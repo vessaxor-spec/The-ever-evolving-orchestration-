@@ -173,7 +173,7 @@ Specialists do not replace core teams, bypass Mission Control, select their own 
 
 ## Capability roles and current implementations
 
-TEO defines responsibilities independently from providers. Terra, Sol, and Luna are internal capability roles, not OpenAI endorsements and not a complete representation of the ecosystem.
+TEO defines responsibilities independently from providers.
 
 | Capability role | Purpose | Current implementation families |
 |---|---|---|
@@ -205,6 +205,28 @@ The complete machine-readable policy is available in [`policy/routing/routing.ya
 Team dispatch rules are available in [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml).
 
 Specialist selection rules and bindings are available in [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml).
+
+## Registry status
+
+Phase 4 established source-backed registries for provider access, concrete model identifiers, stable capabilities, and benchmark evidence.
+
+| Registry area | Initial population |
+|---|---:|
+| Providers | 4 |
+| Routing-relevant model entries | 12 |
+| Stable capability definitions | 21 |
+| Governance and verification controls | 4 |
+| Benchmark evidence entries | 2 |
+
+The initial registry was reviewed on **2026-08-05**. Provider documentation establishes availability and claimed features, not independent proof of routing superiority.
+
+- Provider records: [`registry/providers/`](registry/providers/)
+- Model records: [`registry/models/`](registry/models/)
+- Capability definitions: [`registry/capabilities/`](registry/capabilities/)
+- Benchmark evidence: [`registry/benchmarks/`](registry/benchmarks/)
+- Phase 4 validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
+
+No controlled common harness has yet produced live cross-model quality, cost, or latency results. Those measurements belong to the reference implementation and later evidence cycles.
 
 ## Example workflow
 
@@ -376,32 +398,32 @@ All examples, policies, registries, specialists, and discussions should be safe 
 
 TEO is being built under a strict phase sequence.
 
-### Phase 1: Repository credibility
+### Phase 1: Repository credibility (complete)
 
 - complete the flagship README
 - align the visible structure with the documented architecture
 - add diagrams and visual identity
 
-### Phase 2: Core team completion
+### Phase 2: Core team completion (complete)
 
 - complete Mission Control
 - complete Planning, Engineering, Research, Review, and Verification teams
 - standardize team inputs, outputs, escalation, and success criteria
 
-### Phase 3: Routing validation
+### Phase 3: Routing validation (complete)
 
 - test the approved routing against real task classes
 - record failures, disagreements, and verification outcomes
 - change routing only when evidence exposes a weakness
 
-### Phase 4: Registry population
+### Phase 4: Registry population (complete)
 
 - document providers from current primary sources
 - document models and distinguish provider claims from TEO observations
 - define stable capabilities used for eligibility and routing
 - record benchmark evidence, limitations, and routing relevance
 
-### Phase 5: Reference implementation
+### Phase 5: Reference implementation (next)
 
 - implement a readable reference router
 - connect team, worker, specialist, and implementation selection to the policy files
