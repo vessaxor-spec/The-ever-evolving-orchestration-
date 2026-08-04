@@ -31,7 +31,7 @@ jobs:
       - name: Restore and validate every specialist
         run: python3 .github/scripts/restore_legion.py /tmp/roxas-legion
 
-      - name: Commit validated restoration
+      - name: Publish validated restoration branch
         run: |
           if git diff --quiet -- community/specialists; then
             echo "All specialist specifications already match the canonical Legion."
@@ -40,6 +40,7 @@ jobs:
 
           git config user.name "TEO Steward"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B legion/preserve-canonical-specs
           git add community/specialists
           git commit -m "Restore full Roxas-Legion specialist specifications"
-          git push origin HEAD:main
+          git push --force origin HEAD:refs/heads/legion/preserve-canonical-specs
