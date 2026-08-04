@@ -10,3 +10,7 @@ Human-readable and machine-readable examples showing how TEO classifies tasks, a
 ## Specialist allocation
 
 - [`specialist-allocation-validation-2026-08-04.md`](specialist-allocation-validation-2026-08-04.md) records the 56-role allocation, team totals, non-obvious placements, high-consequence controls, and validation outcome.
+
+## Registry validation
+
+- [`registry-validation-2026-08-05.md`](registry-validation-2026-08-05.md) records provider, model, capability, benchmark, identifier, and evidence-grade validation for Phase 4.
