@@ -1,0 +1,351 @@
+version: 0.1
+status: public-draft
+
+worker_template:
+  required_fields:
+    - mission
+    - owning_team
+    - responsibilities
+    - required_capabilities
+    - preferred_implementations
+    - fallbacks
+    - verification
+    - escalation
+
+workers:
+  architecture:
+    mission: design coherent systems and resolve structural tradeoffs
+    owning_team: planning
+    responsibilities:
+      - system_design
+      - interface_boundaries
+      - dependency_strategy
+      - tradeoff_analysis
+    required_capabilities:
+      - high_reasoning
+      - planning
+      - technical_context
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.1-pro-high
+    fallbacks:
+      - claude-opus
+    verification:
+      - engineering_feasibility_review
+      - risk_review
+    escalation:
+      - irreversible_platform_choice
+      - security_critical
+
+  backend:
+    mission: implement and maintain server-side systems and APIs
+    owning_team: engineering
+    responsibilities:
+      - api_implementation
+      - business_logic
+      - service_integration
+      - tests
+    required_capabilities:
+      - coding
+      - debugging
+      - tool_execution
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-high
+      - local_best_coder
+    verification:
+      - targeted_tests
+      - integration_tests
+
+  frontend:
+    mission: implement usable and maintainable web interfaces
+    owning_team: engineering
+    responsibilities:
+      - component_implementation
+      - state_management
+      - responsive_behavior
+      - frontend_tests
+    required_capabilities:
+      - coding
+      - visual_reasoning
+      - accessibility_awareness
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - build_validation
+      - interaction_tests
+      - accessibility_review
+
+  mobile:
+    mission: implement mobile applications and platform integrations
+    owning_team: engineering
+    responsibilities:
+      - mobile_architecture
+      - native_integration
+      - cross_platform_implementation
+      - device_testing
+    required_capabilities:
+      - coding
+      - platform_reasoning
+      - debugging
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - platform_builds
+      - device_or_emulator_tests
+
+  devops:
+    mission: automate delivery, deployment, and operational workflows
+    owning_team: engineering
+    responsibilities:
+      - ci_cd
+      - containers
+      - deployment_automation
+      - observability
+    required_capabilities:
+      - coding
+      - infrastructure_reasoning
+      - tool_execution
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - configuration_validation
+      - pipeline_tests
+      - rollback_plan
+
+  infrastructure:
+    mission: design and maintain reliable infrastructure foundations
+    owning_team: planning
+    responsibilities:
+      - cloud_architecture
+      - networking
+      - capacity_planning
+      - resilience
+    required_capabilities:
+      - architecture
+      - high_reasoning
+      - risk_analysis
+    preferred_implementations:
+      - gpt-5.6-sol
+      - claude-sonnet-5
+      - gemini-3.1-pro-high
+    fallbacks:
+      - claude-opus
+    verification:
+      - failure_mode_review
+      - cost_review
+      - recovery_plan
+
+  performance:
+    mission: identify and remove measurable system bottlenecks
+    owning_team: engineering
+    responsibilities:
+      - profiling
+      - query_optimization
+      - runtime_analysis
+      - benchmark_design
+    required_capabilities:
+      - debugging
+      - quantitative_reasoning
+      - tool_execution
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - before_after_measurement
+      - regression_tests
+
+  security:
+    mission: identify, reduce, and verify security risk
+    owning_team: review
+    responsibilities:
+      - threat_modeling
+      - authentication_review
+      - authorization_review
+      - dependency_risk
+      - security_testing
+    required_capabilities:
+      - high_reasoning
+      - adversarial_review
+      - executable_verification
+    preferred_implementations:
+      - claude-opus
+      - gpt-5.6-sol
+      - gpt-5.6-terra
+    fallbacks:
+      - claude-sonnet-5
+      - gemini-3.1-pro-high
+    verification:
+      - independent_review
+      - targeted_security_tests
+      - audit_trace
+    escalation:
+      - critical_vulnerability
+      - identity_or_permissions_change
+
+  database:
+    mission: design and maintain reliable data storage and access patterns
+    owning_team: engineering
+    responsibilities:
+      - schema_design
+      - migrations
+      - query_review
+      - data_integrity
+    required_capabilities:
+      - coding
+      - data_modeling
+      - risk_analysis
+    preferred_implementations:
+      - gpt-5.6-sol
+      - gpt-5.6-terra
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - migration_tests
+      - rollback_plan
+      - integrity_checks
+
+  data_engineering:
+    mission: build reliable data movement and transformation systems
+    owning_team: engineering
+    responsibilities:
+      - pipelines
+      - transformations
+      - data_quality
+      - orchestration
+    required_capabilities:
+      - coding
+      - systems_reasoning
+      - data_validation
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - data_quality_tests
+      - pipeline_replay
+
+  ai_engineering:
+    mission: implement AI-enabled systems with controlled model and tool behavior
+    owning_team: engineering
+    responsibilities:
+      - model_integration
+      - agent_workflows
+      - tool_use
+      - evaluation
+    required_capabilities:
+      - coding
+      - orchestration_reasoning
+      - evaluation_design
+    preferred_implementations:
+      - gpt-5.6-sol
+      - gpt-5.6-terra
+      - claude-sonnet-5
+    fallbacks:
+      - gemini-3.1-pro-high
+    verification:
+      - evaluation_suite
+      - failure_case_review
+      - cost_and_latency_check
+
+  documentation:
+    mission: create accurate, usable, and maintainable technical documentation
+    owning_team: research
+    responsibilities:
+      - technical_writing
+      - examples
+      - reference_updates
+      - consistency_review
+    required_capabilities:
+      - synthesis
+      - technical_accuracy
+      - clear_writing
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.6-flash-high
+    fallbacks:
+      - claude-haiku-4.5
+    verification:
+      - technical_review
+      - link_and_example_check
+
+  qa:
+    mission: convert requirements and risks into repeatable quality checks
+    owning_team: verification
+    responsibilities:
+      - test_planning
+      - regression_coverage
+      - failure_reproduction
+      - acceptance_testing
+    required_capabilities:
+      - test_design
+      - executable_verification
+      - requirements_analysis
+    preferred_implementations:
+      - gpt-5.6-terra
+      - claude-sonnet-5
+    fallbacks:
+      - gpt-5.6-sol
+    verification:
+      - independent_test_run
+      - acceptance_criteria_trace
+
+  accessibility:
+    mission: ensure interfaces and content remain usable across access needs
+    owning_team: review
+    responsibilities:
+      - accessibility_review
+      - semantic_structure
+      - keyboard_behavior
+      - assistive_technology_considerations
+    required_capabilities:
+      - standards_reasoning
+      - interface_review
+      - visual_analysis
+    preferred_implementations:
+      - claude-sonnet-5
+      - gemini-3.1-pro-high
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.6-flash-high
+    verification:
+      - automated_checks
+      - manual_review
+
+  release:
+    mission: prepare controlled and traceable releases
+    owning_team: verification
+    responsibilities:
+      - release_readiness
+      - change_summary
+      - versioning
+      - rollback_readiness
+    required_capabilities:
+      - coordination
+      - verification
+      - documentation
+    preferred_implementations:
+      - gpt-5.6-terra
+      - claude-sonnet-5
+    fallbacks:
+      - gpt-5.6-sol
+    verification:
+      - release_checklist
+      - artifact_validation
+      - rollback_confirmation
