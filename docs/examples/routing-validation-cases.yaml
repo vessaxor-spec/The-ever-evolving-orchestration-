@@ -1,0 +1,194 @@
+version: 0.1
+status: validated
+
+cases:
+  - id: RV-001
+    task: design a service architecture with an irreversible platform choice
+    task_type: architecture_design
+    context: architecture
+    risk_level: high
+    expected:
+      primary_team: planning
+      primary_worker: architecture
+      supporting_teams:
+        - research
+        - review
+      verification_team: verification
+      controls:
+        - engineering_feasibility_review
+        - risk_review
+        - rollback_or_recovery_plan
+        - independent_verifier
+
+  - id: RV-002
+    task: build a responsive React dashboard with automated interaction tests
+    task_type: daily_coding
+    context: frontend
+    risk_level: medium
+    expected:
+      primary_team: engineering
+      primary_worker: frontend
+      review_team: review
+      verification_team: verification
+      controls:
+        - build_validation
+        - interaction_tests
+        - accessibility_review
+
+  - id: RV-003
+    task: diagnose a Kubernetes deployment stuck in CrashLoopBackOff
+    task_type: deep_debugging
+    context: deployment
+    risk_level: high
+    expected:
+      primary_team: engineering
+      primary_worker: devops
+      supporting_workers:
+        - performance
+        - database
+      review_team: review
+      verification_team: verification
+      controls:
+        - reproduce_original_failure
+        - demonstrate_fix
+        - targeted_tests
+        - regression_tests
+        - rollback_or_recovery_plan
+        - independent_verifier
+
+  - id: RV-004
+    task: refactor a large frontend application without changing public behavior
+    task_type: repo_wide_refactor
+    context: frontend
+    risk_level: high
+    expected:
+      primary_team: planning
+      primary_worker: architecture
+      execution_team: engineering
+      execution_worker: frontend
+      review_team: review
+      verification_team: verification
+      controls:
+        - dependency_map
+        - phased_execution
+        - rollback_plan
+        - full_test_suite
+        - public_interface_comparison
+        - scope_change_detection
+
+  - id: RV-005
+    task: review a pull request that changes OAuth permissions and token handling
+    task_type: security_review
+    context: permissions_or_identity
+    risk_level: critical
+    expected:
+      primary_team: review
+      primary_worker: security
+      execution_team: engineering
+      verification_team: verification
+      human_approval: required
+      controls:
+        - threat_model
+        - least_privilege_review
+        - secret_exposure_check
+        - authentication_review
+        - authorization_review
+        - targeted_security_tests
+        - audit_trace
+        - independent_verification
+
+  - id: RV-006
+    task: compare current primary documentation for a new external API
+    task_type: deep_research
+    context: external_api
+    risk_level: medium
+    expected:
+      primary_team: research
+      primary_worker: documentation
+      supporting_team: review
+      verification_team: verification
+      controls:
+        - primary_source_traceability
+        - contradiction_analysis
+        - uncertainty_record
+
+  - id: RV-007
+    task: update API documentation after a verified endpoint change
+    task_type: documentation
+    context: technical_documentation
+    risk_level: medium
+    expected:
+      primary_team: research
+      primary_worker: documentation
+      supporting_teams:
+        - engineering
+        - review
+      verification_team: verification
+      controls:
+        - technical_review
+        - link_and_example_check
+        - changed_contract_review
+
+  - id: RV-008
+    task: implement a destructive database migration with a reversible deployment plan
+    task_type: daily_coding
+    context: database
+    risk_level: high
+    expected:
+      primary_team: engineering
+      primary_worker: database
+      review_team: review
+      verification_team: verification
+      controls:
+        - migration_tests
+        - integrity_checks
+        - rollback_plan
+        - independent_verifier
+
+  - id: RV-009
+    task: extract the same fields from a large batch of public invoices
+    task_type: high_volume_simple
+    context: structured_extraction
+    risk_level: low
+    expected:
+      primary_team: research
+      primary_worker: documentation
+      verification_team: verification
+      verification_method: sampled_review
+      controls:
+        - output_validation
+        - adaptive_sample
+
+  - id: RV-010
+    task: prepare and validate a traceable software release
+    task_type: release
+    context: release
+    risk_level: high
+    expected:
+      primary_team: verification
+      primary_worker: release
+      supporting_teams:
+        - engineering
+        - documentation
+        - review
+      verification_team: verification
+      controls:
+        - release_checklist
+        - artifact_validation
+        - rollback_confirmation
+        - audit_trace
+
+  - id: RV-011
+    task: analyze an architecture diagram and connect its components to repository implementation
+    task_type: multimodal_analysis
+    context: architecture_diagram
+    risk_level: medium
+    expected:
+      primary_team: research
+      primary_worker: documentation
+      visual_implementation_team: engineering
+      visual_implementation_worker: frontend
+      verification_team: verification
+      controls:
+        - source_grounding_and_cross_check
+        - technical_repository_followup
