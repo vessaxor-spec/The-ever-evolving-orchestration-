@@ -1,10 +1,11 @@
-version: 0.2
+version: 0.3
 status: public-draft
 
 routing_order:
   - mission_control
   - team
   - worker
+  - specialist
   - capability
   - implementation
   - verification
@@ -16,6 +17,7 @@ mission_control:
     - identify_capabilities
     - select_teams
     - select_workers
+    - select_specialists
     - sequence_work
     - assign_fallbacks
     - assign_verification
@@ -130,19 +132,43 @@ team_routes:
       - documentation
       - review
 
+specialist_resolution:
+  registry: community/specialists/specialists.yaml
+  methodology: docs/methodology/specialist-allocation.md
+  selection_order:
+    - confirm_primary_team
+    - confirm_worker_binding
+    - match_specialist_domain
+    - check_authority_and_boundaries
+    - check_risk_and_human_approval
+    - assign_supporting_teams
+    - assign_verification
+  rules:
+    - specialists_do_not_replace_core_teams
+    - team_selection_precedes_specialist_selection
+    - specialist_worker_binding_must_match_task_capability
+    - specialist_risk_must_be_satisfied_by_verification
+    - regulated_decisions_require_qualified_human_approval
+    - specialist_creator_credit_must_be_preserved
+    - a_specialist_cannot_be_the_sole_planner_executor_reviewer_and_verifier
+  optional: true
+
 implementation_resolution:
   source: policy/routing/routing.yaml
   model_registry: models.yaml
   rule: >-
-    Resolve the selected worker to the best currently available implementation
-    using capability fit, task risk, context, cost, latency, tool access, and
-    verification requirements.
+    Resolve the selected worker and optional specialist to the best currently
+    available implementation using capability fit, task risk, context, cost,
+    latency, tool access, availability, and verification requirements.
 
 required_dispatch_record:
   - task_type
   - risk_level
   - selected_team
   - selected_worker
+  - selected_specialist
+  - specialist_source
+  - specialist_risk_profile
   - required_capabilities
   - selected_implementation
   - fallback_implementation
