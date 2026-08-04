@@ -1,8 +1,12 @@
-version: 0.2
+version: 0.3
 status: public-draft
+reviewed_at: 2026-08-05
+registry_source: registry/models/models.yaml
 review_policy: >-
   These aliases are role-based defaults. Replace the concrete implementation
   behind an alias when evidence shows a newer option performs the role better.
+  Provider descriptions establish availability and claimed features, not TEO
+  benchmark superiority.
 
 profiles:
   terra:
@@ -35,6 +39,7 @@ models:
   codex-terra:
     provider_family: openai
     concrete_model: gpt-5.6-terra
+    availability: current
     role: primary coding and debugging agent
     profile: terra
     preferred_for:
@@ -51,6 +56,7 @@ models:
   codex-sol:
     provider_family: openai
     concrete_model: gpt-5.6-sol
+    availability: current
     role: high-reasoning engineering and orchestration agent
     profile: sol
     preferred_for:
@@ -64,9 +70,26 @@ models:
       - use codex-terra for routine implementation and test execution
       - use an independent verifier for consequential decisions
 
+  codex-luna:
+    provider_family: openai
+    concrete_model: gpt-5.6-luna
+    availability: current
+    role: cost-sensitive high-volume implementation
+    profile: luna
+    preferred_for:
+      - extraction
+      - classification
+      - transformation
+      - routing
+      - simple high-volume work
+    limitations:
+      - escalate consequential reasoning and low-confidence results
+      - use sampled or targeted verification appropriate to the workload
+
   gemini-pro:
     provider_family: google
-    concrete_model: gemini-3.1-pro-high
+    concrete_model: gemini-3.1-pro-preview
+    availability: preview
     role: deep research and large-context fallback
     profile: sol
     preferred_for:
@@ -76,11 +99,14 @@ models:
       - coding fallback
       - documentation synthesis
     limitations:
+      - preview status must be visible in the dispatch record
       - should not replace executable verification for code changes
+      - endpoint availability and deprecation timing may change
 
   gemini-flash:
     provider_family: google
-    concrete_model: gemini-3.6-flash-high
+    concrete_model: gemini-3.6-flash
+    availability: stable
     role: fast mapping and multimodal processing
     profile: luna
     preferred_for:
@@ -95,6 +121,7 @@ models:
   claude-sonnet:
     provider_family: anthropic
     concrete_model: claude-sonnet-5
+    availability: generally_available
     role: architecture, planning, and review
     profile: sol
     preferred_for:
@@ -108,7 +135,8 @@ models:
 
   claude-opus:
     provider_family: anthropic
-    concrete_model: claude-opus
+    concrete_model: claude-opus-5
+    availability: generally_available
     role: high-consequence reasoning escalation
     profile: sol
     preferred_for:
@@ -119,9 +147,25 @@ models:
     limitations:
       - reserve for cases where added reasoning depth justifies cost and latency
 
+  claude-fable:
+    provider_family: anthropic
+    concrete_model: claude-fable-5
+    availability: generally_available
+    role: candidate maximum-capability escalation
+    profile: sol
+    preferred_for:
+      - long-running agentic work
+      - critical cross-system reasoning
+      - cases where current routing defaults remain inconclusive
+    limitations:
+      - not an automatic default
+      - requires evidence that the added capability is relevant to the task
+
   claude-haiku:
     provider_family: anthropic
-    concrete_model: claude-haiku-4.5
+    concrete_model: claude-haiku-4-5
+    provider_model_id: claude-haiku-4-5-20251001
+    availability: generally_available
     role: fast low-cost language work
     profile: luna
     preferred_for:
@@ -133,23 +177,35 @@ models:
       - not the default for consequential reasoning
 
   local-coder:
-    provider_family: local
+    provider_family: local_ollama
     role: private or offline coding fallback
     profile: terra
     candidate_implementations:
       - qwen-coder
       - deepseek-coder
       - codellama
+    required_execution_metadata:
+      - exact_model_tag_or_digest
+      - quantization
+      - context_configuration
+      - runtime_version
+      - hardware
     limitations:
       - capability depends on hardware, quantization, context, and tool integration
 
   local-model:
-    provider_family: local
+    provider_family: local_ollama
     role: private or economical throughput fallback
     profile: luna
     candidate_implementations:
       - qwen
       - llama
       - mistral
+    required_execution_metadata:
+      - exact_model_tag_or_digest
+      - quantization
+      - context_configuration
+      - runtime_version
+      - hardware
     limitations:
       - validate quality against the intended workload
