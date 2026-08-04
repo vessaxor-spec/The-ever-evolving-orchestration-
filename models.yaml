@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 review_policy: >-
   These aliases are role-based defaults. Replace the concrete implementation
@@ -21,6 +21,7 @@ profiles:
       - tradeoff analysis
       - planning
       - complex review
+      - cross-system reasoning
 
   luna:
     purpose: economical throughput
@@ -33,6 +34,7 @@ profiles:
 models:
   codex-terra:
     provider_family: openai
+    concrete_model: gpt-5.6-terra
     role: primary coding and debugging agent
     profile: terra
     preferred_for:
@@ -41,12 +43,30 @@ models:
       - refactoring
       - testing
       - executable code review
+      - repository verification
     limitations:
       - may require a separate reasoning reviewer for ambiguous architecture
       - availability and usage limits may vary
 
+  codex-sol:
+    provider_family: openai
+    concrete_model: gpt-5.6-sol
+    role: high-reasoning engineering and orchestration agent
+    profile: sol
+    preferred_for:
+      - complex architecture with implementation constraints
+      - difficult debugging strategy
+      - cross-repository planning
+      - high-risk code reasoning
+      - orchestration decisions requiring executable context
+      - technical verification of architectural assumptions
+    limitations:
+      - use codex-terra for routine implementation and test execution
+      - use an independent verifier for consequential decisions
+
   gemini-pro:
     provider_family: google
+    concrete_model: gemini-3.1-pro-high
     role: deep research and large-context fallback
     profile: sol
     preferred_for:
@@ -54,11 +74,13 @@ models:
       - long-context analysis
       - grounded comparison
       - coding fallback
+      - documentation synthesis
     limitations:
       - should not replace executable verification for code changes
 
   gemini-flash:
     provider_family: google
+    concrete_model: gemini-3.6-flash-high
     role: fast mapping and multimodal processing
     profile: luna
     preferred_for:
@@ -72,6 +94,7 @@ models:
 
   claude-sonnet:
     provider_family: anthropic
+    concrete_model: claude-sonnet-5
     role: architecture, planning, and review
     profile: sol
     preferred_for:
@@ -85,6 +108,7 @@ models:
 
   claude-opus:
     provider_family: anthropic
+    concrete_model: claude-opus
     role: high-consequence reasoning escalation
     profile: sol
     preferred_for:
@@ -97,6 +121,7 @@ models:
 
   claude-haiku:
     provider_family: anthropic
+    concrete_model: claude-haiku-4.5
     role: fast low-cost language work
     profile: luna
     preferred_for:
