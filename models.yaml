@@ -1,0 +1,130 @@
+version: 0.1
+status: public-draft
+review_policy: >-
+  These aliases are role-based defaults. Replace the concrete implementation
+  behind an alias when evidence shows a newer option performs the role better.
+
+profiles:
+  terra:
+    purpose: engineering execution
+    strengths:
+      - coding
+      - debugging
+      - repository editing
+      - test execution
+      - verification
+
+  sol:
+    purpose: difficult synthesis and reasoning
+    strengths:
+      - architecture
+      - tradeoff analysis
+      - planning
+      - complex review
+
+  luna:
+    purpose: economical throughput
+    strengths:
+      - extraction
+      - classification
+      - transformation
+      - routing
+
+models:
+  codex-terra:
+    provider_family: openai
+    role: primary coding and debugging agent
+    profile: terra
+    preferred_for:
+      - implementation
+      - debugging
+      - refactoring
+      - testing
+      - executable code review
+    limitations:
+      - may require a separate reasoning reviewer for ambiguous architecture
+      - availability and usage limits may vary
+
+  gemini-pro:
+    provider_family: google
+    role: deep research and large-context fallback
+    profile: sol
+    preferred_for:
+      - deep research
+      - long-context analysis
+      - grounded comparison
+      - coding fallback
+    limitations:
+      - should not replace executable verification for code changes
+
+  gemini-flash:
+    provider_family: google
+    role: fast mapping and multimodal processing
+    profile: luna
+    preferred_for:
+      - extraction
+      - classification
+      - repository mapping
+      - multimodal triage
+      - high-volume processing
+    limitations:
+      - escalate consequential synthesis to a stronger reasoning model
+
+  claude-sonnet:
+    provider_family: anthropic
+    role: architecture, planning, and review
+    profile: sol
+    preferred_for:
+      - architecture
+      - requirements analysis
+      - implementation planning
+      - semantic review
+      - adversarial challenge
+    limitations:
+      - coding work should be executed and tested by a coding agent where available
+
+  claude-opus:
+    provider_family: anthropic
+    role: high-consequence reasoning escalation
+    profile: sol
+    preferred_for:
+      - unresolved ambiguity
+      - security-sensitive reasoning
+      - difficult cross-system decisions
+      - disagreement resolution
+    limitations:
+      - reserve for cases where added reasoning depth justifies cost and latency
+
+  claude-haiku:
+    provider_family: anthropic
+    role: fast low-cost language work
+    profile: luna
+    preferred_for:
+      - classification
+      - summaries
+      - formatting
+      - simple transformations
+    limitations:
+      - not the default for consequential reasoning
+
+  local-coder:
+    provider_family: local
+    role: private or offline coding fallback
+    profile: terra
+    candidate_implementations:
+      - qwen-coder
+      - deepseek-coder
+      - codellama
+    limitations:
+      - capability depends on hardware, quantization, context, and tool integration
+
+  local-model:
+    provider_family: local
+    role: private or economical throughput fallback
+    profile: luna
+    candidate_implementations:
+      - qwen
+      - llama
+      - mistral
+    limitations:
+      - validate quality against the intended workload
