@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1540 250" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1760 250" role="img" aria-labelledby="title desc">
   <title id="title">TEO core architecture</title>
-  <desc id="desc">Task flows through Mission Control, Team, Worker, Capability, Implementation, and Verification.</desc>
+  <desc id="desc">Task flows through Mission Control, Team, Worker, an optional Specialist, Capability, Implementation, and Verification.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b949e"/>
@@ -9,47 +9,53 @@
       <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
     </filter>
   </defs>
-  <rect width="1540" height="250" rx="24" fill="#0d1117"/>
+  <rect width="1760" height="250" rx="24" fill="#0d1117"/>
   <g font-family="Inter, Segoe UI, Arial, sans-serif" text-anchor="middle" filter="url(#shadow)">
-    <g transform="translate(30 82)">
-      <rect width="170" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-      <text x="85" y="52" fill="#f0f6fc" font-size="24" font-weight="700">Task</text>
+    <g transform="translate(25 82)">
+      <rect width="150" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="75" y="52" fill="#f0f6fc" font-size="23" font-weight="700">Task</text>
     </g>
-    <g transform="translate(250 82)">
+    <g transform="translate(215 82)">
       <rect width="190" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-      <text x="95" y="52" fill="#f0f6fc" font-size="23" font-weight="700">Mission Control</text>
+      <text x="95" y="52" fill="#f0f6fc" font-size="22" font-weight="700">Mission Control</text>
     </g>
-    <g transform="translate(490 82)">
+    <g transform="translate(445 82)">
+      <rect width="150" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="75" y="52" fill="#f0f6fc" font-size="23" font-weight="700">Team</text>
+    </g>
+    <g transform="translate(635 82)">
+      <rect width="150" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="75" y="52" fill="#f0f6fc" font-size="23" font-weight="700">Worker</text>
+    </g>
+    <g transform="translate(825 82)">
+      <rect width="170" height="86" rx="16" fill="#161b22" stroke="#d29922" stroke-width="2" stroke-dasharray="7 5"/>
+      <text x="85" y="43" fill="#f0f6fc" font-size="21" font-weight="700">Specialist</text>
+      <text x="85" y="65" fill="#d29922" font-size="13">optional domain layer</text>
+    </g>
+    <g transform="translate(1035 82)">
       <rect width="170" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-      <text x="85" y="52" fill="#f0f6fc" font-size="24" font-weight="700">Team</text>
+      <text x="85" y="52" fill="#f0f6fc" font-size="22" font-weight="700">Capability</text>
     </g>
-    <g transform="translate(710 82)">
-      <rect width="170" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-      <text x="85" y="52" fill="#f0f6fc" font-size="24" font-weight="700">Worker</text>
+    <g transform="translate(1245 82)">
+      <rect width="185" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
+      <text x="92.5" y="52" fill="#f0f6fc" font-size="21" font-weight="700">Implementation</text>
     </g>
-    <g transform="translate(930 82)">
-      <rect width="180" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-      <text x="90" y="52" fill="#f0f6fc" font-size="23" font-weight="700">Capability</text>
-    </g>
-    <g transform="translate(1160 82)">
-      <rect width="190" height="86" rx="16" fill="#161b22" stroke="#58a6ff" stroke-width="2"/>
-      <text x="95" y="52" fill="#f0f6fc" font-size="22" font-weight="700">Implementation</text>
-    </g>
-    <g transform="translate(1400 82)">
-      <rect width="110" height="86" rx="16" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
-      <text x="55" y="45" fill="#f0f6fc" font-size="18" font-weight="700">Verification</text>
-      <text x="55" y="66" fill="#8b949e" font-size="13">accept or return</text>
+    <g transform="translate(1470 82)">
+      <rect width="255" height="86" rx="16" fill="#161b22" stroke="#3fb950" stroke-width="2"/>
+      <text x="127.5" y="43" fill="#f0f6fc" font-size="21" font-weight="700">Verification</text>
+      <text x="127.5" y="65" fill="#8b949e" font-size="13">accept, revise, reject, or escalate</text>
     </g>
   </g>
   <g stroke="#8b949e" stroke-width="3" fill="none" marker-end="url(#arrow)">
-    <path d="M 205 125 H 242"/>
-    <path d="M 445 125 H 482"/>
-    <path d="M 665 125 H 702"/>
-    <path d="M 885 125 H 922"/>
-    <path d="M 1115 125 H 1152"/>
-    <path d="M 1355 125 H 1392"/>
+    <path d="M 180 125 H 207"/>
+    <path d="M 410 125 H 437"/>
+    <path d="M 600 125 H 627"/>
+    <path d="M 790 125 H 817"/>
+    <path d="M 1000 125 H 1027"/>
+    <path d="M 1210 125 H 1237"/>
+    <path d="M 1435 125 H 1462"/>
   </g>
-  <text x="770" y="40" fill="#8b949e" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle">Responsibilities remain stable while implementations evolve.</text>
-  <path d="M 1455 176 C 1455 222, 345 226, 345 176" fill="none" stroke="#d29922" stroke-width="2" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
-  <text x="900" y="224" fill="#d29922" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" text-anchor="middle">Failed or uncertain verification returns to Mission Control</text>
+  <text x="880" y="40" fill="#8b949e" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="17" text-anchor="middle">Responsibilities remain stable while specialists and implementations evolve.</text>
+  <path d="M 1598 176 C 1598 222, 310 226, 310 176" fill="none" stroke="#d29922" stroke-width="2" stroke-dasharray="8 7" marker-end="url(#arrow)"/>
+  <text x="955" y="224" fill="#d29922" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" text-anchor="middle">Failed or uncertain verification returns to Mission Control</text>
 </svg>
