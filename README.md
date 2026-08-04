@@ -126,17 +126,26 @@ The Verification Team confirms that execution satisfied the original requirement
 
 Verification may include tests, static analysis, runtime checks, source grounding, independent review, rollback planning, or human approval, depending on risk.
 
-## Profiles
+## Capability roles and current implementations
 
-TEO uses three durable profiles to describe how work should be performed.
+TEO defines responsibilities independently from providers. Terra, Sol, and Luna are internal capability roles, not OpenAI endorsements and not a complete representation of the ecosystem.
 
-| Profile | Purpose | Typical responsibilities |
+| Capability role | Purpose | Current implementation families |
 |---|---|---|
-| **Terra** | Engineering execution | inspect, implement, edit, test, debug, verify |
-| **Sol** | Difficult reasoning and synthesis | architect, plan, analyze tradeoffs, resolve ambiguity |
-| **Luna** | Economical throughput | classify, extract, transform, summarize, map, route |
+| **Engineering execution** | inspect, implement, edit, test, debug, verify | Codex Terra, local coding models, Gemini Pro as fallback |
+| **Engineering reasoning** | plan complex changes, reason across repositories, connect architecture to execution | Codex Sol, Claude Sonnet, Gemini Pro |
+| **General reasoning and review** | architecture, requirements, critique, tradeoff analysis, semantic review | Claude Sonnet, Claude Opus, Codex Sol, Gemini Pro |
+| **Research and long context** | source discovery, grounded comparison, large-context synthesis | Gemini Pro, Gemini Flash, Claude Sonnet |
+| **Multimodal and high-volume processing** | classify, extract, transform, map, summarize, triage | Gemini Flash, Claude Haiku, local models |
+| **Independent verification** | test claims, challenge assumptions, validate execution | Codex Terra, Claude Sonnet, Gemini Pro, human review when required |
 
-Profiles are stable roles. Models are replaceable implementations of those roles.
+The labels **Terra**, **Sol**, and **Luna** may still be used as shorthand inside compatible systems:
+
+- **Terra** means engineering execution.
+- **Sol** means difficult reasoning and synthesis.
+- **Luna** means economical throughput.
+
+They do not outrank Claude, Gemini, local models, or future implementations. The routing policy selects the implementation that best satisfies the role, evidence, risk, tool access, and availability requirements at that time.
 
 ## Current routing baseline
 
