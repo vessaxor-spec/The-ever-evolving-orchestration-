@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/banner/teo-banner.svg" alt="The Ever-Evolving Orchestration banner" width="100%">
+</p>
+
 <div align="center">
 
 # The Ever-Evolving Orchestration
@@ -45,6 +49,10 @@ It does not attempt to declare a permanent best model. It provides a structured 
 TEO combines a human-readable architecture with machine-readable routing policies and model registries. It is intended to be useful to engineers, AI agents, researchers, and organizations building multi-model systems.
 
 ## Core architecture
+
+<p align="center">
+  <img src="assets/diagrams/core-architecture.svg" alt="Task to Mission Control to Team to Worker to Capability to Implementation to Verification" width="100%">
+</p>
 
 ```text
 Task
