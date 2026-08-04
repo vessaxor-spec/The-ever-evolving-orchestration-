@@ -1,0 +1,126 @@
+version: 0.1
+status: public-draft
+
+routing_order:
+  - mission_control
+  - team
+  - worker
+  - capability
+  - implementation
+  - verification
+
+mission_control:
+  responsibilities:
+    - classify_task
+    - assess_risk
+    - identify_capabilities
+    - select_teams
+    - select_workers
+    - sequence_work
+    - assign_fallbacks
+    - assign_verification
+    - assemble_result
+
+team_routes:
+  architecture_design:
+    primary_team: planning
+    primary_worker: architecture
+    supporting_teams:
+      - research
+      - review
+    verification_team: verification
+
+  daily_coding:
+    primary_team: engineering
+    primary_worker: backend
+    worker_override_by_context:
+      frontend: frontend
+      mobile: mobile
+      database: database
+      data_pipeline: data_engineering
+      ai_system: ai_engineering
+      deployment: devops
+    review_team: review
+    verification_team: verification
+
+  deep_debugging:
+    primary_team: engineering
+    primary_worker: backend
+    supporting_workers:
+      - performance
+      - database
+      - devops
+    review_team: review
+    verification_team: verification
+
+  repo_wide_refactor:
+    primary_team: planning
+    primary_worker: architecture
+    execution_team: engineering
+    execution_worker: backend
+    review_team: review
+    verification_team: verification
+
+  deep_research:
+    primary_team: research
+    primary_worker: documentation
+    supporting_team: review
+    verification_team: verification
+
+  code_review:
+    primary_team: review
+    primary_worker: architecture
+    supporting_workers:
+      - security
+      - performance
+      - accessibility
+    verification_team: verification
+
+  security_review:
+    primary_team: review
+    primary_worker: security
+    execution_team: engineering
+    verification_team: verification
+    human_approval_for:
+      - critical
+
+  multimodal_analysis:
+    primary_team: research
+    primary_worker: documentation
+    route_visual_implementation_to:
+      team: engineering
+      worker: frontend
+    verification_team: verification
+
+  high_volume_simple:
+    primary_team: research
+    primary_worker: documentation
+    verification_method: sampled_review
+
+  release:
+    primary_team: verification
+    primary_worker: release
+    supporting_teams:
+      - engineering
+      - documentation
+      - review
+
+implementation_resolution:
+  source: policy/routing/routing.yaml
+  model_registry: models.yaml
+  rule: >-
+    Resolve the selected worker to the best currently available implementation
+    using capability fit, task risk, context, cost, latency, tool access, and
+    verification requirements.
+
+required_dispatch_record:
+  - task_type
+  - risk_level
+  - selected_team
+  - selected_worker
+  - required_capabilities
+  - selected_implementation
+  - fallback_implementation
+  - verification_team
+  - verification_method
+  - routing_explanation
