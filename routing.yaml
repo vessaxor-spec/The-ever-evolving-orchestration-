@@ -1,0 +1,120 @@
+version: 0.1
+status: public-draft
+purpose: >-
+  Select the most suitable model or agent for a task based on capability,
+  risk, cost, latency, context, and verification needs.
+
+defaults:
+  prefer_capability_over_provider: true
+  require_explanation_for_high_risk: true
+  max_failed_attempts_before_escalation: 2
+  separate_verifier_for_consequential_work: true
+
+routes:
+  architecture_design:
+    primary: claude-sonnet
+    support: gemini-pro
+    escalation: claude-opus
+    reasoning: high
+    use_when:
+      - system architecture
+      - requirements are ambiguous
+      - tradeoffs span multiple systems
+    verify_with: independent-review
+
+  deep_research:
+    primary: gemini-pro
+    support: claude-sonnet
+    escalation: claude-opus
+    reasoning: high
+    use_when:
+      - external research
+      - source comparison
+      - long-context synthesis
+    verify_with: primary-sources
+
+  daily_coding:
+    primary: codex-terra
+    fallback: gemini-pro
+    review: claude-sonnet
+    reasoning: medium
+    use_when:
+      - feature implementation
+      - test writing
+      - repository edits
+      - dependency updates
+    verify_with: tests-and-execution
+
+  deep_debugging:
+    primary: codex-terra
+    support: claude-sonnet
+    fallback: gemini-pro
+    escalation: claude-opus
+    reasoning: high
+    use_when:
+      - failing tests
+      - runtime defects
+      - cross-file bugs
+      - nondeterministic behavior
+    verify_with: reproducible-fix
+
+  repo_wide_refactor:
+    mapper: gemini-flash
+    planner: claude-sonnet
+    executor: codex-terra
+    verifier: codex-terra
+    escalation: claude-opus
+    reasoning: high
+    verify_with: full-test-suite
+
+  code_review:
+    executable_review: codex-terra
+    semantic_review: claude-sonnet
+    escalation: claude-opus
+    reasoning: high
+    verify_with: targeted-tests
+
+  multimodal_analysis:
+    primary: gemini-flash
+    escalation: gemini-pro
+    synthesis: claude-sonnet
+    reasoning: medium
+    verify_with: source-grounding
+
+  high_volume_simple:
+    primary: luna
+    alternatives:
+      - claude-haiku
+      - gemini-flash
+      - local-model
+    reasoning: low
+    verify_with: sampling
+
+  security_sensitive:
+    planner: claude-opus
+    executor: codex-terra
+    verifier: independent-review
+    reasoning: high
+    mandatory_controls:
+      - least-privilege
+      - explicit-risk-review
+      - tests
+      - audit-trace
+
+fallback_order:
+  coding:
+    - codex-terra
+    - gemini-pro
+    - local-coder
+  reasoning:
+    - claude-sonnet
+    - claude-opus
+    - gemini-pro
+  research:
+    - gemini-pro
+    - claude-sonnet
+  throughput:
+    - luna
+    - gemini-flash
+    - claude-haiku
+    - local-model
