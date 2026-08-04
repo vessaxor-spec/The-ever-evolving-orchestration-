@@ -1,0 +1,122 @@
+version: 0.1
+status: public
+reviewed_at: 2026-08-05
+
+evidence_grades:
+  A:
+    definition: reproducible TEO-observed result with artifacts, method, and limitations
+  B:
+    definition: reproducible independent external benchmark relevant to the routed task
+  C:
+    definition: current provider-reported result or capability claim
+  D:
+    definition: unverified assertion, anecdote, or non-reproducible comparison
+
+registry_rules:
+  - do_not_compare_scores_from_different_harnesses_as_if_equivalent
+  - record_model_snapshot_and_execution_environment
+  - disclose_prompt_tool_and_sampling_configuration
+  - record_failures_and_missing_runs
+  - connect_evidence_to_a_specific_routing_decision
+  - provider_claims_cannot_receive_grade_A
+
+entries:
+  teo-routing-policy-conformance-2026-08-04:
+    evidence_grade: A
+    evidence_type: teo_observed
+    subject: team and worker routing policy completeness
+    method: 11 representative task-class cases checked against routing and verification requirements
+    baseline:
+      accepted: 7
+      revised: 4
+      rejected: 0
+      inconclusive: 0
+    final:
+      accepted: 11
+      revised: 0
+      rejected: 0
+      inconclusive: 0
+    artifacts:
+      - docs/methodology/routing-validation.md
+      - docs/examples/routing-validation-cases.yaml
+      - docs/examples/routing-validation-results-2026-08-04.md
+    routing_relevance:
+      - context_aware_worker_selection
+      - documentation_route
+      - verification_team_assignment
+    limitations:
+      - no_live_model_quality_measurement
+      - no_cost_or_latency_measurement
+      - no_provider_availability_test
+
+  provider-model-catalog-review-2026-08-05:
+    evidence_grade: C
+    evidence_type: provider_claim
+    subject: current model identifiers, availability classes, and provider-described capabilities
+    sources:
+      - https://developers.openai.com/api/docs/models
+      - https://platform.claude.com/docs/en/about-claude/models/overview
+      - https://ai.google.dev/gemini-api/docs/models
+      - https://docs.ollama.com/api/introduction
+    routing_relevance:
+      - normalize_concrete_model_identifiers
+      - expose_preview_status
+      - distinguish_local_deployment_metadata
+    limitations:
+      - does_not_measure_teo_task_performance
+      - provider_descriptions_are_not_independent
+      - availability_may_change_after_review
+
+required_future_evidence:
+  coding_execution:
+    status: not_yet_recorded
+    required_measurements:
+      - task_success
+      - tests_passed
+      - regression_rate
+      - files_changed
+      - human_review_findings
+      - latency
+      - cost
+
+  architecture_and_review:
+    status: not_yet_recorded
+    required_measurements:
+      - requirement_coverage
+      - hidden_risk_detection
+      - actionable_finding_rate
+      - disagreement_resolution
+      - latency
+      - cost
+
+  research_and_source_grounding:
+    status: not_yet_recorded
+    required_measurements:
+      - source_precision
+      - claim_support
+      - contradiction_detection
+      - freshness
+      - citation_accuracy
+      - latency
+      - cost
+
+  multimodal_and_extraction:
+    status: not_yet_recorded
+    required_measurements:
+      - field_accuracy
+      - omission_rate
+      - hallucination_rate
+      - schema_validity
+      - latency
+      - cost
+
+  local_execution:
+    status: deployment_specific
+    required_measurements:
+      - exact_model_digest
+      - quantization
+      - hardware
+      - runtime
+      - throughput
+      - memory_use
+      - task_quality
