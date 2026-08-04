@@ -1,123 +1,557 @@
-routing:
+version: 0.2
+status: public-draft
 
+principles:
+  capability_first: true
+  provider_neutral: true
+  explain_high_risk_decisions: true
+  separate_execution_and_verification_for_consequential_work: true
+  escalate_on_evidence_not_task_label: true
+  prefer_reversible_actions_under_uncertainty: true
+
+defaults:
+  max_failed_attempts_before_escalation: 2
+  require_independent_verifier_for:
+    - security_sensitive
+    - financial_logic
+    - permissions_or_identity
+    - destructive_migration
+    - production_infrastructure
+    - irreversible_platform_choice
+  fallback_on:
+    - model_unavailable
+    - usage_limit_reached
+    - tool_access_missing
+    - context_limit_reached
+    - repeated_execution_failure
+  stop_conditions:
+    - requirements_unresolved
+    - required_evidence_unavailable
+    - verification_failed
+    - scope_expanded_beyond_authorized_task
+
+profiles:
+  terra:
+    purpose: engineering execution
+    responsibilities:
+      - inspect
+      - implement
+      - edit
+      - test
+      - debug
+      - verify
+
+  sol:
+    purpose: difficult reasoning and synthesis
+    responsibilities:
+      - architect
+      - plan
+      - analyze_tradeoffs
+      - challenge_assumptions
+      - resolve_ambiguity
+      - reason_across_systems
+
+  luna:
+    purpose: economical throughput
+    responsibilities:
+      - classify
+      - extract
+      - transform
+      - summarize
+      - map
+      - route
+
+routing:
   architecture_design:
     primary:
       agent: claude
       model: claude-sonnet-5
+      profile: sol
       reasoning: high
+    engineering_reasoner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: validate architecture against repository and implementation constraints
     context_provider:
       agent: agy
       model: gemini-3.1-pro-high
-      purpose: research_and_repository_context
+      profile: sol
+      reasoning: high
+      purpose: external research, documentation review, and large-context synthesis
     escalate_when:
       - security_critical
       - irreversible_platform_choice
       - conflicting_constraints
+      - unresolved_cross_system_tradeoffs
+      - architecture_requires_executable_repository_analysis
     escalation:
       agent: claude
       model: claude-opus
+      profile: sol
       reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: test architectural assumptions against implementation reality
 
   deep_research:
     primary:
       agent: agy
       model: gemini-3.1-pro-high
+      profile: sol
       reasoning: high
+    fast_collection:
+      agent: agy
+      model: gemini-3.6-flash-high
+      profile: luna
+      reasoning: medium
+      purpose: source discovery, extraction, and document mapping
     verifier:
       agent: claude
       model: claude-sonnet-5
-      purpose: synthesis_and_source_challenge
+      profile: sol
+      reasoning: high
+      purpose: synthesis, source challenge, and contradiction analysis
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      use_when:
+        - research_concerns_software_behavior
+        - implementation_claims_require_validation
+        - repository_or_api_constraints_matter
+    escalation:
+      agent: claude
+      model: claude-opus
+      profile: sol
+      reasoning: high
+      use_when:
+        - sources_materially_disagree
+        - decision_is_high_consequence
+        - uncertainty_remains_after_verification
 
   daily_coding:
     primary:
       agent: codex
       model: gpt-5.6-terra
+      profile: terra
       reasoning: medium
+    planning_support:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: medium
+      use_when:
+        - implementation_spans_multiple_components
+        - requirements_are_ambiguous
+        - architectural_constraints_are_present
     fallback:
       agent: agy
       model: gemini-3.1-pro-high
+      profile: sol
+      reasoning: medium
+    local_fallback:
+      agent: sidecar
+      model: local_best_coder
+      profile: terra
       reasoning: medium
     review_when:
       - public_api_changed
       - database_schema_changed
       - authentication_changed
+      - authorization_changed
+      - dependency_graph_changed
       - more_than_8_files_changed
-    reviewer:
+      - production_configuration_changed
+      - test_coverage_reduced
+    semantic_reviewer:
       agent: claude
       model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    executable_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: medium
 
   deep_debugging:
     primary:
       agent: codex
       model: gpt-5.6-terra
+      profile: terra
       reasoning: high
+    engineering_reasoner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: form hypotheses across code, runtime, architecture, and dependencies
     hypothesis_reviewer:
       agent: claude
       model: claude-sonnet-5
+      profile: sol
       reasoning: high
-    fallback:
+      purpose: challenge assumptions and generate competing explanations
+    research_fallback:
       agent: agy
       model: gemini-3.1-pro-high
+      profile: sol
       reasoning: high
+      use_when:
+        - external_documentation_required
+        - dependency_behavior_is_unclear
+        - issue_may_be_version_specific
     escalate_after:
       failed_attempts: 2
+      repeated_same_root_cause: true
+      nondeterministic_failure_persists: true
     escalation:
       agent: claude
       model: claude-opus
+      profile: sol
       reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+      requirements:
+        - reproduce_original_failure
+        - demonstrate_fix
+        - run_targeted_tests
+        - run_regression_tests
+        - document_root_cause
 
   repo_wide_refactor:
     mapper:
       agent: agy
       model: gemini-3.6-flash-high
+      profile: luna
       reasoning: medium
-    planner:
+      purpose: map repository structure, dependencies, and affected components
+    architecture_planner:
       agent: claude
       model: claude-sonnet-5
+      profile: sol
       reasoning: high
+    engineering_planner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: translate architecture into an executable refactor sequence
     executor:
       agent: codex
       model: gpt-5.6-terra
+      profile: terra
       reasoning: high
     verifier:
       agent: codex
       model: gpt-5.6-terra
-      reasoning: medium
+      profile: terra
+      reasoning: high
+    semantic_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    escalation:
+      agent: claude
+      model: claude-opus
+      profile: sol
+      reasoning: high
+      use_when:
+        - refactor_changes_public_contracts
+        - migration_is_irreversible
+        - architectural_boundaries_are_disputed
+        - security_model_changes
+    required_controls:
+      - dependency_map
+      - phased_execution
+      - rollback_plan
+      - full_test_suite
+      - public_interface_comparison
+      - scope_change_detection
 
   code_review:
     executable_review:
       agent: codex
       model: gpt-5.6-terra
+      profile: terra
       reasoning: medium
+      responsibilities:
+        - inspect_diff
+        - execute_tests
+        - detect_runtime_errors
+        - check_repository_consistency
+    engineering_reasoning_review:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      responsibilities:
+        - inspect_design_correctness
+        - identify_hidden_implementation_risks
+        - evaluate_cross_component_effects
     semantic_review:
       agent: claude
       model: claude-sonnet-5
+      profile: sol
       reasoning: high
+      responsibilities:
+        - challenge_assumptions
+        - assess_maintainability
+        - inspect_requirements_alignment
+        - identify_logic_gaps
     escalation:
       conditions:
         - security_sensitive
         - financial_logic
         - permissions_or_identity
+        - cryptography
+        - destructive_data_operations
+        - production_infrastructure
       agent: claude
       model: claude-opus
+      profile: sol
+      reasoning: high
+    required_verification:
+      - targeted_tests
+      - regression_risk_review
+      - changed_contract_review
+      - unresolved_assumption_log
+
+  security_review:
+    primary:
+      agent: claude
+      model: claude-opus
+      profile: sol
+      reasoning: high
+    engineering_reasoner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: connect threat analysis to repository and runtime behavior
+    executable_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    research_support:
+      agent: agy
+      model: gemini-3.1-pro-high
+      profile: sol
+      reasoning: high
+      purpose: retrieve primary security documentation and current advisories
+    mandatory_controls:
+      - threat_model
+      - least_privilege_review
+      - secret_exposure_check
+      - authentication_review
+      - authorization_review
+      - dependency_risk_review
+      - targeted_security_tests
+      - audit_trace
+      - independent_verification
 
   multimodal_analysis:
     primary:
       agent: agy
       model: gemini-3.6-flash-high
+      profile: luna
       reasoning: medium
     escalation:
       agent: agy
       model: gemini-3.1-pro-high
+      profile: sol
       reasoning: high
+    synthesis:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    technical_followup:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      use_when:
+        - visual_input_contains_code
+        - architecture_diagram_requires_implementation_analysis
+        - technical_claims_require_repository_validation
+    verifier:
+      method: source_grounding_and_cross_check
 
   high_volume_simple:
     primary:
       agent: claude
       model: claude-haiku-4.5
+      profile: luna
       reasoning: low
     alternatives:
       - agent: agy
         model: gemini-flash
+        profile: luna
       - agent: sidecar
         model: local_best_fit
+        profile: luna
+    escalation:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: medium
+      use_when:
+        - confidence_below_threshold
+        - task_contains_material_ambiguity
+        - sampled_outputs_fail_validation
+    verification:
+      method: sampled_review
+      sample_rate: adaptive
+
+  documentation:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: medium
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: medium
+    bulk_transformation:
+      agent: agy
+      model: gemini-3.6-flash-high
+      profile: luna
+      reasoning: low
+    architecture_documentation:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      use_when:
+        - documentation_describes_repository_architecture
+        - documentation_contains_executable_workflows
+        - technical_tradeoffs_require_validation
+
+  task_routing:
+    classifier:
+      agent: sidecar
+      model: local_best_fit
+      profile: luna
+      reasoning: low
+    fallback_classifier:
+      agent: claude
+      model: claude-haiku-4.5
+      profile: luna
+      reasoning: low
+    ambiguous_task_interpreter:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    engineering_task_interpreter:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    required_output:
+      - detected_task_type
+      - required_capabilities
+      - risk_level
+      - selected_route
+      - fallback_route
+      - verification_route
+      - routing_explanation
+
+fallback_order:
+  coding:
+    - agent: codex
+      model: gpt-5.6-terra
+    - agent: codex
+      model: gpt-5.6-sol
+    - agent: agy
+      model: gemini-3.1-pro-high
+    - agent: sidecar
+      model: local_best_coder
+  engineering_reasoning:
+    - agent: codex
+      model: gpt-5.6-sol
+    - agent: claude
+      model: claude-sonnet-5
+    - agent: claude
+      model: claude-opus
+    - agent: agy
+      model: gemini-3.1-pro-high
+  general_reasoning:
+    - agent: claude
+      model: claude-sonnet-5
+    - agent: codex
+      model: gpt-5.6-sol
+    - agent: claude
+      model: claude-opus
+    - agent: agy
+      model: gemini-3.1-pro-high
+  research:
+    - agent: agy
+      model: gemini-3.1-pro-high
+    - agent: claude
+      model: claude-sonnet-5
+    - agent: codex
+      model: gpt-5.6-sol
+  multimodal:
+    - agent: agy
+      model: gemini-3.6-flash-high
+    - agent: agy
+      model: gemini-3.1-pro-high
+    - agent: claude
+      model: claude-sonnet-5
+  throughput:
+    - agent: claude
+      model: claude-haiku-4.5
+    - agent: agy
+      model: gemini-flash
+    - agent: sidecar
+      model: local_best_fit
+
+verification_policy:
+  low_risk:
+    minimum:
+      - output_validation
+  medium_risk:
+    minimum:
+      - output_validation
+      - targeted_review
+  high_risk:
+    minimum:
+      - independent_verifier
+      - explicit_reasoning_summary
+      - evidence_or_test_results
+      - rollback_or_recovery_plan
+  critical:
+    minimum:
+      - independent_multi_agent_review
+      - executable_verification
+      - human_approval
+      - audit_trace
+      - rollback_plan
+
+decision_logging:
+  required_fields:
+    - task_type
+    - selected_route
+    - selected_model
+    - fallback_model
+    - verification_method
+    - risk_level
+    - selection_reason
+    - outcome
+    - failed_attempts
+    - escalation_used
