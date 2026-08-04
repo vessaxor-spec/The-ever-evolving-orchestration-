@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 
 routing_order:
@@ -46,6 +46,14 @@ team_routes:
   deep_debugging:
     primary_team: engineering
     primary_worker: backend
+    worker_override_by_context:
+      frontend: frontend
+      mobile: mobile
+      database: database
+      data_pipeline: data_engineering
+      ai_system: ai_engineering
+      deployment: devops
+      infrastructure: infrastructure
     supporting_workers:
       - performance
       - database
@@ -58,6 +66,14 @@ team_routes:
     primary_worker: architecture
     execution_team: engineering
     execution_worker: backend
+    execution_worker_override_by_context:
+      frontend: frontend
+      mobile: mobile
+      database: database
+      data_pipeline: data_engineering
+      ai_system: ai_engineering
+      deployment: devops
+      infrastructure: infrastructure
     review_team: review
     verification_team: verification
 
@@ -95,7 +111,16 @@ team_routes:
   high_volume_simple:
     primary_team: research
     primary_worker: documentation
+    verification_team: verification
     verification_method: sampled_review
+
+  documentation:
+    primary_team: research
+    primary_worker: documentation
+    supporting_teams:
+      - engineering
+      - review
+    verification_team: verification
 
   release:
     primary_team: verification
