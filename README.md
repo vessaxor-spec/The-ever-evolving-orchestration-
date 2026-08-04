@@ -8,7 +8,7 @@
 
 ### Models evolve. Responsibilities endure.
 
-An open, vendor-neutral orchestration framework and reference specification for coordinating intelligent systems through teams, workers, capabilities, implementations, and verification.
+An open, vendor-neutral orchestration framework and reference specification for coordinating intelligent systems through teams, workers, specialists, capabilities, implementations, and verification.
 
 **Navigate by principles. Adapt by evidence.**
 
@@ -41,17 +41,18 @@ It does not attempt to declare a permanent best model. It provides a structured 
 - interpret a task
 - identify the responsible team
 - select the appropriate worker
+- activate a domain specialist when useful
 - resolve required capabilities
 - choose the best available implementation
 - verify the result according to risk
 - improve future routing through evidence
 
-TEO combines a human-readable architecture with machine-readable routing policies and model registries. It is intended to be useful to engineers, AI agents, researchers, and organizations building multi-model systems.
+TEO combines a human-readable architecture with machine-readable routing policies, specialist bindings, and model registries. It is intended to be useful to engineers, AI agents, researchers, and organizations building multi-model systems.
 
 ## Core architecture
 
 <p align="center">
-  <img src="assets/diagrams/core-architecture.svg" alt="Task to Mission Control to Team to Worker to Capability to Implementation to Verification" width="100%">
+  <img src="assets/diagrams/core-architecture.svg" alt="Task to Mission Control to Team to Worker to optional Specialist to Capability to Implementation to Verification" width="100%">
 </p>
 
 ```text
@@ -67,6 +68,9 @@ Team
 Worker
   |
   v
+Optional Specialist
+  |
+  v
 Capability
   |
   v
@@ -76,9 +80,11 @@ Implementation
 Verification
 ```
 
-A task is never routed directly to a model unless the system has already resolved the responsibility, capability, and risk requirements behind that choice.
+A task is never routed directly to a model unless the system has already resolved the responsibility, worker, optional specialist, capability, and risk requirements behind that choice.
 
-This hierarchy is designed to remain stable even when model names, providers, prices, context limits, or tool capabilities change.
+The Specialist layer is optional. It narrows a stable worker responsibility to a particular domain without replacing the owning team or changing the authority chain.
+
+This hierarchy is designed to remain stable even when specialist rosters, model names, providers, prices, context limits, or tool capabilities change.
 
 ## Core principles
 
@@ -134,6 +140,37 @@ The Verification Team confirms that execution satisfied the original requirement
 
 Verification may include tests, static analysis, runtime checks, source grounding, independent review, rollback planning, or human approval, depending on risk.
 
+## Public specialist roster
+
+TEO includes **56 public specialist role cards** originally created by **Sylvester Roxas** for the Roxas-Legion specialist system.
+
+Each specialist has:
+
+- a primary TEO team
+- supporting teams where needed
+- a stable worker binding
+- activation and handoff requirements
+- a risk profile
+- verification requirements
+- authority and safety boundaries
+- creator attribution preserved in the role card
+
+| Primary team | Specialists |
+|---|---:|
+| Mission Control | 4 |
+| Planning Team | 17 |
+| Engineering Team | 13 |
+| Research Team | 10 |
+| Review Team | 10 |
+| Verification Team | 2 |
+| **Total** | **56** |
+
+The human-readable roster is available in [`community/specialists/`](community/specialists/).
+
+The machine-readable allocation registry is available in [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml).
+
+Specialists do not replace core teams, bypass Mission Control, select their own authority, or approve their own consequential work. Regulated and high-consequence roles require proportionate independent verification and qualified human approval.
+
 ## Capability roles and current implementations
 
 TEO defines responsibilities independently from providers. Terra, Sol, and Luna are internal capability roles, not OpenAI endorsements and not a complete representation of the ecosystem.
@@ -167,6 +204,8 @@ The complete machine-readable policy is available in [`policy/routing/routing.ya
 
 Team dispatch rules are available in [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml).
 
+Specialist selection rules and bindings are available in [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml).
+
 ## Example workflow
 
 Consider a request to diagnose and repair a failing service across a large repository.
@@ -176,7 +215,7 @@ Mission Control
   |
   +--> classifies the task as deep debugging
   +--> assigns the Engineering Team
-  +--> selects the relevant backend, database, or infrastructure worker
+  +--> selects the relevant backend, database, infrastructure, or domain specialist
   |
   v
 Codex Terra
@@ -209,8 +248,10 @@ The models can change. The responsibility chain remains understandable.
 2. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).
 3. Review the canonical routing policy in [`policy/routing/routing.yaml`](policy/routing/routing.yaml).
 4. Review the team architecture in [`community/teams/`](community/teams/).
-5. Review specialist workers in [`community/workers/workers.yaml`](community/workers/workers.yaml).
-6. Compare the current model aliases in [`models.yaml`](models.yaml).
+5. Review stable workers in [`community/workers/workers.yaml`](community/workers/workers.yaml).
+6. Review the public specialist roster in [`community/specialists/`](community/specialists/).
+7. Compare the current model aliases in [`models.yaml`](models.yaml).
+8. Review provider, model, capability, and benchmark evidence under [`registry/`](registry/).
 
 ### For AI agents
 
@@ -222,8 +263,10 @@ Read in this order:
 2. [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml)
 3. [`community/teams/`](community/teams/)
 4. [`community/workers/workers.yaml`](community/workers/workers.yaml)
-5. [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
-6. [`models.yaml`](models.yaml)
+5. [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml)
+6. [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
+7. [`models.yaml`](models.yaml)
+8. [`registry/`](registry/)
 
 Then resolve:
 
@@ -231,12 +274,13 @@ Then resolve:
 Task
   -> Team
   -> Worker
+  -> Optional Specialist
   -> Capability
   -> Implementation
   -> Verification
 ```
 
-For consequential work, do not allow the same implementation to be the sole planner, executor, and verifier.
+For consequential work, do not allow the same implementation to be the sole planner, executor, reviewer, and verifier.
 
 ## Repository structure
 
@@ -286,6 +330,7 @@ For consequential work, do not allow the same implementation to be the sole plan
 └── community/
     ├── teams/
     ├── workers/
+    ├── specialists/
     ├── capsules/
     ├── discussions/
     └── proposals/
@@ -307,6 +352,8 @@ Normative guidance belongs under `docs/specification/` and `policy/`.
 
 Provider, model, capability, and benchmark information belongs under `registry/`.
 
+Stable workers and specialist bindings belong under `community/workers/` and `community/specialists/`.
+
 Reference configurations and implementations belong under `reference/`.
 
 ## Public scope
@@ -323,7 +370,7 @@ It must not contain:
 - confidential benchmarks
 - identifying operational data
 
-All examples, policies, registries, and discussions should be safe for public review and reuse once a license is selected.
+All examples, policies, registries, specialists, and discussions should be safe for public review and reuse once a license is selected.
 
 ## Roadmap
 
@@ -349,15 +396,15 @@ TEO is being built under a strict phase sequence.
 
 ### Phase 4: Registry population
 
-- document providers
-- document models
-- document capabilities
-- document benchmark evidence
+- document providers from current primary sources
+- document models and distinguish provider claims from TEO observations
+- define stable capabilities used for eligibility and routing
+- record benchmark evidence, limitations, and routing relevance
 
 ### Phase 5: Reference implementation
 
 - implement a readable reference router
-- connect team and worker selection to the policy files
+- connect team, worker, specialist, and implementation selection to the policy files
 - add validation and conformance examples
 
 The approved scope is tracked in [`ROADMAP.md`](ROADMAP.md).
@@ -371,6 +418,7 @@ Contributions should improve one of the following:
 - routing quality
 - verification quality
 - capability definitions
+- specialist definitions and bindings
 - registry accuracy
 - reference implementations
 - documentation clarity
@@ -378,6 +426,8 @@ Contributions should improve one of the following:
 Model updates should include evidence, limitations, and the routing role affected. A newer model should not replace an existing default solely because it is newer or stronger on one benchmark.
 
 The repository owner is `vessaxor-spec`. The project was originally initiated by Sylvester Roxas in 2026 and is intended to grow through community stewardship.
+
+The public specialist roster was created by Sylvester Roxas. Creator attribution is preserved in every specialist role card and in the canonical specialist registry.
 
 ## Capsules
 
