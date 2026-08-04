@@ -9,6 +9,9 @@ registry_rules:
 - high_risk_requires_independent_verification
 - regulated_decisions_require_qualified_human_approval
 - preserve_creator_credit
+- preserve_original_specification_verbatim
+- teo_allocation_is_additive_only
+- capability_reduction_requires_explicit_creator_approval
 specialists:
   agents-orchestrator:
     primary_team: mission_control
