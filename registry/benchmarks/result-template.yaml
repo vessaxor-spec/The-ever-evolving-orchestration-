@@ -1,0 +1,60 @@
+benchmark_id: replace-me
+status: draft
+evidence_grade: A
+created_at: YYYY-MM-DD
+
+routing_question:
+  task_class: replace-me
+  decision_informed: replace-me
+  baseline_route: replace-me
+  candidate_route: replace-me
+
+implementations:
+  - alias: replace-me
+    provider: replace-me
+    exact_model_id: replace-me
+    availability_class: stable
+    configuration:
+      reasoning: replace-me
+      temperature: null
+      max_output_tokens: null
+      tools: []
+
+harness:
+  dataset_or_cases: replace-me
+  attempts_per_case: 1
+  environment: replace-me
+  acceptance_criteria: []
+  scoring_method: replace-me
+
+measurements:
+  task_success_rate: null
+  verification_accept_rate: null
+  critical_findings: null
+  latency_ms:
+    median: null
+    p95: null
+  cost:
+    currency: USD
+    total: null
+    per_successful_case: null
+  additional_metrics: {}
+
+failures:
+  unavailable_runs: []
+  invalid_outputs: []
+  tool_failures: []
+  excluded_cases: []
+
+artifacts:
+  prompts: []
+  raw_outputs: []
+  verification_records: []
+  logs: []
+
+conclusion:
+  result: inconclusive
+  routing_change_recommended: false
+  recommendation: replace-me
+  limitations: []
+  next_evidence_required: []
