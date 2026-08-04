@@ -1,0 +1,123 @@
+routing:
+
+  architecture_design:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning: high
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-high
+      purpose: research_and_repository_context
+    escalate_when:
+      - security_critical
+      - irreversible_platform_choice
+      - conflicting_constraints
+    escalation:
+      agent: claude
+      model: claude-opus
+      reasoning: high
+
+  deep_research:
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-high
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      purpose: synthesis_and_source_challenge
+
+  daily_coding:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning: medium
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-high
+      reasoning: medium
+    review_when:
+      - public_api_changed
+      - database_schema_changed
+      - authentication_changed
+      - more_than_8_files_changed
+    reviewer:
+      agent: claude
+      model: claude-sonnet-5
+
+  deep_debugging:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning: high
+    hypothesis_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-high
+      reasoning: high
+    escalate_after:
+      failed_attempts: 2
+    escalation:
+      agent: claude
+      model: claude-opus
+      reasoning: high
+
+  repo_wide_refactor:
+    mapper:
+      agent: agy
+      model: gemini-3.6-flash-high
+      reasoning: medium
+    planner:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning: high
+    executor:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning: medium
+
+  code_review:
+    executable_review:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning: medium
+    semantic_review:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning: high
+    escalation:
+      conditions:
+        - security_sensitive
+        - financial_logic
+        - permissions_or_identity
+      agent: claude
+      model: claude-opus
+
+  multimodal_analysis:
+    primary:
+      agent: agy
+      model: gemini-3.6-flash-high
+      reasoning: medium
+    escalation:
+      agent: agy
+      model: gemini-3.1-pro-high
+      reasoning: high
+
+  high_volume_simple:
+    primary:
+      agent: claude
+      model: claude-haiku-4.5
+      reasoning: low
+    alternatives:
+      - agent: agy
+        model: gemini-flash
+      - agent: sidecar
+        model: local_best_fit
