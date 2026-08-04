@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">The Ever-Evolving Orchestration astrolabe mark</title>
+  <desc id="desc">A geometric astrolabe symbol representing navigation, routing, evidence, and verification.</desc>
+  <defs>
+    <linearGradient id="ring" x1="96" y1="64" x2="416" y2="448" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <radialGradient id="core" cx="50%" cy="44%" r="60%">
+      <stop offset="0" stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </radialGradient>
+  </defs>
+
+  <circle cx="256" cy="256" r="220" fill="none" stroke="url(#ring)" stroke-width="18"/>
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#334155" stroke-width="6" opacity="0.9"/>
+  <circle cx="256" cy="256" r="116" fill="url(#core)" stroke="#0f172a" stroke-width="8"/>
+
+  <g stroke="#475569" stroke-width="5" stroke-linecap="round" opacity="0.9">
+    <path d="M256 36v62"/>
+    <path d="M256 414v62"/>
+    <path d="M36 256h62"/>
+    <path d="M414 256h62"/>
+    <path d="M100.4 100.4l43.8 43.8"/>
+    <path d="M367.8 367.8l43.8 43.8"/>
+    <path d="M411.6 100.4l-43.8 43.8"/>
+    <path d="M144.2 367.8l-43.8 43.8"/>
+  </g>
+
+  <g fill="#0f172a">
+    <circle cx="256" cy="86" r="11"/>
+    <circle cx="376" cy="136" r="11"/>
+    <circle cx="426" cy="256" r="11"/>
+    <circle cx="376" cy="376" r="11"/>
+    <circle cx="256" cy="426" r="11"/>
+    <circle cx="136" cy="376" r="11"/>
+    <circle cx="86" cy="256" r="11"/>
+    <circle cx="136" cy="136" r="11"/>
+  </g>
+
+  <g fill="none" stroke="#0f766e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 142l31 83 83 31-83 31-31 83-31-83-83-31 83-31z"/>
+  </g>
+
+  <path d="M256 164l29 92-29 92-29-92z" fill="#1d4ed8" opacity="0.92"/>
+  <path d="M164 256l92-29 92 29-92 29z" fill="#0f766e" opacity="0.82"/>
+  <circle cx="256" cy="256" r="24" fill="#0f172a"/>
+  <circle cx="256" cy="256" r="9" fill="#f8fafc"/>
+
+  <g fill="none" stroke="#94a3b8" stroke-width="4" stroke-dasharray="7 10" opacity="0.75">
+    <ellipse cx="256" cy="256" rx="205" ry="78" transform="rotate(-24 256 256)"/>
+    <ellipse cx="256" cy="256" rx="205" ry="78" transform="rotate(24 256 256)"/>
+  </g>
+</svg>
