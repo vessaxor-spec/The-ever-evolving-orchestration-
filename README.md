@@ -139,14 +139,6 @@ TEO defines responsibilities independently from providers. Terra, Sol, and Luna 
 | **Multimodal and high-volume processing** | classify, extract, transform, map, summarize, triage | Gemini Flash, Claude Haiku, local models |
 | **Independent verification** | test claims, challenge assumptions, validate execution | Codex Terra, Claude Sonnet, Gemini Pro, human review when required |
 
-The labels **Terra**, **Sol**, and **Luna** may still be used as shorthand inside compatible systems:
-
-- **Terra** means engineering execution.
-- **Sol** means difficult reasoning and synthesis.
-- **Luna** means economical throughput.
-
-They do not outrank Claude, Gemini, local models, or future implementations. The routing policy selects the implementation that best satisfies the role, evidence, risk, tool access, and availability requirements at that time.
-
 ## Current routing baseline
 
 The current policy uses the following implementation split:
