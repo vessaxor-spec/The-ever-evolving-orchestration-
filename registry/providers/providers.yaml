@@ -1,0 +1,66 @@
+version: 0.1
+status: public
+reviewed_at: 2026-08-05
+
+registry_rules:
+  - provider_claims_require_primary_sources
+  - model_availability_must_be_rechecked_before_execution
+  - preview_and_experimental_access_must_be_explicit
+  - provider_access_does_not_establish_task_fitness
+  - data_governance_and_region_requirements_are_execution_constraints
+
+providers:
+  openai:
+    display_name: OpenAI
+    access_modes:
+      - OpenAI API
+      - official client SDKs
+    primary_model_source: https://developers.openai.com/api/docs/models
+    documented_tool_classes:
+      - functions
+      - web_search
+      - file_search
+      - computer_use
+    registry_entry: openai.md
+
+  anthropic:
+    display_name: Anthropic
+    access_modes:
+      - Claude API
+      - Amazon Bedrock
+      - Claude Platform on AWS
+      - Google Cloud
+      - Microsoft Foundry
+    primary_model_source: https://platform.claude.com/docs/en/about-claude/models/overview
+    documented_modalities:
+      - text_input
+      - image_input
+      - text_output
+      - vision
+      - multilingual
+    registry_entry: anthropic.md
+
+  google:
+    display_name: Google
+    access_modes:
+      - Gemini API
+      - Google AI Studio
+    primary_model_source: https://ai.google.dev/gemini-api/docs/models
+    model_metadata_endpoint: https://generativelanguage.googleapis.com/v1beta/models
+    version_classes:
+      - stable
+      - preview
+      - latest
+      - experimental
+    registry_entry: google.md
+
+  local_ollama:
+    display_name: Local models through Ollama
+    access_modes:
+      - local API
+      - local interactive runtime
+      - optional Ollama cloud API
+    primary_source: https://docs.ollama.com/quickstart
+    api_source: https://docs.ollama.com/api/introduction
+    default_local_api: http://localhost:11434/api
+    registry_entry: local-ollama.md
