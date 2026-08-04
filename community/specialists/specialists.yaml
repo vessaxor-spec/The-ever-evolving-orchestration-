@@ -1,0 +1,487 @@
+version: 0.1
+status: public
+creator: Sylvester Roxas
+origin: Roxas-Legion specialist roster
+registry_rules:
+- select_team_before_specialist
+- specialist_must_match_worker_binding
+- specialist_cannot_override_team_authority
+- high_risk_requires_independent_verification
+- regulated_decisions_require_qualified_human_approval
+- preserve_creator_credit
+specialists:
+  agents-orchestrator:
+    primary_team: mission_control
+    supporting_teams:
+    - planning
+    - engineering
+    - verification
+    worker_binding: orchestration
+    risk_profile: high
+    role_card: community/specialists/agents-orchestrator.md
+  ai-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: ai_engineering
+    risk_profile: high
+    role_card: community/specialists/ai-engineer.md
+  architect:
+    primary_team: planning
+    supporting_teams:
+    - engineering
+    - review
+    worker_binding: architecture
+    risk_profile: high
+    role_card: community/specialists/architect.md
+  backend-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: backend
+    risk_profile: medium
+    role_card: community/specialists/backend-engineer.md
+  blockchain-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - review
+    - verification
+    worker_binding: blockchain
+    risk_profile: critical
+    role_card: community/specialists/blockchain-engineer.md
+  brand-designer:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - review
+    worker_binding: brand_design
+    risk_profile: medium
+    role_card: community/specialists/brand-designer.md
+  china-marketing-specialist:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - review
+    worker_binding: regional_marketing
+    risk_profile: high
+    role_card: community/specialists/china-marketing-specialist.md
+  civil-engineer:
+    primary_team: planning
+    supporting_teams:
+    - review
+    - verification
+    worker_binding: civil_engineering
+    risk_profile: critical
+    role_card: community/specialists/civil-engineer.md
+  code-reviewer:
+    primary_team: review
+    supporting_teams:
+    - engineering
+    - verification
+    worker_binding: code_review
+    risk_profile: high
+    role_card: community/specialists/code-reviewer.md
+  compliance-auditor:
+    primary_team: review
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: compliance
+    risk_profile: critical
+    role_card: community/specialists/compliance-auditor.md
+  content-creator:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    worker_binding: content
+    risk_profile: medium
+    role_card: community/specialists/content-creator.md
+  corporate-trainer:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: learning_design
+    risk_profile: medium
+    role_card: community/specialists/corporate-trainer.md
+  cross-border-ecommerce:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - review
+    worker_binding: ecommerce_strategy
+    risk_profile: high
+    role_card: community/specialists/cross-border-ecommerce.md
+  customer-success:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - mission_control
+    worker_binding: customer_success
+    risk_profile: medium
+    role_card: community/specialists/customer-success.md
+  data-analyst:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - verification
+    worker_binding: analytics
+    risk_profile: high
+    role_card: community/specialists/data-analyst.md
+  data-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: data_engineering
+    risk_profile: high
+    role_card: community/specialists/data-engineer.md
+  devops-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: devops
+    risk_profile: high
+    role_card: community/specialists/devops-engineer.md
+  devsecops-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - review
+    - verification
+    worker_binding: devsecops
+    risk_profile: critical
+    role_card: community/specialists/devsecops-engineer.md
+  embedded-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: embedded
+    risk_profile: high
+    role_card: community/specialists/embedded-engineer.md
+  feedback-synthesizer:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    worker_binding: user_research
+    risk_profile: medium
+    role_card: community/specialists/feedback-synthesizer.md
+  finance-analyst:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: financial_analysis
+    risk_profile: critical
+    role_card: community/specialists/finance-analyst.md
+  frontend-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: frontend
+    risk_profile: medium
+    role_card: community/specialists/frontend-engineer.md
+  game-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: game_engineering
+    risk_profile: medium
+    role_card: community/specialists/game-engineer.md
+  image-prompt-engineer:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - review
+    worker_binding: generative_media
+    risk_profile: medium
+    role_card: community/specialists/image-prompt-engineer.md
+  incident-commander:
+    primary_team: mission_control
+    supporting_teams:
+    - engineering
+    - review
+    - verification
+    worker_binding: incident_response
+    risk_profile: critical
+    role_card: community/specialists/incident-commander.md
+  legal-operations:
+    primary_team: review
+    supporting_teams:
+    - research
+    - planning
+    worker_binding: legal
+    risk_profile: critical
+    role_card: community/specialists/legal-operations.md
+  loan-officer-assistant:
+    primary_team: review
+    supporting_teams:
+    - research
+    - planning
+    - verification
+    worker_binding: lending_compliance
+    risk_profile: critical
+    role_card: community/specialists/loan-officer-assistant.md
+  malware-analyst:
+    primary_team: review
+    supporting_teams:
+    - research
+    - engineering
+    - verification
+    worker_binding: malware_analysis
+    risk_profile: critical
+    role_card: community/specialists/malware-analyst.md
+  market-analyst:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    worker_binding: market_research
+    risk_profile: medium
+    role_card: community/specialists/market-analyst.md
+  operations-manager:
+    primary_team: mission_control
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: operations
+    risk_profile: high
+    role_card: community/specialists/operations-manager.md
+  osint-specialist:
+    primary_team: research
+    supporting_teams:
+    - review
+    - verification
+    worker_binding: osint
+    risk_profile: high
+    role_card: community/specialists/osint-specialist.md
+  paid-search-strategist:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: paid_search
+    risk_profile: medium
+    role_card: community/specialists/paid-search-strategist.md
+  paid-social-strategist:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: paid_social
+    risk_profile: medium
+    role_card: community/specialists/paid-social-strategist.md
+  product-manager:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - engineering
+    - review
+    worker_binding: product_strategy
+    risk_profile: high
+    role_card: community/specialists/product-manager.md
+  programmatic-buyer:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: programmatic_media
+    risk_profile: medium
+    role_card: community/specialists/programmatic-buyer.md
+  project-manager:
+    primary_team: mission_control
+    supporting_teams:
+    - planning
+    - engineering
+    - verification
+    worker_binding: project_delivery
+    risk_profile: medium
+    role_card: community/specialists/project-manager.md
+  qa-engineer:
+    primary_team: verification
+    supporting_teams:
+    - engineering
+    - review
+    worker_binding: qa
+    risk_profile: high
+    role_card: community/specialists/qa-engineer.md
+  real-estate-agent:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    worker_binding: real_estate
+    risk_profile: high
+    role_card: community/specialists/real-estate-agent.md
+  red-team-advisor:
+    primary_team: review
+    supporting_teams:
+    - planning
+    - engineering
+    - verification
+    worker_binding: security_advisory
+    risk_profile: critical
+    role_card: community/specialists/red-team-advisor.md
+  researcher:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: research
+    risk_profile: medium
+    role_card: community/specialists/researcher.md
+  revenue-analyst:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - verification
+    worker_binding: revenue_analytics
+    risk_profile: high
+    role_card: community/specialists/revenue-analyst.md
+  rust-engineer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: systems_engineering
+    risk_profile: high
+    role_card: community/specialists/rust-engineer.md
+  sales-coach:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: sales_enablement
+    risk_profile: medium
+    role_card: community/specialists/sales-coach.md
+  sales-engineer:
+    primary_team: planning
+    supporting_teams:
+    - engineering
+    - research
+    - review
+    worker_binding: solution_engineering
+    risk_profile: high
+    role_card: community/specialists/sales-engineer.md
+  sales-strategist:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - review
+    worker_binding: sales_strategy
+    risk_profile: medium
+    role_card: community/specialists/sales-strategist.md
+  security-engineer:
+    primary_team: review
+    supporting_teams:
+    - engineering
+    - research
+    - verification
+    worker_binding: security
+    risk_profile: critical
+    role_card: community/specialists/security-engineer.md
+  seo-specialist:
+    primary_team: review
+    supporting_teams:
+    - research
+    - planning
+    - verification
+    worker_binding: seo_review
+    risk_profile: medium
+    role_card: community/specialists/seo-specialist.md
+  social-media-strategist:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - verification
+    worker_binding: social_strategy
+    risk_profile: medium
+    role_card: community/specialists/social-media-strategist.md
+  spatial-terminal:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: terminal_ui
+    risk_profile: medium
+    role_card: community/specialists/spatial-terminal.md
+  supply-chain-strategist:
+    primary_team: planning
+    supporting_teams:
+    - research
+    - review
+    - verification
+    worker_binding: supply_chain
+    risk_profile: high
+    role_card: community/specialists/supply-chain-strategist.md
+  tax-strategist:
+    primary_team: review
+    supporting_teams:
+    - research
+    - planning
+    worker_binding: tax_review
+    risk_profile: critical
+    role_card: community/specialists/tax-strategist.md
+  technical-writer:
+    primary_team: verification
+    supporting_teams:
+    - research
+    - engineering
+    - review
+    worker_binding: documentation_verification
+    risk_profile: medium
+    role_card: community/specialists/technical-writer.md
+  ux-designer:
+    primary_team: review
+    supporting_teams:
+    - planning
+    - research
+    - engineering
+    - verification
+    worker_binding: ux_review
+    risk_profile: medium
+    role_card: community/specialists/ux-designer.md
+  workflow-optimizer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - verification
+    worker_binding: automation
+    risk_profile: medium
+    role_card: community/specialists/workflow-optimizer.md
+  xr-developer:
+    primary_team: engineering
+    supporting_teams:
+    - planning
+    - review
+    - verification
+    worker_binding: xr_engineering
+    risk_profile: medium
+    role_card: community/specialists/xr-developer.md
+  zk-steward:
+    primary_team: research
+    supporting_teams:
+    - planning
+    - review
+    worker_binding: knowledge_management
+    risk_profile: low
+    role_card: community/specialists/zk-steward.md
