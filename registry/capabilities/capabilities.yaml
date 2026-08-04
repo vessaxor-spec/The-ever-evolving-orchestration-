@@ -1,0 +1,189 @@
+version: 0.1
+status: public
+
+registry_rules:
+  - capability_names_are_provider_neutral
+  - eligibility_requires_evidence_at_the_required_risk_level
+  - tool_access_is_separate_from_model_reasoning
+  - unsupported_or_unverified_capabilities_must_not_be_inferred
+  - human_approval_is_a_control_not_a_model_capability
+
+capabilities:
+  task_interpretation:
+    definition: identify intent, constraints, ambiguity, and completion conditions
+    typical_teams: [mission_control]
+    evidence:
+      - structured_dispatch_record
+      - preserved_user_constraints
+
+  orchestration:
+    definition: select and coordinate teams, workers, specialists, fallbacks, and verification
+    typical_teams: [mission_control]
+    evidence:
+      - valid_handoffs
+      - dependency_tracking
+      - completion_status
+
+  planning:
+    definition: decompose work, sequence dependencies, define tradeoffs, and set acceptance criteria
+    typical_teams: [planning]
+    evidence:
+      - executable_plan
+      - objective_acceptance_criteria
+      - rollback_or_recovery_controls
+
+  high_reasoning:
+    definition: resolve difficult ambiguity, tradeoffs, cross-system effects, and competing hypotheses
+    typical_teams: [planning, review, mission_control]
+    evidence:
+      - alternative_analysis
+      - assumption_log
+      - independent_challenge
+
+  coding:
+    definition: create or modify executable software within an authorized scope
+    typical_teams: [engineering]
+    evidence:
+      - changed_artifacts
+      - build_or_runtime_results
+      - relevant_tests
+
+  repository_inspection:
+    definition: inspect files, history, symbols, dependencies, and repository-wide constraints
+    typical_teams: [engineering, planning, review]
+    evidence:
+      - inspected_paths
+      - dependency_or_symbol_trace
+      - repository-grounded_findings
+
+  tool_execution:
+    definition: invoke approved tools and record their observable results
+    typical_teams: [engineering, research, verification]
+    evidence:
+      - command_or_tool_log
+      - result_capture
+      - error_reporting
+
+  debugging:
+    definition: reproduce failures, form competing hypotheses, isolate root cause, and demonstrate a fix
+    typical_teams: [engineering]
+    evidence:
+      - original_failure_reproduction
+      - root_cause_record
+      - fix_demonstration
+
+  testing:
+    definition: design and execute checks against expected behavior and failure paths
+    typical_teams: [engineering, verification]
+    evidence:
+      - test_plan
+      - test_results
+      - skipped_or_unavailable_checks
+
+  research:
+    definition: collect, compare, and synthesize relevant external or internal evidence
+    typical_teams: [research]
+    evidence:
+      - traceable_sources
+      - conflicts_and_limitations
+      - decision_relevance
+
+  source_grounding:
+    definition: connect material factual claims to current, appropriate, and traceable sources
+    typical_teams: [research, verification, review]
+    evidence:
+      - primary_source_links
+      - publication_or_effective_dates
+      - fact_inference_separation
+
+  long_context:
+    definition: process and connect information across large documents, repositories, or evidence sets
+    typical_teams: [research, planning, review]
+    evidence:
+      - coverage_map
+      - omitted_scope_disclosure
+      - cross-document_trace
+
+  multimodal_understanding:
+    definition: interpret relevant information from text, images, audio, video, or document layout
+    typical_teams: [research, engineering, review]
+    evidence:
+      - modality_specific_findings
+      - source_or_artifact_reference
+      - uncertainty_disclosure
+
+  extraction:
+    definition: convert source material into bounded structured fields without changing meaning
+    typical_teams: [research]
+    evidence:
+      - source_to_output_trace
+      - schema_validation
+      - sampled_accuracy_check
+
+  classification:
+    definition: assign inputs to a defined taxonomy with confidence and escalation thresholds
+    typical_teams: [mission_control, research]
+    evidence:
+      - taxonomy
+      - confidence_or_rule_trace
+      - error_sample_review
+
+  transformation:
+    definition: convert content or data between formats while preserving required semantics
+    typical_teams: [engineering, research]
+    evidence:
+      - input_output_comparison
+      - schema_or_format_validation
+      - loss_disclosure
+
+  structured_output:
+    definition: produce output that conforms to a declared machine-readable schema
+    typical_teams: [all]
+    evidence:
+      - schema_validation
+      - required_field_coverage
+
+  semantic_review:
+    definition: assess requirements alignment, logic, maintainability, communication, and hidden assumptions
+    typical_teams: [review]
+    evidence:
+      - findings_by_severity
+      - requirement_trace
+      - disposition
+
+  adversarial_review:
+    definition: actively search for failure modes, counterexamples, abuse paths, and unsupported assumptions
+    typical_teams: [review]
+    evidence:
+      - threat_or_failure_cases
+      - unresolved_risk_log
+      - remediation_requests
+
+  executable_verification:
+    definition: validate a claim through reproducible execution rather than explanation alone
+    typical_teams: [verification, engineering]
+    evidence:
+      - commands_or_harness
+      - reproducible_results
+      - environment_record
+
+  evidence_verification:
+    definition: determine whether evidence is sufficient, current, relevant, and independent for acceptance
+    typical_teams: [verification]
+    evidence:
+      - criterion_status
+      - evidence_quality
+      - accept_revise_reject_or_escalate
+
+controls:
+  independent_verification:
+    definition: use a separate worker, implementation, evidence path, environment, or qualified human
+
+  human_approval:
+    definition: require an authorized human decision before a consequential action or risk acceptance
+
+  rollback_readiness:
+    definition: establish a tested or credible recovery path before consequential execution
+
+  audit_trace:
+    definition: preserve the dispatch, execution, review, verification, and approval record
