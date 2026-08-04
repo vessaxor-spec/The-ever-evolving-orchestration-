@@ -1,6 +1,6 @@
 # TEO Specialist Roster
 
-The specialist roster extends TEO with domain-specific workers while preserving the core responsibility chain:
+The specialist roster extends TEO with the full, battle-tested Roxas-Legion specifications while preserving the core responsibility chain:
 
 ```text
 Task
@@ -13,16 +13,27 @@ Task
   -> Verification
 ```
 
-The specialists were originally created by **Sylvester Roxas** for the Roxas-Legion roster and integrated into TEO with the creator's permission.
+The specialists were created by **Sylvester Roxas** for Roxas-Legion and integrated into TEO with the creator's permission.
+
+## Canonical preservation rule
+
+The original Roxas-Legion Markdown file is the canonical capability definition for each specialist. TEO does not summarize, narrow, demote, simplify, or rewrite the Legion role.
+
+Each TEO role card therefore follows this order:
+
+1. The complete original Roxas-Legion specification, unchanged.
+2. A separate TEO Allocation appendix containing team placement, supporting teams, worker binding, risk profile, and registry links.
+
+The allocation appendix controls where and how the specialist participates in TEO. It does not reduce or redefine what the specialist can do. See the binding [`Roxas-Legion Preservation Contract`](PRESERVATION.md).
 
 ## Integration rules
 
-- A specialist narrows domain expertise. It does not replace a core team.
-- Mission Control selects the team before selecting a specialist.
-- The primary team owns the specialist's work and handoff.
-- Supporting teams provide evidence, execution, review, or verification without collapsing responsibilities.
-- High-risk and critical specialists require proportionate independence and human approval.
-- Specialist instructions cannot override TEO routing, safety, verification, or governance policy.
+- The full Roxas-Legion specification remains authoritative for specialist identity, capabilities, protocols, responsibilities, outputs, boundaries, collaboration rules, and examples.
+- Mission Control selects the owning team before selecting a specialist.
+- The primary team owns routing, task scope, handoff, and acceptance responsibility.
+- Supporting teams provide planning, evidence, execution, review, or verification without rewriting the specialist.
+- TEO governance adds orchestration and proportional controls around consequential work. It must not silently remove or weaken specialist capability.
+- Any capability reduction or behavioral restriction requires explicit written approval from Sylvester Roxas and a versioned migration record.
 - Every specialist role card preserves creator attribution.
 
 ## Allocation summary
@@ -101,12 +112,13 @@ The specialists were originally created by **Sylvester Roxas** for the Roxas-Leg
 
 ## Machine-readable registry
 
-The canonical allocation and binding data is available in [`specialists.yaml`](specialists.yaml).
+The canonical TEO allocation and binding data is available in [`specialists.yaml`](specialists.yaml). It records routing metadata only. The linked Roxas-Legion role cards remain the canonical capability specifications.
 
 ## Source and credit
 
-Each specialist role card includes the following attribution:
+Every specialist role card preserves the creator attribution and identifies its original source:
 
-> Original specialist specification created by Sylvester Roxas for the Roxas-Legion specialist roster and integrated into TEO with permission.
+> Creator: Sylvester Roxas  
+> Original source: Roxas-Legion specialist roster
 
-This credit must remain in derived specialist files unless the creator requests otherwise.
+This credit and the complete source specification must remain in derived specialist files unless Sylvester Roxas explicitly requests otherwise.
