@@ -61,9 +61,26 @@ Every core team definition contains the same operating sections:
 - Verification follows evidence and records every material criterion as passed, failed, skipped, unavailable, or inconclusive.
 - Consequential work must not use the same implementation as the sole planner, executor, reviewer, and verifier.
 
+## Specialist roster
+
+TEO includes a public roster of 56 specialist role cards created by **Sylvester Roxas** and integrated from the Roxas-Legion specialist system.
+
+| Primary team | Specialists |
+|---|---:|
+| Mission Control | 4 |
+| Planning Team | 17 |
+| Engineering Team | 13 |
+| Research Team | 10 |
+| Review Team | 10 |
+| Verification Team | 2 |
+
+The complete roster, creator attribution, worker bindings, supporting teams, risk profiles, and individual role cards are available in [`community/specialists/`](../specialists/).
+
+Specialists narrow domain expertise. They do not replace the core team, bypass Mission Control, select their own authority, or approve their own consequential work.
+
 ## Specialist workers
 
-Core teams dispatch specialist workers according to task context. The current specialist set includes:
+Core teams dispatch specialist workers according to task context. The original stable worker set includes:
 
 - Architecture
 - Backend
@@ -82,6 +99,8 @@ Core teams dispatch specialist workers according to task context. The current sp
 - Release
 
 Worker responsibilities and capability mappings are defined in [`community/workers/workers.yaml`](../workers/workers.yaml).
+
+The extended domain-specialist bindings are defined in [`community/specialists/specialists.yaml`](../specialists/specialists.yaml).
 
 ## Routing authority
 
