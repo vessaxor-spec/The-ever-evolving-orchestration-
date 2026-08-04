@@ -1,0 +1,10 @@
+flowchart TD
+    A[Task] --> B[Mission Control]
+    B --> C[Team]
+    C --> D[Worker]
+    D --> E[Capability]
+    E --> F[Implementation]
+    F --> G[Verification]
+
+    G -->|verified| H[Complete]
+    G -->|failed or uncertain| B
