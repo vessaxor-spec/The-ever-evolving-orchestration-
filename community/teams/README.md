@@ -63,7 +63,7 @@ Every core team definition contains the same operating sections:
 
 ## Specialist roster
 
-TEO includes a public roster of 56 specialist role cards created by **Sylvester Roxas** and integrated from the specialist collection specialist system.
+TEO includes a public roster of 56 specialist role cards created by **Sylvester Roxas**.
 
 | Primary team | Specialists |
 |---|---:|

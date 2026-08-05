@@ -17,7 +17,7 @@ The specialists were created by **Sylvester Roxas** and integrated into TEO.
 
 ## Canonical preservation rule
 
-Each specialist Markdown file is the canonical capability definition for that specialist. TEO does not summarize, narrow, demote, simplify, or rewrite the Legion role.
+Each specialist Markdown file is the canonical capability definition for that specialist. TEO does not summarize, narrow, demote, simplify, or rewrite the specialist role.
 
 Each TEO role card therefore follows this order:
 
