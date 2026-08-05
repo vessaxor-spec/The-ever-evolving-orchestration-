@@ -1,20 +1,20 @@
 name: Redact specialist origin references
 
 on:
-  push:
+  pull_request:
     branches: [main]
-    paths:
-      - .github/workflows/redact-specialist-origin.yml
 
 permissions:
   contents: write
 
 jobs:
   redact:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
 
       - name: Remove origin references while preserving specialist content
@@ -62,7 +62,6 @@ jobs:
                   continue
               original = text
 
-              # Remove origin/source metadata while preserving creator credit.
               text = re.sub(r'(?mi)^\s*origin:\s*.*roxas[- ]legion.*\n?', '', text)
               text = re.sub(r'(?mi)^\s*-\s*\*\*Original source:\*\*.*roxas[- ]legion.*\n?', '', text)
               text = re.sub(r'(?mi)^\s*>\s*\*\*Origin:\*\*.*roxas[- ]legion.*\n?', '', text)
@@ -71,15 +70,12 @@ jobs:
               for old, new in exact_replacements.items():
                   text = text.replace(old, new)
 
-              # Replace repository URLs with the TEO specialist roster.
               text = re.sub(
                   r'https://github\.com/vessaxor-spec/Roxas-Legion(?:/[^\s\)\]>]*)?',
                   'https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main/community/specialists',
                   text,
                   flags=re.IGNORECASE,
               )
-
-              # Remove any residual origin naming without changing the specialist doctrine.
               text = re.sub(r'Roxas[- ]Legion specialist roster', 'specialist roster', text, flags=re.IGNORECASE)
               text = re.sub(r'Roxas[- ]Legion role cards?', 'specialist role cards', text, flags=re.IGNORECASE)
               text = re.sub(r'Roxas[- ]Legion source specifications?', 'specialist specifications', text, flags=re.IGNORECASE)
@@ -87,7 +83,6 @@ jobs:
               text = re.sub(r'Roxas[- ]Legion Markdown files?', 'specialist Markdown files', text, flags=re.IGNORECASE)
               text = re.sub(r'Roxas[- ]Legion', 'specialist collection', text, flags=re.IGNORECASE)
 
-              # Make the roster credit section creator-focused rather than origin-focused.
               if path.as_posix() == 'community/specialists/README.md':
                   text = text.replace('## Source and credit', '## Creator credit')
                   text = re.sub(
@@ -103,12 +98,13 @@ jobs:
               if text != original:
                   path.write_text(text, encoding='utf-8')
 
-          # Remove the temporary workflow from the final repository state.
-          workflow = Path('.github/workflows/redact-specialist-origin.yml')
-          if workflow.exists():
-              workflow.unlink()
+          for temporary in (
+              Path('.github/workflows/redact-specialist-origin.yml'),
+              Path('.teo-origin-cleanup-trigger'),
+          ):
+              if temporary.exists():
+                  temporary.unlink()
 
-          # Current repository content must contain no origin-name references.
           remaining = []
           for path in root.rglob('*'):
               if not path.is_file() or '.git' in path.parts:
@@ -125,7 +121,7 @@ jobs:
               raise SystemExit('Residual origin references: ' + ', '.join(remaining))
           PY
 
-      - name: Commit cleanup
+      - name: Commit cleanup to pull request branch
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -135,4 +131,4 @@ jobs:
             exit 0
           fi
           git commit -m "Remove specialist origin references [skip ci]"
-          git push
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
