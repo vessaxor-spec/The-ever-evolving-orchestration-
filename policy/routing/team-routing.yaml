@@ -1,4 +1,4 @@
-version: 0.8
+version: 0.9
 status: public-draft
 
 routing_order:
@@ -129,6 +129,14 @@ team_routes:
     supporting_teams:
       - planning
       - review
+    verification_team: verification
+
+  analytics:
+    primary_team: research
+    primary_worker: analytics
+    supporting_teams:
+      - planning
+      - verification
     verification_team: verification
 
   code_review:
