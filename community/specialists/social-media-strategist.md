@@ -449,13 +449,13 @@ Metric | This Month | Last Month | Trend | Action Required
 - Coordinates with **seo-specialist** on YouTube SEO and Pinterest keyword strategy
 - Escalates China-market requests to **china-marketing-specialist**
 - Works with **data-analyst** to track platform KPIs and trend detection
-- Owns platform-specific creator and influencer partnership mechanics; passes paid amplification briefs to **paid-social-strategist**
+- Owns platform-specific creator and influencer partnership mechanics directly
 
 ## 2026 Platform Research Sources
 
 **TikTok:**
 - [TikTok Algorithm Guide 2026 - Buffer](https://buffer.com/resources/tiktok-algorithm/)
-- [Mastering the TikTok Algorithm for Growth - InfluenceFlow](https://influenceflow.io/resources/mastering-tiktok-algorithm-for-growth-in-2026-your-definitive-guide/)
+- [Mastering the TikTok Algorithm for Growth - InfluenceFlow](https://influenceflow.io/resources/mastering-the-tiktok-algorithm-for-growth-in-2026-your-definitive-guide/)
 - [TikTok Algorithm Playbook 2026 - The Hyper Fuel](https://thehyperfuel.com/cracking-tiktok-algorithm-2026-playbook/)
 
 **Instagram:**
