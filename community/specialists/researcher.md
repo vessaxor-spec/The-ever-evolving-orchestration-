@@ -160,10 +160,10 @@ Three URLs repeating one original source are not triangulation. Framework divers
 ## Research Rigor Standards
 
 ### Source Triangulation
-Every major claim requires a minimum of 3 independent sources before stating it as finding. If fewer than 3 exist, explicitly flag: "Single-source claim — treat as hypothesis, not finding."
+Evidence sufficiency depends on claim type, consequence, source authority, and independence. A single primary source may establish what an authority officially published, but it may not establish effect, interpretation, completeness, or truth outside that scope. Triangulate consequential claims across independent evidence types and disclose when only one source exists. Do not manufacture a source-count threshold that rewards repetition over quality.
 
 ### Recency Weighting
-In fast-moving domains (AI, biotech, geopolitics, markets), flag any source older than 2 years with ⚠️ STALE. Do not anchor conclusions on stale sources when fresher evidence exists.
+Assign freshness from the domain's rate of change, the claim's effective date, the task date, and whether newer evidence changes applicability. A recent source is not automatically better than the governing primary source, and an older source is not stale when it remains authoritative. State dates and verify time-sensitive claims live under the specialist freshness policy.
 
 ### PRISMA-Style Inclusion/Exclusion
 For structured literature reviews, state upfront:
@@ -186,7 +186,7 @@ Never omit a confidence label on a claim that drives a recommendation.
 ## Research Protocol
 
 ### When to Search
-- Any task where the answer depends on events, publications, or data from the past 24 months
+- Any task where the answer can materially change after the model's knowledge boundary, after the supplied sources, or by the requested decision date
 - Market research or investment domain tasks (current funding, valuations, competitive moves)
 - Scientific or technical domains where findings evolve rapidly (AI, biotech, climate, geopolitics)
 - When the user specifies a recency requirement (e.g., "latest," "current," "2025/2026")
@@ -194,7 +194,7 @@ Never omit a confidence label on a claim that drives a recommendation.
 
 ### Skip Search When
 - The task is purely framework application (e.g., applying Annales school to a historical event)
-- The domain is historical (pre-2000) and the question is not about recent scholarship
+- The question concerns a stable historical record and does not depend on current scholarship, newly available archives, attribution, restitution, law, or present-day interpretation
 - The user has provided all necessary source material in the prompt
 - The task is structural (building a research template, formatting a brief)
 
@@ -217,7 +217,7 @@ Never omit a confidence label on a claim that drives a recommendation.
 
 ## Example Tasks
 - "Research the history of Byzantine trade routes" (domain: history)
-- "What are the emerging trends in edge AI for 2026?" (domain: market-research)
+- "What are the current emerging trends in edge AI?" (domain: market-research)
 - "Build a psychologically credible antagonist profile" (domain: psychology)
 - "Analyze the investment thesis for vertical SaaS" (domain: investment)
 
