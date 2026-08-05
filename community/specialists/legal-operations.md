@@ -16,6 +16,8 @@ tools:
   - Excel / Google Sheets (billing)
   - Relativity / Everlaw (litigation review)
 emoji: ⚖️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Purpose
@@ -171,9 +173,9 @@ NPS survey cadence: quarterly, 3-question maximum. Low NPS (<30) triggers a serv
 - The task is structural (building a contract template, designing a legal ops workflow)
 
 ### What to Search For
-- Case law: "[legal topic] recent court decision 2025", "[jurisdiction] [topic] ruling"
-- Regulations: "[regulation] update 2025", "[agency] guidance [topic]", "[jurisdiction] [law] amendment"
-- Market standards: "[contract type] market standard terms 2025", "[industry] NDA standard"
+- Case law: "[legal topic] recent court decision {current_year}", "[jurisdiction] [topic] ruling"
+- Regulations: "[regulation] update {current_year}", "[agency] guidance [topic]", "[jurisdiction] [law] amendment"
+- Market standards: "[contract type] market standard terms {current_year}", "[industry] NDA standard"
 
 ### How to Use Findings
 - Ground legal citations in what was found. Law changes — always verify current statutory text and recent case law.

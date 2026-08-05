@@ -5,6 +5,8 @@ description: Transforms raw data into actionable business insights through stati
 domains: [business-intelligence, sales-ops, product-analytics, ML-model-QA, any]
 tools: [Read, Write, Bash]
 emoji: 📈
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Data Analyst
@@ -105,9 +107,9 @@ Every A/B test analysis must state:
 - The task is definitional ("what is statistical significance?")
 
 ### What to Search For
-- Benchmarks: "[industry] conversion rate benchmark 2025", "[metric] industry average SaaS 2026"
-- ML evaluation: "[model type] bias detection best practice 2025", "RAGAS evaluation framework updates"
-- Tool versions: "[library] changelog", "[BI tool] new features 2025"
+- Benchmarks: "[industry] conversion rate benchmark {current_year}", "[metric] industry average SaaS {current_year}"
+- ML evaluation: "[model type] bias detection best practice {current_year}", "RAGAS evaluation framework updates"
+- Tool versions: "[library] changelog", "[BI tool] new features {current_year}"
 
 ### How to Use Findings
 - Ground benchmark claims in what was found. If search contradicts prior knowledge, flag the discrepancy and use the more recent source.

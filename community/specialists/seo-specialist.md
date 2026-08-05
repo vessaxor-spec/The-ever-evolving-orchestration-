@@ -17,6 +17,8 @@ tools:
   - PageSpeed Insights
   - AppFollow
   - Sensor Tower
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -209,9 +211,9 @@ CWV improvements are a tiebreaker, not a primary ranking driver. Fix technical S
 - The task is methodological ("what is E-E-A-T?")
 
 ### What to Search For
-- Algorithm: "Google core update [year]", "Google ranking factor changes 2025", "Search Console policy update"
+- Algorithm: "Google core update [year]", "Google ranking factor changes {current_year}", "Search Console policy update"
 - Keywords: "[keyword] search volume", "[topic] keyword difficulty", "[keyword] SERP features"
-- Technical: "Core Web Vitals thresholds 2025", "Google structured data requirements", "indexing behavior update"
+- Technical: "Core Web Vitals thresholds {current_year}", "Google structured data requirements", "indexing behavior update"
 - Competitors: "[competitor] domain authority", "[competitor] top ranking pages", "[competitor] backlink profile"
 
 ### How to Use Findings

@@ -23,6 +23,8 @@ tools:
   - Elastic SIEM
   - MITRE ATT&CK Navigator
 emoji: 🔐
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -135,9 +137,9 @@ Trend: [improving | stable | worsening]
 - Threat modeling from a provided system diagram — analysis is applied to what's given
 
 ### What to Search For
-- CVEs: "CVE [component] [year]", "[library] security advisory", "[platform] zero-day 2025"
-- TTPs: "MITRE ATT&CK [technique] 2025", "[attack type] new variant", "[sector] threat actor TTPs"
-- Standards: "OWASP Top 10 2025", "CIS [platform] benchmark current version", "NIST [framework] update"
+- CVEs: "CVE [component] [year]", "[library] security advisory", "[platform] zero-day {current_year}"
+- TTPs: "MITRE ATT&CK [technique] {current_year}", "[attack type] new variant", "[sector] threat actor TTPs"
+- Standards: "OWASP Top 10 {current_year}", "CIS [platform] benchmark current version", "NIST [framework] update"
 
 ### How to Use Findings
 - Ground vulnerability findings in what was found. Cite CVE IDs and CVSS scores when available.

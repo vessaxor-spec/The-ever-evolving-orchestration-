@@ -5,6 +5,8 @@ description: Market intelligence, competitive analysis, trend detection, and opp
 domains: [B2B, B2C, SaaS, ecommerce, enterprise, startup, any]
 tools: [WebFetch, WebSearch, Read, Write]
 emoji: 📊
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Market Analyst
@@ -96,10 +98,10 @@ Name the analytical framework used for each section (e.g., Porter's Five Forces,
 - The task is definitional ("what is TAM?") or methodological ("how do I size a market?")
 
 ### What to Search For
-- Competitive moves: "[competitor] funding 2025", "[competitor] product launch 2026", "[competitor] pricing"
-- Market data: "[market] size 2025 report", "[market] growth rate forecast", "[market] VC investment"
+- Competitive moves: "[competitor] funding {current_year}", "[competitor] product launch {current_year}", "[competitor] pricing"
+- Market data: "[market] size {current_year} report", "[market] growth rate forecast", "[market] VC investment"
 - Weak signals: "[category] job postings trend", "[category] patent filings", "[topic] Google Trends"
-- Category shifts: "[market] consolidation 2025", "[market] new entrant", "[category] disruption"
+- Category shifts: "[market] consolidation {current_year}", "[market] new entrant", "[category] disruption"
 
 ### How to Use Findings
 - Ground all market claims in what was found. If search contradicts prior knowledge, flag the discrepancy and use the more recent source.

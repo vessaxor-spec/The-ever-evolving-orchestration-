@@ -21,6 +21,8 @@ tools:
   - Swift
   - Xcode
 emoji: 🥽
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -172,9 +174,9 @@ Thermal management rules:
 - Debugging tasks where all context is in the provided code or device logs
 
 ### What to Search For
-- SDK versions: "visionOS SDK latest", "ARKit [version] new features", "WebXR API 2025 updates"
-- Hardware: "[headset] specs 2025", "[device] field of view", "[platform] hand tracking capabilities"
-- Policy: "App Store XR guidelines 2025", "Meta Quest submission requirements"
+- SDK versions: "visionOS SDK latest", "ARKit [version] new features", "WebXR API {current_year} updates"
+- Hardware: "[headset] specs {current_year}", "[device] field of view", "[platform] hand tracking capabilities"
+- Policy: "App Store XR guidelines {current_year}", "Meta Quest submission requirements"
 
 ### How to Use Findings
 - Ground platform recommendations in what was found. XR SDKs evolve rapidly — API availability changes with each OS release.

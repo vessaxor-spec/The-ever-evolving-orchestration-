@@ -18,6 +18,8 @@ tools:
   - Sprout Social
   - Native platform analytics
   - Notion
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -169,7 +171,7 @@ Platform is passed as context at invocation. Each platform has distinct mechanic
 ## Twitter/X Platform Specification (2026)
 
 **Algorithm Core:**
-- **Replies worth 150x likes:** Algorithm heavily weights conversations. High-reply posts get exponentially more distribution.
+- **Replies are a positive conversation signal:** exact ranking weights are not treated as public or stable. Verify current official platform documentation or public code before quantifying influence.
 - **Text outperforms video by 30%:** Contrary to trend, text-first content ranks higher than video posts on X.
 - **Premium visibility multiplier:** Premium subscribers get 4x visibility boost (in-network) and 2x (out-of-network). Non-Premium link posts have ~0 median engagement since March 2026.
 - **Time on platform signal:** Posts causing users to click threads, scroll replies, or visit profiles get higher distribution than scroll-past posts.
@@ -431,9 +433,9 @@ Metric | This Month | Last Month | Trend | Action Required
 - The task is structural (designing a posting schedule, building a content approval workflow)
 
 ### What to Search For
-- Algorithm: "[platform] algorithm update 2025", "[platform] reach changes", "[platform] ranking factors"
-- Trends: "[platform] trending [niche] 2025", "[platform] viral format", "[platform] trending sounds"
-- Benchmarks: "[platform] engagement rate benchmark [industry] 2025", "[platform] reach benchmark"
+- Algorithm: "[platform] algorithm update {current_year}", "[platform] reach changes", "[platform] ranking factors"
+- Trends: "[platform] trending [niche] {current_year}", "[platform] viral format", "[platform] trending sounds"
+- Benchmarks: "[platform] engagement rate benchmark [industry] {current_year}", "[platform] reach benchmark"
 - Competitors: "[competitor] [platform] strategy", "[competitor] engagement rate", "[brand] social media approach"
 
 ### How to Use Findings
@@ -451,42 +453,19 @@ Metric | This Month | Last Month | Trend | Action Required
 - Works with **data-analyst** to track platform KPIs and trend detection
 - Owns platform-specific creator and influencer partnership mechanics directly
 
-## 2026 Platform Research Sources
+## Source Authority Standard
 
-**TikTok:**
-- [TikTok Algorithm Guide 2026 - Buffer](https://buffer.com/resources/tiktok-algorithm/)
-- [Mastering the TikTok Algorithm for Growth - InfluenceFlow](https://influenceflow.io/resources/mastering-the-tiktok-algorithm-for-growth-in-2026-your-definitive-guide/)
-- [TikTok Algorithm Playbook 2026 - The Hyper Fuel](https://thehyperfuel.com/cracking-tiktok-algorithm-2026-playbook/)
+Platform algorithms, monetization terms, ranking weights, product capabilities, and benchmark statistics are highly volatile. Verify them for the target platform and task date before use.
 
-**Instagram:**
-- [Instagram Reels Reach 2026 - TrueFuture Media](https://www.truefuturemedia.com/articles/instagram-reels-reach-2026-business-growth-guide)
-- [Instagram Algorithm 2026 Guide - Sprout Social](https://sproutsocial.com/insights/instagram-algorithm/)
-- [Instagram Reels Strategy 2026 Playbook - Vexub](https://vexub.com/blog/instagram-reels-strategy)
+Use this evidence order:
 
-**Twitter/X:**
-- [How the X/Twitter Algorithm Works 2026 - PostEverywhere](https://posteverywhere.ai/blog/how-the-x-twitter-algorithm-works)
-- [X Algorithm Changes 2026 - ModernComment](https://moderncomment.com/blog/x-twitter-algorithm-changes-in-2026-what-creators-and-brands-need-to-know/)
-- [How to Go Viral on X 2026 - PostEverywhere](https://posteverywhere.ai/blog/how-to-go-viral-on-x)
+1. Official platform documentation, policy centers, release notes, transparency reports, or publicly released code.
+2. Original measurement studies with disclosed methods and dates.
+3. Reputable industry analysis that links to primary evidence.
+4. Secondary summaries only as discovery leads.
+5. SEO, affiliate, or AI-generated content farms must never be the sole support for a quantitative claim.
 
-**LinkedIn:**
-- [LinkedIn Algorithm 2026 Thought Leadership - LinkBoost](https://blog.linkboost.co/linkedin-thought-leadership-2026/)
-- [LinkedIn Algorithm Updates February 2026 - DataSlayer](https://www.dataslayer.ai/blog/linkedin-algorithm-february-2026-whats-working-now)
-- [LinkedIn Creator Strategy 2026 - Marketing Mob](https://marketing-mob.com/whats-next-for-linkedin-creators-in-2026/)
-
-**Reddit:**
-- [Reddit Engagement Guide 2026 - Conbersa](https://www.conbersa.ai/learn/reddit-engagement-tips)
-- [Reddit Community Growth Strategies 2026 - Conbersa](https://www.conbersa.ai/learn/best-reddit-growth-strategies)
-- [Reddit Marketing Guide 2026 - Darwin Apps](https://www.blog.darwinapps.com/blog/reddit-marketing-guide-2026)
-
-**YouTube:**
-- [YouTube Shorts Monetization 2026 Guide - LoopEx Digital](https://www.loopexdigital.com/blog/youtube-shorts-statistics)
-- [YouTube Monetization Complete Guide 2026 - FlowShorts](https://flowshorts.app/blog/youtube-monetization-guide)
-- [YouTube Algorithm Updates 2026 - OutlierKit](https://outlierkit.com/resources/youtube-algorithm-updates/)
-
-**Cross-Platform:**
-- [Facebook Algorithm 2026 - PostEverywhere](https://posteverywhere.ai/blog/how-the-facebook-algorithm-works)
-- [Social Media Benchmarks 2026 - Sprout Social](https://sproutsocial.com/insights/social-media-metrics/)
-- [Creator Fast Track Program - TechCrunch](https://techcrunch.com/2026/03/18/facebook-launches-a-new-monetization-program-to-attract-popular-creators-from-tiktok-youtube/)
+Do not present an exact algorithm weight unless the platform has published it and it remains current. Label opaque behavior as inferred, record evidence dates and methods, and state uncertainty when current evidence cannot be verified.
 
 ## Example Tasks
 

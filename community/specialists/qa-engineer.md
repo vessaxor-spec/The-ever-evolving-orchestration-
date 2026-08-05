@@ -16,6 +16,8 @@ tools:
   - Lighthouse
   - OWASP ZAP
 emoji: 🧪
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -154,7 +156,7 @@ Flaky tests in the blocking CI suite are a team tax. A quarantined test that is 
 - Building test templates or checklists from provided requirements
 
 ### What to Search For
-- Tool versions: "[testing tool] latest release", "[framework] changelog 2025", "[tool] breaking changes"
+- Tool versions: "[testing tool] latest release", "[framework] changelog {current_year}", "[tool] breaking changes"
 - Standards: "OWASP Top 10 current version", "WCAG 2.2 success criteria", "OWASP API Security 2023"
 - Benchmarks: "[domain] load testing benchmarks", "[industry] p95 response time standard"
 

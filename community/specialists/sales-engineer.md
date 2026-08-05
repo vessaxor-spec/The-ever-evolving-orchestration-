@@ -16,6 +16,8 @@ tools:
   - Miro
   - Demo environments
   - Battlecard tools (Klue, Crayon)
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -230,13 +232,13 @@ A technical win without a commercial win is not a win — it is a reference cust
 
 ### Skip Search When
 - Designing a POC or demo from a provided product spec and prospect requirements
-- Applying stable technical discovery frameworks (FIA: Fit/Impact/Authority)
+- Applying stable technical discovery frameworks and the card's Feature-Impact-Advantage battlecard format
 - Writing technical proposals or RFP responses from provided requirements
 - The task is structural (building a demo script template, designing a POC success criteria)
 
 ### What to Search For
 - Competitors: "[competitor] API documentation", "[competitor] integration list", "[competitor] technical limitations"
-- Product: "[product] recent release notes", "[product] new integrations 2025", "[product] beta features"
+- Product: "[product] recent release notes", "[product] new integrations {current_year}", "[product] beta features"
 - APIs: "[third-party] API changelog", "[service] rate limits", "[integration] authentication method"
 
 ### How to Use Findings

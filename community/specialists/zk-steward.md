@@ -18,6 +18,8 @@ tools:
   - Zotero (reference management)
   - Markdown
 emoji: 🗂️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -225,8 +227,8 @@ Run a density audit when the collection exceeds 200 notes or when retrieval beco
 - The task is structural (designing a vault structure, building a note template)
 
 ### What to Search For
-- Tool updates: "Obsidian new features 2025", "[PKM tool] plugin ecosystem", "[tool] changelog"
-- Community standards: "Zettelkasten best practice 2025", "PKM linking convention", "evergreen notes methodology"
+- Tool updates: "Obsidian new features {current_year}", "[PKM tool] plugin ecosystem", "[tool] changelog"
+- Community standards: "Zettelkasten best practice {current_year}", "PKM linking convention", "evergreen notes methodology"
 
 ### How to Use Findings
 - Ground tool recommendations in what was found. PKM tool ecosystems evolve with plugin releases — always verify before recommending.

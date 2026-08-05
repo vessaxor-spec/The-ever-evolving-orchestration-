@@ -19,6 +19,8 @@ tools:
   - GA4
   - Meta CAPI
   - Google Consent Mode v2
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -140,25 +142,26 @@ Viewability (50% pixels for 1 second) is a floor, not a performance metric. Atte
 
 **Optimization lever:** Attention correlates with placement position (above fold > below fold), creative format (video > display), and content adjacency (relevant context = higher attention). Use attention data to prune low-attention placements, not just low-viewability placements.
 
-## Cookieless Targeting Readiness
+## Signal and Privacy Readiness
 
-Third-party cookie deprecation is complete in Chrome (2024). Cookieless readiness is not future planning — it is current operational requirement.
+Browser privacy controls, third-party-cookie availability, identity products, consent requirements, and advertising APIs are highly volatile. Verify the current status for the target browser, geography, DSP, SSP, and campaign date before recommending activation.
 
-**Four-layer targeting stack:**
+**Durable targeting stack:**
 
 | Layer | Method | Readiness action |
 |---|---|---|
-| **First-party data** | CRM upload, pixel audiences, customer match | Audit data collection: is email/phone captured at every conversion point? |
-| **Contextual targeting** | Content category, keyword, topic targeting | Activate in TTD (Contextual targeting) and DV360 (Topic targeting) — no cookies required |
-| **ID solutions** | UID2.0 (TTD), RampID (LiveRamp), Google PAIR | Integrate publisher-side ID solution; match rate varies by publisher |
-| **Modeled audiences** | Google's Privacy Sandbox (Topics API), Meta's modeled signals | Enable in DV360; accept modeled reach in reporting |
+| First-party data | consented CRM, conversion, and customer-match data | Audit lawful collection, consent, normalization, and match quality |
+| Contextual targeting | content category, topic, placement, and semantic context | Validate inventory quality without depending on cross-site identity |
+| Publisher and identity signals | publisher audiences or supported identity solutions | Verify platform support, contracts, match rates, and privacy obligations |
+| Modeled measurement | modeled conversions, incrementality, and aggregate reporting | Document assumptions, uncertainty, and platform limitations |
 
-**UID2.0 implementation (TTD):**
-- Requires publisher participation — check TTD's UID2 publisher list
-- Advertiser side: hash email addresses at point of collection; pass to TTD via first-party data onboarding
-- Match rate benchmark: 20-40% of addressable audience (varies by vertical)
+Rules:
 
-**Audit question:** What % of current campaign reach relies on third-party cookies? If >50%, cookieless readiness is a critical gap.
+- Do not state that third-party-cookie deprecation is complete without verifying current browser policy.
+- Do not instruct users to enable Topics, Protected Audience, Attribution Reporting, or another Privacy Sandbox API without checking Google's official feature-status page and the target DSP's current support.
+- Retired, deprecated, experimental, or unavailable APIs must not appear as required activation steps.
+- Prefer first-party data quality, contextual relevance, consented publisher signals, experiments, and incrementality over dependence on one identity mechanism.
+- State the verification date and source for browser or advertising-platform privacy capabilities.
 
 ## Brand Safety Tier Classification
 
@@ -195,10 +198,10 @@ One-size brand safety blocks waste reach. Tiered classification matches risk tol
 - The task is structural (building a campaign template, designing a trafficking workflow)
 
 ### What to Search For
-- Platform updates: "DV360 new features 2025", "The Trade Desk updates", "Privacy Sandbox status 2025"
+- Platform updates: "DV360 new features {current_year}", "The Trade Desk updates", "Privacy Sandbox status {current_year}"
 - Privacy: "third-party cookie deprecation status", "Privacy Sandbox API availability", "first-party data best practice"
-- Benchmarks: "programmatic CPM benchmark [vertical] 2025", "viewability rate benchmark", "brand safety standard"
-- Fraud: "IVT patterns 2025", "MFA site list update", "ad fraud trends [year]"
+- Benchmarks: "programmatic CPM benchmark [vertical] {current_year}", "viewability rate benchmark", "brand safety standard"
+- Fraud: "IVT patterns {current_year}", "MFA site list update", "ad fraud trends [year]"
 
 ### How to Use Findings
 - Ground platform and privacy claims in what was found. The programmatic landscape and cookie deprecation timeline change frequently.

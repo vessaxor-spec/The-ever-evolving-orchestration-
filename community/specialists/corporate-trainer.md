@@ -18,6 +18,8 @@ tools:
   - Google Slides / PowerPoint
   - Kirkpatrick evaluation model
 emoji: 🎓
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -203,9 +205,9 @@ Report ROI to program sponsor at 90 days. If Level 4 data is unavailable, report
 - The task is structural (building a curriculum map, designing a training calendar)
 
 ### What to Search For
-- Benchmarks: "[role] time-to-productivity benchmark", "[industry] training completion rate", "L&D ROI benchmark 2025"
-- Tools: "[LMS platform] features 2025", "[training tool] pricing", "[platform] new capabilities"
-- Research: "microlearning effectiveness research 2025", "adult learning retention research", "[skill] training best practice"
+- Benchmarks: "[role] time-to-productivity benchmark", "[industry] training completion rate", "L&D ROI benchmark {current_year}"
+- Tools: "[LMS platform] features {current_year}", "[training tool] pricing", "[platform] new capabilities"
+- Research: "microlearning effectiveness research {current_year}", "adult learning retention research", "[skill] training best practice"
 
 ### How to Use Findings
 - Ground benchmark claims in what was found. Training benchmarks vary by role and industry — always cite the source and segment.

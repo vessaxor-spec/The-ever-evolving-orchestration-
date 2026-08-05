@@ -19,6 +19,8 @@ tools:
   - viem
   - OpenZeppelin Upgrades Plugin
 emoji: ⛓️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -185,9 +187,9 @@ Minimum acceptable optimization: 10% reduction on the target function, or explic
 - Auditing code where all context is in the provided contracts
 
 ### What to Search For
-- Protocol updates: "EIP [number] status", "[protocol] upgrade 2025", "[chain] hard fork changes"
-- Security: "[contract type] exploit 2025", "[DeFi protocol] vulnerability", "Slither [detector] false positive"
-- Gas: "[EVM] opcode pricing post-[fork]", "[chain] gas optimization 2025"
+- Protocol updates: "EIP [number] status", "[protocol] upgrade {current_year}", "[chain] hard fork changes"
+- Security: "[contract type] exploit {current_year}", "[DeFi protocol] vulnerability", "Slither [detector] false positive"
+- Gas: "[EVM] opcode pricing post-[fork]", "[chain] gas optimization {current_year}"
 
 ### How to Use Findings
 - Ground protocol recommendations in what was found. EIP status changes — always verify before implementing.

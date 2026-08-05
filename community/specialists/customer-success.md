@@ -19,6 +19,8 @@ tools:
   - Notion (knowledge base)
   - Delighted
   - Medallia
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -301,9 +303,9 @@ CS insights are the highest-quality product signal in the company. Without a str
 - The task is structural (designing a CS process, building a health score model)
 
 ### What to Search For
-- Benchmarks: "[industry] NPS benchmark 2025", "[segment] churn rate benchmark", "SaaS NRR benchmark [ARR range]"
+- Benchmarks: "[industry] NPS benchmark {current_year}", "[segment] churn rate benchmark", "SaaS NRR benchmark [ARR range]"
 - Competitive: "[competitor] customer success model", "[competitor] onboarding approach"
-- Tools: "Gainsight features 2025", "[CS platform] pricing", "[tool] health scoring capabilities"
+- Tools: "Gainsight features {current_year}", "[CS platform] pricing", "[tool] health scoring capabilities"
 
 ### How to Use Findings
 - Ground benchmark claims in what was found. CS benchmarks vary by segment and product type — always cite the source and segment.

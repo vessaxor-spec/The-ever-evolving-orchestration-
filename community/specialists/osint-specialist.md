@@ -26,6 +26,8 @@ tools:
   - Wayback Machine
   - Google Dorks
 emoji: 🕵️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # OSINT Specialist
@@ -212,9 +214,9 @@ For tracking threat actor infrastructure:
 - The task is methodological ("how does certificate transparency work?")
 
 ### What to Search For
-- Target: "[organization] news 2025", "[domain] WHOIS", "site:linkedin.com [organization]"
+- Target: "[organization] news {current_year}", "[domain] WHOIS", "site:linkedin.com [organization]"
 - Infrastructure: Shodan/Censys queries for target IP ranges and domains
-- Threat actors: "[actor] infrastructure 2025", "[actor] C2 domains", "ThreatFox [actor]"
+- Threat actors: "[actor] infrastructure {current_year}", "[actor] C2 domains", "ThreatFox [actor]"
 - Tools: "Amass [version] new features", "Shodan API [capability]"
 
 ### How to Use Findings

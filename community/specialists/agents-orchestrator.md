@@ -15,6 +15,8 @@ tools:
   - tool registries and capability manifests
   - structured handoff contracts
 emoji: 🤖
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -159,9 +161,9 @@ Observability hooks are not optional. A pipeline without them cannot be debugged
 - Debugging a pipeline where all context is in the provided logs or agent outputs
 
 ### What to Search For
-- MCP: "MCP specification latest version", "Model Context Protocol updates 2025"
-- Frameworks: "[orchestration framework] latest release", "[tool] multi-agent capabilities 2025"
-- Models: "[model] context window 2025", "[provider] tool-use API", "[model] rate limits"
+- MCP: "MCP specification latest version", "Model Context Protocol updates {current_year}"
+- Frameworks: "[orchestration framework] latest release", "[tool] multi-agent capabilities {current_year}"
+- Models: "[model] context window {current_year}", "[provider] tool-use API", "[model] rate limits"
 
 ### How to Use Findings
 - Ground framework recommendations in what was found. Orchestration tooling evolves rapidly — always verify before committing.

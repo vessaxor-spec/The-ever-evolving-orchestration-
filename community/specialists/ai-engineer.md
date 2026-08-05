@@ -21,6 +21,8 @@ tools:
   - Weaviate
   - MLflow
 emoji: 🤖
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -151,10 +153,10 @@ Document the methodology used in the model card. "We measure hallucination" with
 - Debugging tasks where all context is in the provided code or logs
 
 ### What to Search For
-- Model benchmarks: "[model] benchmark 2025", "[model] context window", "[provider] model pricing 2026"
-- Framework versions: "LangChain changelog 2025", "LlamaIndex latest release", "[vector DB] new features"
-- Evaluation: "RAGAS evaluation framework update", "RAG evaluation best practices 2025"
-- Prompting: "[model family] prompting guide", "[model] system prompt best practices 2025"
+- Model benchmarks: "[model] benchmark {current_year}", "[model] context window", "[provider] model pricing {current_year}"
+- Framework versions: "LangChain changelog {current_year}", "LlamaIndex latest release", "[vector DB] new features"
+- Evaluation: "RAGAS evaluation framework update", "RAG evaluation best practices {current_year}"
+- Prompting: "[model family] prompting guide", "[model] system prompt best practices {current_year}"
 
 ### How to Use Findings
 - Ground model recommendations in what was found. Benchmark data changes with every model release — always cite the source and date.

@@ -15,6 +15,8 @@ tools:
   - HubSpot
   - Outreach
   - Salesloft
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -221,8 +223,8 @@ Coaching on quota attainment is coaching on the past. Coach on the activities th
 
 ### What to Search For
 - Competitive: "[competitor] common objections", "[competitor] positioning vs [product]"
-- Research: "sales coaching effectiveness research 2025", "call analysis best practice", "rep ramp time benchmark"
-- Tools: "Gong new features 2025", "[sales tool] coaching capabilities"
+- Research: "sales coaching effectiveness research {current_year}", "call analysis best practice", "rep ramp time benchmark"
+- Tools: "Gong new features {current_year}", "[sales tool] coaching capabilities"
 
 ### How to Use Findings
 - Ground competitive coaching content in what was found. Competitor positioning changes — always verify before building objection-handling content.

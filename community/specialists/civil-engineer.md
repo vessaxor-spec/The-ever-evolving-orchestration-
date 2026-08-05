@@ -19,6 +19,8 @@ tools:
   - Tekla Structures
   - Python / MATLAB (custom calculations)
 emoji: 🏗️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -195,7 +197,7 @@ Embodied carbon is reported in kg CO₂e/m² of floor area for comparison agains
 - The task is methodological ("how do I calculate beam deflection?")
 
 ### What to Search For
-- Code editions: "[jurisdiction] adopted building code 2025", "IBC [year] amendments", "ASCE 7 current edition"
+- Code editions: "[jurisdiction] adopted building code {current_year}", "IBC [year] amendments", "ASCE 7 current edition"
 - Standards: "ASTM [standard number] current revision", "ACI 318 [year] changes"
 - Local amendments: "[city/state] building code local amendments", "[jurisdiction] seismic zone update"
 

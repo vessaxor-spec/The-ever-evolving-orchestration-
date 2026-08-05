@@ -5,6 +5,8 @@ description: Owns the full product lifecycle — discovery, strategy, roadmap, s
 domains: [B2B-SaaS, consumer, platform, enterprise, any]
 tools: [WebFetch, WebSearch, Read, Write]
 emoji: 🧭
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Product Manager
@@ -174,9 +176,9 @@ If a feature serves multiple segments differently: write separate user stories p
 - The task is structural (sprint planning, retrospective facilitation, roadmap formatting)
 
 ### What to Search For
-- Competitors: "[competitor] product updates 2025", "[competitor] pricing", "[competitor] new features"
-- Benchmarks: "[domain] activation rate benchmark", "[category] retention benchmark 2025"
-- Trends: "[user behavior] trend 2025", "[platform] algorithm change impact on [product type]"
+- Competitors: "[competitor] product updates {current_year}", "[competitor] pricing", "[competitor] new features"
+- Benchmarks: "[domain] activation rate benchmark", "[category] retention benchmark {current_year}"
+- Trends: "[user behavior] trend {current_year}", "[platform] algorithm change impact on [product type]"
 
 ### How to Use Findings
 - Ground competitive claims in what was found. Product features and pricing change frequently — always verify before citing.

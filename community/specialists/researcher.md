@@ -5,6 +5,8 @@ description: Domain-expert research and synthesis. Gathers, validates, and synth
 domains: [history, anthropology, geography, psychology, narratology, market-research, investment-research, any]
 tools: [WebFetch, WebSearch, Read, Write]
 emoji: 🔬
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Researcher
@@ -97,7 +99,7 @@ Never omit a confidence label on a claim that drives a recommendation.
 
 ### What to Search For
 - Primary sources: official publications, institutional reports, peer-reviewed abstracts
-- Recency check: "site:arxiv.org [topic] 2025" or "[topic] research findings 2026"
+- Recency check: "site:arxiv.org [topic] {current_year}" or "[topic] research findings {current_year}"
 - Consensus validation: "[claim] expert consensus" or "[claim] challenged by"
 - For investment domain: recent earnings, funding rounds, analyst reports
 

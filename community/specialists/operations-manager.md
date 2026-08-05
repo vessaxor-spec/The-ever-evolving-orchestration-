@@ -19,6 +19,8 @@ tools:
   - Prometheus / Grafana
   - Notion / Confluence (process docs)
 emoji: ⚙️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -186,8 +188,8 @@ Do not move to the next ADKAR stage until the current stage is confirmed. Skippi
 - The task is structural (building an org chart, designing an approval workflow)
 
 ### What to Search For
-- Regulations: "[jurisdiction] employment law update 2025", "[country] labor regulation", "[state] HR compliance"
-- Tools: "[HRIS platform] features 2025", "[ERP] pricing", "[ops tool] new capabilities"
+- Regulations: "[jurisdiction] employment law update {current_year}", "[country] labor regulation", "[state] HR compliance"
+- Tools: "[HRIS platform] features {current_year}", "[ERP] pricing", "[ops tool] new capabilities"
 - Benchmarks: "[industry] cost per hire benchmark", "[sector] headcount ratio", "vendor payment terms benchmark"
 
 ### How to Use Findings

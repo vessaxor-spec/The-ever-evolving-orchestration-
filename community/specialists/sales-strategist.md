@@ -16,6 +16,8 @@ tools:
   - LinkedIn Sales Navigator
   - Gong
   - Clari
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -221,9 +223,9 @@ Declining velocity = either fewer deals, lower ACV, lower win rate, or longer cy
 - The task is structural (building a battlecard template, designing a sales process)
 
 ### What to Search For
-- Competitors: "[competitor] pricing 2025", "[competitor] product announcement", "[competitor] funding round"
-- Benchmarks: "[segment] win rate benchmark", "[deal size] sales cycle length", "[industry] ACV benchmark 2025"
-- Account: "[company] news 2025", "[company] funding", "[company] leadership change", "[company] strategic initiative"
+- Competitors: "[competitor] pricing {current_year}", "[competitor] product announcement", "[competitor] funding round"
+- Benchmarks: "[segment] win rate benchmark", "[deal size] sales cycle length", "[industry] ACV benchmark {current_year}"
+- Account: "[company] news {current_year}", "[company] funding", "[company] leadership change", "[company] strategic initiative"
 
 ### How to Use Findings
 - Ground competitive claims in what was found. Competitor pricing and features change — always verify before citing in a deal.

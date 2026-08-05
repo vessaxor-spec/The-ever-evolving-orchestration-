@@ -16,6 +16,8 @@ tools:
   - GDPR / CCPA
   - NIST CSF
 emoji: 🛡️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -183,8 +185,8 @@ Compliance findings presented to the audit committee follow this format:
 - The task is methodological ("what is the difference between SOC 2 Type I and Type II?")
 
 ### What to Search For
-- Standards: "SOC 2 2025 updates", "PCI DSS v4 requirements", "ISO 27001 2022 changes", "GDPR enforcement 2025"
-- Enforcement: "[regulator] enforcement action 2025", "[regulation] fine 2025", "[sector] compliance penalty"
+- Standards: "SOC 2 {current_year} updates", "PCI DSS v4 requirements", "ISO 27001 2022 changes", "GDPR enforcement {current_year}"
+- Enforcement: "[regulator] enforcement action {current_year}", "[regulation] fine {current_year}", "[sector] compliance penalty"
 - Vendors: "[vendor] security breach", "[vendor] compliance certification status", "[vendor] SOC 2 report"
 
 ### How to Use Findings
