@@ -1,3 +1,34 @@
 # Capsules
 
-Immutable historical snapshots of TEO and the wider AI ecosystem. Accepted capsules are never rewritten.
+Immutable historical snapshots of TEO and the wider AI ecosystem.
+
+## Immutability rule
+
+Once a capsule is accepted into `main`, its contents are never rewritten, corrected, reformatted, or retroactively updated.
+
+When later evidence changes the interpretation of an earlier capsule, create a new capsule that references the earlier record. Do not modify history to make the past appear cleaner, more complete, or more accurate than it was at the time.
+
+The capsule index in this README may evolve. Accepted capsule files may not.
+
+## Naming convention
+
+```text
+NNNN-YYYY-MM-DD-short-description.md
+```
+
+Each capsule should record:
+
+- a stable capsule ID
+- capture date and time
+- the repository commit being preserved
+- the project and ecosystem assumptions in effect
+- completed capabilities and routes
+- known limitations and unresolved work
+- the next expected horizon
+- a message to future stewards
+
+## Accepted capsules
+
+| Capsule | Captured state | Snapshot commit |
+|---|---|---|
+| [TEO-CAPSULE-0001](0001-2026-08-05-reference-control-plane.md) | The reference control plane exists; Phases 1–5 complete | `1aec5f651e4b448b5cb2cf0d7e0b1e3d099ee938` |
