@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 
 worker_template:
@@ -168,6 +168,40 @@ workers:
     verification:
       - before_after_measurement
       - regression_tests
+
+  code_review:
+    mission: review code for correctness, risk, scope discipline, and contract integrity
+    owning_team: review
+    responsibilities:
+      - inspect_diff
+      - correctness_review
+      - regression_risk_review
+      - minimal_change_discipline
+      - test_coverage_review
+      - api_contract_review
+    required_capabilities:
+      - high_reasoning
+      - adversarial_review
+      - executable_verification
+      - requirements_analysis
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+      - claude-sonnet-5
+    fallbacks:
+      - gemini-3.1-pro-preview
+      - claude-opus-5
+    verification:
+      - targeted_tests
+      - changed_contract_review
+      - unresolved_assumption_log
+    escalation:
+      - security_sensitive
+      - financial_logic
+      - permissions_or_identity
+      - cryptography
+      - destructive_data_operations
+      - production_infrastructure
 
   security:
     mission: identify, reduce, and verify security risk
