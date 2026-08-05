@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -108,3 +108,40 @@ bindings:
         - no_code_implementation
         - no_budget_ownership_substitution
         - no_commitment_without_capacity_validation
+
+  - specialist: incident-commander
+    worker: incident_response
+    primary_team: mission_control
+    risk_profile: critical
+    role_card: community/specialists/incident-commander.md
+    contains:
+      responsibilities:
+        - severity_classification
+        - incident_role_assignment
+        - response_cadence_management
+        - live_timeline_governance
+        - stakeholder_and_customer_communications_coordination
+        - resolution_readiness_and_monitoring_confirmation
+        - blameless_postmortem_facilitation
+        - on_call_health_and_escalation_review
+      required_capabilities:
+        - incident_command
+        - coordination
+        - risk_analysis
+        - operational_communications
+        - timeline_management
+        - reliability_reasoning
+        - evidence_evaluation
+        - clear_writing
+      verification:
+        - severity_evidence_review
+        - role_and_cadence_check
+        - resolution_checklist_validation
+        - independent_technical_signoff_confirmation
+        - postmortem_action_trace
+      authority_boundaries:
+        - no_technical_diagnosis_or_fix_implementation
+        - no_external_communication_without_comms_confirmation
+        - no_incident_closure_without_technical_lead_signoff
+        - no_severity_escalation_without_evidence
+        - no_blame_assignment_or_human_error_root_cause
