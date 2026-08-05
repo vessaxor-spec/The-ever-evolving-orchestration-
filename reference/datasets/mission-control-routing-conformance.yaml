@@ -1,0 +1,121 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+scenarios:
+  - id: orchestration-route
+    purpose: Select governed multi-agent orchestration through Mission Control with independent semantic review.
+    task:
+      task_id: conformance-orchestration-route
+      task: Design a multi-agent pipeline with typed handoff contracts using the agents orchestrator.
+      risk_level: low
+      specialist: agents-orchestrator
+    expect:
+      equals:
+        task_type: orchestration
+        risk_level: high
+        selected_team: mission_control
+        selected_worker: orchestration
+        selected_specialist: agents-orchestrator
+        specialist_risk_profile: high
+        selected_implementation.model: gpt-5.6-sol
+        selected_implementation.source: routing.orchestration.primary
+        fallback_implementation.model: gemini-3.1-pro-preview
+        verification.team: verification
+        verification.implementation.model: claude-sonnet-5
+        verification.independent: true
+        verification.human_approval_required: false
+        warnings: []
+      contains:
+        required_capabilities:
+          - orchestration_reasoning
+          - distributed_systems_reasoning
+          - schema_design
+          - tool_integration
+          - risk_analysis
+          - observability
+        verification.method:
+          - independent_verifier
+          - explicit_reasoning_summary
+          - evidence_or_test_results
+          - rollback_or_recovery_plan
+        routing_explanation:
+          - Task classified as orchestration by deterministic keyword rules.
+
+  - id: operations-route
+    purpose: Select controlled business operations through Mission Control with independent control verification.
+    task:
+      task_id: conformance-operations-route
+      task: Build an operations plan for accounts payable controls and vendor performance using the operations manager.
+      risk_level: low
+      specialist: operations-manager
+    expect:
+      equals:
+        task_type: operations
+        risk_level: high
+        selected_team: mission_control
+        selected_worker: operations
+        selected_specialist: operations-manager
+        specialist_risk_profile: high
+        selected_implementation.model: claude-sonnet-5
+        selected_implementation.source: routing.operations.primary
+        fallback_implementation.model: gemini-3.1-pro-preview
+        verification.team: verification
+        verification.implementation.model: gpt-5.6-sol
+        verification.independent: true
+        verification.human_approval_required: false
+        warnings: []
+      contains:
+        required_capabilities:
+          - operational_planning
+          - process_design
+          - coordination
+          - quantitative_reasoning
+          - compliance_awareness
+          - risk_analysis
+          - documentation
+        verification.method:
+          - independent_verifier
+          - explicit_reasoning_summary
+          - evidence_or_test_results
+          - rollback_or_recovery_plan
+        routing_explanation:
+          - Task classified as operations by deterministic keyword rules.
+
+  - id: project-delivery-route
+    purpose: Select delivery governance through Mission Control without granting product, coding, or budget authority.
+    task:
+      task_id: conformance-project-delivery-route
+      task: Create a project plan with a critical path, RACI matrix, and risk register using the project manager.
+      risk_level: low
+      specialist: project-manager
+    expect:
+      equals:
+        task_type: project_delivery
+        risk_level: medium
+        selected_team: mission_control
+        selected_worker: project_delivery
+        selected_specialist: project-manager
+        specialist_risk_profile: medium
+        selected_implementation.model: claude-sonnet-5
+        selected_implementation.source: routing.project_delivery.primary
+        fallback_implementation.model: gemini-3.1-pro-preview
+        verification.team: verification
+        verification.implementation.model: gpt-5.6-sol
+        verification.independent: true
+        verification.human_approval_required: false
+        warnings: []
+      contains:
+        required_capabilities:
+          - planning
+          - coordination
+          - requirements_analysis
+          - risk_analysis
+          - dependency_mapping
+          - quantitative_reasoning
+          - clear_writing
+        verification.method:
+          - output_validation
+          - targeted_review
+        routing_explanation:
+          - Task classified as project_delivery by deterministic keyword rules.
