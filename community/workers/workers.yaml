@@ -1,4 +1,4 @@
-version: 0.2
+version: 0.3
 status: public-draft
 
 worker_template:
@@ -13,6 +13,137 @@ worker_template:
     - escalation
 
 workers:
+  orchestration:
+    mission: design, activate, coordinate, observe, and recover governed multi-agent workflows
+    owning_team: mission_control
+    responsibilities:
+      - pipeline_architecture
+      - agent_activation_protocols
+      - typed_handoff_contracts
+      - capability_registry_management
+      - pipeline_state_and_checkpointing
+      - loop_and_stall_detection
+      - token_budget_management
+      - operator_gate_placement
+    required_capabilities:
+      - orchestration_reasoning
+      - distributed_systems_reasoning
+      - schema_design
+      - tool_integration
+      - risk_analysis
+      - observability
+    preferred_implementations:
+      - gpt-5.6-sol
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - claude-opus-5
+    verification:
+      - handoff_contract_validation
+      - independent_pipeline_review
+      - failure_and_recovery_simulation
+      - authority_boundary_check
+    escalation:
+      - production_side_effect
+      - irreversible_action
+      - security_sensitive_operation
+      - authority_violation
+      - unresolved_pipeline_loop
+    authority_boundaries:
+      - no_undeclared_agent_authority
+      - no_production_side_effect_without_operator_approval
+      - no_self_modifying_instructions_or_authority
+      - no_bypass_of_required_human_gate
+
+  operations:
+    mission: coordinate people, vendors, financial operations, infrastructure maintenance, and process improvement under controlled approvals
+    owning_team: mission_control
+    responsibilities:
+      - onboarding_and_hr_operations
+      - recruitment_operations
+      - accounts_payable_workflows
+      - vendor_performance_management
+      - infrastructure_health_coordination
+      - sop_and_process_optimization
+      - operational_kpi_management
+      - change_management
+    required_capabilities:
+      - operational_planning
+      - process_design
+      - coordination
+      - quantitative_reasoning
+      - compliance_awareness
+      - risk_analysis
+      - documentation
+    preferred_implementations:
+      - gpt-5.6-sol
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - claude-opus-5
+    verification:
+      - approval_threshold_check
+      - pii_and_access_review
+      - payment_control_review
+      - infrastructure_change_plan_review
+      - jurisdiction_or_policy_validation
+    escalation:
+      - headcount_or_compensation_change
+      - payment_above_approval_threshold
+      - production_infrastructure_change
+      - legal_or_labor_conflict
+      - regulatory_deadline_at_risk
+      - worker_classification_risk
+    authority_boundaries:
+      - no_unapproved_headcount_or_compensation_change
+      - no_payment_above_threshold_without_dual_approval
+      - no_unreviewed_production_infrastructure_change
+      - no_tax_or_legal_strategy_substitution
+
+  project_delivery:
+    mission: govern cross-functional delivery through realistic scope, capacity, dependency, risk, and change controls
+    owning_team: mission_control
+    responsibilities:
+      - project_intake
+      - definition_of_done
+      - scope_and_capacity_negotiation
+      - dependency_and_critical_path_management
+      - risk_register_management
+      - stakeholder_status_and_escalation
+      - change_control
+      - delivery_metrics_and_retrospectives
+    required_capabilities:
+      - planning
+      - coordination
+      - requirements_analysis
+      - risk_analysis
+      - dependency_mapping
+      - quantitative_reasoning
+      - clear_writing
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - claude-opus-5
+    verification:
+      - capacity_and_timeline_validation
+      - definition_of_done_trace
+      - critical_path_review
+      - raci_accountability_check
+      - change_log_review
+    escalation:
+      - unachievable_scope_or_timeline
+      - critical_path_at_risk
+      - missing_accountable_owner
+      - scope_change_without_tradeoff
+      - delivery_index_below_threshold
+    authority_boundaries:
+      - no_product_decision_substitution
+      - no_code_implementation
+      - no_budget_ownership_substitution
+      - no_commitment_without_capacity_validation
+
   architecture:
     mission: design coherent systems and resolve structural tradeoffs
     owning_team: planning
