@@ -27,6 +27,11 @@ def test_researcher_has_domain_evidence_depth() -> None:
     assert "## Cross-Domain Claim Ledger" in card
     assert "Three URLs repeating one original source are not triangulation" in card
     assert "Replaces all 7 original" not in card
+    assert "minimum of 3 independent sources" not in card
+    assert "older than 2 years" not in card
+    assert "past 24 months" not in card
+    assert "historical (pre-2000)" not in card
+    assert "Do not manufacture a source-count threshold" in card
 
 
 def test_data_analyst_has_high_risk_model_qa_protocol() -> None:
@@ -45,6 +50,10 @@ def test_data_analyst_has_high_risk_model_qa_protocol() -> None:
     assert "Does not treat removal of protected attributes as proof" in card
     assert "A random row split is rejected" in card
     assert "no universal disparity threshold" in card
+    assert "±2σ" not in card
+    assert "3+ periods" not in card
+    assert "false-alert behavior" in card
+    assert "operationally meaningful duration" in card
 
 
 def test_devsecops_examples_follow_full_sha_policy() -> None:
