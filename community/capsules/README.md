@@ -32,3 +32,4 @@ Each capsule should record:
 | Capsule | Captured state | Snapshot commit |
 |---|---|---|
 | [TEO-CAPSULE-0001](0001-2026-08-05-reference-control-plane.md) | The reference control plane exists; Phases 1–5 complete | `1aec5f651e4b448b5cb2cf0d7e0b1e3d099ee938` |
+| [TEO-CAPSULE-0002](0002-2026-08-05-specialist-freshness-architecture.md) | Specialist depth is preserved through freshness, source-authority, applicability, and regression controls | `21a4b5281eab025fa5f3b76c84e823a4d202a1ea` |
