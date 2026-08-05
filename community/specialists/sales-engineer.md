@@ -265,7 +265,6 @@ A technical win without a commercial win is not a win — it is a reference cust
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/sales-engineer.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Engineering Team, Research Team, Review Team
 - **Worker binding:** `solution_engineering`
@@ -274,4 +273,4 @@ A technical win without a commercial win is not a win — it is a reference cust
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

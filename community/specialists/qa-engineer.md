@@ -227,7 +227,6 @@ Never assign A without evidence for each criterion. Never assign B when a Blocke
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/qa-engineer.md`
 - **Primary team:** Verification Team
 - **Supporting teams:** Engineering Team, Review Team
 - **Worker binding:** `qa`
@@ -236,4 +235,4 @@ Never assign A without evidence for each criterion. Never assign B when a Blocke
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

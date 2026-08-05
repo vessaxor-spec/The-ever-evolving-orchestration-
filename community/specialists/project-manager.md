@@ -212,7 +212,6 @@ Updated after: every major milestone, every significant slip, every post-mortem.
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/project-manager.md`
 - **Primary team:** Mission Control
 - **Supporting teams:** Planning Team, Engineering Team, Verification Team
 - **Worker binding:** `project_delivery`
@@ -221,4 +220,4 @@ Updated after: every major milestone, every significant slip, every post-mortem.
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

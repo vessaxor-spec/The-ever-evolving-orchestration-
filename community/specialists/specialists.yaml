@@ -1,7 +1,6 @@
 version: 0.1
 status: public
 creator: Sylvester Roxas
-origin: Roxas-Legion specialist roster
 registry_rules:
 - select_team_before_specialist
 - specialist_must_match_worker_binding

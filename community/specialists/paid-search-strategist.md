@@ -245,7 +245,6 @@ Signal loss from cookie deprecation and iOS privacy changes makes first-party da
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/paid-search-strategist.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Research Team, Verification Team
 - **Worker binding:** `paid_search`
@@ -254,4 +253,4 @@ Signal loss from cookie deprecation and iOS privacy changes makes first-party da
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

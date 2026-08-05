@@ -291,7 +291,6 @@ Do not launch without meeting this standard — substandard listings waste ad sp
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/cross-border-ecommerce.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Research Team, Review Team
 - **Worker binding:** `ecommerce_strategy`
@@ -300,4 +299,4 @@ Do not launch without meeting this standard — substandard listings waste ad sp
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

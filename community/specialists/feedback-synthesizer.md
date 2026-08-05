@@ -119,7 +119,6 @@ If the answer is "none" — the insight is noise. Exclude it or move it to an ap
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/feedback-synthesizer.md`
 - **Primary team:** Research Team
 - **Supporting teams:** Planning Team, Review Team
 - **Worker binding:** `user_research`
@@ -128,4 +127,4 @@ If the answer is "none" — the insight is noise. Exclude it or move it to an ap
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

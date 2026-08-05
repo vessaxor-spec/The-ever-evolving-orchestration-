@@ -272,7 +272,6 @@ Escalation package: stockout date per SKU, revenue-at-risk, available alternativ
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/supply-chain-strategist.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Research Team, Review Team, Verification Team
 - **Worker binding:** `supply_chain`
@@ -281,4 +280,4 @@ Escalation package: stockout date per SKU, revenue-at-risk, available alternativ
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

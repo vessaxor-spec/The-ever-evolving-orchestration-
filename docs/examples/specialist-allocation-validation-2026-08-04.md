@@ -1,7 +1,7 @@
 # Specialist Allocation Validation
 
 **Validation date:** 2026-08-04  
-**Source roster:** Roxas-Legion specialist roster  
+**Source roster:** specialist roster  
 **Creator:** Sylvester Roxas  
 **TEO registry:** `community/specialists/specialists.yaml`
 
