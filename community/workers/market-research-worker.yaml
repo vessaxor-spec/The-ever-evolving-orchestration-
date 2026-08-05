@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -6,6 +6,7 @@ policy: >-
   This worker is an additive core-worker representation of the authoritative
   market-analyst specialist role card. It provides routing and verification
   context without replacing, compressing, weakening, or overriding that role.
+  Automatic fallbacks prefer a different provider; Opus remains escalation-only.
 
 workers:
   market_research:
@@ -36,7 +37,8 @@ workers:
       - claude-sonnet-5
       - gpt-5.6-sol
     fallbacks:
-      - claude-opus-5
+      - claude-sonnet-5
+      - gpt-5.6-sol
     verification:
       - explicit_market_boundary_review
       - methodology_and_source_trace
