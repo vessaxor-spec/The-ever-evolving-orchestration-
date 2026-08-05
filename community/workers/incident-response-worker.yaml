@@ -1,11 +1,12 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
 policy: >-
   This additive core-worker definition resolves the incident-commander specialist
   binding without modifying, compressing, weakening, or overriding its
-  authoritative role card.
+  authoritative role card. Automatic fallbacks prefer a different provider;
+  Opus remains reserved for evidence-based escalation.
 
 workers:
   incident_response:
@@ -34,7 +35,8 @@ workers:
       - gpt-5.6-sol
       - gemini-3.1-pro-preview
     fallbacks:
-      - claude-opus-5
+      - gemini-3.1-pro-preview
+      - gpt-5.6-sol
     verification:
       - severity_evidence_review
       - role_and_cadence_check
