@@ -1,0 +1,110 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  These fixtures bind Mission Control specialists to distinct core workers.
+  The core worker layer is additive and must not replace, compress, or weaken
+  the authoritative specialist role cards.
+
+bindings:
+  - specialist: agents-orchestrator
+    worker: orchestration
+    primary_team: mission_control
+    risk_profile: high
+    role_card: community/specialists/agents-orchestrator.md
+    contains:
+      responsibilities:
+        - pipeline_architecture
+        - agent_activation_protocols
+        - typed_handoff_contracts
+        - pipeline_state_and_checkpointing
+        - loop_and_stall_detection
+        - operator_gate_placement
+      required_capabilities:
+        - orchestration_reasoning
+        - distributed_systems_reasoning
+        - schema_design
+        - tool_integration
+        - risk_analysis
+        - observability
+      verification:
+        - handoff_contract_validation
+        - independent_pipeline_review
+        - failure_and_recovery_simulation
+        - authority_boundary_check
+      authority_boundaries:
+        - no_undeclared_agent_authority
+        - no_production_side_effect_without_operator_approval
+        - no_self_modifying_instructions_or_authority
+        - no_bypass_of_required_human_gate
+
+  - specialist: operations-manager
+    worker: operations
+    primary_team: mission_control
+    risk_profile: high
+    role_card: community/specialists/operations-manager.md
+    contains:
+      responsibilities:
+        - onboarding_and_hr_operations
+        - recruitment_operations
+        - accounts_payable_workflows
+        - vendor_performance_management
+        - infrastructure_health_coordination
+        - sop_and_process_optimization
+        - operational_kpi_management
+        - change_management
+      required_capabilities:
+        - operational_planning
+        - process_design
+        - coordination
+        - quantitative_reasoning
+        - compliance_awareness
+        - risk_analysis
+        - documentation
+      verification:
+        - approval_threshold_check
+        - pii_and_access_review
+        - payment_control_review
+        - infrastructure_change_plan_review
+        - jurisdiction_or_policy_validation
+      authority_boundaries:
+        - no_unapproved_headcount_or_compensation_change
+        - no_payment_above_threshold_without_dual_approval
+        - no_unreviewed_production_infrastructure_change
+        - no_tax_or_legal_strategy_substitution
+
+  - specialist: project-manager
+    worker: project_delivery
+    primary_team: mission_control
+    risk_profile: medium
+    role_card: community/specialists/project-manager.md
+    contains:
+      responsibilities:
+        - project_intake
+        - definition_of_done
+        - scope_and_capacity_negotiation
+        - dependency_and_critical_path_management
+        - risk_register_management
+        - stakeholder_status_and_escalation
+        - change_control
+        - delivery_metrics_and_retrospectives
+      required_capabilities:
+        - planning
+        - coordination
+        - requirements_analysis
+        - risk_analysis
+        - dependency_mapping
+        - quantitative_reasoning
+        - clear_writing
+      verification:
+        - capacity_and_timeline_validation
+        - definition_of_done_trace
+        - critical_path_review
+        - raci_accountability_check
+        - change_log_review
+      authority_boundaries:
+        - no_product_decision_substitution
+        - no_code_implementation
+        - no_budget_ownership_substitution
+        - no_commitment_without_capacity_validation
