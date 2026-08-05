@@ -20,6 +20,17 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
+def _load_routing(path: Path) -> dict[str, Any]:
+    data = _load_yaml(path)
+    policy = data.get("verification_policy")
+    if isinstance(policy, dict):
+        for risk in ("low", "medium", "high"):
+            canonical_key = f"{risk}_risk"
+            if risk not in policy and canonical_key in policy:
+                policy[risk] = policy[canonical_key]
+    return data
+
+
 @dataclass(slots=True)
 class ConfigBundle:
     root: Path
@@ -35,7 +46,7 @@ class ConfigBundle:
         bundle = cls(
             root=root_path,
             team_routing=_load_yaml(root_path / "policy/routing/team-routing.yaml"),
-            routing=_load_yaml(root_path / "policy/routing/routing.yaml"),
+            routing=_load_routing(root_path / "policy/routing/routing.yaml"),
             workers=_load_yaml(root_path / "community/workers/workers.yaml"),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
             models=_load_yaml(root_path / "models.yaml"),
