@@ -68,6 +68,22 @@ TASK_PATTERNS: list[tuple[str, tuple[str, ...]]] = [
             "on-call rotation",
         ),
     ),
+    (
+        "market_research",
+        (
+            "market research",
+            "competitive landscape",
+            "competitive positioning",
+            "market sizing",
+            "tam sam som",
+            "weak signals",
+            "category lifecycle",
+            "go-to-market timing",
+            "market opportunity",
+            "ai search visibility",
+            "agentic search visibility",
+        ),
+    ),
     ("security_review", ("security review", "threat model", "vulnerability", "authentication", "authorization")),
     ("code_review", ("code review", "review this diff", "review the pull request", "review pr")),
     ("deep_debugging", ("debug", "root cause", "failing test", "failure", "incident")),
@@ -104,6 +120,7 @@ ROUTE_IMPLEMENTATION_KEYS: dict[str, tuple[str, ...]] = {
     "operations": ("primary",),
     "project_delivery": ("primary",),
     "incident_response": ("primary",),
+    "market_research": ("primary",),
     "architecture_design": ("primary",),
     "daily_coding": ("primary",),
     "deep_debugging": ("primary",),
@@ -131,6 +148,16 @@ VERIFIER_KEYS: tuple[str, ...] = (
 CAPABILITY_FAMILY: tuple[tuple[set[str], str], ...] = (
     ({"coding", "debugging", "tool_execution", "executable_verification"}, "coding"),
     ({"architecture", "planning", "high_reasoning", "orchestration_reasoning"}, "engineering_reasoning"),
+    (
+        {
+            "market_intelligence",
+            "competitive_analysis",
+            "trend_analysis",
+            "current_information_retrieval",
+            "source_validation",
+        },
+        "research",
+    ),
     ({"synthesis", "technical_accuracy", "clear_writing"}, "general_reasoning"),
     ({"visual_reasoning", "visual_analysis"}, "multimodal"),
 )

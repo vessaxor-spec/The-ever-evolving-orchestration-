@@ -1,4 +1,4 @@
-version: 0.3
+version: 0.4
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -180,3 +180,42 @@ scenarios:
           - targeted_review
         routing_explanation:
           - Task classified as deep_research by deterministic keyword rules.
+
+  - id: deterministic-market-research-classification
+    purpose: Preserve market-specific classification, dedicated worker ownership, market-analyst activation, bounded analysis, and independent verification.
+    task:
+      task_id: conformance-market-research
+      task: Map the competitive landscape and size the TAM SAM SOM with current weak signals using the market analyst.
+      risk_level: low
+      specialist: market-analyst
+    expect:
+      equals:
+        task_type: market_research
+        risk_level: medium
+        selected_team: research
+        selected_worker: market_research
+        selected_specialist: market-analyst
+        specialist_risk_profile: medium
+        selected_implementation.model: gemini-3.1-pro-preview
+        selected_implementation.source: routing.market_research.primary
+        fallback_implementation.model: gpt-5.6-sol
+        verification.team: verification
+        verification.implementation.model: claude-sonnet-5
+        verification.independent: true
+        verification.human_approval_required: false
+        warnings: []
+      contains:
+        required_capabilities:
+          - market_intelligence
+          - competitive_analysis
+          - quantitative_reasoning
+          - source_validation
+          - current_information_retrieval
+          - trend_analysis
+          - strategic_synthesis
+          - confidence_calibration
+        verification.method:
+          - output_validation
+          - targeted_review
+        routing_explanation:
+          - Task classified as market_research by deterministic keyword rules.
