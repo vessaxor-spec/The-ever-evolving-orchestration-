@@ -1,0 +1,56 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  These implementation routes are first-class Research Team routes. They are
+  loaded alongside the shared routing policy without changing or weakening the
+  authoritative specialist specifications or broad-domain research route.
+
+routing:
+  market_research:
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: gather current market evidence, map competitors, size bounded opportunities, and synthesize strategic signals
+    fast_collection:
+      agent: agy
+      model: gemini-3.6-flash
+      profile: luna
+      reasoning: medium
+      purpose: collect current competitor, pricing, funding, hiring, patent, search, and category signals
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: reconstruct market logic and quantitative methodology when the primary route is unavailable
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: independently challenge market boundaries, source quality, estimates, lifecycle alignment, and strategic conclusions
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      use_when:
+        - market_sizing_math_requires_validation
+        - quantitative_model_or_dataset_is_provided
+        - ai_search_or_discovery_claims_require_technical_review
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - materially_conflicting_market_sources
+        - single_source_market_size
+        - regulated_or_high_consequence_market
+        - investment_or_financial_decision_requested
+        - irreversible_market_entry_commitment
+        - insufficient_evidence_for_strategic_recommendation
