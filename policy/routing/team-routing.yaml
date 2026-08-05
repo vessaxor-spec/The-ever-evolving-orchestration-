@@ -1,4 +1,4 @@
-version: 0.3
+version: 0.4
 status: public-draft
 
 routing_order:
@@ -87,7 +87,7 @@ team_routes:
 
   code_review:
     primary_team: review
-    primary_worker: architecture
+    primary_worker: code_review
     supporting_workers:
       - security
       - performance
