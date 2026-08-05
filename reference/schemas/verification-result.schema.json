@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/verification-result.schema.json",
+  "title": "TEO Verification Result",
+  "type": "object",
+  "required": ["dispatch_id", "status", "verifier_model"],
+  "properties": {
+    "dispatch_id": {"type": "string"},
+    "status": {"enum": ["passed", "failed", "needs_human"]},
+    "verifier_model": {"type": "string"},
+    "checks": {"type": "array", "items": {"type": "string"}},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": ["string", "null"]}
+  }
+}
