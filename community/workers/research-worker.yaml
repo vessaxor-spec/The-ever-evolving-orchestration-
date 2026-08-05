@@ -1,11 +1,13 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
 policy: >-
   This worker is derived from the authoritative researcher specialist role card.
   It adds core routing and verification context without replacing, compressing,
-  weakening, or overriding that specialist specification.
+  weakening, or overriding that specialist specification. Automatic fallbacks
+  prefer a different provider family from the selected implementation. Opus is
+  reserved for evidence-based escalation rather than routine availability failover.
 
 workers:
   research:
@@ -33,7 +35,8 @@ workers:
       - claude-sonnet-5
       - gpt-5.6-sol
     fallbacks:
-      - claude-opus-5
+      - claude-sonnet-5
+      - gpt-5.6-sol
     verification:
       - source_independence_check
       - claim_evidence_trace
