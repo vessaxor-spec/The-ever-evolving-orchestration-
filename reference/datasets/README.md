@@ -28,6 +28,12 @@ The incident-response scenario additionally requires critical-risk verification,
 
 The fixture protects source triangulation, evidence traceability, contradiction analysis, confidence calibration, escalation boundaries, and the separation between research synthesis and final deliverable writing. Routing conformance separately requires `deep_research` to use this worker while documentation tasks remain on the `documentation` worker.
 
+## Market research worker conformance
+
+[`market-research-worker-conformance.yaml`](market-research-worker-conformance.yaml) binds the `market-analyst` specialist to the dedicated Research Team `market_research` worker.
+
+The fixture protects explicit market boundaries, current-data requirements, methodology and source traceability, estimate labeling, moat and lifecycle analysis, weak-signal corroboration, willingness-to-pay weighting, and the separation from campaign execution, paid media, investment decisions, and broad-domain research.
+
 ## Configuration warning baseline
 
 [`configuration-warning-baseline.yaml`](configuration-warning-baseline.yaml) records known inconsistencies currently exposed by configuration validation.
