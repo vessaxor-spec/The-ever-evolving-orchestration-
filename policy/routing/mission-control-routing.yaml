@@ -1,0 +1,117 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  These implementation routes are first-class Mission Control routes. They are
+  loaded into the reference router alongside the shared implementation policy
+  without changing or weakening the underlying specialist specifications.
+
+routing:
+  orchestration:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: design and govern executable multi-agent pipelines, handoffs, state, and recovery
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: inspect large capability registries, protocol documentation, and pipeline context
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    semantic_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: independently challenge authority boundaries, termination criteria, and recovery design
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - production_side_effect
+        - irreversible_action
+        - security_sensitive_operation
+        - authority_violation
+        - unresolved_pipeline_loop
+
+  operations:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: coordinate operational processes, controls, dependencies, and accountable execution
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: inspect policy, jurisdictional, vendor, process, and operational evidence
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: independently verify control logic, thresholds, dependencies, and executable change plans
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - payment_above_approval_threshold
+        - production_infrastructure_change
+        - legal_or_labor_conflict
+        - regulatory_deadline_at_risk
+        - worker_classification_risk
+
+  project_delivery:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: govern scope, capacity, dependencies, critical path, risk, and delivery commitments
+    planning_support:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: validate delivery plans against technical execution constraints
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: independently validate capacity, sequencing, critical path, and definition of done
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - unachievable_scope_or_timeline
+        - critical_path_at_risk
+        - missing_accountable_owner
+        - scope_change_without_tradeoff
+        - delivery_index_below_threshold
