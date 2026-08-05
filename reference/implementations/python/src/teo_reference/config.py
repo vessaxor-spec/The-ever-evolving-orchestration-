@@ -52,6 +52,31 @@ def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[st
     return data
 
 
+def _load_workers(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
+    data = _load_yaml(path)
+    workers = data.get("workers")
+    if not isinstance(workers, dict):
+        raise ConfigurationError(f"Worker configuration must contain a workers mapping: {path}")
+
+    for extension_path in extension_paths:
+        if not extension_path.is_file():
+            continue
+        extension = _load_yaml(extension_path)
+        extension_workers = extension.get("workers")
+        if not isinstance(extension_workers, dict):
+            raise ConfigurationError(
+                f"Worker extension must contain a workers mapping: {extension_path}"
+            )
+        duplicates = sorted(set(workers).intersection(extension_workers))
+        if duplicates:
+            raise ConfigurationError(
+                f"Worker extension duplicates canonical workers in {extension_path}: "
+                + ", ".join(duplicates)
+            )
+        workers.update(extension_workers)
+    return data
+
+
 @dataclass(slots=True)
 class ConfigBundle:
     root: Path
@@ -71,7 +96,10 @@ class ConfigBundle:
                 root_path / "policy/routing/routing.yaml",
                 (root_path / "policy/routing/mission-control-routing.yaml",),
             ),
-            workers=_load_yaml(root_path / "community/workers/workers.yaml"),
+            workers=_load_workers(
+                root_path / "community/workers/workers.yaml",
+                (root_path / "community/workers/incident-response-worker.yaml",),
+            ),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
             models=_load_yaml(root_path / "models.yaml"),
         )
