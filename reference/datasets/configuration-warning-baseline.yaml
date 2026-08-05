@@ -1,0 +1,12 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  These warnings are known configuration inconsistencies, not ignored failures.
+  CI compares the exact warning set. Resolving, adding, removing, or rewording a
+  warning requires an intentional baseline update in the same reviewed change.
+
+expected_issues:
+  - "WARNING: route code_review selects review/architecture, but the worker belongs to planning"
+  - "WARNING: specialist bindings without core worker definitions: analytics, automation, blockchain, brand_design, civil_engineering, code_review, compliance, content, customer_success, devsecops, documentation_verification, ecommerce_strategy, embedded, financial_analysis, game_engineering, generative_media, incident_response, knowledge_management, learning_design, legal, lending_compliance, malware_analysis, market_research, operations, orchestration, osint, paid_search, paid_social, product_strategy, programmatic_media, project_delivery, real_estate, regional_marketing, research, revenue_analytics, sales_enablement, sales_strategy, security_advisory, seo_review, social_strategy, solution_engineering, supply_chain, systems_engineering, tax_review, terminal_ui, user_research, ux_review, xr_engineering"
