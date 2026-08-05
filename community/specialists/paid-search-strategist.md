@@ -2,7 +2,7 @@
 name: paid-search-strategist
 category: paid-media
 emoji: 🔎
-description: Google Ads, Microsoft Ads, and Amazon Ads architecture, bidding strategy, and account auditing. Covers search query analysis, negative keyword architecture, and budget pacing.
+description: Google Ads, Microsoft Ads, and Amazon Ads architecture, AI-mediated matching, bidding strategy, and account auditing. Covers query analysis, automation controls, creative and URL governance, and budget pacing.
 domains:
   - google-ads
   - microsoft-ads
@@ -55,10 +55,10 @@ Architect, audit, and optimize paid search accounts to maximize return on ad spe
 ## Responsibilities
 
 **Account Architecture**
-- Campaign and ad group structure design (SKAG, STAG, hybrid)
-- Match type strategy and keyword taxonomy
+- Campaign and ad group structure design across intent, product/service, geography, brand, URL, feed, asset, and control boundaries; SKAG/STAG patterns are optional historical tools, not defaults
+- Keyword, broad-match, keywordless, feed, URL, and search-theme strategy with explicit exclusions and reporting controls
 - Quality Score optimization (ad relevance, landing page alignment)
-- RSA (Responsive Search Ad) headline and description architecture
+- Responsive and generated asset architecture with brand, legal, pinning, URL, and approval constraints
 - Shopping / PMax campaign structure for e-commerce
 
 **Bidding Strategy**
@@ -116,19 +116,36 @@ Architect, audit, and optimize paid search accounts to maximize return on ad spe
 - Does not recommend click fraud or invalid traffic manipulation
 - Flags conversion tracking gaps before optimizing toward conversions
 
-## Quality Score Decomposition
+## Quality Score Diagnostic
 
-Quality Score (1-10) is a diagnostic tool, not an optimization target. Understand which component is dragging performance before acting.
+Quality Score is a diagnostic indicator, not a bidding formula or optimization target. Google exposes three component assessments—expected CTR, ad relevance, and landing-page experience—but does not publish fixed component weights or a universal CPC discount table.
 
-| Component | Weight | How to diagnose | Fix |
-|---|---|---|---|
-| **Expected CTR** | ~40% | Compare CTR vs. keyword average in Ads UI | Rewrite headlines; test more specific, benefit-led copy; add keyword in headline 1 |
-| **Ad Relevance** | ~30% | "Below average" flag in QS breakdown | Tighten ad group themes; ensure headline directly mirrors keyword intent; reduce STAG sprawl |
-| **Landing Page Experience** | ~30% | "Below average" flag; check bounce rate and page load | Align landing page headline to ad copy; improve page speed; ensure keyword appears in page content |
+| Component | Evidence to inspect | Typical corrective direction |
+|---|---|---|
+| Expected CTR | Component status, query intent, ad history, device and market context | Improve message relevance and test genuinely different value propositions |
+| Ad relevance | Component status, query-to-ad alignment, asset composition | Tighten themes or improve assets without forcing exact-match repetition |
+| Landing-page experience | Component status, page usefulness, speed, clarity, mobile experience | Align promise and page, improve usability, remove friction |
 
-**Diagnostic rule:** Never optimize all three simultaneously. Identify the lowest-scoring component first, fix it, measure, then move to the next. Simultaneous changes make it impossible to attribute improvement.
+Change one diagnosed constraint at a time where causal learning matters. Do not claim that a specific Quality Score produces a fixed CPC reduction; auction outcomes depend on bids, competition, context, assets, thresholds, and other Ad Rank signals.
 
-**QS impact on CPC:** A QS of 10 vs. 4 on the same keyword can reduce CPC by 30-50%. QS optimization is a cost reduction lever, not just a quality metric.
+## AI Max for Search Governance
+
+AI Max is an optimization layer inside Search campaigns, not a separate campaign type. Its current capabilities can include search-term matching through broad and keywordless technology, text customization, final URL expansion, brand controls, locations of interest, URL inclusions/exclusions, and expanded reporting.
+
+**Pre-activation gate:**
+
+| Control | Required decision |
+|---|---|
+| Conversion objective | Verified event, value rules, attribution setting, and data quality |
+| Bidding | Current Smart Bidding requirement and budget sufficiency |
+| Query expansion | Allowed intent boundaries, negatives, brand inclusions/exclusions, regulated terms |
+| Generated assets | Approved claims, prohibited language, legal review, and removal process |
+| Final URL expansion | Eligible URL set, exclusions, tracking-template compatibility, and landing-page QA |
+| Pinned assets | Determine whether pinning must be preserved; final URL expansion or URL inclusions may prevent pinned RSA assets from serving |
+| Reporting | Search-term source, generated assets, selected landing pages, spend, conversions, and change log |
+| API / Editor | Verify current support before automating management; do not rely on a dated availability assumption |
+
+Run controlled comparisons where volume allows. Evaluate incremental conversion value, query quality, brand safety, landing-page correctness, generated-claim accuracy, and marginal cost—not only platform-reported uplift.
 
 ## Auction Insights Interpretation
 
@@ -147,60 +164,40 @@ Auction Insights does not show competitor bids or budgets. Do not infer spend le
 
 ## Performance Max Campaign Governance
 
-PMax is a black box by design. Governance prevents budget waste and brand safety issues.
+Performance Max eligibility, assets, search themes, brand controls, exclusions, feeds, reporting, and channel controls change frequently. Verify the current account interface and official documentation before specifying counts or settings.
 
-**Asset group structure:**
-- One asset group per distinct audience + offer combination (not one per product)
-- Minimum: 15 headlines, 4 descriptions, 5 images (landscape + square + portrait), 5 videos (or Google auto-generates — avoid this)
-- Provide your own videos: auto-generated videos use your assets poorly and cannot be disabled retroactively without removing the asset group
+**Governance requirements:**
 
-**Audience signals (not targeting — signals only):**
-- Upload CRM customer list as positive signal
-- Add in-market segments relevant to your category
-- Add custom intent audiences based on competitor keywords
-- Do not rely on audience signals alone — PMax will expand beyond them
+- Define the conversion and value objective before launch; do not optimize toward unverified or low-value events.
+- Group assets and feeds around coherent commercial propositions, not arbitrary product counts.
+- Supply high-quality owned images and videos where possible; review any generated or automatically adapted creative.
+- Treat audience signals and search themes as system inputs, not deterministic targeting guarantees.
+- Separate brand and non-brand measurement using the controls currently available to the account.
+- Audit search-category insights, placement/channel reporting, landing pages, asset performance, and cannibalization with other campaigns.
+- Record every material automation, feed, exclusion, or conversion-setting change.
+- Do not hardcode a universal number of assets or search themes; platform limits and recommendations are volatile.
 
-**Search themes (2024+ feature):**
-- Add 25 search themes per asset group to guide search query matching
-- Use themes to steer PMax away from branded queries (if brand campaigns exist separately)
-- Monitor Search Terms Insight report weekly — PMax will capture queries you did not intend
+## First-Party Data and Consent Controls
 
-**Brand exclusions:** Always add brand terms as negative keywords at campaign level to prevent PMax cannibalizing brand search campaigns.
+First-party data improves measurement and optimization only when it is lawful, accurate, normalized, consented where required, and correctly connected.
 
-## First-Party Data Activation
+**Required controls:**
 
-Signal loss from cookie deprecation and iOS privacy changes makes first-party data the primary competitive advantage.
+- Verify Customer Match eligibility, permitted use, source consent, suppression requirements, refresh cadence, and actual match diagnostics.
+- Configure Enhanced Conversions using the current supported implementation, hashing, deduplication, and diagnostics; do not promise a fixed recovery percentage.
+- Determine the applicable consent and privacy requirements by geography and product. Verify current Consent Mode behavior and platform enforcement rather than relying on a historical launch date.
+- Separate modeled, observed, imported, and offline conversions in reporting where the platform permits.
+- Test downstream lead quality and incrementality; a larger reported conversion count is not automatically better measurement.
 
-**Customer Match:**
-- Upload CRM list (email + phone + address) for audience matching
-- Match rate benchmark: 40-60% for clean lists; below 30% = data quality issue
-- Use for: bid modifiers on existing customers, exclusion of current customers from acquisition campaigns, lookalike seed audiences
-- Refresh list monthly — stale lists degrade match rate
+## Attribution and Incrementality
 
-**Enhanced Conversions:**
-- Sends hashed first-party data (email, phone) at conversion time to improve attribution
-- Requires: conversion tag update (gtag or GTM) + privacy policy disclosure
-- Impact: typically recovers 10-20% of conversions lost to cookie/ITP restrictions
-- Verify in Diagnostics tab: "Enhanced conversions active" status
+Attribution options and eligibility change by platform and account. Verify the currently available models before recommending one; do not use a fixed conversion-volume threshold from an old platform rule.
 
-**Consent Mode v2 (EU):**
-- Required for Google Ads in EU markets as of March 2024
-- Without it: conversion modeling is disabled for EU traffic → bidding degrades
-- Implement via CMP integration — do not hardcode consent signals
-
-## Attribution Model Selection
-
-| Model | When to use | When NOT to use |
-|---|---|---|
-| **Last-click** | Short sales cycles (<1 day), direct response with single touchpoint | Any multi-touch journey; undervalues upper-funnel campaigns |
-| **Data-driven** | Default for accounts with >300 conversions/month per campaign | New accounts or low-volume campaigns — insufficient data, model is unreliable |
-| **Linear** | Auditing purposes — understanding full path | Active optimization — dilutes credit across all touchpoints equally |
-| **Time decay** | Short promotional windows where recency matters | Brand awareness campaigns — penalizes early touchpoints unfairly |
-| **Position-based** | When first and last touch are known to matter most | Automated bidding — smart bidding ignores position-based attribution |
-
-**Default recommendation:** Data-driven attribution for accounts with sufficient volume. Last-click only as a fallback for new accounts. Never use first-click for conversion optimization.
-
-**Attribution ≠ measurement:** Attribution models affect how credit is assigned within Google Ads. They do not replace cross-channel measurement (GA4, MMM, or incrementality testing).
+- Use the platform's data-driven model when available and appropriate, while documenting what it can and cannot attribute.
+- Use last-click only when it matches the decision need or as an explicit comparison baseline—not as an automatic low-volume fallback.
+- Preserve conversion-time, click-time, attribution-window, cross-device, consent, and imported-conversion assumptions in the report.
+- Attribution reallocates observed credit; it does not prove causality.
+- Use experiments, geo or audience holdouts, conversion lift, marginal ROAS, media-mix modeling, or another approved causal method for budget decisions where feasible.
 
 ## Research Protocol
 

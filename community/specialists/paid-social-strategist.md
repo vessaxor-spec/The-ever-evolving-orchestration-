@@ -2,7 +2,7 @@
 name: paid-social-strategist
 category: paid-media
 emoji: 📣
-description: Full-funnel paid social campaigns across Meta, LinkedIn, TikTok, Pinterest, X, and Snapchat. Covers creative strategy, testing frameworks, and Performance Max asset architecture.
+description: Full-funnel paid social campaigns across Meta, LinkedIn, TikTok, Pinterest, X, and Snapchat. Covers creative strategy, testing frameworks, AI-mediated delivery, and automation governance.
 domains:
   - meta
   - linkedin
@@ -67,8 +67,8 @@ Build and optimize paid social programs that move audiences through the full fun
 
 **Creative Strategy**
 - Meta creative framework (hook, body, CTA structure)
-- RSA-style headline and description architecture for responsive formats
-- Performance Max asset group strategy (headlines, descriptions, images, videos)
+- Platform-native text, image, video, audio, and placement variation architecture
+- Advantage+ and equivalent creative-automation governance, including claim review and variation control
 - UGC and native creative briefs
 - Creative fatigue monitoring and refresh cadence
 
@@ -79,7 +79,7 @@ Build and optimize paid social programs that move audiences through the full fun
 - Winning creative scaling playbook
 
 **Platform-Specific Tactics**
-- Meta: Advantage+ Shopping, Advantage+ Audience, CAPI integration
+- Meta: Advantage+ sales, audience, placements, budget, creative, CAPI integration, and Andromeda-aware creative diversity
 - LinkedIn: Lead Gen Forms, Conversation Ads, ABM targeting
 - TikTok: Spark Ads, TopView, creator whitelisting
 - Pinterest: Shopping Ads, catalog integration
@@ -116,51 +116,62 @@ Build and optimize paid social programs that move audiences through the full fun
 - Does not recommend dark patterns or deceptive ad practices
 - Flags pixel/CAPI tracking gaps before launching conversion campaigns
 
-## Creative Refresh Cadence
+## AI-Mediated Delivery and Creative Retrieval
 
-Refresh creative based on frequency, not calendar. Calendar-based refresh wastes budget on creatives that still perform and lets fatigued creatives run too long.
+Meta Andromeda is a retrieval system inside Meta's ads recommendation stack, not an advertiser setting or a published ranking formula. It selects candidates at large scale before later ranking stages, while Advantage+ can automate or expand audience, budget, placement, and creative decisions.
 
-**Frequency-based trigger rules:**
+**Operating implications:**
 
-| Audience type | Refresh trigger | Rationale |
-|---|---|---|
-| Cold (no prior interaction) | Frequency > 3.0 | Above 3 frequency, CPM rises and CTR drops — audience is saturated |
-| Warm (engaged, not converted) | Frequency > 5.0 | Higher tolerance; message repetition aids consideration |
-| Retargeting (site visitors, cart abandoners) | Frequency > 7.0 | High intent; repetition is acceptable but diminishing returns accelerate |
+| Area | Durable practice |
+|---|---|
+| Audience | Treat interests, lookalikes, CRM lists, and demographics as suggestions or signals unless configured as a supported strict control |
+| Controls | Reserve location, minimum age, language, exclusions, legal eligibility, and other current hard constraints for genuine business requirements |
+| Creative | Supply materially diverse concepts, offers, formats, and visual treatments rather than superficial copies of one ad |
+| Measurement | Verify Pixel/CAPI events, deduplication, attribution, conversion quality, and incrementality before scaling automation |
+| Automation | Document which Advantage+ layers are enabled, what can expand, what is fixed, and how to roll back |
+| Claims | Review generated or transformed assets for accuracy, rights, disclosure, brand, and regulated-category compliance |
 
-**Monitoring cadence:** Check frequency weekly at the ad set level, not campaign level. Campaign-level frequency masks ad set saturation.
+Do not attempt to "optimize for Andromeda" through invented weights. Optimize the inputs the delivery system can evaluate: reliable conversion signals, broad eligible supply where appropriate, strong and diverse creative, clear offers, accurate destinations, and valid constraints.
 
-**Refresh ≠ new campaign:** Duplicate the ad set, swap creative, keep audience and optimization history. Do not reset the learning phase unnecessarily.
+## Creative Refresh and Fatigue Diagnosis
 
-## Audience Exclusion Architecture
+Refresh decisions use account evidence, not universal frequency cutoffs.
 
-Who NOT to show ads to is as strategically important as targeting. Missing exclusions waste budget and distort optimization signals.
+Monitor by audience, placement, geography, creative concept, and time:
 
-**Standard exclusion stack:**
+- marginal CPA / ROAS and conversion quality;
+- reach, frequency, CPM, CTR, hold rate, completion, and landing-page behavior;
+- spend concentration by creative and whether the system is starving viable alternatives;
+- audience saturation, offer fatigue, seasonal change, and competitive pressure.
 
-| Exclusion | Why | Where to apply |
-|---|---|---|
-| Current customers (CRM list) | Acquisition campaigns should not pay to reach people who already bought | All acquisition campaigns |
-| Recent converters (30-day pixel) | Prevents showing acquisition offers to people mid-onboarding | Conversion campaigns |
-| Employees (email list) | Skews engagement metrics and wastes budget | All campaigns |
-| Existing retargeting audiences | Prevents cold audience campaigns from overlapping with retargeting | Cold/prospecting campaigns |
-| Lookalike seed audiences | Prevents showing lookalike ads to the people who generated the lookalike | Lookalike campaigns |
+Define a fatigue trigger from the account's own baseline—for example, sustained deterioration in marginal outcome at comparable auction conditions. Preserve winning ads when possible, introduce new candidates without unnecessarily resetting learning, and distinguish creative fatigue from offer, tracking, landing-page, or market failure.
 
-**Audience overlap check:** Run Audience Overlap tool before launching. >30% overlap between ad sets = consolidate or exclude.
+## Audience Controls and Exclusions
 
-## iOS 14+ Signal Loss Mitigation
+Audience architecture must distinguish strict controls from optimization suggestions.
 
-iOS 14+ ATT framework reduced Meta's signal fidelity. Mitigation is not optional for conversion campaigns.
+**Common controls to evaluate:**
 
-**Three-layer mitigation stack:**
+- current customers or recent converters where acquisition spend should exclude them;
+- employees, test users, invalid leads, or internal traffic;
+- legal age, geography, language, licensing, and regulated-category restrictions;
+- retargeting windows and suppression periods;
+- data-source consent, list freshness, match quality, and deletion obligations.
 
-1. **Conversions API (CAPI):** Server-side event sending that bypasses browser-level blocking. Implement via direct integration or partner (Shopify, GTM server-side). Target: Event Match Quality score >6.0 in Events Manager.
+Advantage+ audience can expand beyond suggestions while honoring the strict controls currently supported by the product. Verify the current interface and campaign objective before asserting that an age, interest, custom audience, or lookalike is a hard boundary. Do not rely on a deprecated audience-overlap tool or a universal percentage threshold; diagnose duplication through delivery, reach, auction, and conversion evidence.
 
-2. **Aggregated Event Measurement (AEM):** Configure up to 8 conversion events per domain, ranked by priority. Only the highest-priority event fires per iOS user. Rank events: Purchase > Add to Cart > Lead > View Content. Verify domain in Business Manager before configuring.
+## Measurement and Signal Resilience
 
-3. **Modeled Conversions:** Meta models conversions it cannot directly observe. Accept modeled data in reporting — do not filter it out. Modeled conversions are included in optimization signals.
+Platform measurement changes with operating systems, browser controls, consent, privacy law, product updates, and modeled reporting. Build a resilient measurement stack rather than preserving an old iOS workaround checklist.
 
-**Verification:** In Events Manager, check "Event Match Quality" per event. Below 6.0 = CAPI not working correctly or event parameters missing (email, phone, fbp, fbc).
+1. **Browser/app events:** verify the current Pixel, SDK, and event configuration.
+2. **Server-side events:** use Conversions API or the current supported equivalent with event IDs, deduplication, timestamps, consent, and data minimization.
+3. **Diagnostics:** monitor platform event diagnostics, match quality, missing parameters, duplicates, delays, and schema drift without treating one score as a universal pass/fail threshold.
+4. **Outcome quality:** connect CRM or downstream outcomes where lawful so optimization does not reward low-quality leads or superficial events.
+5. **Modeled reporting:** label modeled versus observed results and preserve attribution assumptions.
+6. **Causal measurement:** use lift tests, holdouts, or other approved incrementality methods for budget decisions.
+
+Do not instruct users to configure an old fixed number of Aggregated Event Measurement events or claim that only one prioritized event can be recorded without verifying current Meta documentation and account behavior.
 
 ## Creative Performance Diagnosis
 
@@ -176,10 +187,7 @@ When performance drops, isolate the failure point before changing anything.
 
 **Isolation rule:** Change one variable at a time. If hook, offer, and CTA all change simultaneously, you cannot attribute the result.
 
-**Benchmark thresholds (Meta, 2025-2026):**
-- Hook rate (3s video views / impressions): >30% = strong hook
-- CTR (link clicks / impressions): >1.5% = healthy for cold audiences
-- Landing page CVR: benchmark against your own historical baseline, not industry averages
+**Benchmark rule:** Use the account's historical distribution, objective, placement, geography, format, attribution window, and downstream outcome quality. External hook-rate or CTR benchmarks require a dated source and comparable population; they are context, not pass/fail thresholds.
 
 ## Incrementality Testing
 
@@ -237,7 +245,7 @@ Paid social attribution overstates impact. Incrementality testing measures wheth
 - "Build a full-funnel Meta campaign structure for a DTC brand with $30K/month"
 - "Design a creative testing framework for TikTok ads — what variables to test first?"
 - "What's the right LinkedIn campaign structure for B2B lead generation?"
-- "Write a Performance Max asset group for a SaaS product targeting HR teams"
+- "Design an Advantage+ creative and audience test for a SaaS product targeting HR teams"
 - "My Meta ROAS dropped 40% — diagnose the likely causes"
 
 ---
