@@ -1,0 +1,36 @@
+name: Apply native operations refresh
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: github.head_ref == 'agent/refresh-native-operations'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out migration branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/refresh-native-operations
+          fetch-depth: 0
+
+      - name: Apply guarded native operations refresh
+        run: python tools/apply_native_operations_refresh.py
+
+      - name: Commit migration result
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add community/specialists docs/methodology tests
+          git diff --cached --quiet && exit 0
+          git commit -m "Refresh native operations specialists"
+          git push origin HEAD:agent/refresh-native-operations
