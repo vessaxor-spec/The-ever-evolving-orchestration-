@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -87,23 +87,35 @@ scenarios:
           - debugging
           - tool_execution
 
-  - id: code-review-known-worker-mismatch
-    purpose: Preserve the current canonical code-review route while exposing its known worker ownership inconsistency.
+  - id: code-review-owned-worker
+    purpose: Preserve Review Team ownership, the dedicated code-review worker, specialist activation, and independent verification.
     task:
       task_id: conformance-code-review
-      task: Review this pull request for correctness and regression risk.
+      task: Review this pull request for correctness, scope discipline, and regression risk.
       task_type: code_review
       risk_level: medium
+      specialist: code-reviewer
     expect:
       equals:
+        risk_level: high
         selected_team: review
-        selected_worker: architecture
+        selected_worker: code_review
+        selected_specialist: code-reviewer
+        specialist_risk_profile: high
         selected_implementation.model: gpt-5.6-terra
         fallback_implementation.model: claude-opus-5
         verification.implementation.model: gpt-5.6-sol
+        verification.independent: true
+        warnings: []
       contains:
-        warnings:
-          - Selected worker architecture is registered to planning, not review; the canonical route was preserved and the mismatch was exposed.
+        required_capabilities:
+          - high_reasoning
+          - adversarial_review
+          - executable_verification
+          - requirements_analysis
+        verification.method:
+          - independent_verifier
+          - evidence_or_test_results
 
   - id: critical-specialist-risk-elevation
     purpose: Ensure a critical specialist can only elevate task risk and triggers qualified human approval.
