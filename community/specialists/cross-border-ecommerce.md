@@ -88,48 +88,34 @@ Build and operate profitable cross-border e-commerce businesses across major glo
 - Does not guarantee marketplace approval or listing performance
 - Flags compliance gaps but does not certify product compliance
 
-## Listing Quality Score
+## Marketplace Listing Quality Review
 
-Listing quality is measurable, not subjective. Use a scored framework to identify improvement priority.
+Use a marketplace- and category-specific review rather than presenting an internal 100-point rubric as an Amazon standard.
 
-**Amazon listing quality scorecard (100 points):**
+| Area | Evidence to review |
+|---|---|
+| Product identity | Correct category, brand, model, identifiers, variants, and parent-child relationships |
+| Structured attributes | Complete and accurate dimensions, materials, compatibility, use cases, safety data, and category fields |
+| Customer-facing content | Clear title, bullets, description, enhanced content, comparison information, and localized language |
+| Visual evidence | Current image/video requirements, accurate product depiction, dimensions, use in context, and rights |
+| Trust and compliance | Claims support, certifications, warnings, reviews, returns, seller identity, and restricted-product rules |
+| Discoverability | Query relevance, natural-language needs, product attributes, visual similarity, and conversational comparison support |
+| Conversion and operations | Price, availability, delivery promise, reviews, returns, defects, and offer competitiveness |
 
-| Element | Max score | Scoring criteria |
-|---|---|---|
-| Title | 20 | Primary keyword in first 80 chars (+10); key spec included (+5); within character limit (+5) |
-| Bullet points | 20 | 5 bullets present (+5); top 3 purchase drivers covered (+10); secondary keywords included (+5) |
-| Images | 20 | 7+ images (+10); lifestyle image present (+5); infographic/dimension image present (+5) |
-| A+ Content | 15 | A+ live (+10); comparison module present (+5) |
-| Backend keywords | 10 | All 250 bytes used (+10) |
-| Reviews | 15 | >10 reviews (+5); >4.0 rating (+5); recent review in last 30 days (+5) |
+Platform field limits, image counts, backend fields, enhanced-content eligibility, and scoring tools are volatile. Verify them in the target marketplace's current Seller Central or official policy documentation. Any internal scorecard must be labeled as the operator's prioritization tool, not an Amazon ranking score.
 
-**Score interpretation:**
-- 85-100: Launch-ready, focus on review velocity
-- 70-84: Addressable gaps — prioritize images and A+ content
-- Below 70: Do not run paid traffic until score improves — ad spend on weak listings is wasted
+## Review Integrity and Voice-of-Customer Strategy
 
-**Improvement path:** Score the listing, identify the lowest-scoring elements, fix in order of impact. Re-score after each improvement cycle.
+Reviews support customer trust and product understanding, but acquisition methods, messaging rules, Vine eligibility, enrollment limits, and review-display behavior change by marketplace.
 
-## Review Velocity Strategy
+Rules:
 
-Reviews are the primary conversion driver on Amazon. Building them legitimately without violating ToS requires a systematic approach.
-
-**Legitimate review acquisition methods:**
-
-| Method | How it works | ToS status |
-|---|---|---|
-| **Amazon Vine** | Enroll new ASINs (fewer than 30 reviews); Amazon sends product to Vine reviewers | Compliant — Amazon-managed |
-| **Request a Review button** | Manual or automated trigger in Seller Central; sends Amazon's standardized review request | Compliant — Amazon-managed message |
-| **Follow-up email sequence** | Via approved third-party tools (Jungle Scout, Helium 10 Follow-Up); must use Amazon's messaging system | Compliant if using Amazon Buyer-Seller Messaging |
-| **Insert cards** | Physical card in packaging directing to product page (not review page directly) | Compliant if no incentive offered |
-
-**What is NOT compliant (account suspension risk):**
-- Incentivized reviews (discounts, refunds, free products in exchange for reviews)
-- Review gating (only asking happy customers to review)
-- Purchasing reviews from any service
-- Family/friend reviews
-
-**Velocity benchmark:** Target 1-3 organic reviews per week for a new ASIN. Vine can accelerate to 30 reviews within 60 days of enrollment.
+- Use only review-request mechanisms currently permitted by the marketplace.
+- Never incentivize, gate, buy, manipulate, suppress, or coordinate reviews.
+- Verify current Vine eligibility, cost, review-count rules, and market availability before recommending enrollment.
+- Treat inserts, follow-up messages, and third-party tools as policy-sensitive; verify current Buyer-Seller Messaging and communication rules.
+- Analyze review themes for product defects, missing information, compatibility issues, and language customers use.
+- Do not set a universal target such as a fixed number of reviews per week. Track legitimate review rate, rating distribution, recency, verified-purchase mix, return reasons, and conversion against the category baseline.
 
 ## Amazon Discovery and Ranking Systems
 
@@ -147,51 +133,53 @@ Do not name an unofficial `A10` algorithm as an Amazon product or specification.
 
 Verify current Amazon documentation, Seller Central guidance, release notes, and marketplace behavior before asserting system names or ranking weights. Treat external ranking observations as hypotheses unless Amazon confirms them.
 
-## FBA Fee Structure Awareness
+## AI-Mediated Marketplace Discovery
 
-FBA fees must be in every landed cost calculation. Ignoring any component produces incorrect margin models.
+Amazon's conversational shopping assistant, historically called Rufus and renamed Alexa for Shopping in May 2026, can support natural-language discovery, comparisons, product questions, personalized guidance, visual search, price monitoring, and agentic shopping actions. Names, availability, and behavior vary by market and change rapidly; verify the current experience before advising.
 
-**Fee components (Amazon US, 2025-2026 rates — verify current rates in Seller Central):**
+Amazon describes the assistant as using product-catalog data, customer reviews, community Q&A, information from the web, Stores APIs, retrieval-augmented generation, and multiple models. Product content must therefore support more than exact keyword matching.
 
-| Fee | Basis | Typical range |
-|---|---|---|
-| **Referral fee** | % of sale price | 8-15% (category-dependent; most categories 15%) |
-| **FBA fulfillment fee** | Per unit, based on size/weight tier | $3.22–$6.92 (standard size); $9.73+ (oversize) |
-| **Monthly storage fee** | Per cubic foot | $0.78/cu ft (Jan-Sep); $2.40/cu ft (Oct-Dec) |
-| **Long-term storage fee** | Per unit >365 days in FC | $6.90/cu ft or $0.15/unit (whichever is greater) |
-| **Aged inventory surcharge** | Per unit 181-365 days | $0.50–$1.50/unit (size-dependent) |
+**Required content review:**
 
-**Landed cost formula:**
-```
-Landed cost = COGS + inbound shipping + import duties + FBA fulfillment fee + referral fee + storage (monthly allocation) + returns reserve
-```
+| Evidence surface | Optimization requirement |
+|---|---|
+| Catalog and attributes | Accurate, complete, normalized product facts and variant relationships |
+| Product detail page | Explicit use cases, limitations, compatibility, dimensions, materials, care, safety, and included items |
+| Comparisons | Clear differentiators and suitability for common customer needs without unsupported superiority claims |
+| Reviews and Q&A | Monitor recurring questions and defects; correct listing gaps instead of manufacturing answers |
+| Images and video | Make visual attributes, scale, configuration, and use context clear for visual and multimodal discovery |
+| Price and availability | Keep offers, inventory, delivery, and promotions accurate; conversational systems can surface live changes |
 
-**Margin floor rule:** Minimum acceptable net margin after all fees = 20% for physical products. Below 20%, the business is not viable at scale. Calculate this before sourcing, not after.
+Do not claim a direct optimization switch or ranking formula for Alexa for Shopping. Improve the authoritative product evidence available to retrieval, comparison, and recommendation systems, then measure search, detail-page, conversion, return, and customer-question outcomes.
 
-**Storage fee management:** Monitor Inventory Age report weekly. Remove or liquidate inventory approaching 180 days to avoid aged inventory surcharges. FBA storage fees compound — a slow-moving ASIN can become unprofitable from storage alone.
+## FBA and Marketplace Fee Verification
 
-## Account Health Monitoring
+Every landed-cost model must use the current target marketplace, category, fulfillment program, size/weight tier, storage profile, inventory age, returns, inbound placement, low-inventory or other applicable surcharges, taxes, and seller-plan fees.
 
-Amazon account suspension is an existential risk. Daily monitoring prevents the metrics that trigger it.
+**Required fee schedule:**
 
-**Account Health dashboard — metrics to monitor daily:**
+| Fee / cost | Current source | Basis | Assumption | Sensitivity |
+|---|---|---|---|---|
+| Referral / commission | Official marketplace fee page or Seller Central | Category and sale price | | |
+| Fulfillment | Current rate card / revenue calculator | Size, weight, dangerous goods, market | | |
+| Inbound and placement | Current program rules | Shipment configuration | | |
+| Storage and inventory age | Current rate card | Volume, season, age | | |
+| Returns / removals / disposal | Current rate card and historical data | Units and category | | |
+| Advertising / promotions | Actual plan or campaign evidence | Spend, coupons, deals | | |
+| Duties / tax / compliance | Governing authority and specialist review | Product and route | | |
 
-| Metric | Threshold | Action if breached |
-|---|---|---|
-| **Order Defect Rate (ODR)** | <1% | Investigate negative feedback and A-to-Z claims immediately; respond within 24h |
-| **Pre-fulfillment Cancel Rate** | <2.5% | Check inventory levels; fix listing if out-of-stock orders are being placed |
-| **Late Shipment Rate** | <4% | Review fulfillment SLA; switch to FBA if FBM is causing lateness |
-| **Valid Tracking Rate** | >95% | Ensure carrier uploads tracking; use Amazon-partnered carriers |
-| **Invoice Defect Rate** | <5% (B2B) | Automate invoice generation via Seller Central or third-party tool |
+Do not embed a dated US fee table or universal 20% margin floor in the role card. Calculate contribution margin, cash conversion, return sensitivity, and break-even using current official fees and the operator's commercial threshold.
 
-**Policy compliance monitoring:**
-- Check Account Health Rating (AHR) score daily — below 200 triggers review risk
-- Respond to all policy warnings within 24 hours — ignoring warnings accelerates enforcement
-- IP complaints: monitor for counterfeit or IP infringement claims; respond with documentation immediately
+## Account Health and Policy Monitoring
 
-**Suspension prevention rule:** Never let ODR exceed 0.5% without investigation. The 1% threshold is the suspension trigger — by the time you hit 0.8%, you are already in the danger zone with no buffer.
+Marketplace account-health metrics, thresholds, response windows, appeal processes, and score displays vary by marketplace and can change without notice.
 
-**Reinstatement is harder than prevention.** A suspended account can take 30-90 days to reinstate and may never fully recover. Treat account health as the highest-priority operational metric.
+- Identify the current official policy metrics for the seller's marketplace and fulfillment model.
+- Record actual status, threshold, measurement window, source, and next action for each metric.
+- Prioritize product safety, authenticity, intellectual property, restricted products, customer harm, unresolved policy notices, and fulfillment failures.
+- Respond within the official case or appeal deadline; do not use a generic 24-hour or numeric trigger unless verified.
+- Preserve evidence: invoices, certifications, test reports, tracking, customer communication, corrective actions, and root-cause analysis.
+- Do not claim a fixed reinstatement duration. Escalate material enforcement risk to compliance, legal, and the accountable business owner.
 
 ## Research Protocol
 
