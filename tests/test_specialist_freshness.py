@@ -25,9 +25,7 @@ def search_block(raw: str) -> str:
     if marker not in raw:
         return ""
     block = raw.split(marker, 1)[1]
-    match = re.search(r"
-### |
-## ", block)
+    match = re.search(r"\n### |\n## ", block)
     return block[: match.start()] if match else block
 
 
@@ -57,9 +55,22 @@ def test_corrected_categories_use_existing_taxonomy() -> None:
 
 
 def test_known_false_or_retired_instructions_are_absent() -> None:
-    combined = "
-".join(card.read_text(encoding="utf-8") for card in cards())
-    for phrase in ["--iref", "Replies worth 150x likes", "Third-party cookie deprecation is complete", "Google's Privacy Sandbox (Topics API)", "## A9/A10 Algorithm Factors", "commonly called A10", "| SLSA 4 |", "Airflow SLA callbacks", "FIA: Fit/Impact/Authority", "  - async-std", "`async-std`:", "packed_simd"]:
+    combined = "\n".join(card.read_text(encoding="utf-8") for card in cards())
+    banned = [
+        "--iref",
+        "Replies worth 150x likes",
+        "Third-party cookie deprecation is complete",
+        "Google's Privacy Sandbox (Topics API)",
+        "## A9/A10 Algorithm Factors",
+        "commonly called A10",
+        "| SLSA 4 |",
+        "Airflow SLA callbacks",
+        "FIA: Fit/Impact/Authority",
+        "  - async-std",
+        "`async-std`:",
+        "packed_simd",
+    ]
+    for phrase in banned:
         assert phrase not in combined, phrase
 
 
