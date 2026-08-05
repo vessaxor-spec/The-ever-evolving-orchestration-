@@ -14,8 +14,8 @@ def frontmatter(name: str) -> str:
 
 
 def test_corrected_specialist_categories() -> None:
-    assert "category: operations" in frontmatter("incident-commander.md")
-    assert "category: automation" in frontmatter("workflow-optimizer.md")
+    assert "category: governance" in frontmatter("incident-commander.md")
+    assert "category: engineering-core" in frontmatter("workflow-optimizer.md")
     assert "category: testing" in frontmatter("qa-engineer.md")
 
 

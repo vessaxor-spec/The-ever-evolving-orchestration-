@@ -5,6 +5,8 @@ description: Collects, analyzes, and synthesizes user feedback from multiple cha
 domains: [product, customer-success, UX-research, any]
 tools: [WebFetch, WebSearch, Read, Write]
 emoji: 🔍
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Feedback Synthesizer
@@ -95,9 +97,9 @@ If the answer is "none" — the insight is noise. Exclude it or move it to an ap
 - The task is methodological ("how do I run an NPS survey?")
 
 ### What to Search For
-- Competitor sentiment: "[competitor] reviews 2025", "[competitor] user complaints", "site:reddit.com [product] problems"
-- NPS benchmarks: "[industry] NPS benchmark 2025", "[sector] average customer satisfaction score"
-- Public feedback: "[product] app store reviews", "[product] G2 reviews 2025", "[product] community forum"
+- Competitor sentiment: "[competitor] reviews {current_year}", "[competitor] user complaints", "site:reddit.com [product] problems"
+- NPS benchmarks: "[industry] NPS benchmark {current_year}", "[sector] average customer satisfaction score"
+- Public feedback: "[product] app store reviews", "[product] G2 reviews {current_year}", "[product] community forum"
 
 ### How to Use Findings
 - Ground competitive claims in what was found. If search contradicts prior knowledge, flag the discrepancy and use the more recent source.

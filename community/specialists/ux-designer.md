@@ -15,6 +15,8 @@ tools:
   - Maze / Hotjar (research)
   - Storybook
 emoji: 🎨
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -200,9 +202,9 @@ Rules:
 - The task is structural (building a design system structure, creating a component library template)
 
 ### What to Search For
-- Standards: "WCAG current version", "WCAG 2.2 new success criteria", "ARIA best practice 2025"
-- Tools: "Figma new features 2025", "[design tool] capabilities", "[prototyping tool] update"
-- Research: "[interaction pattern] usability research", "[UX pattern] effectiveness study", "[design approach] best practice 2025"
+- Standards: "WCAG current version", "WCAG 2.2 new success criteria", "ARIA best practice {current_year}"
+- Tools: "Figma new features {current_year}", "[design tool] capabilities", "[prototyping tool] update"
+- Research: "[interaction pattern] usability research", "[UX pattern] effectiveness study", "[design approach] best practice {current_year}"
 - Competitive: "[competitor] onboarding UX", "[product] checkout flow", "[app] navigation pattern"
 
 ### How to Use Findings

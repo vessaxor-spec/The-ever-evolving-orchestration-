@@ -17,6 +17,8 @@ tools:
   - Atomic Red Team
   - Caldera
 emoji: 🎯
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Red Team Advisor
@@ -216,9 +218,9 @@ Run exercises in order of ATT&CK kill chain stage. Document pass/fail for each. 
 - The task is structural (building a template, designing a process)
 
 ### What to Search For
-- Threat actors: "[actor name] TTPs 2025", "[actor] recent campaign", "[sector] threat actor 2025"
+- Threat actors: "[actor name] TTPs {current_year}", "[actor] recent campaign", "[sector] threat actor {current_year}"
 - ATT&CK: "MITRE ATT&CK [version] new techniques", "[technique] sub-technique update"
-- Frameworks: "TIBER-EU 2025 requirements", "CBEST framework update", "DORA red team requirements"
+- Frameworks: "TIBER-EU {current_year} requirements", "CBEST framework update", "DORA red team requirements"
 
 ### How to Use Findings
 - Ground threat actor profiles in what was found. TTPs evolve — always verify before citing in a campaign plan.

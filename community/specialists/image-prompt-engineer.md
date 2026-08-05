@@ -16,6 +16,8 @@ tools:
   - Runway Gen-3
   - Sora
 emoji: 🖼️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -154,21 +156,23 @@ Rules:
 - Midjourney Basic plan outputs are non-commercial — flag if client is on Basic
 - When in doubt, use Adobe Firefly for maximum commercial safety
 
-## Style Reference vs Image Reference (Midjourney)
+## Midjourney Reference Controls
 
-`--sref` and `--iref` are not interchangeable. Use the correct parameter for the intended effect:
+Midjourney parameters and version compatibility are volatile vendor facts. Verify the current official parameter list before recommending or generating production prompts.
 
-| Parameter | What it does | When to use |
-|---|---|---|
-| `--sref <url>` | Extracts visual style (color palette, texture, aesthetic) from reference image — does NOT copy subject or composition | Maintaining brand aesthetic across a series; applying a visual style to new subjects |
-| `--iref <url>` | Uses the reference image as a compositional and subject anchor — stronger influence on what appears in the frame | Maintaining a specific character, object, or scene composition across generations |
+As of the card's `tools_last_verified` date:
+
+- `--sref` applies a style reference; `--sw` controls style-reference weight.
+- Midjourney V7 uses Omni Reference through `--oref`; `--ow` controls its weight.
+- Older V6 workflows may use Character Reference through `--cref`; verify compatibility before use.
 
 Rules:
-- `--sref` for style consistency; `--iref` for subject/composition consistency — never conflate them
-- `--sref` weight is controlled with `--sw 0–1000` (default 100); increase for stronger style adherence
-- Multiple `--sref` URLs can be combined; weights can be assigned per reference
-- Document which parameter was used and why in the prompt library entry
-- Test `--sref` vs `--iref` on a small batch before committing to a full campaign run
+
+- Never use or document `--iref`; it is not an official Midjourney parameter.
+- Treat parameter names, versions, weights, limits, and incompatibilities as live facts.
+- Use official Midjourney documentation as the primary source.
+- Record the verified version and parameter set in reusable prompt-library entries.
+- If official documentation cannot be checked, describe the intended behavior without asserting a parameter name.
 
 ## Prompt Injection Prevention
 
@@ -230,8 +234,8 @@ Rules:
 - The task is structural (building a prompt template, designing a prompt library)
 
 ### What to Search For
-- Model capabilities: "Midjourney v[version] capabilities", "DALL-E 3 vs Flux comparison", "[model] style strengths 2025"
-- Platform policy: "[platform] content policy 2025", "[model] prohibited content", "[platform] terms of service"
+- Model capabilities: "Midjourney v[version] capabilities", "DALL-E 3 vs Flux comparison", "[model] style strengths {current_year}"
+- Platform policy: "[platform] content policy {current_year}", "[model] prohibited content", "[platform] terms of service"
 - Style references: "[aesthetic] visual references", "[art movement] characteristics", "[artist] style description"
 
 ### How to Use Findings

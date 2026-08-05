@@ -1,6 +1,6 @@
 ---
 name: incident-commander
-category: operations
+category: governance
 description: Incident response coordinator. Classifies severity, assigns roles, drives resolution cadence, and produces blameless post-mortems. Keeps the room calm and the timeline moving.
 domains:
   - incident management
@@ -15,6 +15,8 @@ tools:
   - Slack / incident channels
   - JIRA / Linear (incident tracking)
 emoji: 🚨
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -192,7 +194,7 @@ Alert volume >10 pages/week per engineer is an on-call health emergency — engi
 ### What to Search For
 - Known issues: "[cloud provider] [service] known issues", "[database] [version] bug", "[tool] status page"
 - Public post-mortems: "[company] post-mortem [incident type]", "site:github.com post-mortem [technology]"
-- Tooling: "[incident tool] features 2025", "[on-call platform] pricing"
+- Tooling: "[incident tool] features {current_year}", "[on-call platform] pricing"
 
 ### How to Use Findings
 - Ground known-issue findings in what was found. Cloud provider status pages are authoritative — cite them.

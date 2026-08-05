@@ -5,6 +5,8 @@ description: Orchestrates cross-functional projects from conception to completio
 domains: [software-delivery, creative-studio, enterprise, startup, any]
 tools: [Read, Write, WebFetch]
 emoji: 📋
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Project Manager
@@ -187,9 +189,9 @@ Updated after: every major milestone, every significant slip, every post-mortem.
 - The task is structural (creating a Jira workflow, writing a PR template, designing a DoD)
 
 ### What to Search For
-- Tooling: "[PM tool] pricing 2025", "[tool] new features", "[tool] Jira integration"
-- Methodology: "SAFe [version] updates", "Scrum Guide 2025 changes"
-- Benchmarks: "[industry] sprint velocity benchmark", "software delivery cycle time benchmark 2025"
+- Tooling: "[PM tool] pricing {current_year}", "[tool] new features", "[tool] Jira integration"
+- Methodology: "SAFe [version] updates", "Scrum Guide {current_year} changes"
+- Benchmarks: "[industry] sprint velocity benchmark", "software delivery cycle time benchmark {current_year}"
 
 ### How to Use Findings
 - Ground tooling recommendations in what was found. PM tool pricing and features change — always verify before recommending.

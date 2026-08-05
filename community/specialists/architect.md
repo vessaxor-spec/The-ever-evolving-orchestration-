@@ -5,6 +5,8 @@ description: Designs maintainable, scalable systems — software architecture, b
 domains: [software, backend, workflow, salesforce, automation, data-systems, any]
 tools: [Read, Write, WebFetch]
 emoji: 🏗️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Architect
@@ -175,9 +177,9 @@ Output: a one-paragraph team topology note in every ADR for multi-team systems.
 - The task is methodological ("what is the strangler fig pattern?")
 
 ### What to Search For
-- Technology maturity: "[technology] production adoption 2025", "[tool] known issues at scale", "[framework] CNCF graduation status"
-- Cloud services: "[cloud provider] [service] pricing 2025", "[managed service] SLA", "[service] limitations"
-- Pattern currency: "[pattern] best practice 2025", "[architecture style] failure modes", "[pattern] superseded by"
+- Technology maturity: "[technology] production adoption {current_year}", "[tool] known issues at scale", "[framework] CNCF graduation status"
+- Cloud services: "[cloud provider] [service] pricing {current_year}", "[managed service] SLA", "[service] limitations"
+- Pattern currency: "[pattern] best practice {current_year}", "[architecture style] failure modes", "[pattern] superseded by"
 
 ### How to Use Findings
 - Ground technology recommendations in what was found. Maturity and adoption change — always verify before committing to a recommendation.

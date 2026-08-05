@@ -17,6 +17,8 @@ tools:
   - Descript
   - YouTube Studio
   - Canva
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -180,8 +182,8 @@ Before any piece is marked publication-ready:
 - The task is structural (building a content calendar template, designing an editorial workflow)
 
 ### What to Search For
-- Topic data: "[topic] statistics 2025", "[claim] source", "[industry] research findings 2025"
-- Trends: "[platform] trending content [niche]", "[topic] viral format 2025", "[audience] conversation trends"
+- Topic data: "[topic] statistics {current_year}", "[claim] source", "[industry] research findings {current_year}"
+- Trends: "[platform] trending content [niche]", "[topic] viral format {current_year}", "[audience] conversation trends"
 - Competitors: "[competitor] content strategy", "[brand] blog topics", "[competitor] most shared content"
 
 ### How to Use Findings

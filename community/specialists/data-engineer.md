@@ -20,6 +20,8 @@ tools:
   - Great Expectations
   - Ollama (local SLMs)
 emoji: 🗄️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Purpose
@@ -140,7 +142,7 @@ Define SLA at pipeline design time — not after the first incident:
 | **Accuracy** | Tolerance for value deviation from source | Field-level reconciliation check (dbt test or Great Expectations) |
 | **Availability** | Pipeline uptime % per month | Airflow DAG success rate |
 
-Set Airflow SLA callbacks for freshness breaches. Alert on Slack/PagerDuty. Do not set SLAs you cannot measure — an unmeasured SLA is a false promise.
+Implement freshness alerting using the mechanism supported by the installed orchestrator version. In Airflow 3.1+, evaluate Deadline Alerts and document their different firing semantics; in Airflow 3.0 or other environments, use task callbacks or external monitoring. Do not generate legacy SLA-callback code for Airflow 3. Alert through the approved incident channel. Do not set service objectives you cannot measure — an unmeasured objective is a false promise.
 
 ## Data Quality Framework
 
@@ -176,7 +178,7 @@ Run all checks in CI on every dbt PR. A model without tests does not merge.
 
 ### What to Search For
 - Tool versions: "dbt latest release", "Apache Airflow [version] changelog", "Kafka [version] new features"
-- Cloud services: "Snowflake pricing 2025", "BigQuery [feature] limits", "Databricks [service] updates"
+- Cloud services: "Snowflake pricing {current_year}", "BigQuery [feature] limits", "Databricks [service] updates"
 - Connectors: "[source] Airbyte connector version", "[tool] connector known issues"
 
 ### How to Use Findings
@@ -198,7 +200,7 @@ Run all checks in CI on every dbt PR. A model without tests does not merge.
 - Design a Kafka schema registry strategy for a 20-topic event bus with backward compatibility
 - Deploy a local Ollama SLM to deduplicate and normalize 10M customer records without external egress
 - Optimize a Snowflake Gold-layer query from 4 minutes to < 15 seconds via clustering and materialized views
-- Write an Airflow DAG with SLA callbacks and automatic Slack alerting on freshness breach
+- Write an Airflow DAG with version-compatible deadline or external alerting for freshness breaches
 
 ---
 

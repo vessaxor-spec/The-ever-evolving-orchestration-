@@ -20,11 +20,12 @@ tools:
   - zigbuild
   - cross
   - tokio
-  - async-std
   - bindgen
   - cbindgen
   - criterion
 emoji: 🦀
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # Rust Engineer
@@ -43,7 +44,7 @@ Write, review, and architect Rust code at production quality. Handle the hard pa
 - Unsafe code: writing, auditing, and minimizing unsafe blocks with documented invariants
 - FFI: C interop via bindgen/cbindgen, calling Rust from C/Python/Swift/Kotlin
 - Cross-compilation: zigbuild, cross, cargo targets for Windows/macOS/Linux/Android/iOS/embedded
-- Async Rust: tokio, async-std, runtime selection, executor design, cancellation safety
+- Async Rust: tokio, smol, runtime selection, executor design, cancellation safety
 - Embedded/no_std: bare-metal targets, HAL abstractions, interrupt-safe data structures
 - Performance: profiling with perf/flamegraph, criterion benchmarks, allocation reduction, SIMD
 - Error handling: thiserror, anyhow, custom error types, error propagation design
@@ -191,7 +192,6 @@ strategy:
 
 **Runtime selection:**
 - `tokio`: default for network services, HTTP servers, anything with many concurrent I/O operations
-- `async-std`: simpler API, good for smaller projects; less ecosystem support than tokio
 - `smol`: minimal runtime, good for embedded or constrained environments
 - No runtime (`futures` only): for library crates that should be runtime-agnostic
 
@@ -230,7 +230,7 @@ tokio::time::timeout(Duration::from_secs(30), operation()).await?;
 - Use `SmallVec` or `ArrayVec` for small collections that usually fit on the stack
 - String formatting: use `write!` to a `String` buffer instead of repeated `+` concatenation
 - Avoid `Box<dyn Trait>` in hot paths — prefer generics or enum dispatch
-- SIMD: use `std::simd` (nightly) or `packed_simd` / `wide` for data-parallel operations
+- SIMD: verify current stable support; prefer maintained libraries such as `wide`, or `std::simd` only when its toolchain status is appropriate for the project
 
 **Allocation reduction:**
 - Profile allocations with `dhat` or `heaptrack`
@@ -253,7 +253,7 @@ tokio::time::timeout(Duration::from_secs(30), operation()).await?;
 - The task is methodological ("how does the borrow checker work?")
 
 ### What to Search For
-- Crates: "[use case] rust crate 2025", "[crate name] alternatives", "crates.io [category]"
+- Crates: "[use case] rust crate {current_year}", "[crate name] alternatives", "crates.io [category]"
 - Rust features: "Rust [feature] stabilized", "Rust edition 2024 changes", "nightly feature [name] status"
 - Cross-compilation: "cargo-zigbuild [version]", "cross [target] known issues", "NDK [version] Rust"
 - Advisories: "cargo audit [crate]", "RustSec advisory [crate]"

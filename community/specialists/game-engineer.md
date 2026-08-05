@@ -26,6 +26,8 @@ tools:
   - ShaderGraph
   - Niagara
 emoji: 🎮
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -203,9 +205,9 @@ Privacy rules: no PII in telemetry events. Player ID is an opaque UUID — never
 - Debugging tasks where all context is in the provided code or logs
 
 ### What to Search For
-- Engine versions: "Unity LTS version 2025", "Unreal Engine latest release", "[engine] known issues"
-- Platform: "[console] SDK certification requirements 2025", "[platform] policy update"
-- Services: "[multiplayer service] pricing 2025", "[anti-cheat] bypass 2025"
+- Engine versions: "Unity LTS version {current_year}", "Unreal Engine latest release", "[engine] known issues"
+- Platform: "[console] SDK certification requirements {current_year}", "[platform] policy update"
+- Services: "[multiplayer service] pricing {current_year}", "[anti-cheat] bypass {current_year}"
 
 ### How to Use Findings
 - Ground engine recommendations in what was found. LTS status and known issues change with each release cycle.

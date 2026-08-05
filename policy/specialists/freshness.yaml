@@ -1,0 +1,35 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+purpose: Keep durable specialist doctrine intact while volatile facts require current evidence.
+
+principles:
+  durable_doctrine:
+    includes: [identity, purpose, responsibilities, non_responsibilities, methodologies, decision_frameworks, safety_boundaries, authority_limits, collaboration_and_handoffs, output_contracts]
+    rule: Preserve in the specialist role card.
+  volatile_facts:
+    includes: [laws_and_effective_dates, regulatory_thresholds, standards_and_adopted_editions, product_and_framework_versions, api_and_parameter_availability, model_names_and_capabilities, pricing_and_fees, platform_algorithm_behavior, numerical_benchmarks, tool_maintenance_and_security_status]
+    rule: Verify at execution time or through an explicitly dated evidence record.
+
+volatility_classes:
+  durable: {verification: normal_role_review}
+  slow_moving: {verification: before_consequential_use, maximum_evidence_age_days: 90}
+  fast_moving: {verification: per_relevant_task, maximum_evidence_age_days: 30}
+  highly_volatile: {verification: live, maximum_evidence_age_days: 0}
+
+source_authority:
+  - {tier: 1, sources: [regulator, standards_body, official_vendor_documentation, official_release_notes, primary_law]}
+  - {tier: 2, sources: [original_research, maintained_security_advisory, authoritative_technical_publication]}
+  - {tier: 3, sources: [reputable_industry_analysis_with_primary_links]}
+  - {tier: 4, sources: [secondary_summary], restriction: discovery_only}
+  - {tier: 5, sources: [seo_content_farm, affiliate_content, unattributed_ai_generated_summary], restriction: never_sole_support}
+
+risk_overrides:
+  high: [verify_current_primary_source, state_evidence_date, state_applicability]
+  critical: [verify_current_primary_source, state_evidence_date, state_jurisdiction_or_governing_authority, identify_adopted_edition_or_effective_rule, require_independent_verification]
+
+failure_behavior:
+  unavailable_current_evidence: do_not_assert_volatile_fact
+  conflicting_authoritative_sources: escalate_and_present_conflict
+  unknown_jurisdiction_or_applicability: surface_missing_context
+  retired_or_unmaintained_tool: do_not_recommend_without_explicit_exception

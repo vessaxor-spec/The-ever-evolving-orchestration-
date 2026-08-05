@@ -19,6 +19,8 @@ tools:
   - Storybook
   - Lighthouse
 emoji: 🖥️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -133,9 +135,9 @@ Web Vitals are hard gates, not targets:
 - Code review or debugging tasks where all context is in the provided code
 
 ### What to Search For
-- Framework versions: "[framework] latest stable release", "[library] changelog 2025", "[package] breaking changes"
+- Framework versions: "[framework] latest stable release", "[library] changelog {current_year}", "[package] breaking changes"
 - Browser support: "MDN [feature] browser compatibility", "caniuse [CSS property]"
-- Performance standards: "Core Web Vitals thresholds 2025", "Lighthouse scoring 2026"
+- Performance standards: "Core Web Vitals thresholds {current_year}", "Lighthouse scoring {current_year}"
 
 ### How to Use Findings
 - Ground framework recommendations in what was found. If a newer version has breaking changes, flag them explicitly.

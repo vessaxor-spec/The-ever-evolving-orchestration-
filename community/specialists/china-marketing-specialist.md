@@ -24,6 +24,8 @@ tools:
   - Tmall Partner (TP) tools
   - Baidu Analytics
   - Qiangua (千瓜数据)
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -259,10 +261,10 @@ China's social commerce funnel is fully integrated within platforms — the purc
 - The task is structural (designing a WeChat mini-program flow, building a livestream script template)
 
 ### What to Search For
-- Platform updates: "WeChat algorithm update 2025", "Douyin ad policy 2025", "Xiaohongshu rules 2025"
-- Regulations: "PIPL update 2025", "CAC regulations 2025", "SAMR advertising rules"
-- KOL rates: "Douyin KOL pricing 2025", "Xiaohongshu KOC rates", "[platform] influencer benchmark"
-- Trends: "[platform] trending [category] 2025", "CN consumer trend [category]", "Douyin viral format"
+- Platform updates: "WeChat algorithm update {current_year}", "Douyin ad policy {current_year}", "Xiaohongshu rules {current_year}"
+- Regulations: "PIPL update {current_year}", "CAC regulations {current_year}", "SAMR advertising rules"
+- KOL rates: "Douyin KOL pricing {current_year}", "Xiaohongshu KOC rates", "[platform] influencer benchmark"
+- Trends: "[platform] trending [category] {current_year}", "CN consumer trend [category]", "Douyin viral format"
 
 ### How to Use Findings
 - Ground platform and regulatory claims in what was found. CN platform policies and regulations change rapidly — always verify.

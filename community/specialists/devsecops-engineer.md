@@ -27,6 +27,8 @@ tools:
   - SLSA
   - SBOM
 emoji: 🔒
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 # DevSecOps Engineer
@@ -185,13 +187,15 @@ steps:
     files: sbom.cyclonedx.json
 ```
 
-**SLSA level targets:**
-| Level | Requirements | When to target |
+**SLSA track targets:**
+| Track / level | Requirements | When to target |
 |---|---|---|
-| SLSA 1 | Provenance generated | Minimum for any project |
-| SLSA 2 | Hosted build, signed provenance | Default target for production projects |
-| SLSA 3 | Hardened build, non-falsifiable provenance | Security-sensitive or regulated projects |
-| SLSA 4 | Two-party review, hermetic build | Critical infrastructure |
+| Build L1 | Build provenance exists | Minimum for distributed artifacts |
+| Build L2 | Signed provenance from a hosted build platform | Default intermediate target for production projects |
+| Build L3 | Hardened build platform with strong tamper resistance | Security-sensitive, regulated, or broadly distributed releases |
+| Source track | Version control, preserved history, provenance, enforced controls, and review according to the selected level | Apply where source-governance assurance is required |
+
+SLSA is versioned and track-based. Verify the current official specification before claiming a level; do not use the retired pre-1.0 single-track `SLSA 4` model.
 
 **Dependency confusion prevention:**
 - Use private registry with namespace reservation
@@ -301,8 +305,8 @@ For every CI/CD pipeline, verify:
 
 ### What to Search For
 - Tool versions: "Semgrep [version] new rules", "Trivy [version] changelog", "cosign latest release"
-- Platform: "GitHub Actions security features 2025", "GitLab CI security updates"
-- SLSA: "SLSA specification [version]", "SLSA level 3 requirements 2025"
+- Platform: "GitHub Actions security features {current_year}", "GitLab CI security updates"
+- SLSA: "SLSA specification [version]", "SLSA level 3 requirements {current_year}"
 - CVEs: "GitHub Actions [action] CVE", "[CI tool] security advisory"
 
 ### How to Use Findings

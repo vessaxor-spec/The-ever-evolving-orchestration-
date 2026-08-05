@@ -15,6 +15,8 @@ tools:
   - Search Ads 360
   - Optmyzr
   - DataStudio / Looker Studio
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -215,8 +217,8 @@ Signal loss from cookie deprecation and iOS privacy changes makes first-party da
 - The task is structural (building a campaign template, designing a naming convention)
 
 ### What to Search For
-- Platform updates: "Google Ads new features 2025", "Google Ads policy update", "Performance Max updates 2025"
-- Benchmarks: "[industry] Google Ads CPC benchmark 2025", "[vertical] conversion rate benchmark", "[campaign type] CTR benchmark"
+- Platform updates: "Google Ads new features {current_year}", "Google Ads policy update", "Performance Max updates {current_year}"
+- Benchmarks: "[industry] Google Ads CPC benchmark {current_year}", "[vertical] conversion rate benchmark", "[campaign type] CTR benchmark"
 - Competitors: "[competitor] Google Ads strategy", "[competitor] ad copy", "site:semrush.com [competitor] paid search"
 
 ### How to Use Findings

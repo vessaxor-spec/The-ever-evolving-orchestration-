@@ -18,6 +18,8 @@ tools:
   - RPR (Realtors Property Resource)
   - Google Maps / satellite imagery
 emoji: 🏠
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -185,9 +187,9 @@ Never assume a seller knows about 1031 eligibility. Ask: "Are you planning to re
 - The task is methodological ("how do I calculate cap rate?")
 
 ### What to Search For
-- Market data: "[city/neighborhood] real estate market 2025", "[area] median home price", "[market] days on market"
-- Rates: "current mortgage rates", "[area] cap rate [property type] 2025", "commercial real estate rates"
-- Regulations: "[jurisdiction] zoning update 2025", "[city] rent control changes", "[state] disclosure requirements"
+- Market data: "[city/neighborhood] real estate market {current_year}", "[area] median home price", "[market] days on market"
+- Rates: "current mortgage rates", "[area] cap rate [property type] {current_year}", "commercial real estate rates"
+- Regulations: "[jurisdiction] zoning update {current_year}", "[city] rent control changes", "[state] disclosure requirements"
 
 ### How to Use Findings
 - Ground market data claims in what was found. Real estate markets change monthly — always cite the source and date.

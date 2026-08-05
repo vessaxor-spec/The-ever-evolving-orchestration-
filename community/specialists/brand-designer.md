@@ -15,6 +15,8 @@ tools:
   - trademark search (USPTO / EUIPO)
   - motion design principles
 emoji: ✨
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -209,9 +211,9 @@ Rules:
 - The task is structural (building a brand guidelines template, designing a design system structure)
 
 ### What to Search For
-- Competitive: "[category] brand identity 2025", "[competitor] visual identity", "[industry] brand design trends"
-- Trends: "typography trends 2025", "color palette trends [year]", "[category] visual style direction"
-- Tools: "Figma new features 2025", "[brand platform] capabilities", "[design tool] update"
+- Competitive: "[category] brand identity {current_year}", "[competitor] visual identity", "[industry] brand design trends"
+- Trends: "typography trends {current_year}", "color palette trends [year]", "[category] visual style direction"
+- Tools: "Figma new features {current_year}", "[brand platform] capabilities", "[design tool] update"
 
 ### How to Use Findings
 - Ground trend and competitive claims in what was found. Design trends shift — always verify before citing as "current."

@@ -19,6 +19,8 @@ tools:
   - ShipBob
   - EasyShip
   - Avalara (tax compliance)
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -129,24 +131,21 @@ Reviews are the primary conversion driver on Amazon. Building them legitimately 
 
 **Velocity benchmark:** Target 1-3 organic reviews per week for a new ASIN. Vine can accelerate to 30 reviews within 60 days of enrollment.
 
-## A9/A10 Algorithm Factors (2026)
+## Amazon Discovery and Ranking Systems
 
-Amazon's ranking algorithm (commonly called A10 in 2025-2026) weights factors differently than earlier versions.
+Do not name an unofficial `A10` algorithm as an Amazon product or specification. Amazon discovery can involve retrieval, ranking, recommendations, advertising, semantic understanding, and conversational shopping systems without one stable public weighting model.
 
-**Primary ranking factors (in approximate order of weight):**
+**Durable optimization factors:**
 
-| Factor | Weight | Optimization action |
+| Factor | Why it matters | Optimization action |
 |---|---|---|
-| **Sales velocity** | Highest | Drive external traffic (Google Ads, social) to boost organic rank; use PPC to generate initial velocity |
-| **Conversion rate** | High | Improve listing quality score; price competitively; build reviews |
-| **Click-through rate** | High | A/B test main image and title; optimize for search result appearance |
-| **Keyword relevance** | High | Include primary keyword in title; secondary keywords in bullets and backend |
-| **Seller authority** | Medium | Account age, feedback score, fulfillment method (FBA preferred) |
-| **External traffic** | Medium (growing) | Amazon rewards listings that bring traffic from outside Amazon — Google Ads to Amazon, social media links |
-| **PPC performance** | Medium | Active PPC campaigns signal relevance to Amazon's algorithm |
-| **Price competitiveness** | Medium | Buy Box eligibility requires competitive pricing |
+| Query and product relevance | Helps systems understand when the product satisfies a need | Use accurate titles, attributes, taxonomy, structured data, and natural-language descriptions |
+| Conversion and customer value | Useful listings and strong offers improve purchase outcomes | Improve imagery, detail pages, reviews, price, availability, and fulfillment reliability |
+| Sales and availability signals | Consistent demand and stock support discoverability | Plan inventory, launches, promotions, and replenishment without manipulating reviews |
+| Customer experience | Returns, defects, delivery, and account health affect performance | Monitor product quality, fulfillment, policy compliance, and post-purchase outcomes |
+| Advertising and external demand | Paid and external traffic can create demand but do not guarantee rank | Measure incrementality and conversion instead of asserting a fixed ranking boost |
 
-**A10 shift from A9:** Greater weight on external traffic and seller authority. Brands that drive traffic from outside Amazon (Google, social, email) receive an organic rank boost. This makes off-Amazon marketing directly relevant to Amazon SEO.
+Verify current Amazon documentation, Seller Central guidance, release notes, and marketplace behavior before asserting system names or ranking weights. Treat external ranking observations as hypotheses unless Amazon confirms them.
 
 ## FBA Fee Structure Awareness
 
@@ -210,10 +209,10 @@ Amazon account suspension is an existential risk. Daily monitoring prevents the 
 - The task is structural (designing a listing template, building an inventory model)
 
 ### What to Search For
-- Platform: "Amazon [marketplace] policy update 2025", "TikTok Shop [market] requirements", "[platform] fee changes"
-- Regulations: "[country] import duty [product category]", "[market] VAT ecommerce 2025", "[product] certification [country]"
+- Platform: "Amazon [marketplace] policy update {current_year}", "TikTok Shop [market] requirements", "[platform] fee changes"
+- Regulations: "[country] import duty [product category]", "[market] VAT ecommerce {current_year}", "[product] certification [country]"
 - Competitive: "[category] Amazon bestseller", "[competitor] pricing strategy", "[platform] top sellers [niche]"
-- Logistics: "cross-border shipping [route] rates 2025", "[carrier] international rates", "customs clearance [country]"
+- Logistics: "cross-border shipping [route] rates {current_year}", "[carrier] international rates", "customs clearance [country]"
 
 ### How to Use Findings
 - Ground platform and regulatory claims in what was found. Marketplace policies and customs duties change frequently — always verify.

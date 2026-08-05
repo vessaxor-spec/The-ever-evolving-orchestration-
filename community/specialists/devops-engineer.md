@@ -20,6 +20,8 @@ tools:
   - Helm
   - ArgoCD
 emoji: 🚀
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -131,8 +133,8 @@ Is the primary region degraded?
 - Debugging tasks where all context is in the provided logs or config
 
 ### What to Search For
-- Tool versions: "[tool] latest stable release", "[cloud provider] [service] changelog 2025"
-- Security benchmarks: "CIS [platform] benchmark 2025", "[cloud] security best practices 2026"
+- Tool versions: "[tool] latest stable release", "[cloud provider] [service] changelog {current_year}"
+- Security benchmarks: "CIS [platform] benchmark {current_year}", "[cloud] security best practices {current_year}"
 - Known issues: "[tool] known issues", "[cloud service] outage history", "[version] regression"
 
 ### How to Use Findings

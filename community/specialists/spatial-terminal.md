@@ -1,6 +1,6 @@
 ---
 name: spatial-terminal
-category: design
+category: engineering-specialized
 description: Terminal emulation and text rendering specialist for modern Swift applications. SwiftTerm integration, glyph rendering optimization, and spatial/visionOS terminal UI design.
 domains:
   - terminal emulation
@@ -15,6 +15,8 @@ tools:
   - Metal (GPU text rendering)
   - visionOS RealityKit (spatial contexts)
 emoji: 🖥️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -212,7 +214,7 @@ Rules:
 
 ### What to Search For
 - SDK versions: "SwiftTerm latest release", "visionOS SDK [version] terminal", "SwiftUI [version] new APIs"
-- Platform: "visionOS ornament API 2025", "Apple Vision Pro input model updates"
+- Platform: "visionOS ornament API {current_year}", "Apple Vision Pro input model updates"
 - Accessibility: "visionOS accessibility text rendering", "Dynamic Type visionOS"
 
 ### How to Use Findings

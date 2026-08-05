@@ -22,6 +22,8 @@ tools:
   - GDB
   - Logic analyzers
 emoji: 🔧
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -156,9 +158,9 @@ Every peripheral driver must handle its failure mode — returning an error code
 - Debugging tasks where all context is in the provided code or hardware logs
 
 ### What to Search For
-- SDK versions: "[MCU family] SDK latest release", "[RTOS] changelog 2025", "[toolchain] update"
+- SDK versions: "[MCU family] SDK latest release", "[RTOS] changelog {current_year}", "[toolchain] update"
 - Errata: "[chip part number] errata", "[silicon revision] known issues"
-- Security: "[RTOS] CVE", "[bootloader] vulnerability 2025", "firmware OTA security best practice"
+- Security: "[RTOS] CVE", "[bootloader] vulnerability {current_year}", "firmware OTA security best practice"
 
 ### How to Use Findings
 - Ground SDK recommendations in what was found. Silicon errata can change behavior — always check before finalizing.

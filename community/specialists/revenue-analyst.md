@@ -18,6 +18,8 @@ tools:
   - Tableau
   - Google Sheets
   - Metabase
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -263,9 +265,9 @@ Update scenario weights at each forecast call based on pipeline movement. A bear
 - The task is structural (designing a forecast template, building a board deck structure)
 
 ### What to Search For
-- Benchmarks: "[segment] NRR benchmark 2025", "[stage] ARR growth rate", "SaaS churn benchmark [ARR range]"
-- Metrics: "CAC payback period benchmark 2025", "LTV:CAC ratio benchmark [industry]"
-- Competitive: "[company] ARR 2025", "[competitor] growth rate", "[company] funding round"
+- Benchmarks: "[segment] NRR benchmark {current_year}", "[stage] ARR growth rate", "SaaS churn benchmark [ARR range]"
+- Metrics: "CAC payback period benchmark {current_year}", "LTV:CAC ratio benchmark [industry]"
+- Competitive: "[company] ARR {current_year}", "[competitor] growth rate", "[company] funding round"
 
 ### How to Use Findings
 - Ground benchmark claims in what was found. Revenue benchmarks shift year-over-year — always cite the source and date.

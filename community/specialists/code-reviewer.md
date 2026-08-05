@@ -14,6 +14,8 @@ tools:
   - architecture decision records (ADR)
   - Mermaid (diagrams)
 emoji: 🔍
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -128,8 +130,8 @@ Every PR review includes the following checks as first-class outputs — not opt
 - Any task where the user has provided all necessary code and requirements
 
 ### What to Search For
-- CVEs: "CVE [library name] [version]", "[dependency] security advisory 2025"
-- Language idioms: "[language] [version] best practices", "[framework] idiomatic patterns 2025"
+- CVEs: "CVE [library name] [version]", "[dependency] security advisory {current_year}"
+- Language idioms: "[language] [version] best practices", "[framework] idiomatic patterns {current_year}"
 - Compliance controls: "PCI DSS v4 technical requirements", "HIPAA technical safeguards checklist"
 
 ### How to Use Findings

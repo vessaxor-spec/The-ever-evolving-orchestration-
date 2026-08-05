@@ -22,6 +22,8 @@ tools:
   - Python (pandas, numpy)
   - SQL
 emoji: 📊
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -148,9 +150,9 @@ A model without an audit trail is not deliverable. Flag and request source docum
 - The task is methodological ("how do I calculate EBITDA?")
 
 ### What to Search For
-- Benchmarks: "[sector] gross margin benchmark 2025", "[stage] burn multiple benchmark", "SaaS Rule of 40 benchmark"
-- Standards: "ASC 606 revenue recognition update", "IFRS 16 lease accounting guidance 2025"
-- Market rates: "10-year treasury rate current", "equity risk premium 2025", "[sector] EV/Revenue multiple"
+- Benchmarks: "[sector] gross margin benchmark {current_year}", "[stage] burn multiple benchmark", "SaaS Rule of 40 benchmark"
+- Standards: "ASC 606 revenue recognition update", "IFRS 16 lease accounting guidance {current_year}"
+- Market rates: "10-year treasury rate current", "equity risk premium {current_year}", "[sector] EV/Revenue multiple"
 
 ### How to Use Findings
 - Ground benchmark claims in what was found. Financial benchmarks shift with market conditions — always cite the source and date.

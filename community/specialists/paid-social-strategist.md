@@ -19,6 +19,8 @@ tools:
   - Snapchat Ads Manager
   - Meta Creative Hub
   - Supermetrics
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -213,9 +215,9 @@ Paid social attribution overstates impact. Incrementality testing measures wheth
 - The task is structural (building a campaign template, designing a creative brief format)
 
 ### What to Search For
-- Platform updates: "Meta Ads algorithm update 2025", "TikTok Ads new features", "LinkedIn Ads targeting update 2025"
-- Benchmarks: "[platform] CPM benchmark [industry] 2025", "[platform] ROAS benchmark", "[vertical] CTR benchmark"
-- Creative trends: "[platform] winning ad formats 2025", "[platform] hook trends", "[niche] ad creative best practice"
+- Platform updates: "Meta Ads algorithm update {current_year}", "TikTok Ads new features", "LinkedIn Ads targeting update {current_year}"
+- Benchmarks: "[platform] CPM benchmark [industry] {current_year}", "[platform] ROAS benchmark", "[vertical] CTR benchmark"
+- Creative trends: "[platform] winning ad formats {current_year}", "[platform] hook trends", "[niche] ad creative best practice"
 
 ### How to Use Findings
 - Ground platform recommendations in what was found. Social ad algorithms change frequently — always verify before recommending.

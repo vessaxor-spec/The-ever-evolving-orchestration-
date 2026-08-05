@@ -20,6 +20,8 @@ tools:
   - Redis
   - Docker
 emoji: ⚙️
+freshness_policy: live-verification-required
+tools_last_verified: 2026-08-05
 ---
 
 ## Identity
@@ -123,8 +125,8 @@ Document the chosen isolation level in every service layer method that opens a t
 - Code review or debugging tasks where all context is in the provided code
 
 ### What to Search For
-- Dependency versions: "[library] latest stable version", "[framework] changelog 2025", "[package] CVE"
-- API changes: "[service] API changelog", "[provider] webhook breaking changes 2025"
+- Dependency versions: "[library] latest stable version", "[framework] changelog {current_year}", "[package] CVE"
+- API changes: "[service] API changelog", "[provider] webhook breaking changes {current_year}"
 - Security advisories: "[library] security advisory", "CVE [dependency name]"
 
 ### How to Use Findings
