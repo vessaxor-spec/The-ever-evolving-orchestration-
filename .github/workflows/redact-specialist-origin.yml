@@ -1,0 +1,138 @@
+name: Redact specialist origin references
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/redact-specialist-origin.yml
+
+permissions:
+  contents: write
+
+jobs:
+  redact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Remove origin references while preserving specialist content
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('.')
+          text_suffixes = {'.md', '.yaml', '.yml', '.txt', '.json', '.toml'}
+
+          exact_replacements = {
+              '# Roxas-Legion Preservation Contract': '# Specialist Preservation Contract',
+              'The specialist roster extends TEO with the full, battle-tested Roxas-Legion specifications while preserving the core responsibility chain:':
+                  'The specialist roster extends TEO with the full, battle-tested specialist specifications while preserving the core responsibility chain:',
+              'The specialists were created by **Sylvester Roxas** for Roxas-Legion and integrated into TEO with the creator\'s permission.':
+                  'The specialists were created by **Sylvester Roxas** and integrated into TEO.',
+              'The original Roxas-Legion Markdown file is the canonical capability definition for each specialist.':
+                  'Each specialist Markdown file is the canonical capability definition for that specialist.',
+              '1. The complete original Roxas-Legion specification, unchanged.':
+                  '1. The complete specialist specification, unchanged.',
+              '[`Roxas-Legion Preservation Contract`](PRESERVATION.md)':
+                  '[`Specialist Preservation Contract`](PRESERVATION.md)',
+              'The full Roxas-Legion specification remains authoritative':
+                  'The full specialist specification remains authoritative',
+              'The linked Roxas-Legion role cards remain the canonical capability specifications.':
+                  'The linked specialist role cards remain the canonical capability specifications.',
+              'The Roxas-Legion specialist specifications are the canonical capability definitions for the Legion roles represented in TEO.':
+                  'The specialist specifications are the canonical capability definitions for the specialist roles represented in TEO.',
+              'Each TEO specialist role card must contain the corresponding Roxas-Legion source specification verbatim.':
+                  'Each TEO specialist role card must retain its complete specialist specification verbatim.',
+              'The original Roxas-Legion specification above is authoritative and must remain intact.':
+                  'The specialist specification above is authoritative and must remain intact.',
+          }
+
+          for path in root.rglob('*'):
+              if not path.is_file() or '.git' in path.parts:
+                  continue
+              if path.suffix.lower() not in text_suffixes:
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              original = text
+
+              # Remove origin/source metadata while preserving creator credit.
+              text = re.sub(r'(?mi)^\s*origin:\s*.*roxas[- ]legion.*\n?', '', text)
+              text = re.sub(r'(?mi)^\s*-\s*\*\*Original source:\*\*.*roxas[- ]legion.*\n?', '', text)
+              text = re.sub(r'(?mi)^\s*>\s*\*\*Origin:\*\*.*roxas[- ]legion.*\n?', '', text)
+              text = re.sub(r'(?mi)^\s*>\s*Original source:.*roxas[- ]legion.*\n?', '', text)
+
+              for old, new in exact_replacements.items():
+                  text = text.replace(old, new)
+
+              # Replace repository URLs with the TEO specialist roster.
+              text = re.sub(
+                  r'https://github\.com/vessaxor-spec/Roxas-Legion(?:/[^\s\)\]>]*)?',
+                  'https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main/community/specialists',
+                  text,
+                  flags=re.IGNORECASE,
+              )
+
+              # Remove any residual origin naming without changing the specialist doctrine.
+              text = re.sub(r'Roxas[- ]Legion specialist roster', 'specialist roster', text, flags=re.IGNORECASE)
+              text = re.sub(r'Roxas[- ]Legion role cards?', 'specialist role cards', text, flags=re.IGNORECASE)
+              text = re.sub(r'Roxas[- ]Legion source specifications?', 'specialist specifications', text, flags=re.IGNORECASE)
+              text = re.sub(r'Roxas[- ]Legion specifications?', 'specialist specifications', text, flags=re.IGNORECASE)
+              text = re.sub(r'Roxas[- ]Legion Markdown files?', 'specialist Markdown files', text, flags=re.IGNORECASE)
+              text = re.sub(r'Roxas[- ]Legion', 'specialist collection', text, flags=re.IGNORECASE)
+
+              # Make the roster credit section creator-focused rather than origin-focused.
+              if path.as_posix() == 'community/specialists/README.md':
+                  text = text.replace('## Source and credit', '## Creator credit')
+                  text = re.sub(
+                      r'Every specialist role card preserves the creator attribution and identifies its original source:\n\n> Creator: Sylvester Roxas\s*\n(?:> Original source:.*\n)?',
+                      'Every specialist role card preserves the creator attribution:\n\n> Creator: Sylvester Roxas  \n',
+                      text,
+                  )
+                  text = text.replace(
+                      'This credit and the complete source specification must remain in derived specialist files unless Sylvester Roxas explicitly requests otherwise.',
+                      'This credit and the complete specialist specification must remain unless Sylvester Roxas explicitly requests otherwise.',
+                  )
+
+              if text != original:
+                  path.write_text(text, encoding='utf-8')
+
+          # Remove the temporary workflow from the final repository state.
+          workflow = Path('.github/workflows/redact-specialist-origin.yml')
+          if workflow.exists():
+              workflow.unlink()
+
+          # Current repository content must contain no origin-name references.
+          remaining = []
+          for path in root.rglob('*'):
+              if not path.is_file() or '.git' in path.parts:
+                  continue
+              if path.suffix.lower() not in text_suffixes:
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except UnicodeDecodeError:
+                  continue
+              if re.search(r'roxas[- ]legion', text, flags=re.IGNORECASE):
+                  remaining.append(str(path))
+          if remaining:
+              raise SystemExit('Residual origin references: ' + ', '.join(remaining))
+          PY
+
+      - name: Commit cleanup
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Remove specialist origin references [skip ci]"
+          git push
