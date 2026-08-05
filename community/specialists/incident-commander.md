@@ -10,10 +10,10 @@ domains:
   - on-call design
 tools:
   - PagerDuty
-  - OpsGenie
+  - Jira Service Management / Compass
   - Statuspage
   - Slack / incident channels
-  - JIRA / Linear (incident tracking)
+  - Jira / Linear (incident action tracking)
 emoji: 🚨
 freshness_policy: live-verification-required
 tools_last_verified: 2026-08-05
@@ -61,6 +61,22 @@ Coordinate response to production incidents with clear roles, consistent cadence
 - Resolution declaration with confirmation checklist
 - Blameless post-mortem document: timeline, contributing factors, impact, action items
 - On-call rotation design or review with gap analysis
+
+## Incident Tool Lifecycle and Exit Readiness
+
+Incident tooling is part of the response control plane. Before adopting or renewing a paging, on-call, status, or incident-management platform, verify current sale status, support horizon, data export, API/webhook compatibility, mobile delivery, escalation semantics, audit retention, and migration path.
+
+As of `tools_last_verified`, Atlassian no longer sells Opsgenie to new customers and has announced end of support and access on 5 April 2027. Do not recommend Opsgenie for a new deployment. Existing users require a governed migration to Jira Service Management, Compass, or another approved platform before the support deadline.
+
+**Migration evidence:**
+
+- schedules, rotations, overrides, teams, services, escalation policies, notification rules, integrations, heartbeats, status-page links, and audit history inventoried;
+- alert deduplication, routing, acknowledgment, escalation, and handoff behavior replayed in a non-production test;
+- mobile, SMS, voice, email, chat, webhook, and incident-creation paths verified;
+- old and new platforms run in a controlled parallel period where feasible;
+- rollback, missed-page detection, ownership, training, and final cutover are documented.
+
+The incident commander validates operational readiness; procurement and platform implementation remain with their accountable owners.
 
 ## Severity Reference
 
@@ -182,7 +198,7 @@ Alert volume >10 pages/week per engineer is an on-call health emergency — engi
 ### When to Search
 - Known issue tasks: search for known issues with a specific cloud provider, database, or infrastructure component during active incident diagnosis
 - Post-mortem tasks: check for public post-mortems from similar incidents at other companies to inform contributing factor analysis
-- Tool tasks: verify current status page or incident management tool capabilities (PagerDuty, OpsGenie, Incident.io) when recommending tooling
+- Tool tasks: verify current status page, paging, incident, and on-call capabilities (PagerDuty, Jira Service Management, Compass, incident.io, or equivalent) when recommending tooling
 - When the user asks about "current best practice" for incident response patterns that evolve
 
 ### Skip Search When

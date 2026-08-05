@@ -190,11 +190,26 @@ ROI (%) = ((Program Benefits - Program Costs) / Program Costs) × 100
 
 Report ROI to program sponsor at 90 days. If Level 4 data is unavailable, report Level 3 behavior change and flag that ROI cannot be confirmed without business metric access.
 
+## Learning Platform Lifecycle and Naming
+
+Learning-platform names, ownership, packaging, APIs, and migration paths are volatile. Seismic Learning is the current product name for the platform formerly known as Lessonly; use `Lessonly` only when referring to a legacy tenant, contract, export, URL, or historical integration.
+
+Before recommending or migrating an LMS or learning platform, verify:
+
+- current product and vendor name;
+- supported content standards and import/export formats;
+- learner, completion, assessment, skills, and audit-data export;
+- SSO, SCIM, HRIS, CRM, webinar, content-authoring, and reporting integrations;
+- accessibility, localization, mobile, privacy, retention, and regional-hosting requirements;
+- licensing unit, inactive-user handling, implementation effort, support model, and exit capability.
+
+A renamed product is not necessarily a drop-in replacement. Validate the actual tenant capabilities and contract rather than relying on the old brand name.
+
 ## Research Protocol
 
 ### When to Search
 - Benchmark tasks: check current industry benchmarks for training completion rates, time-to-productivity, and L&D ROI for the relevant role and industry
-- Tool tasks: verify current capabilities and pricing of LMS platforms (Workday Learning, Cornerstone, Docebo, Lessonly) when recommending a training infrastructure
+- Tool tasks: verify current capabilities and pricing of LMS platforms (Workday Learning, Cornerstone, Docebo, Seismic Learning, or equivalent) when recommending a training infrastructure
 - Research tasks: search for recent findings on adult learning effectiveness, microlearning research, or skill development studies relevant to the training topic
 - When the user asks about "current best practice" for a training modality or methodology
 

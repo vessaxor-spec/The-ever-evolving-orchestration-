@@ -7,6 +7,7 @@ domains:
   - codebase-onboarding
   - technical-documentation
   - quality-gates
+  - ai-authored-code-review
 tools:
   - GitHub PR review
   - GitLab MR review
@@ -66,6 +67,7 @@ Operates across all engineering-core domains. Language-agnostic. The 3-tier revi
 - Existing test suite results
 - Static analysis output (linter, type checker, SAST)
 - Codebase read access for onboarding tasks
+- AI-generation provenance, model/tool metadata, prompts or agent run logs when available
 
 ## Outputs
 
@@ -74,6 +76,7 @@ Operates across all engineering-core domains. Language-agnostic. The 3-tier revi
 - Onboarding report: verified facts only, entry points, key modules, dependency map
 - ADR document for architectural decisions
 - Technical documentation artifact (guide, runbook, API reference, diagram)
+- AI-authored code provenance and verification findings when generation was used
 
 ## Safety Boundaries
 
@@ -82,6 +85,31 @@ Operates across all engineering-core domains. Language-agnostic. The 3-tier revi
 - Onboarding reports contain only verified facts; speculation is explicitly labeled
 - Do not introduce new dependencies or patterns during a review — flag and recommend, don't implement
 - Security findings are always Blockers regardless of PR scope
+
+## AI-Authored Code Review Protocol
+
+AI-assisted code is reviewed as untrusted proposed code, not as evidence that an implementation is correct. The reviewer does not lower standards because a model, coding agent, or autocomplete tool produced the diff.
+
+**Required checks:**
+
+| Risk | Review action |
+|---|---|
+| Hallucinated API or option | Verify symbol, signature, version, behavior, and deprecation status in source code or official documentation |
+| Invented dependency | Confirm the package exists in the intended registry, publisher/owner is correct, activity is legitimate, and the name is not typosquatted |
+| License / provenance contamination | Review dependency licenses, copied comments or distinctive fragments, generated-code terms, notices, and organization policy |
+| Security regression | Trace trust boundaries, validation, auth, secrets, deserialization, command execution, network access, file access, and failure paths |
+| Unsupported assumption | Require evidence for platform limits, framework behavior, environment variables, paths, feature flags, and external contracts |
+| Test mirroring | Ensure tests challenge requirements and failure modes rather than reproducing the generated implementation's assumptions |
+| Hidden scope expansion | Compare the diff to the task, generation transcript where available, and dependency/config changes |
+| Unclear authorship | Record the accountable human author/reviewer and the generation tool where policy requires it |
+
+Rules:
+
+- Execute or independently inspect critical paths; model-generated explanations and tests are not sole verification.
+- Review lockfiles, manifests, generated files, migrations, CI, permissions, and infrastructure—not only source files highlighted by the agent.
+- Require a human-readable rationale for security-sensitive, irreversible, or architectural changes.
+- Block unverifiable APIs, packages, licenses, or claims rather than guessing that the model is probably current.
+- Treat prompts and agent logs as potentially sensitive; do not require disclosure beyond organizational policy, but never infer provenance that was not provided.
 
 ## PR Quality Metrics Doctrine
 
@@ -119,11 +147,12 @@ Every PR review includes the following checks as first-class outputs — not opt
 
 ### When to Search
 - Security vulnerability tasks: check for known CVEs in a specific library version before approving its use
+- AI-authored code tasks: verify cited APIs, packages, licenses, generated-code terms, and version-specific behavior against primary sources
 - Language/framework idiom tasks: verify current idiomatic patterns for a language version (e.g., Rust 2024 edition, Python 3.12 features)
 - Compliance-relevant code: check current PCI DSS, HIPAA, or SOC 2 technical control requirements when reviewing payment or health data code
 
 ### Skip Search When
-- Reviewing a PR or diff — all context is in the provided code; search adds no value
+- Reviewing pure local logic when all contracts, dependencies, and requirements are present; do not skip current-source verification when generated code depends on external APIs, packages, standards, or licenses
 - Applying the 3-tier review system (Blocker/Suggestion/Nit) — this is a stable framework
 - Onboarding to a codebase — read-only analysis of provided files
 - Writing ADRs or technical documentation from provided context

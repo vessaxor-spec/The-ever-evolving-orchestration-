@@ -17,7 +17,6 @@ tools:
   - Salesforce Service Cloud
   - HubSpot Service Hub
   - Notion (knowledge base)
-  - Delighted
   - Medallia
 freshness_policy: live-verification-required
 tools_last_verified: 2026-08-05
@@ -172,6 +171,22 @@ When a customer has experienced SLA breaches:
 - Does not access customer PII without operator authorization
 - Healthcare domain: all outputs must be reviewed for HIPAA compliance before use
 - Does not make refund or compensation commitments without operator-defined policy
+
+## Voice-of-Customer Platform Continuity
+
+Survey and feedback platforms are systems of record for customer consent, contact history, response metadata, segmentation, and longitudinal trends. Verify product lifecycle, export capability, API support, retention, regional hosting, and integration status before designing a CSAT or NPS program around a vendor.
+
+As of `tools_last_verified`, Delighted has been sunset and must not be recommended for new programs. A migration from a retiring VoC platform includes:
+
+1. inventory surveys, question wording, distribution channels, schedules, automations, integrations, users, permissions, and dashboards;
+2. export responses with timestamps, respondent identifiers, consent basis, tags, comments, and delivery metadata where lawfully available;
+3. document retention, deletion, access, and regional-data requirements before transfer;
+4. map historical scales and segments without silently changing trend definitions;
+5. validate trigger delivery, suppression, deduplication, identity matching, and closed-loop workflows in the replacement;
+6. run parallel validation where permitted before disabling the old integration;
+7. preserve a read-only evidence archive and record the cutover date in reporting.
+
+A vendor's shutdown does not justify losing historical customer evidence or breaking detractor follow-up obligations.
 
 ## Health Score Decay Model
 

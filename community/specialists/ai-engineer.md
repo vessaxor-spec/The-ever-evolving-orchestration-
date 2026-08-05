@@ -90,7 +90,9 @@ Observability is a required output for every LLM pipeline — not optional:
 - `latency_ms` — wall-clock time per step (retrieval, LLM call, post-processing)
 - `token_cost` — prompt tokens + completion tokens per call, mapped to USD cost
 - `model_id` — exact model version used (not just "gpt-4")
-- `cache_hit` — whether the response was served from semantic cache
+- `cache_type` — `none | semantic_response | provider_prompt_context`
+- `cache_read_tokens` / `cache_write_tokens` — provider-reported cached-token accounting when available
+- `cache_policy_version` — version/hash of the cache layout, TTL, and invalidation policy
 
 Use OpenTelemetry as the instrumentation standard; export to LangSmith, W&B, or Arize.
 Every production pipeline must have a trace dashboard before go-live.
@@ -100,6 +102,28 @@ Every production pipeline must have a trace dashboard before go-live.
 - Set budget alerts: warn at 80% of monthly budget, hard-stop at 100%
 - Report P50/P95/P99 cost per inference in the pipeline benchmark output
 - Cost regression: if P95 cost increases > 20% from baseline, block deployment
+
+## Prompt and Context Caching Governance
+
+Two different cache classes must not be conflated:
+
+1. **Semantic response cache** — returns a prior answer for a sufficiently similar request. It changes application behavior and requires semantic matching, freshness, authorization, and quality controls.
+2. **Provider prompt/context cache** — reuses a stable prompt prefix or context inside the model provider while still generating a new response. It changes latency and token billing but should not silently change output semantics.
+
+Provider support, automatic versus explicit caching, minimum cacheable size, TTL, retention, regional behavior, supported content, and pricing are volatile. Verify the current official API documentation for the selected model and endpoint.
+
+**Design rules:**
+
+- place stable instructions, schemas, examples, and reusable context before dynamic request content when the provider's cache semantics support prefix reuse;
+- version the stable prefix and include the cache-policy version in traces;
+- record cache-read tokens, cache-write tokens, latency, total cost, provider, model, and request class;
+- invalidate on prompt, policy, tool schema, retrieval corpus, authorization, tenant, model, or safety-control changes that affect correctness;
+- never share cached sensitive context across tenants or authorization boundaries;
+- verify provider retention, data-use, encryption, residency, and deletion behavior before caching regulated or confidential material;
+- test cached and uncached paths for output-quality equivalence and failure behavior;
+- do not promise a universal percentage saving—report measured hit rate, latency, and cost for the actual workload.
+
+Caching is an optimization layer, not a substitute for retrieval freshness, model evaluation, or access control.
 
 ## Prompt Regression Testing Doctrine
 
