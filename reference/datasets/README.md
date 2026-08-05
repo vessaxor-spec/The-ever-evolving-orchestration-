@@ -16,6 +16,10 @@ A routing change is not rejected merely because it differs from the baseline. It
 
 The fixtures verify team ownership, worker binding, specialist risk profile, role-card reference, responsibilities, capabilities, verification requirements, escalation coverage, and authority boundaries. The worker layer is additive and does not replace the authoritative specialist specifications.
 
+## Mission Control routing conformance
+
+[`mission-control-routing-conformance.yaml`](mission-control-routing-conformance.yaml) records executable task classification, specialist activation, implementation fallback, risk elevation, and independent verification for the `orchestration`, `operations`, and `project_delivery` routes.
+
 ## Configuration warning baseline
 
 [`configuration-warning-baseline.yaml`](configuration-warning-baseline.yaml) records known inconsistencies currently exposed by configuration validation.

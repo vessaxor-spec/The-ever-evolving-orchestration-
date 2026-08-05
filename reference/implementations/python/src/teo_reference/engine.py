@@ -18,6 +18,42 @@ from .schemas import (
 )
 
 TASK_PATTERNS: list[tuple[str, tuple[str, ...]]] = [
+    (
+        "orchestration",
+        (
+            "agent orchestration",
+            "multi-agent pipeline",
+            "multi agent pipeline",
+            "handoff contract",
+            "agent activation protocol",
+            "mcp server",
+        ),
+    ),
+    (
+        "operations",
+        (
+            "operations plan",
+            "operational plan",
+            "onboarding workflow",
+            "accounts payable",
+            "vendor performance",
+            "operational kpi",
+            "process optimization",
+            "recruitment operations",
+        ),
+    ),
+    (
+        "project_delivery",
+        (
+            "project plan",
+            "delivery plan",
+            "critical path",
+            "risk register",
+            "raci matrix",
+            "scope negotiation",
+            "project status report",
+        ),
+    ),
     ("security_review", ("security review", "threat model", "vulnerability", "authentication", "authorization")),
     ("code_review", ("code review", "review this diff", "review the pull request", "review pr")),
     ("deep_debugging", ("debug", "root cause", "failing test", "failure", "incident")),
@@ -50,6 +86,9 @@ RISK_PATTERNS: dict[str, tuple[str, ...]] = {
 }
 
 ROUTE_IMPLEMENTATION_KEYS: dict[str, tuple[str, ...]] = {
+    "orchestration": ("primary",),
+    "operations": ("primary",),
+    "project_delivery": ("primary",),
     "architecture_design": ("primary",),
     "daily_coding": ("primary",),
     "deep_debugging": ("primary",),

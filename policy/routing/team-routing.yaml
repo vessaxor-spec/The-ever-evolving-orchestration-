@@ -1,4 +1,4 @@
-version: 0.4
+version: 0.5
 status: public-draft
 
 routing_order:
@@ -24,6 +24,33 @@ mission_control:
     - assemble_result
 
 team_routes:
+  orchestration:
+    primary_team: mission_control
+    primary_worker: orchestration
+    supporting_teams:
+      - planning
+      - engineering
+      - verification
+    verification_team: verification
+
+  operations:
+    primary_team: mission_control
+    primary_worker: operations
+    supporting_teams:
+      - planning
+      - review
+      - verification
+    verification_team: verification
+
+  project_delivery:
+    primary_team: mission_control
+    primary_worker: project_delivery
+    supporting_teams:
+      - planning
+      - engineering
+      - verification
+    verification_team: verification
+
   architecture_design:
     primary_team: planning
     primary_worker: architecture
@@ -154,7 +181,9 @@ specialist_resolution:
   optional: true
 
 implementation_resolution:
-  source: policy/routing/routing.yaml
+  sources:
+    - policy/routing/routing.yaml
+    - policy/routing/mission-control-routing.yaml
   model_registry: models.yaml
   rule: >-
     Resolve the selected worker and optional specialist to the best currently
