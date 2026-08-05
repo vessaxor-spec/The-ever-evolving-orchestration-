@@ -20,6 +20,15 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
+def _separate_conditional_escalations(routes: dict[str, Any]) -> None:
+    for route in routes.values():
+        if not isinstance(route, dict):
+            continue
+        escalation = route.pop("escalation", None)
+        if escalation is not None:
+            route["conditional_escalation"] = escalation
+
+
 def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
     data = _load_yaml(path)
     routes = data.get("routing")
@@ -42,6 +51,8 @@ def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[st
                 + ", ".join(duplicates)
             )
         routes.update(extension_routes)
+
+    _separate_conditional_escalations(routes)
 
     policy = data.get("verification_policy")
     if isinstance(policy, dict):
