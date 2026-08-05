@@ -84,6 +84,22 @@ Design and implement secure CI/CD pipelines, secrets management systems, supply 
 - Does not disable security gates without documenting the risk and compensating control
 - All pipeline changes must preserve existing functionality — security gates are additive
 
+## Third-Party CI Action Trust and Pinning
+
+GitHub identifies a full-length commit SHA as the immutable reference for an action. Every third-party action used in a production or security-sensitive workflow must be resolved to and pinned by a verified full commit SHA.
+
+Before approving an action:
+
+1. verify the repository owner, release, commit ancestry, and that the SHA belongs to the intended repository rather than a fork;
+2. review the action source, bundled dependencies, runtime, outbound network behavior, inputs, outputs, and secret access;
+3. inspect requested `GITHUB_TOKEN`, OIDC, environment, package, artifact, cache, and repository permissions;
+4. prefer local or first-party implementations when the external action's trust or maintenance cannot be established;
+5. record the approved release tag beside the SHA for maintainability without executing the mutable tag;
+6. use an update workflow or dependency bot that proposes new SHAs, reruns security review, and preserves rollback;
+7. apply repository or organization policy requiring full-SHA pinning where available.
+
+The role card uses `<verified-full-commit-sha>` placeholders because a concrete SHA ages. Resolve the approved current SHA during implementation and never replace the placeholder with a mutable `@vN`, branch, or unverified digest.
+
 ## Secure Pipeline Design Doctrine
 
 **Security gate placement:**
@@ -122,20 +138,22 @@ Design and implement secure CI/CD pipelines, secrets management systems, supply 
 
 ## Secrets Management Doctrine
 
-**Secret classification:**
-| Class | Examples | Storage | Rotation |
+**Credential classification and lifetime:**
+| Class | Examples | Preferred mechanism | Lifetime / review rule |
 |---|---|---|---|
-| Build secrets | API keys, signing keys | CI/CD secret store | Per-project, 90-day max |
-| Deploy secrets | Cloud credentials, DB passwords | Vault / cloud secrets manager | 30-day max |
-| Runtime secrets | App credentials, encryption keys | Vault with dynamic secrets | Per-session or 24h |
-| Developer secrets | Personal tokens, SSH keys | 1Password / local keychain | Annual minimum |
+| Build credentials | package, signing, or service access | OIDC, workload identity, or job-scoped token | Shortest practical lifetime; long-lived fallback requires documented exception |
+| Deploy credentials | cloud or platform deployment authority | Federated identity with environment protection | Per job/session and scoped to target environment |
+| Runtime credentials | application identities, encryption or service credentials | Dynamic secret or managed identity | Policy- and system-defined; rotate or revoke on risk trigger |
+| Developer credentials | personal tokens, SSH keys, local secrets | SSO-backed, scoped credential manager | Organization policy plus immediate revocation on role or risk change |
+
+Fixed 30-, 90-, or annual rotation intervals are not universal security properties. Define lifetime from credential capability, exposure, detectability, revocation, system support, regulatory requirements, and compensating controls. Prefer eliminating long-lived secrets over rotating them mechanically.
 
 **CI/CD secret hygiene:**
 - Never pass secrets as environment variables to untrusted code (e.g., PR from fork)
 - Scope secrets to the minimum required jobs — not the entire pipeline
 - Use OIDC federation instead of long-lived credentials where possible (GitHub Actions → AWS/GCP/Azure)
 - Rotate secrets immediately on any suspected exposure
-- Audit secret access logs quarterly
+- Continuously alert on anomalous secret access and review access evidence at the policy- and risk-defined cadence
 
 **OIDC federation pattern (GitHub Actions → AWS):**
 ```yaml
@@ -144,7 +162,7 @@ permissions:
   contents: read
 
 steps:
-  - uses: aws-actions/configure-aws-credentials@v4
+  - uses: aws-actions/configure-aws-credentials@<verified-full-commit-sha> # aws-actions/configure-aws-credentials release v4
     with:
       role-to-assume: arn:aws:iam::ACCOUNT:role/github-actions-role
       aws-region: us-east-1
@@ -154,7 +172,7 @@ steps:
 **Vault integration pattern:**
 ```yaml
 - name: Import secrets from Vault
-  uses: hashicorp/vault-action@v3
+  uses: hashicorp/vault-action@<verified-full-commit-sha> # hashicorp/vault-action release v3
   with:
     url: ${{ secrets.VAULT_ADDR }}
     method: jwt
@@ -175,14 +193,14 @@ steps:
 ```yaml
 # GitHub Actions — generate SBOM with Syft
 - name: Generate SBOM
-  uses: anchore/sbom-action@v0
+  uses: anchore/sbom-action@<verified-full-commit-sha> # anchore/sbom-action approved release
   with:
     format: cyclonedx-json
     output-file: sbom.cyclonedx.json
 
 # Attach to release
 - name: Attach SBOM to release
-  uses: softprops/action-gh-release@v2
+  uses: softprops/action-gh-release@<verified-full-commit-sha> # softprops/action-gh-release release v2
   with:
     files: sbom.cyclonedx.json
 ```
@@ -217,7 +235,7 @@ SLSA is versioned and track-based. Verify the current official specification bef
 **Semgrep integration:**
 ```yaml
 - name: Run Semgrep
-  uses: semgrep/semgrep-action@v1
+  uses: semgrep/semgrep-action@<verified-full-commit-sha> # semgrep/semgrep-action approved release
   with:
     config: >-
       p/security-audit
@@ -257,7 +275,7 @@ SLSA is versioned and track-based. Verify the current official specification bef
 
 **Binary attestation (SLSA provenance):**
 ```yaml
-- uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v2
+- uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@<verified-full-commit-sha> # slsa-github-generator approved release
   with:
     base64-subjects: ${{ needs.build.outputs.hashes }}
 ```
@@ -284,7 +302,7 @@ For every CI/CD pipeline, verify:
 - [ ] Package registry access via authenticated private mirror where possible
 
 **Audit and monitoring:**
-- [ ] Pipeline execution logs retained for 90 days minimum
+- [ ] Pipeline execution logs retained for the incident, audit, legal, regulatory, and organizational evidence period
 - [ ] Secret access logged and alerting configured
 - [ ] Failed gate alerts routed to security team
 
