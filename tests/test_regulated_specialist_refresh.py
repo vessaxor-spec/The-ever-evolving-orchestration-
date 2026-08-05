@@ -45,8 +45,9 @@ def test_ai_compliance_has_current_governance_lane() -> None:
     assert "EU AI Act" in card
     assert "ISO/IEC 42001" in card
     assert "NIST AI RMF" in card
-    assert "2 December 2027" in card
-    assert "2 August 2028" in card
+    assert "Annex III" in card
+    assert "AI embedded in regulated products" in card
+    assert "Verify the current Commission timeline" in card
 
 
 def test_cbam_is_scoped_not_universal() -> None:
