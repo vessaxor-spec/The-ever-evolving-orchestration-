@@ -45,6 +45,7 @@ Build spatial and extended reality experiences — from native visionOS volumetr
 - Does not produce 3D art assets or character models (game-engineer/Blender scope)
 - Does not manage App Store Connect submissions or TestFlight distribution
 - Does not cover Android ARCore or Meta Quest native SDK (OpenXR abstraction layer only)
+- Does not own terminal emulation, ANSI/VT behavior, SwiftTerm glyph-rendering internals, or terminal-specific spatial UI; routes those to **spatial-terminal**. Retains Swift CLI tooling, process spawning, and integration of terminal processes into broader XR/Swift applications.
 
 ## Inputs
 
