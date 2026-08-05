@@ -49,6 +49,12 @@ jobs:
                   'Each TEO specialist role card must retain its complete specialist specification verbatim.',
               'The original Roxas-Legion specification above is authoritative and must remain intact.':
                   'The specialist specification above is authoritative and must remain intact.',
+              'TEO includes **56 public specialist role cards** originally created by **Sylvester Roxas** for the specialist collection specialist system.':
+                  'TEO includes **56 public specialist role cards** created by **Sylvester Roxas**.',
+              'TEO includes a public roster of 56 specialist role cards created by **Sylvester Roxas** and integrated from the specialist collection specialist system.':
+                  'TEO includes a public roster of 56 specialist role cards created by **Sylvester Roxas**.',
+              'TEO does not summarize, narrow, demote, simplify, or rewrite the Legion role.':
+                  'TEO does not summarize, narrow, demote, simplify, or rewrite the specialist role.',
           }
 
           def eligible(path: Path) -> bool:
@@ -72,6 +78,7 @@ jobs:
               text = re.sub(r'(?mi)^\s*-\s*\*\*Original source:\*\*.*roxas[- ]legion.*\n?', '', text)
               text = re.sub(r'(?mi)^\s*>\s*\*\*Origin:\*\*.*roxas[- ]legion.*\n?', '', text)
               text = re.sub(r'(?mi)^\s*>\s*Original source:.*roxas[- ]legion.*\n?', '', text)
+              text = re.sub(r'(?mi)^\*\*Source roster:\*\*\s*specialist roster\s*\n?', '', text)
 
               for old, new in exact_replacements.items():
                   text = text.replace(old, new)
@@ -87,7 +94,11 @@ jobs:
               text = re.sub(r'Roxas[- ]Legion source specifications?', 'specialist specifications', text, flags=re.IGNORECASE)
               text = re.sub(r'Roxas[- ]Legion specifications?', 'specialist specifications', text, flags=re.IGNORECASE)
               text = re.sub(r'Roxas[- ]Legion Markdown files?', 'specialist Markdown files', text, flags=re.IGNORECASE)
-              text = re.sub(r'Roxas[- ]Legion', 'specialist collection', text, flags=re.IGNORECASE)
+              text = re.sub(r'Roxas[- ]Legion', 'TEO', text, flags=re.IGNORECASE)
+              text = text.replace('specialist collection specialist system', 'TEO specialist system')
+              text = text.replace('specialist collection', 'TEO')
+              text = text.replace('Legion role', 'specialist role')
+              text = text.replace('Legion roles', 'specialist roles')
 
               if path.as_posix() == 'community/specialists/README.md':
                   text = text.replace('## Source and credit', '## Creator credit')
@@ -116,7 +127,7 @@ jobs:
                   text = path.read_text(encoding='utf-8')
               except UnicodeDecodeError:
                   continue
-              if re.search(r'roxas[- ]legion', text, flags=re.IGNORECASE):
+              if re.search(r'roxas[- ]legion|specialist collection', text, flags=re.IGNORECASE):
                   remaining.append(str(path))
           if remaining:
               raise SystemExit('Residual origin references: ' + ', '.join(remaining))
@@ -131,5 +142,5 @@ jobs:
           if git diff --cached --quiet; then
             exit 0
           fi
-          git commit -m "Remove specialist origin references [skip ci]"
+          git commit -m "Refine specialist attribution wording [skip ci]"
           git push origin HEAD:${{ github.event.pull_request.head.ref }}
