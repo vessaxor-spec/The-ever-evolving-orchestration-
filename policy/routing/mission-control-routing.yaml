@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -115,3 +115,41 @@ routing:
         - missing_accountable_owner
         - scope_change_without_tradeoff
         - delivery_index_below_threshold
+
+  incident_response:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: coordinate severity, roles, cadence, communications, resolution readiness, and blameless learning
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: inspect incident history, runbooks, on-call context, status evidence, and affected-system documentation
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: independently validate severity evidence, technical sign-off, monitoring stability, and resolution criteria
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - sev1_or_data_integrity_risk
+        - payment_processing_failure
+        - cascading_service_failure
+        - contractual_sla_breach_imminent
+        - unresolved_extended_incident
+        - recurrence_with_failed_prior_actions
+        - no_technical_lead_available
