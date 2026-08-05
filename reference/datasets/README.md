@@ -12,13 +12,15 @@ A routing change is not rejected merely because it differs from the baseline. It
 
 ## Mission Control worker conformance
 
-[`mission-control-worker-conformance.yaml`](mission-control-worker-conformance.yaml) binds the `agents-orchestrator`, `operations-manager`, and `project-manager` specialists to distinct Mission Control core workers.
+[`mission-control-worker-conformance.yaml`](mission-control-worker-conformance.yaml) binds the `agents-orchestrator`, `operations-manager`, `project-manager`, and `incident-commander` specialists to distinct Mission Control core workers.
 
 The fixtures verify team ownership, worker binding, specialist risk profile, role-card reference, responsibilities, capabilities, verification requirements, escalation coverage, and authority boundaries. The worker layer is additive and does not replace the authoritative specialist specifications.
 
 ## Mission Control routing conformance
 
-[`mission-control-routing-conformance.yaml`](mission-control-routing-conformance.yaml) records executable task classification, specialist activation, implementation fallback, risk elevation, and independent verification for the `orchestration`, `operations`, and `project_delivery` routes.
+[`mission-control-routing-conformance.yaml`](mission-control-routing-conformance.yaml) records executable task classification, specialist activation, implementation fallback, risk elevation, and independent verification for the `orchestration`, `operations`, `project_delivery`, and `incident_response` routes.
+
+The incident-response scenario additionally requires critical-risk verification, qualified human approval, technical sign-off confirmation, and preservation of the incident commander's coordination-only authority.
 
 ## Configuration warning baseline
 
