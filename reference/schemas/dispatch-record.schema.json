@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/dispatch-record.schema.json",
+  "title": "TEO Dispatch Record",
+  "type": "object",
+  "required": [
+    "task_id", "dispatch_id", "created_at", "task", "task_type", "risk_level",
+    "selected_team", "selected_worker", "required_capabilities",
+    "selected_implementation", "verification", "routing_explanation", "status"
+  ],
+  "properties": {
+    "task_id": {"type": "string"},
+    "dispatch_id": {"type": "string"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "task": {"type": "string"},
+    "task_type": {"type": "string"},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "selected_team": {"type": "string"},
+    "selected_worker": {"type": "string"},
+    "selected_specialist": {"type": ["string", "null"]},
+    "specialist_source": {"type": ["string", "null"]},
+    "specialist_risk_profile": {"type": ["string", "null"]},
+    "required_capabilities": {"type": "array", "items": {"type": "string"}},
+    "selected_implementation": {"$ref": "#/$defs/implementation"},
+    "fallback_implementation": {"oneOf": [{"$ref": "#/$defs/implementation"}, {"type": "null"}]},
+    "verification": {
+      "type": "object",
+      "required": ["team", "method", "implementation", "independent", "human_approval_required"],
+      "properties": {
+        "team": {"type": "string"},
+        "method": {"type": "array", "items": {"type": "string"}},
+        "implementation": {"$ref": "#/$defs/implementation"},
+        "independent": {"const": true},
+        "human_approval_required": {"type": "boolean"}
+      }
+    },
+    "routing_explanation": {"type": "array", "items": {"type": "string"}},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "status": {"const": "dispatched"}
+  },
+  "$defs": {
+    "implementation": {
+      "type": "object",
+      "required": ["agent", "model", "source"],
+      "properties": {
+        "agent": {"type": "string"},
+        "model": {"type": "string"},
+        "profile": {"type": ["string", "null"]},
+        "provider_family": {"type": ["string", "null"]},
+        "availability": {"type": ["string", "null"]},
+        "source": {"type": "string"}
+      }
+    }
+  }
+}
