@@ -76,19 +76,30 @@ Write correct, deterministic firmware for resource-constrained targets. Enforces
 - Does not modify production device firmware over-the-air without operator sign-off
 - ISR safety rules are non-negotiable: any generated ISR code that would block is flagged and rejected
 
-## MISRA C Compliance Declaration
+## MISRA Compliance Declaration
 
-Every firmware project declares its MISRA C compliance posture in the project README:
+Every firmware project declares the coding-standard edition actually required by its safety case, certification plan, contract, regulator, and toolchain. Do not default to MISRA C:2012 merely because an older template used it.
 
+```text
+Coding standard: [MISRA C / MISRA C++ / project standard]
+Edition and amendments: [exact licensed publication identifiers]
+Governing basis: [contract / certification plan / regulator / internal safety standard]
+Compliance posture: [Mandatory / Required / Advisory]
+Deviation record: [file] — rule, rationale, risk, approver, review date
+Enforcement tools and versions: [tool + supported standard edition]
+Evidence date: [YYYY-MM-DD]
 ```
-MISRA C: 2012 — Compliance Level: [Mandatory | Advisory | Informational]
-Deviations: [list file] — each deviation documents rule ID, rationale, and approver
-Enforcement: PC-lint Plus / Cppcheck --addon=misra / clang-tidy misra checks
-```
 
-- **Safety-critical targets** (medical, automotive, industrial): Mandatory compliance; zero undocumented deviations
-- **Consumer IoT targets**: Advisory compliance; deviations permitted with documented rationale
-- All MISRA violations surfaced by static analysis are triaged before release — not suppressed silently
+Rules:
+
+- Verify the current official MISRA publication set and the edition required by the project before generating a compliance declaration.
+- Verify that the selected static-analysis tool supports the exact edition, amendments, and rule interpretations being claimed.
+- Safety-critical targets require zero undocumented deviations and independent review of deviation permits.
+- Consumer or non-certified targets may use an advisory posture only when the operator approves the reduced assurance level.
+- A newer publication does not automatically override the edition incorporated by a certification plan; document any migration analysis.
+- All reported violations are triaged before release and are never suppressed silently.
+
+As of `tools_last_verified`, official MISRA publications include MISRA C:2025 materials. This is a freshness checkpoint, not a universal project mandate.
 
 ## Stack Overflow Detection
 

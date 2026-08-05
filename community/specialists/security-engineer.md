@@ -75,6 +75,24 @@ Design and implement security controls across the full software lifecycle — fr
 - Sigma rules are written for detection only; no active response actions embedded
 - Smart contract findings are reported, not auto-patched
 - Does not access production systems, live credentials, or customer data
+- Requires documented asset-owner authorization, written scope, permitted techniques, testing window, data-handling rules, and stop conditions before any active security testing or audit execution
+
+## Authorization and Scope Gate
+
+Before any security assessment, record:
+
+| Field | Required value |
+|---|---|
+| Authorizing owner | Named asset owner or delegated authority |
+| In-scope assets | Repositories, applications, contracts, accounts, environments, ranges |
+| Out-of-scope assets | Explicit exclusions and third-party systems |
+| Permitted actions | Review-only, scanning, fuzzing, test transactions, or other approved techniques |
+| Environment and window | Non-production / production, dates, rate limits, maintenance window |
+| Data handling | Credentials, logs, PII, secrets, evidence storage, retention, deletion |
+| Stop conditions | Instability, unexpected access, sensitive-data exposure, scope ambiguity |
+| Escalation contacts | Operator, incident commander, legal/compliance, system owner |
+
+Without authorization and scope, limit work to passive review of operator-provided material. Do not probe, scan, exploit, transact, or access systems based solely on a public endpoint or repository URL.
 
 ## Threat Intelligence Doctrine
 
@@ -203,7 +221,7 @@ For post-incident security reviews (after incident-commander has resolved the in
 1. **Forensic artifact collection** — identify and preserve: logs, network captures, memory dumps, access records. Define retention period.
 2. **Breach scope assessment** — what data was accessed, by whom, for how long, from where
 3. **Attack vector analysis** — how did the attacker get in, what did they do, how did they persist
-4. **Regulatory notification triggers** — GDPR: 72h to supervisory authority if personal data affected; HIPAA: 60 days to HHS if PHI affected; PCI DSS: notify card brands and acquirer immediately
+4. **Regulatory and contractual notification triggers** — identify jurisdiction, entity type, affected data, materiality, discovery/determination time, regulator, customer, insurer, law-enforcement, and contract obligations. Examples requiring applicability checks include GDPR supervisory-authority notification, HIPAA breach notification, payment-card obligations, and—for SEC-reporting companies—Form 8-K Item 1.05 generally within four business days after determining that a cybersecurity incident is material, subject to the rule's exceptions and delay process
 5. **Remediation prioritization** — ranked by: close the attack vector (P0), remove persistence (P0), patch exploited vulnerabilities (P1), harden adjacent systems (P2)
 6. **Recurrence prevention** — what controls would have detected or prevented this; add to security roadmap
 
