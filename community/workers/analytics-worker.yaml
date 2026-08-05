@@ -1,0 +1,69 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  This worker is an additive core-worker representation of the authoritative
+  data-analyst specialist role card. It provides routing and verification
+  context without replacing, compressing, weakening, or overriding that role.
+
+workers:
+  analytics:
+    mission: turn validated data into reproducible, uncertainty-aware findings that explain what happened, why it happened, and what evidence supports the next decision
+    owning_team: research
+    responsibilities:
+      - analytical_question_scoping
+      - data_quality_validation
+      - sql_and_dashboard_analysis
+      - kpi_funnel_and_pipeline_analysis
+      - statistical_inference
+      - experiment_design_and_analysis
+      - cohort_and_retention_analysis
+      - customer_segmentation_and_churn_modeling
+      - attribution_analysis
+      - ml_model_qa_and_bias_review
+      - forecast_accuracy_analysis
+      - decision_briefing
+    required_capabilities:
+      - quantitative_reasoning
+      - statistical_analysis
+      - sql_analysis
+      - experiment_design
+      - data_quality_assessment
+      - causal_reasoning
+      - visualization_design
+      - model_validation
+      - reproducible_analysis
+      - business_context_synthesis
+    preferred_implementations:
+      - gpt-5.6-sol
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - gemini-3.1-pro-preview
+      - claude-sonnet-5
+    verification:
+      - data_quality_and_lineage_check
+      - methodology_trace
+      - sample_size_and_power_review
+      - statistical_significance_recalculation
+      - causal_claim_review
+      - anomaly_protocol_check
+      - reproducibility_check
+      - independent_result_review
+    escalation:
+      - insufficient_or_corrupted_data
+      - underpowered_experiment
+      - material_method_disagreement
+      - protected_attribute_or_bias_risk
+      - regulated_or_high_consequence_decision
+      - financial_or_forecast_commitment
+      - model_leakage_or_integrity_failure
+    authority_boundaries:
+      - no_data_pipeline_ownership
+      - no_business_strategy_decision_substitution
+      - no_paid_media_reporting_ownership
+      - no_production_data_mutation
+      - no_correlation_presented_as_causation
+      - no_statistical_claim_without_method_sample_and_uncertainty
+      - no_go_no_go_decision_without_stated_evidence_and_accountable_owner
