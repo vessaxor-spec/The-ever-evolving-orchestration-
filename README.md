@@ -8,9 +8,11 @@
 
 ### Models evolve. Responsibilities endure.
 
-An open, vendor-neutral orchestration framework and reference specification for coordinating intelligent systems through teams, workers, specialists, capabilities, implementations, and verification.
+An open, vendor-neutral orchestration framework and runnable reference control plane for coordinating intelligent systems through teams, workers, specialists, capabilities, implementations, fallbacks, and independent verification.
 
 **Navigate by principles. Adapt by evidence.**
+
+[![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)
 
 </div>
 
@@ -18,9 +20,7 @@ An open, vendor-neutral orchestration framework and reference specification for 
 
 Every few months, the AI landscape changes.
 
-New models appear. Existing models improve. Providers add capabilities, change limits, and alter the economics of execution.
-
-Most orchestration systems respond by adding another model-specific rule.
+New models appear. Existing models improve. Providers change limits, pricing, context windows, tool access, and reliability. Systems built around a permanent model hierarchy become brittle as soon as those assumptions move.
 
 TEO starts from a different premise:
 
@@ -28,26 +28,51 @@ TEO starts from a different premise:
 
 Responsibilities change slowly. Capabilities evolve gradually. Implementations change constantly.
 
-The Ever-Evolving Orchestration separates those layers so a system can adopt better models without repeatedly redesigning how work is understood, assigned, executed, and verified.
+The Ever-Evolving Orchestration separates those layers so a system can adopt better implementations without repeatedly redesigning how work is understood, assigned, executed, challenged, and verified.
 
 ## What is TEO?
 
 TEO is a public framework for answering one durable question:
 
-> **How should intelligent systems decide which intelligence to use?**
+> **How should an intelligent system decide which intelligence to use, under what authority, with which fallback, and with what verification?**
 
-It does not attempt to declare a permanent best model. It provides a structured way to:
+TEO provides a structured way to:
 
-- interpret a task
-- identify the responsible team
+- interpret and classify a task
+- assess risk and constraints
+- identify the accountable team
 - select the appropriate worker
 - activate a domain specialist when useful
-- resolve required capabilities
-- choose the best available implementation
-- verify the result according to risk
-- improve future routing through evidence
+- resolve the required capabilities
+- choose an eligible implementation
+- assign a provider-aware fallback
+- require independent verification proportional to risk
+- record the dispatch, evidence, outcome, and escalation path
+- improve routing through conformance tests and observed results
 
-TEO combines a human-readable architecture with machine-readable routing policies, specialist bindings, and model registries. It is intended to be useful to engineers, AI agents, researchers, and organizations building multi-model systems.
+TEO combines human-readable architecture with machine-readable routing policies, specialist bindings, worker registries, model metadata, conformance fixtures, and a minimal runnable Python router.
+
+It is intended for engineers, AI agents, researchers, and organizations building multi-model or multi-agent systems that must remain understandable as implementations change.
+
+## Current project state
+
+The repository now contains:
+
+- six stable organizational layers: Mission Control, Planning, Engineering, Research, Review, and Verification
+- a public roster of 56 preserved specialist role cards
+- machine-readable team, worker, specialist, capability, model, fallback, and verification policies
+- dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
+- dedicated Research Team workers for broad research, market research, analytics, and documentation
+- deterministic task classification for the active reference routes
+- risk elevation from specialist profiles
+- provider-aware routine fallbacks
+- conditional escalation separated from ordinary availability fallback
+- exact configuration-warning baselines
+- worker and routing conformance datasets
+- a runnable Python reference router with validation, planning, finalization, and audit output
+- CI that compiles the implementation, runs the tests, parses schemas, validates linked configuration, and executes the end-to-end example
+
+The current control plane is intentionally inspectable. It does not call provider APIs yet. Provider adapters, credentials, retry execution, streaming, circuit breakers, and cost telemetry are later runtime layers built on top of the validated routing contract.
 
 ## Core architecture
 
@@ -76,29 +101,48 @@ Capability
   v
 Implementation
   |
+  +--> Routine fallback
+  |
+  +--> Conditional escalation
+  |
   v
-Verification
+Independent verification
+  |
+  v
+Evidence-bearing outcome
 ```
 
-A task is never routed directly to a model unless the system has already resolved the responsibility, worker, optional specialist, capability, and risk requirements behind that choice.
+A task is not routed directly to a model until the system has resolved the responsibility, worker, optional specialist, capability, risk, fallback, and verification requirements behind that choice.
 
-The Specialist layer is optional. It narrows a stable worker responsibility to a particular domain without replacing the owning team or changing the authority chain.
+The Specialist layer is optional. It narrows a stable worker responsibility to a domain without replacing the owning team, weakening the worker, or changing the authority chain.
 
-This hierarchy is designed to remain stable even when specialist rosters, model names, providers, prices, context limits, or tool capabilities change.
+This hierarchy is designed to remain stable even when model names, providers, prices, quotas, context limits, or tool capabilities change.
 
 ## Core principles
 
 ### Team-first
 
-Route work to a responsibility before selecting an implementation.
+Route work to an accountable responsibility before selecting an implementation.
 
 ### Capability-first
 
-Select the capabilities required by the task before selecting a provider or model.
+Resolve what the task requires before considering a provider or model.
 
 ### Evidence-first
 
-Improve routing through validation, measured outcomes, and documented tradeoffs rather than preference.
+Change routing through validation, measured outcomes, documented limitations, and explicit conformance updates rather than preference.
+
+### Authority before autonomy
+
+Workers and specialists operate inside declared responsibilities, escalation conditions, and human-approval boundaries.
+
+### Independent verification
+
+Consequential work must not rely on the same implementation as sole planner, executor, reviewer, and verifier.
+
+### Failure-aware fallback
+
+Fallback decisions must account for whether a failure is request-specific, transient, model-specific, provider-scoped, or capability-scoped.
 
 ## Team-first orchestration
 
@@ -106,43 +150,154 @@ TEO treats orchestration as an organizational problem before treating it as a mo
 
 ### Mission Control
 
-Mission Control receives the task, interprets intent, identifies constraints, assesses risk, selects the responsible team, coordinates execution, and determines the required verification path.
+Mission Control receives the task, interprets intent, assesses risk, selects the accountable route, coordinates work, and determines the verification path.
 
-Mission Control does not own specialist work. It owns dispatch, coordination, and completion.
+Its dedicated workers currently include:
+
+| Worker | Responsibility |
+|---|---|
+| `orchestration` | governed multi-agent pipelines, handoffs, state, recovery, and termination |
+| `operations` | operational controls, vendors, processes, approvals, dependencies, and accountable execution |
+| `project_delivery` | scope, capacity, critical path, risk, change control, and delivery commitments |
+| `incident_response` | severity, roles, cadence, timeline, communications coordination, resolution readiness, and blameless learning |
+
+Mission Control does not absorb specialist work. It owns dispatch, coordination, authority boundaries, and completion.
 
 ### Planning Team
 
-The Planning Team handles architecture, decomposition, dependency analysis, sequencing, and tradeoff evaluation.
+The Planning Team handles architecture, decomposition, dependency analysis, sequencing, tradeoff evaluation, and irreversible-choice review.
 
-Current preferred implementations include Claude Sonnet, Codex Sol, and Gemini Pro, depending on the need for general reasoning, executable repository awareness, or external research.
+Planning resolves structural decisions before Engineering executes them. Consequential architecture remains subject to executable feasibility checks and independent review.
 
 ### Engineering Team
 
-The Engineering Team handles implementation, debugging, testing, refactoring, migrations, and tool execution.
+The Engineering Team handles implementation, debugging, testing, refactoring, migrations, infrastructure work, and tool execution.
 
-Codex Terra is the default execution profile. Codex Sol supports difficult engineering reasoning. Gemini Pro and local coding models provide fallback paths when needed.
+Its workers remain separated by stable responsibility, including backend, frontend, mobile, DevOps, infrastructure, performance, database, data engineering, and AI engineering.
+
+Data engineering builds and maintains data movement and transformation systems. It does not own analytical interpretation merely because the input is data.
 
 ### Research Team
 
-The Research Team handles external research, technical documentation, standards, source comparison, repository mapping, and large-context analysis.
+The Research Team now distinguishes several forms of evidence work that should not be collapsed into one generic worker.
 
-Gemini Pro is the default deep research implementation. Gemini Flash supports fast collection, extraction, mapping, and multimodal triage.
+| Worker | Responsibility |
+|---|---|
+| `research` | source discovery, triangulation, contradiction analysis, confidence calibration, and research synthesis |
+| `market_research` | competitive landscapes, bounded market sizing, lifecycle analysis, weak signals, willingness-to-pay, and strategic market evidence |
+| `analytics` | quantitative analysis, KPI diagnostics, experiments, funnels, cohorts, forecasting, attribution, and model QA |
+| `documentation` | accurate, usable, maintainable technical documentation and reference material |
+
+These workers collaborate but remain distinct:
+
+- research synthesis is not quantitative analytics
+- market intelligence is not broad-domain research
+- analytics is not data-pipeline engineering
+- documentation is not the owner of substantive research
+- none of these workers substitutes for the accountable business decision-maker
 
 ### Review Team
 
 The Review Team challenges assumptions, reviews architecture and code, checks requirements alignment, identifies hidden risks, and escalates consequential decisions.
 
-Claude Sonnet, Codex Sol, and Claude Opus currently serve distinct review roles.
+Review includes semantic challenge, adversarial reasoning, security analysis, performance review, accessibility review, and contract integrity checks.
 
 ### Verification Team
 
-The Verification Team confirms that execution satisfied the original requirements.
+The Verification Team determines whether execution satisfied the original requirements and whether the evidence is sufficient to accept the result.
 
-Verification may include tests, static analysis, runtime checks, source grounding, independent review, rollback planning, or human approval, depending on risk.
+Verification may include:
+
+- output validation
+- targeted review
+- executable tests
+- source grounding
+- statistical recalculation
+- changed-contract review
+- rollback or recovery planning
+- independent multi-agent review
+- qualified human approval
+
+Verification strictness increases with effective risk, including risk elevated by an activated specialist.
+
+## Implemented reference routes
+
+The current control plane includes first-class routes for:
+
+| Route | Primary responsibility |
+|---|---|
+| `orchestration` | multi-agent pipeline design and governance |
+| `operations` | operational process and control coordination |
+| `project_delivery` | project planning and delivery governance |
+| `incident_response` | production incident command and coordination |
+| `architecture_design` | system architecture and structural tradeoffs |
+| `daily_coding` | routine implementation and testing |
+| `deep_debugging` | root-cause analysis and repair |
+| `repo_wide_refactor` | phased repository-scale structural change |
+| `deep_research` | broad evidence gathering and synthesis |
+| `market_research` | current market and competitive intelligence |
+| `analytics` | quantitative and statistical analysis |
+| `code_review` | correctness, scope, contracts, and regression review |
+| `security_review` | critical security analysis and verification |
+| `multimodal_analysis` | visual and multimodal interpretation |
+| `high_volume_simple` | economical classification, extraction, and transformation |
+| `documentation` | technical writing and reference maintenance |
+| `release` | release readiness, artifacts, versioning, and rollback confirmation |
+
+Task classification is deterministic in the reference implementation. Ambiguous work must provide an explicit `task_type` instead of allowing the router to invent a route.
+
+## Provider-aware delegation and fallback
+
+TEO does not assume that changing a model name automatically creates a meaningful fallback.
+
+A second model from the same provider may remain usable after a model-specific failure, but it may be useless after a provider-scoped quota, billing, authentication, regional, or service failure.
+
+The current policy therefore uses the following rules:
+
+1. **Prefer a routine fallback from another provider family.**
+2. **Block only the failed implementation for a model-specific failure.**
+3. **Block the whole provider family for provider-scoped failures.**
+4. **Allow same-provider recovery only when the failure is demonstrably model-specific or no capable cross-provider candidate exists.**
+5. **Do not use local models as automatic fallbacks.** They may remain registered for future explicit, private, or offline use.
+6. **Do not use high-cost escalation capacity as an ordinary availability fallback.**
+7. **Re-dispatch fallback execution with a newly selected independent verifier.**
+8. **Use bounded retries, backoff, jitter, retry budgets, and circuit breaking in future live adapters.**
+
+The complete methodology is documented in [`docs/methodology/provider-aware-fallbacks.md`](docs/methodology/provider-aware-fallbacks.md).
+
+Provider-aware behavior is enforced by [`tests/test_provider_fallback_policy.py`](tests/test_provider_fallback_policy.py).
+
+## Current implementation bindings
+
+TEO defines responsibilities independently from providers. The table below records the current bindings used by the reference policy; it is not a permanent ranking of models.
+
+| Capability direction | Current primary use | Cross-provider support |
+|---|---|---|
+| Engineering execution | Codex Terra | Gemini Pro and Claude review paths |
+| Engineering reasoning | Codex Sol | Gemini Pro and Claude Sonnet |
+| General planning and semantic review | Claude Sonnet | Gemini Pro and Codex Sol |
+| Broad and market research | Gemini Pro | Claude Sonnet and Codex Sol |
+| Quantitative analytics | Codex Sol | Gemini Pro with Claude Sonnet verification |
+| Multimodal and rapid collection | Gemini Flash | Claude Sonnet and technical follow-up when needed |
+| High-volume simple processing | Claude Haiku or Gemini Flash | Luna-class processing where eligible |
+| Critical security reasoning | Claude Opus | Codex engineering analysis and Gemini research support |
+| Executable verification | Codex Terra or Codex Sol | independent semantic, research, or human verification |
+
+Opus is reserved for the intentional `security_review` primary and evidence-based conditional escalation. It is not part of routine worker or global fallback pools.
+
+The complete machine-readable policies are available in:
+
+- [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
+- [`policy/routing/mission-control-routing.yaml`](policy/routing/mission-control-routing.yaml)
+- [`policy/routing/research-routing.yaml`](policy/routing/research-routing.yaml)
+- [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml)
+- [`models.yaml`](models.yaml)
 
 ## Public specialist roster
 
 TEO includes **56 public specialist role cards** created by **Sylvester Roxas**.
+
+Each specialist preserves its complete identity, protocols, responsibilities, capabilities, safety boundaries, collaboration rules, outputs, and examples. TEO allocation adds routing context; it does not compress or weaken the specialist.
 
 Each specialist has:
 
@@ -169,46 +324,99 @@ The human-readable roster is available in [`community/specialists/`](community/s
 
 The machine-readable allocation registry is available in [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml).
 
-Specialists do not replace core teams, bypass Mission Control, select their own authority, or approve their own consequential work. Regulated and high-consequence roles require proportionate independent verification and qualified human approval.
+Specialists do not replace core teams, bypass Mission Control, assign themselves authority, or approve their own consequential work. Regulated and high-consequence roles require proportionate independent verification and qualified human approval.
 
-## Capability roles and current implementations
+## Reference implementation
 
-TEO defines responsibilities independently from providers.
+The Python reference router is a minimal runnable control plane. It reads the existing YAML policies and registries, produces a structured dispatch, assigns an independent verifier, and records a final evidence-bearing outcome.
 
-| Capability role | Purpose | Current implementation families |
-|---|---|---|
-| **Engineering execution** | inspect, implement, edit, test, debug, verify | Codex Terra, local coding models, Gemini Pro as fallback |
-| **Engineering reasoning** | plan complex changes, reason across repositories, connect architecture to execution | Codex Sol, Claude Sonnet, Gemini Pro |
-| **General reasoning and review** | architecture, requirements, critique, tradeoff analysis, semantic review | Claude Sonnet, Claude Opus, Codex Sol, Gemini Pro |
-| **Research and long context** | source discovery, grounded comparison, large-context synthesis | Gemini Pro, Gemini Flash, Claude Sonnet |
-| **Multimodal and high-volume processing** | classify, extract, transform, map, summarize, triage | Gemini Flash, Claude Haiku, local models |
-| **Independent verification** | test claims, challenge assumptions, validate execution | Codex Terra, Claude Sonnet, Gemini Pro, human review when required |
+It currently supports four commands and workflows:
 
-## Current routing baseline
+### Install
 
-The current policy uses the following implementation split:
+```bash
+cd reference/implementations/python
+python -m pip install -e '.[test]'
+```
 
-| Work type | Primary direction |
-|---|---|
-| Architecture and general planning | Claude Sonnet, supported by Codex Sol and Gemini Pro |
-| Engineering architecture with repository constraints | Codex Sol |
-| Daily coding and implementation | Codex Terra |
-| Deep debugging | Codex Terra with Codex Sol and Claude review |
-| Deep research and large-context analysis | Gemini Pro |
-| Repository mapping and multimodal triage | Gemini Flash |
-| Semantic and adversarial review | Claude Sonnet |
-| High-consequence reasoning | Claude Opus |
-| High-volume simple work | Claude Haiku, Gemini Flash, Luna, or local models |
+### Validate linked configuration
 
-The complete machine-readable policy is available in [`policy/routing/routing.yaml`](policy/routing/routing.yaml).
+```bash
+teo --repo-root ../../.. validate
+```
 
-Team dispatch rules are available in [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml).
+Validation exposes unresolved worker bindings and policy inconsistencies without silently rewriting canonical team, worker, or specialist definitions.
 
-Specialist selection rules and bindings are available in [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml).
+### Create a dispatch
+
+```bash
+teo --repo-root ../../.. plan \
+  ../../examples/phase5-task.yaml \
+  --output /tmp/teo-dispatch.json \
+  --audit-log /tmp/teo-audit.jsonl
+```
+
+### Finalize an externally executed result
+
+```bash
+teo --repo-root ../../.. finalize \
+  /tmp/teo-dispatch.json \
+  execution-result.json \
+  verification-result.json \
+  --audit-log /tmp/teo-audit.jsonl
+```
+
+The execution and verification records must reference the dispatch ID. The verifier must match the assigned verification implementation and remain independent from the execution implementation.
+
+### Run the end-to-end example
+
+```bash
+python reference/examples/run_example.py
+```
+
+### Run the complete test suite
+
+```bash
+pytest
+```
+
+The reference router produces one of four final outcomes:
+
+- `completed`
+- `failed`
+- `escalated`
+- `awaiting_human`
+
+More detail is available in [`reference/implementations/python/README.md`](reference/implementations/python/README.md).
+
+## Conformance and CI
+
+TEO treats silent routing drift as a defect.
+
+The repository contains fixtures for:
+
+- general routing behavior
+- Mission Control worker bindings
+- Mission Control route behavior
+- broad research worker boundaries
+- market-research worker boundaries
+- analytics worker boundaries
+- exact configuration-warning baselines
+- provider-aware fallback behavior
+
+Intentional routing changes must update the relevant fixture and explain why the new behavior is correct.
+
+The CI workflow in [`.github/workflows/reference-ci.yml`](.github/workflows/reference-ci.yml) performs:
+
+1. Python source compilation
+2. the complete automated test suite
+3. JSON-schema parsing
+4. linked TEO configuration validation
+5. the end-to-end reference example
 
 ## Registry status
 
-Phase 4 established source-backed registries for provider access, concrete model identifiers, stable capabilities, and benchmark evidence.
+TEO maintains source-backed registries for provider access, concrete model identifiers, stable capabilities, governance controls, and benchmark evidence.
 
 | Registry area | Initial population |
 |---|---:|
@@ -224,43 +432,48 @@ The initial registry was reviewed on **2026-08-05**. Provider documentation esta
 - Model records: [`registry/models/`](registry/models/)
 - Capability definitions: [`registry/capabilities/`](registry/capabilities/)
 - Benchmark evidence: [`registry/benchmarks/`](registry/benchmarks/)
-- Phase 4 validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
+- Registry validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
 
-No controlled common harness has yet produced live cross-model quality, cost, or latency results. Those measurements belong to the reference implementation and later evidence cycles.
+A controlled common harness has not yet produced live cross-model quality, cost, and latency results. Those measurements belong to future provider-adapter and evidence cycles.
 
 ## Example workflow
 
-Consider a request to diagnose and repair a failing service across a large repository.
+Consider a request to analyze an onboarding experiment and recommend whether to ship the treatment.
 
 ```text
 Mission Control
   |
-  +--> classifies the task as deep debugging
-  +--> assigns the Engineering Team
-  +--> selects the relevant backend, database, infrastructure, or domain specialist
+  +--> classifies the task as analytics
+  +--> assigns the Research Team
+  +--> selects the analytics worker
+  +--> activates the data-analyst specialist
+  +--> elevates the task to the specialist's high-risk profile
   |
   v
-Codex Terra
+Quantitative execution
   |
-  +--> reproduces the failure
-  +--> inspects the repository
-  +--> implements and tests the fix
+  +--> validates data quality
+  +--> states H0 and H1
+  +--> checks sample size, power, and minimum detectable effect
+  +--> recalculates significance and confidence intervals
+  +--> checks cohort and funnel distortions
+  +--> separates correlation from supported causal inference
   |
   v
-Codex Sol and Claude Sonnet
+Independent methodological review
   |
-  +--> challenge the root-cause hypothesis
-  +--> review cross-system implications
+  +--> challenges assumptions and interpretation
+  +--> checks uncertainty and reproducibility
+  +--> confirms that the result does not substitute for the accountable business decision
   |
   v
 Verification Team
   |
-  +--> reruns targeted and regression tests
-  +--> confirms the original failure is resolved
-  +--> records the routing outcome
+  +--> validates evidence and analytical controls
+  +--> records the dispatch and outcome
 ```
 
-The models can change. The responsibility chain remains understandable.
+The implementations can change. The responsibility chain remains understandable.
 
 ## Getting started
 
@@ -268,12 +481,12 @@ The models can change. The responsibility chain remains understandable.
 
 1. Read this README.
 2. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).
-3. Review the canonical routing policy in [`policy/routing/routing.yaml`](policy/routing/routing.yaml).
-4. Review the team architecture in [`community/teams/`](community/teams/).
-5. Review stable workers in [`community/workers/workers.yaml`](community/workers/workers.yaml).
+3. Review team dispatch in [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml).
+4. Review implementation and fallback policy under [`policy/routing/`](policy/routing/).
+5. Review stable workers under [`community/workers/`](community/workers/).
 6. Review the public specialist roster in [`community/specialists/`](community/specialists/).
-7. Compare the current model aliases in [`models.yaml`](models.yaml).
-8. Review provider, model, capability, and benchmark evidence under [`registry/`](registry/).
+7. Review model aliases and provider metadata in [`models.yaml`](models.yaml) and [`registry/`](registry/).
+8. Run the reference router validation and tests.
 
 ### For AI agents
 
@@ -284,25 +497,30 @@ Read in this order:
 1. [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md)
 2. [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml)
 3. [`community/teams/`](community/teams/)
-4. [`community/workers/workers.yaml`](community/workers/workers.yaml)
+4. [`community/workers/`](community/workers/)
 5. [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml)
-6. [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
+6. [`policy/routing/`](policy/routing/)
 7. [`models.yaml`](models.yaml)
 8. [`registry/`](registry/)
+9. [`reference/datasets/`](reference/datasets/)
 
 Then resolve:
 
 ```text
 Task
+  -> Risk
   -> Team
   -> Worker
   -> Optional Specialist
   -> Capability
-  -> Implementation
-  -> Verification
+  -> Primary implementation
+  -> Routine fallback
+  -> Conditional escalation
+  -> Independent verification
+  -> Outcome
 ```
 
-For consequential work, do not allow the same implementation to be the sole planner, executor, reviewer, and verifier.
+For consequential work, do not allow one implementation to become the sole planner, executor, reviewer, and verifier.
 
 ## Repository structure
 
@@ -341,9 +559,12 @@ For consequential work, do not allow the same implementation to be the sole plan
 │
 ├── reference/
 │   ├── configs/
+│   ├── schemas/
 │   ├── implementations/
+│   ├── examples/
 │   └── datasets/
 │
+├── tests/
 ├── assets/
 │   ├── logo/
 │   ├── diagrams/
@@ -358,7 +579,7 @@ For consequential work, do not allow the same implementation to be the sole plan
     └── proposals/
 ```
 
-Not every directory is complete. The structure establishes where each type of artifact belongs as the framework develops.
+Not every future layer is complete. The structure establishes where each type of artifact belongs as the framework evolves.
 
 ## Documentation
 
@@ -368,7 +589,7 @@ The foundation documents define the boundaries and language of the project:
 - [`CONSTITUTION.md`](CONSTITUTION.md) defines the enduring principles that constrain the project.
 - [`LEXICON.md`](LEXICON.md) defines stable orchestration terminology.
 - [`STEWARDSHIP.md`](STEWARDSHIP.md) defines how the project is maintained.
-- [`ROADMAP.md`](ROADMAP.md) defines the approved build sequence.
+- [`ROADMAP.md`](ROADMAP.md) defines the directional build sequence.
 
 Normative guidance belongs under `docs/specification/` and `policy/`.
 
@@ -376,7 +597,7 @@ Provider, model, capability, and benchmark information belongs under `registry/`
 
 Stable workers and specialist bindings belong under `community/workers/` and `community/specialists/`.
 
-Reference configurations and implementations belong under `reference/`.
+Reference schemas, examples, datasets, and implementations belong under `reference/`.
 
 ## Public scope
 
@@ -392,62 +613,78 @@ It must not contain:
 - confidential benchmarks
 - identifying operational data
 
-All examples, policies, registries, specialists, and discussions should be safe for public review and reuse once a license is selected.
+All examples, policies, registries, specialists, and discussions should be safe for public review.
 
-## Roadmap
+## Roadmap status
 
-TEO is being built under a strict phase sequence.
+### Phase 1: Repository credibility — complete
 
-### Phase 1: Repository credibility (complete)
+- flagship README and public project identity
+- visible architecture and repository structure
+- diagrams and foundational documents
 
-- complete the flagship README
-- align the visible structure with the documented architecture
-- add diagrams and visual identity
+### Phase 2: Core team completion — complete
 
-### Phase 2: Core team completion (complete)
+- Mission Control
+- Planning, Engineering, Research, Review, and Verification teams
+- standardized team inputs, outputs, escalation, and success criteria
 
-- complete Mission Control
-- complete Planning, Engineering, Research, Review, and Verification teams
-- standardize team inputs, outputs, escalation, and success criteria
+### Phase 3: Routing validation — complete
 
-### Phase 3: Routing validation (complete)
+- representative task classes
+- recorded routing disagreements and verification outcomes
+- deterministic classification and explicit ambiguity handling
 
-- test the approved routing against real task classes
-- record failures, disagreements, and verification outcomes
-- change routing only when evidence exposes a weakness
+### Phase 4: Registry population — complete
 
-### Phase 4: Registry population (complete)
+- provider and model records
+- stable capability definitions
+- governance and verification controls
+- benchmark evidence structure
 
-- document providers from current primary sources
-- document models and distinguish provider claims from TEO observations
-- define stable capabilities used for eligibility and routing
-- record benchmark evidence, limitations, and routing relevance
+### Phase 5: Reference control plane — complete
 
-### Phase 5: Reference implementation (next)
+- linked YAML configuration loading
+- task and risk classification
+- team, worker, specialist, implementation, fallback, and verifier resolution
+- structured dispatch and final outcomes
+- audit logging
+- schemas, conformance datasets, tests, and CI
 
-- implement a readable reference router
-- connect team, worker, specialist, and implementation selection to the policy files
-- add validation and conformance examples
+### Current expansion
 
-The approved scope is tracked in [`ROADMAP.md`](ROADMAP.md).
+The active work now expands dedicated workers from the preserved specialist corpus and improves route precision without weakening existing specialists.
+
+Completed dedicated additions include:
+
+- Mission Control: orchestration, operations, project delivery, incident response
+- Research Team: broad research, market research, analytics
+- Review Team: code review
+
+The next planned worker is `user_research`, derived from the existing feedback-synthesizer specialist and kept separate from analytics and market intelligence.
+
+Later runtime work includes provider adapters, live retry execution, circuit breakers, telemetry, cost and latency measurement, and evidence-backed route optimization.
+
+The directional scope is tracked in [`ROADMAP.md`](ROADMAP.md).
 
 ## Community
 
 TEO is intended to evolve through public collaboration.
 
-Contributions should improve one of the following:
+Contributions should improve one or more of the following:
 
 - routing quality
 - verification quality
 - capability definitions
-- specialist definitions and bindings
+- worker and specialist bindings
 - registry accuracy
+- provider resilience
 - reference implementations
 - documentation clarity
 
-Model updates should include evidence, limitations, and the routing role affected. A newer model should not replace an existing default solely because it is newer or stronger on one benchmark.
+Model updates should include evidence, limitations, provider metadata, and the routing role affected. A newer model should not replace an existing default solely because it is newer or stronger on one benchmark.
 
-The repository owner is `vessaxor-spec`. The project was originally initiated by Sylvester Roxas in 2026 and is intended to grow through community stewardship.
+The repository owner is `vessaxor-spec`. The project was initiated by Sylvester Roxas in 2026 and is intended to grow through community stewardship.
 
 The public specialist roster was created by Sylvester Roxas. Creator attribution is preserved in every specialist role card and in the canonical specialist registry.
 
