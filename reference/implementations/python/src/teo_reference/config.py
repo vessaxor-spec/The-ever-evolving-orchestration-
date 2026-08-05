@@ -98,7 +98,10 @@ class ConfigBundle:
             ),
             workers=_load_workers(
                 root_path / "community/workers/workers.yaml",
-                (root_path / "community/workers/incident-response-worker.yaml",),
+                (
+                    root_path / "community/workers/incident-response-worker.yaml",
+                    root_path / "community/workers/research-worker.yaml",
+                ),
             ),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
             models=_load_yaml(root_path / "models.yaml"),
