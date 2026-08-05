@@ -1,4 +1,4 @@
-version: 0.3
+version: 0.5
 status: public-draft
 reviewed_at: 2026-08-05
 model_registry: models.yaml
@@ -11,9 +11,27 @@ principles:
   separate_execution_and_verification_for_consequential_work: true
   escalate_on_evidence_not_task_label: true
   prefer_reversible_actions_under_uncertainty: true
+  prefer_cross_provider_fallbacks: true
+  provider_scoped_failures_exclude_provider_family: true
+  reserve_opus_for_evidence_based_escalation: true
+  automatic_local_fallbacks: false
 
 defaults:
   max_failed_attempts_before_escalation: 2
+  automatic_local_models_allowed: false
+  prefer_cross_provider_fallbacks: true
+  prefer_cross_provider_verifiers: true
+  fallback_reselection_requires_new_verifier: true
+  same_provider_fallback_allowed_when:
+    - model_specific_failure
+    - no_capable_cross_provider_candidate
+  provider_scoped_failure_signals:
+    - provider_rate_limit
+    - provider_quota_exhausted
+    - provider_authentication_failure
+    - provider_billing_failure
+    - provider_regional_outage
+    - provider_service_outage
   require_independent_verifier_for:
     - security_sensitive
     - financial_logic
@@ -71,6 +89,12 @@ routing:
       model: claude-sonnet-5
       profile: sol
       reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: preserve architectural synthesis when the Anthropic route is unavailable
     engineering_reasoner:
       agent: codex
       model: gpt-5.6-sol
@@ -107,6 +131,12 @@ routing:
       model: gemini-3.1-pro-preview
       profile: sol
       reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: continue evidence synthesis when the Google route is unavailable
     fast_collection:
       agent: agy
       model: gemini-3.6-flash
@@ -158,11 +188,6 @@ routing:
       model: gemini-3.1-pro-preview
       profile: sol
       reasoning: medium
-    local_fallback:
-      agent: sidecar
-      model: local_best_coder
-      profile: terra
-      reasoning: medium
     review_when:
       - public_api_changed
       - database_schema_changed
@@ -189,6 +214,12 @@ routing:
       model: gpt-5.6-terra
       profile: terra
       reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: continue debugging when the OpenAI execution route is unavailable
     engineering_reasoner:
       agent: codex
       model: gpt-5.6-sol
@@ -254,6 +285,12 @@ routing:
       model: gpt-5.6-terra
       profile: terra
       reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: preserve refactor continuity when the OpenAI execution route is unavailable
     verifier:
       agent: codex
       model: gpt-5.6-terra
@@ -293,6 +330,12 @@ routing:
         - execute_tests
         - detect_runtime_errors
         - check_repository_consistency
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: preserve review continuity when the OpenAI review route is unavailable
     engineering_reasoning_review:
       agent: codex
       model: gpt-5.6-sol
@@ -336,6 +379,12 @@ routing:
       model: claude-opus-5
       profile: sol
       reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: preserve high-reasoning security analysis when the Anthropic route is unavailable
     engineering_reasoner:
       agent: codex
       model: gpt-5.6-sol
@@ -370,6 +419,12 @@ routing:
       model: gemini-3.6-flash
       profile: luna
       reasoning: medium
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: continue multimodal interpretation when the Google route is unavailable
     escalation:
       agent: agy
       model: gemini-3.1-pro-preview
@@ -398,15 +453,18 @@ routing:
       model: claude-haiku-4-5
       profile: luna
       reasoning: low
+    fallback:
+      agent: agy
+      model: gemini-3.6-flash
+      profile: luna
+      reasoning: low
+      purpose: continue high-volume work when the Anthropic route is unavailable
     alternatives:
       - agent: agy
         model: gemini-3.6-flash
         profile: luna
       - agent: codex
         model: gpt-5.6-luna
-        profile: luna
-      - agent: sidecar
-        model: local_best_fit
         profile: luna
     escalation:
       agent: claude
@@ -427,6 +485,12 @@ routing:
       model: claude-sonnet-5
       profile: sol
       reasoning: medium
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: medium
+      purpose: continue documentation synthesis when the Anthropic route is unavailable
     technical_verifier:
       agent: codex
       model: gpt-5.6-terra
@@ -449,13 +513,13 @@ routing:
 
   task_routing:
     classifier:
-      agent: sidecar
-      model: local_best_fit
+      agent: claude
+      model: claude-haiku-4-5
       profile: luna
       reasoning: low
     fallback_classifier:
-      agent: claude
-      model: claude-haiku-4-5
+      agent: agy
+      model: gemini-3.6-flash
       profile: luna
       reasoning: low
     ambiguous_task_interpreter:
@@ -479,55 +543,45 @@ routing:
 
 fallback_order:
   coding:
+    - agent: agy
+      model: gemini-3.1-pro-preview
+    - agent: claude
+      model: claude-sonnet-5
     - agent: codex
       model: gpt-5.6-terra
-    - agent: codex
-      model: gpt-5.6-sol
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: sidecar
-      model: local_best_coder
   engineering_reasoning:
-    - agent: codex
-      model: gpt-5.6-sol
-    - agent: claude
-      model: claude-sonnet-5
-    - agent: claude
-      model: claude-opus-5
     - agent: agy
       model: gemini-3.1-pro-preview
+    - agent: claude
+      model: claude-sonnet-5
+    - agent: codex
+      model: gpt-5.6-sol
   general_reasoning:
-    - agent: claude
-      model: claude-sonnet-5
+    - agent: agy
+      model: gemini-3.1-pro-preview
     - agent: codex
       model: gpt-5.6-sol
     - agent: claude
-      model: claude-opus-5
-    - agent: agy
-      model: gemini-3.1-pro-preview
+      model: claude-sonnet-5
   research:
-    - agent: agy
-      model: gemini-3.1-pro-preview
     - agent: claude
       model: claude-sonnet-5
     - agent: codex
       model: gpt-5.6-sol
+    - agent: agy
+      model: gemini-3.1-pro-preview
   multimodal:
+    - agent: claude
+      model: claude-sonnet-5
     - agent: agy
       model: gemini-3.6-flash
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: claude
-      model: claude-sonnet-5
   throughput:
-    - agent: claude
-      model: claude-haiku-4-5
     - agent: agy
       model: gemini-3.6-flash
     - agent: codex
       model: gpt-5.6-luna
-    - agent: sidecar
-      model: local_best_fit
+    - agent: claude
+      model: claude-haiku-4-5
 
 verification_policy:
   low_risk:
@@ -556,10 +610,13 @@ decision_logging:
     - task_type
     - selected_route
     - selected_model
+    - selected_provider_family
     - fallback_model
+    - fallback_provider_family
     - verification_method
     - risk_level
     - selection_reason
+    - failure_scope
     - outcome
     - failed_attempts
     - escalation_used
