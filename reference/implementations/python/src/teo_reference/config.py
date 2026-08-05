@@ -20,8 +20,29 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
-def _load_routing(path: Path) -> dict[str, Any]:
+def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
     data = _load_yaml(path)
+    routes = data.get("routing")
+    if not isinstance(routes, dict):
+        raise ConfigurationError(f"Routing configuration must contain a routing mapping: {path}")
+
+    for extension_path in extension_paths:
+        if not extension_path.is_file():
+            continue
+        extension = _load_yaml(extension_path)
+        extension_routes = extension.get("routing")
+        if not isinstance(extension_routes, dict):
+            raise ConfigurationError(
+                f"Routing extension must contain a routing mapping: {extension_path}"
+            )
+        duplicates = sorted(set(routes).intersection(extension_routes))
+        if duplicates:
+            raise ConfigurationError(
+                f"Routing extension duplicates canonical routes in {extension_path}: "
+                + ", ".join(duplicates)
+            )
+        routes.update(extension_routes)
+
     policy = data.get("verification_policy")
     if isinstance(policy, dict):
         for risk in ("low", "medium", "high"):
@@ -46,7 +67,10 @@ class ConfigBundle:
         bundle = cls(
             root=root_path,
             team_routing=_load_yaml(root_path / "policy/routing/team-routing.yaml"),
-            routing=_load_routing(root_path / "policy/routing/routing.yaml"),
+            routing=_load_routing(
+                root_path / "policy/routing/routing.yaml",
+                (root_path / "policy/routing/mission-control-routing.yaml",),
+            ),
             workers=_load_yaml(root_path / "community/workers/workers.yaml"),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
             models=_load_yaml(root_path / "models.yaml"),
