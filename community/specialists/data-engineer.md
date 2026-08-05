@@ -205,7 +205,6 @@ Run all checks in CI on every dbt PR. A model without tests does not merge.
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/data-engineer.md`
 - **Primary team:** Engineering Team
 - **Supporting teams:** Planning Team, Review Team, Verification Team
 - **Worker binding:** `data_engineering`
@@ -214,4 +213,4 @@ Run all checks in CI on every dbt PR. A model without tests does not merge.
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

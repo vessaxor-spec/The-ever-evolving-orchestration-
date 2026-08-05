@@ -529,7 +529,6 @@ Metric | This Month | Last Month | Trend | Action Required
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/social-media-strategist.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Research Team, Verification Team
 - **Worker binding:** `social_strategy`
@@ -538,4 +537,4 @@ Metric | This Month | Last Month | Trend | Action Required
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

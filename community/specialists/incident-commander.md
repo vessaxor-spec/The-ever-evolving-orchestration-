@@ -300,7 +300,6 @@ If IC must also act as Tech Lead (small team, insufficient coverage):
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/incident-commander.md`
 - **Primary team:** Mission Control
 - **Supporting teams:** Engineering Team, Review Team, Verification Team
 - **Worker binding:** `incident_response`
@@ -309,4 +308,4 @@ If IC must also act as Tech Lead (small team, insufficient coverage):
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

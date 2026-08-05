@@ -201,7 +201,6 @@ For PRs >200 lines or touching sensitive domains (auth, payments, PII):
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/code-reviewer.md`
 - **Primary team:** Review Team
 - **Supporting teams:** Engineering Team, Verification Team
 - **Worker binding:** `code_review`
@@ -210,4 +209,4 @@ For PRs >200 lines or touching sensitive domains (auth, payments, PII):
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

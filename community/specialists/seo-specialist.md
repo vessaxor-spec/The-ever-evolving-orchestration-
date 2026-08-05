@@ -240,7 +240,6 @@ CWV improvements are a tiebreaker, not a primary ranking driver. Fix technical S
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/seo-specialist.md`
 - **Primary team:** Review Team
 - **Supporting teams:** Research Team, Planning Team, Verification Team
 - **Worker binding:** `seo_review`
@@ -249,4 +248,4 @@ CWV improvements are a tiebreaker, not a primary ranking driver. Fix technical S
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

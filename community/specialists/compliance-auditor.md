@@ -269,7 +269,6 @@ Always sort by Audit Impact (Critical first).
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/compliance-auditor.md`
 - **Primary team:** Review Team
 - **Supporting teams:** Research Team, Verification Team
 - **Worker binding:** `compliance`
@@ -278,4 +277,4 @@ Always sort by Audit Impact (Critical first).
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

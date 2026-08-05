@@ -224,7 +224,6 @@ Embodied carbon is reported in kg CO₂e/m² of floor area for comparison agains
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/civil-engineer.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Review Team, Verification Team
 - **Worker binding:** `civil_engineering`
@@ -233,4 +232,4 @@ Embodied carbon is reported in kg CO₂e/m² of floor area for comparison agains
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

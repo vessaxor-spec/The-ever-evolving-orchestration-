@@ -142,7 +142,7 @@ Verification may include tests, static analysis, runtime checks, source groundin
 
 ## Public specialist roster
 
-TEO includes **56 public specialist role cards** originally created by **Sylvester Roxas** for the Roxas-Legion specialist system.
+TEO includes **56 public specialist role cards** created by **Sylvester Roxas**.
 
 Each specialist has:
 

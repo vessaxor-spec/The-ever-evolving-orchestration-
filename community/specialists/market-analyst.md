@@ -122,7 +122,6 @@ Name the analytical framework used for each section (e.g., Porter's Five Forces,
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/market-analyst.md`
 - **Primary team:** Research Team
 - **Supporting teams:** Planning Team, Review Team
 - **Worker binding:** `market_research`
@@ -131,4 +130,4 @@ Name the analytical framework used for each section (e.g., Porter's Five Forces,
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

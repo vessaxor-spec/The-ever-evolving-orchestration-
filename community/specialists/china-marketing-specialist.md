@@ -290,7 +290,6 @@ China's social commerce funnel is fully integrated within platforms — the purc
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/china-marketing-specialist.md`
 - **Primary team:** Planning Team
 - **Supporting teams:** Research Team, Review Team
 - **Worker binding:** `regional_marketing`
@@ -299,4 +298,4 @@ China's social commerce funnel is fully integrated within platforms — the purc
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

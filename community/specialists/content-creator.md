@@ -210,7 +210,6 @@ Before any piece is marked publication-ready:
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/content-creator.md`
 - **Primary team:** Research Team
 - **Supporting teams:** Planning Team, Review Team
 - **Worker binding:** `content`
@@ -219,4 +218,4 @@ Before any piece is marked publication-ready:
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.

@@ -215,7 +215,6 @@ Never assume a seller knows about 1031 eligibility. Ask: "Are you planning to re
 ## TEO Allocation
 
 - **Creator:** Sylvester Roxas
-- **Original source:** `Roxas-Legion/specialists/real-estate-agent.md`
 - **Primary team:** Research Team
 - **Supporting teams:** Planning Team, Review Team
 - **Worker binding:** `real_estate`
@@ -224,4 +223,4 @@ Never assume a seller knows about 1031 eligibility. Ask: "Are you planning to re
 
 ### Preservation rule
 
-The original Roxas-Legion specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
+The specialist specification above is authoritative and must remain intact. TEO allocation adds routing context only. It must never remove, compress, weaken, generalize, or override the specialist's identity, protocols, capabilities, responsibilities, safety boundaries, collaboration rules, outputs, or example tasks.
