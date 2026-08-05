@@ -96,8 +96,8 @@ def test_security_lane_retains_authorization_and_containment() -> None:
 
     assert "Requires documented asset-owner authorization" in security
     assert "Without authorization and scope, limit work to passive review" in security
-    assert "No live malware execution" in malware
-    assert "isolated sandbox" in malware
+    assert "no live malware execution outside isolated environments" in malware
+    assert "use an isolated, resettable environment" in malware
     assert "Authorization chain" in red_team
     assert "Pipeline changes are advisory" in devsecops
     assert "explicit operator confirmation before execution" in blockchain
