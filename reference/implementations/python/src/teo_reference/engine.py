@@ -50,16 +50,16 @@ RISK_PATTERNS: dict[str, tuple[str, ...]] = {
 }
 
 ROUTE_IMPLEMENTATION_KEYS: dict[str, tuple[str, ...]] = {
-    "architecture_design": ("primary", "engineering_reasoner"),
-    "daily_coding": ("primary", "planning_support"),
-    "deep_debugging": ("primary", "engineering_reasoner"),
-    "repo_wide_refactor": ("executor", "engineering_planner"),
-    "deep_research": ("primary", "fast_collection"),
-    "code_review": ("executable_review", "engineering_reasoning_review", "semantic_review"),
-    "security_review": ("primary", "engineering_reasoner"),
-    "multimodal_analysis": ("primary", "synthesis"),
+    "architecture_design": ("primary",),
+    "daily_coding": ("primary",),
+    "deep_debugging": ("primary",),
+    "repo_wide_refactor": ("executor",),
+    "deep_research": ("primary",),
+    "code_review": ("executable_review",),
+    "security_review": ("primary",),
+    "multimodal_analysis": ("primary",),
     "high_volume_simple": ("primary",),
-    "documentation": ("primary", "architecture_documentation"),
+    "documentation": ("primary",),
 }
 
 VERIFIER_KEYS: tuple[str, ...] = (
@@ -108,6 +108,13 @@ class OrchestrationEngine:
         team = str(route["primary_team"])
         worker = self._resolve_worker(route, task)
         specialist, specialist_warning = self._resolve_specialist(task, team, worker)
+        if specialist:
+            specialist_risk = str(specialist[1].get("risk_profile", risk))
+            if specialist_risk in RISK_ORDER and RISK_ORDER[specialist_risk] > RISK_ORDER[risk]:
+                risk = specialist_risk
+                risk_reason += (
+                    f" Specialist {specialist[0]} elevated the effective risk to {specialist_risk}."
+                )
         capabilities = self._resolve_capabilities(task, worker)
         primary = self._resolve_primary(task_type, worker, task)
         fallback = self._resolve_fallback(task_type, worker, capabilities, task, exclude={primary.model})
