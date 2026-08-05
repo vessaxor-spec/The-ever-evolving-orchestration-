@@ -1,0 +1,60 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  This fixture binds the market-analyst specialist to a dedicated Research Team
+  core worker. The worker layer is additive and must not replace, compress,
+  weaken, or override the authoritative market-analyst role card.
+
+binding:
+  specialist: market-analyst
+  worker: market_research
+  primary_team: research
+  risk_profile: medium
+  role_card: community/specialists/market-analyst.md
+  contains:
+    responsibilities:
+      - competitive_landscape_mapping
+      - competitive_positioning_analysis
+      - weak_signal_and_trend_detection
+      - bounded_tam_sam_som_analysis
+      - customer_segment_and_willingness_to_pay_analysis
+      - category_lifecycle_classification
+      - go_to_market_timing_assessment
+      - ai_and_agentic_search_visibility_analysis
+      - opportunity_and_threat_synthesis
+    required_capabilities:
+      - market_intelligence
+      - competitive_analysis
+      - quantitative_reasoning
+      - source_validation
+      - current_information_retrieval
+      - trend_analysis
+      - strategic_synthesis
+      - confidence_calibration
+    verification:
+      - explicit_market_boundary_review
+      - methodology_and_source_trace
+      - confirmed_data_vs_estimate_check
+      - market_data_freshness_review
+      - competitive_moat_review
+      - category_lifecycle_consistency_check
+      - weak_signal_corroboration
+      - willingness_to_pay_weighting_check
+    escalation:
+      - materially_conflicting_market_sources
+      - single_source_market_size
+      - market_data_older_than_six_months
+      - regulated_or_high_consequence_market
+      - investment_or_financial_decision_requested
+      - irreversible_market_entry_commitment
+      - insufficient_evidence_for_strategic_recommendation
+    authority_boundaries:
+      - no_marketing_campaign_execution
+      - no_paid_media_management
+      - no_investment_decision
+      - no_final_business_decision_substitution
+      - no_unbounded_market_size_claim
+      - no_estimate_or_projection_presented_as_confirmed_data
+      - no_strategy_recommendation_without_lifecycle_and_evidence_alignment
