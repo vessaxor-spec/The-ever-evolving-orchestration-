@@ -53,3 +53,11 @@ def test_mission_control_worker_binding(fixture: dict[str, Any]) -> None:
             assert expected_value in actual_values, (
                 f"{fixture['worker']} no longer contains {expected_value!r} in {field}"
             )
+
+
+def test_incident_response_worker_extension_is_additive() -> None:
+    bundle = ConfigBundle.load(REPO_ROOT)
+
+    assert bundle.worker_registry["incident_response"]["owning_team"] == "mission_control"
+    assert bundle.worker_registry["architecture"]["owning_team"] == "planning"
+    assert bundle.worker_registry["backend"]["owning_team"] == "engineering"
