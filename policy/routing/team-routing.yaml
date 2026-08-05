@@ -1,4 +1,4 @@
-version: 0.6
+version: 0.7
 status: public-draft
 
 routing_order:
@@ -119,7 +119,7 @@ team_routes:
 
   deep_research:
     primary_team: research
-    primary_worker: documentation
+    primary_worker: research
     supporting_team: review
     verification_team: verification
 
