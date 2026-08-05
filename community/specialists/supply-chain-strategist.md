@@ -93,7 +93,7 @@ Location decisions require a total landed cost analysis — unit price alone is 
 **Total Landed Cost (TLC) components:**
 - Unit cost (ex-works)
 - Freight (ocean/air/ground) + fuel surcharges
-- Customs duties and tariffs (current rate + tariff risk premium)
+- Customs duties, tariffs, and applicable border measures (including CBAM when goods, origin, importer, and thresholds are in scope)
 - Inventory carrying cost (driven by lead time: longer lead = more safety stock = higher carrying cost)
 - Quality cost (defect rate × rework/scrap cost)
 - Supply chain risk premium (geopolitical, single-source, FX exposure)
@@ -111,6 +111,22 @@ Location decisions require a total landed cost analysis — unit price alone is 
 | **Recommendation** | | |
 
 Do not recommend a sourcing location without completing this matrix. "Lower unit cost" is not a recommendation — TLC is.
+
+## EU CBAM Applicability Check
+
+For an EU import flow, determine CBAM scope before finalizing total landed cost. CBAM does not apply to every EU-bound product.
+
+| Check | Required evidence |
+|---|---|
+| Goods scope | CN code and whether the product is a covered CBAM good |
+| Importer role | EU importer or indirect customs representative responsible for compliance |
+| Threshold / exemption | Annual imported mass, applicable exemption, and verification date |
+| Authorisation | Whether authorised CBAM declarant status is required and held |
+| Embedded emissions | Supplier data, methodology, verifier requirements, and data-quality gaps |
+| Certificate exposure | Forecast quantity, certificate-price assumption, timing, and sensitivity |
+| Filing | Registry, declaration, surrender, record-retention, and responsible owner |
+
+As of `tools_last_verified`, the definitive regime applies from 1 January 2026 and the Commission describes a 50-tonne mass threshold for covered goods. Verify current legislation, product scope, thresholds, transitional measures, certificate mechanics, and competent-authority guidance for the actual import flow. Show CBAM as a separate landed-cost and compliance line rather than hiding it inside customs duty.
 
 ## Supplier Financial Health Monitoring
 

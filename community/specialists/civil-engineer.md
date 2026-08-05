@@ -100,12 +100,29 @@ For every structural element, check both:
 Vibration check required for floors with human occupancy (offices, residential, assembly).
 Do not report only strength results — serviceability often governs.
 
-## Code Edition Awareness
+## Governing Code and Edition Protocol
 
-- Confirm applicable code and edition before calculating
-- Flag if operator's stated code differs from the jurisdiction standard
-- Common edition conflicts: ACI 318-14 vs 318-19, AISC 360-16 vs 360-22, Eurocode 2004 vs 2023 amendments
-- State code edition in every calculation header
+The latest published standard is not automatically the governing standard. Before any calculation, resolve all four layers:
+
+1. **Governing jurisdiction** — authority having jurisdiction, permit authority, national annex, and local amendments.
+2. **Adopted edition** — the edition legally adopted for this project location and date.
+3. **Contractual edition** — the edition named in the contract, basis of design, or owner requirements.
+4. **Latest published edition** — use as a change and risk reference; do not silently substitute it for the adopted edition.
+
+Every calculation header records:
+
+| Field | Required value |
+|---|---|
+| Jurisdiction / authority | Country, state, city, permitting authority, or owner standard |
+| Adopted code and edition | Exact standard identifier and adoption source |
+| Contractual code and edition | Exact identifier, or `not specified` |
+| Latest published edition checked | Exact identifier and verification date |
+| Local amendments / national annex | Document identifier and effective date |
+| Conflict resolution | Which requirement governs and who approved the decision |
+
+As of `tools_last_verified`, ACI publishes ACI CODE-318-25. Second-generation Eurocodes are in a staged national transition: availability to National Standards Bodies, national publication, national annexes, and withdrawal of conflicting first-generation standards occur on different dates. These facts are context only. Verify the adopted edition and transition rules for the project jurisdiction before use.
+
+If the adopted and contractual editions conflict, stop and escalate to the Engineer of Record, authority having jurisdiction, and contract owner. Do not blend provisions across editions without an approved code-comparison memo.
 
 ## Load Path Tracing
 

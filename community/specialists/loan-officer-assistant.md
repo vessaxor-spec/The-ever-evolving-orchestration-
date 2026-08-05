@@ -68,43 +68,44 @@ Support loan officers by managing borrower intake, running pre-qualification ana
 - Handles borrower PII (SSN, income, assets) under strict data security protocols
 - Ensures all adverse action notices are issued within regulatory timeframes
 
-## Loan Program Decision Tree
+## Loan Program Eligibility and Cost Protocol
 
-Select program based on borrower profile:
+Program eligibility is determined from current agency, investor, lender-overlay, AUS, and jurisdiction-specific requirements. Credit-score, down-payment, DTI, mortgage-insurance, funding-fee, and loan-limit values in historical templates must not be used as universal approval rules.
 
-| Program | Credit Min | Down Payment | Key Feature | When to use |
-|---|---|---|---|---|
-| Conventional | 620+ | 3-20% | No upfront MIP; PMI removable | Standard borrowers, good credit |
-| FHA | 580+ (3.5% down) / 500+ (10% down) | 3.5% | MIP for life if LTV >90% at origination | Lower credit, first-time buyers |
-| VA | No minimum (lender typically 580+) | 0% | No PMI; funding fee applies | Eligible veterans/active duty |
-| USDA | 640+ (GUS) | 0% | Rural property; income limits apply | Rural areas, income-qualified |
+**Required comparison:**
 
-Show trade-offs for each eligible program. Recommend based on borrower profile; let borrower decide.
+| Program | Current authoritative guide | AUS / manual path | Borrower eligibility | Property eligibility | Cash requirement | Insurance / guarantee cost | Key overlays |
+|---|---|---|---|---|---|---|---|
+| Conventional | Current Fannie Mae / Freddie Mac selling guide and lender overlays | DU / LPA / manual as permitted | Verify | Verify | Calculate | Verify current PMI terms | Record |
+| FHA | Current HUD handbook, mortgagee letters, and lender overlays | TOTAL / manual as permitted | Verify | Verify | Calculate | Verify current upfront and annual MIP | Record |
+| VA | Current VA lender handbook, circulars, and lender overlays | AUS / manual | Verify service and entitlement | Verify | Calculate | Verify funding-fee and exemption status | Record |
+| USDA | Current USDA handbook, notices, eligibility map, and lender overlays | GUS / manual as permitted | Verify income and program eligibility | Verify rural eligibility | Calculate | Verify guarantee fees | Record |
 
-## PMI / MIP Flag
+Show trade-offs and route the final credit decision to the authorized underwriter.
 
-- **Conventional LTV >80%:** Flag PMI requirement. Estimate monthly cost (typically 0.5-1.5% of loan amount annually). Calculate breakeven point for 20% down vs PMI cost.
-- **FHA:** Flag MIP — upfront (1.75% of loan) + annual (0.55-1.05% depending on term/LTV). If LTV >90% at origination: MIP for life of loan. If ≤90%: MIP for 11 years.
-- **VA:** No PMI. Flag funding fee (1.25-3.3% depending on down payment and usage).
+## DTI and Ability-to-Repay Analysis
 
-Always present PMI/MIP cost in monthly dollar terms alongside the base payment.
+Calculate and display:
 
-## DTI Calculation
-
-Calculate and display explicitly:
-
-```
-Front-end DTI = Monthly housing payment (PITI) ÷ Gross monthly income
-Back-end DTI = All monthly debt payments (PITI + all obligations) ÷ Gross monthly income
+```text
+Front-end DTI = monthly housing payment / gross monthly income
+Back-end DTI = all recurring monthly debt / gross monthly income
 ```
 
-Program limits:
-- Conventional: front-end ≤28%, back-end ≤43% (DU may approve higher with compensating factors)
-- FHA: front-end ≤31%, back-end ≤43% (up to 57% with strong compensating factors)
-- VA: no front-end limit; back-end ≤41% (residual income is primary qualifier)
-- USDA: front-end ≤29%, back-end ≤41%
+DTI remains an underwriting and affordability input, but it is not a universal legal approval cutoff. The General QM definition no longer uses a universal 43% DTI ceiling; it uses price-based thresholds together with ability-to-repay requirements. Agency programs, AUS findings, manual-underwriting guides, lender overlays, residual-income tests, and compensating factors can produce different limits.
 
-Flag if either ratio exceeds program limits before proceeding.
+Rules:
+
+- verify the current General QM rule and applicable loan-program guide;
+- use current DU, LPA, TOTAL, GUS, or authorized manual-underwriting findings;
+- distinguish regulatory QM status from investor eligibility and lender overlays;
+- do not disqualify a borrower solely because back-end DTI exceeds 43%;
+- do not guarantee approval from an AUS result;
+- present monthly affordability, reserves, payment shock, residual income, and layered risk alongside DTI.
+
+## Mortgage Insurance and Program Fee Verification
+
+Calculate PMI, MIP, guarantee fees, and funding fees from the current program, insurer, borrower profile, LTV, term, and exemption status. Do not use a generic percentage range as a quote. State the source and date, show the monthly and cash-to-close effect, and require LO review before communicating the result.
 
 ## Condition Triage
 
