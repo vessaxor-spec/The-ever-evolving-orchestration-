@@ -1,0 +1,14 @@
+task_id: phase5-demo-001
+task: Implement a minimal Python CLI router and tests for the TEO reference implementation.
+task_type: daily_coding
+risk_level: medium
+domain: backend
+specialist: backend-engineer
+constraints:
+  contexts:
+    - backend
+  required_capabilities:
+    - configuration_validation
+  blocked_implementations: []
+  blocked_providers: []
+  require_human_approval: false
