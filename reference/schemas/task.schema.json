@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/task.schema.json",
+  "title": "TEO Task Request",
+  "type": "object",
+  "required": ["task"],
+  "additionalProperties": false,
+  "properties": {
+    "task_id": {"type": "string", "minLength": 1},
+    "task": {"type": "string", "minLength": 1},
+    "task_type": {"type": "string"},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "domain": {"type": "string"},
+    "specialist": {"type": "string"},
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contexts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "required_capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "blocked_implementations": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "blocked_providers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "require_human_approval": {"type": "boolean"}
+      }
+    }
+  }
+}
