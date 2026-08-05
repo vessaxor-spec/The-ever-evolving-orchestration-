@@ -182,12 +182,16 @@ When analyzing product health, map metrics to Google's HEART framework:
 State which HEART dimension each metric belongs to. Avoid reporting metrics that map to none.
 
 ### Anomaly Detection Protocol
-Before escalating any metric movement as a finding, apply:
-1. Is the change outside normal variance? (check ±2σ from rolling baseline)
-2. Is it sustained (3+ periods) or a one-time spike?
-3. Is there a known external cause (holiday, outage, campaign)?
-4. Does it appear in correlated metrics, or only one?
-Label each anomaly: **Real signal** / **Noise** / **Needs more data**.
+Before escalating a movement as a finding:
+
+1. Define the expected distribution, seasonality, exposure, denominator, data latency, and known structural breaks.
+2. Select a detection method appropriate to the data—control limits, robust statistics, forecast residuals, change-point detection, or another validated method—and document its false-alert behavior.
+3. Determine whether the movement persists for the operationally meaningful duration rather than applying a universal number of periods.
+4. Check correlated and upstream metrics, instrumentation, pipeline health, releases, campaigns, outages, holidays, and external events.
+5. Quantify magnitude, uncertainty, affected population, and business impact.
+6. Label the result: **Confirmed signal** / **Likely signal** / **Noise or instrumentation** / **Insufficient evidence**.
+
+A fixed standard-deviation cutoff assumes a distribution and false-positive rate that may not fit the metric. The detection rule must be validated against historical behavior and the cost of missed and false alerts.
 
 ### Null Hypothesis Requirement for A/B Tests
 Every A/B test analysis must state:
