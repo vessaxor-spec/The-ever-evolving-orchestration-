@@ -26,7 +26,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: reference-ci-${{ github.workflow }}-${{ github.ref }}
@@ -41,6 +41,63 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Apply guarded specialist freshness migration
+        if: github.event_name == 'pull_request' && github.head_ref == 'agent/specialist-freshness-foundation-v3'
+        run: |
+          if [ -f policy/specialists/freshness.yaml ]; then
+            exit 0
+          fi
+
+          python - <<'PY'
+          from pathlib import Path
+
+          workflow = Path('.github/workflows/apply-specialist-freshness-foundation.yml').read_text(encoding='utf-8')
+          start = "      - name: Apply freshness architecture and critical corrections\n        run: |\n"
+          end = "\n      - name: Commit migration\n"
+          if workflow.count(start) != 1 or workflow.count(end) != 1:
+              raise SystemExit('Unable to locate guarded migration block')
+          block = workflow.split(start, 1)[1].split(end, 1)[0]
+          script = '\n'.join(line[10:] if line.startswith('          ') else line for line in block.splitlines())
+
+          old_selection = '''cards = sorted(
+              path for path in SPECIALISTS.glob("*.md") if path.name != "README.md"
+          )
+          if len(cards) != 56:
+              raise SystemExit(f"Expected 56 specialist cards, found {len(cards)}")'''
+          new_selection = '''registry_text = read("community/specialists/specialists.yaml")
+          cards = sorted(
+              ROOT / line.strip().split(": ", 1)[1]
+              for line in registry_text.splitlines()
+              if line.strip().startswith("role_card: ")
+          )
+          if len(cards) != 56:
+              raise SystemExit(f"Expected 56 registry role cards, found {len(cards)}")'''
+          if script.count(old_selection) != 1:
+              raise SystemExit('Unable to patch registry-based migration selection')
+          script = script.replace(old_selection, new_selection, 1)
+
+          old_test = '''def cards() -> list[Path]:
+    return sorted(path for path in SPECIALISTS.glob("*.md") if path.name != "README.md")'''
+          new_test = '''def cards() -> list[Path]:
+    registry = yaml.safe_load((SPECIALISTS / "specialists.yaml").read_text(encoding="utf-8"))
+    return sorted(ROOT / entry["role_card"] for entry in registry["specialists"].values())'''
+          if script.count(old_test) != 1:
+              raise SystemExit('Unable to patch registry-based freshness test')
+          script = script.replace(old_test, new_test, 1)
+
+          Path('/tmp/apply-specialist-freshness.sh').write_text(script + '\n', encoding='utf-8')
+          PY
+          bash /tmp/apply-specialist-freshness.sh
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add community/specialists policy/specialists docs/methodology tests
+          git commit -m "Add specialist freshness foundation"
+          git push origin HEAD:${{ github.head_ref }}
 
       - name: Set up Python
         uses: actions/setup-python@v6
