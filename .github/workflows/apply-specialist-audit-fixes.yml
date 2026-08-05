@@ -1,0 +1,105 @@
+name: Apply specialist roster audit fixes
+
+on:
+  push:
+    branches:
+      - agent/fix-specialist-roster-audit
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/fix-specialist-roster-audit
+
+      - name: Apply verified roster corrections
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding="utf-8")
+              if text.count(old) != 1:
+                  raise SystemExit(f"Expected exactly one match in {path}: {old!r}")
+              file.write_text(text.replace(old, new, 1), encoding="utf-8")
+
+          replace_once(
+              "community/specialists/incident-commander.md",
+              "category: testing",
+              "category: operations",
+          )
+          replace_once(
+              "community/specialists/workflow-optimizer.md",
+              "category: testing",
+              "category: automation",
+          )
+          replace_once(
+              "community/specialists/xr-developer.md",
+              "- Does not cover Android ARCore or Meta Quest native SDK (OpenXR abstraction layer only)",
+              "- Does not cover Android ARCore or Meta Quest native SDK (OpenXR abstraction layer only)\n- Does not own terminal emulation, ANSI/VT behavior, SwiftTerm glyph-rendering internals, or terminal-specific spatial UI; routes those to **spatial-terminal**. Retains Swift CLI tooling, process spawning, and integration of terminal processes into broader XR/Swift applications.",
+          )
+          replace_once(
+              "community/specialists/spatial-terminal.md",
+              "- Does not own app-level navigation or window management beyond the terminal view",
+              "- Does not own app-level navigation or window management beyond the terminal view\n- Does not own general Swift CLI tooling, build-process automation, or non-terminal XR application architecture; routes those to **xr-developer**. Owns terminal emulation, PTY/view integration, ANSI/VT behavior, glyph rendering, and terminal-specific spatial UI.",
+          )
+          replace_once(
+              "community/specialists/social-media-strategist.md",
+              "- Collaborates with **influencer-strategist** (if exists) on partnership mechanics per platform",
+              "- Owns platform-specific creator and influencer partnership mechanics; passes paid amplification briefs to **paid-social-strategist**",
+          )
+
+          test = '''from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SPECIALISTS = ROOT / "community" / "specialists"
+
+
+def text(name: str) -> str:
+    return (SPECIALISTS / name).read_text(encoding="utf-8")
+
+
+def test_corrected_specialist_categories() -> None:
+    assert "category: operations" in text("incident-commander.md").split("---", 2)[1]
+    assert "category: automation" in text("workflow-optimizer.md").split("---", 2)[1]
+    assert "category: testing" in text("qa-engineer.md").split("---", 2)[1]
+
+
+def test_xr_and_terminal_ownership_is_explicitly_split() -> None:
+    xr = text("xr-developer.md")
+    terminal = text("spatial-terminal.md")
+    assert "routes those to **spatial-terminal**" in xr
+    assert "Retains Swift CLI tooling, process spawning" in xr
+    assert "routes those to **xr-developer**" in terminal
+    assert "Owns terminal emulation, PTY/view integration" in terminal
+
+
+def test_social_strategy_has_no_dangling_influencer_specialist() -> None:
+    social = text("social-media-strategist.md")
+    assert "influencer-strategist" not in social
+    assert "Owns platform-specific creator and influencer partnership mechanics" in social
+
+
+def test_zettelkasten_steward_slug_remains_stable() -> None:
+    steward = text("zk-steward.md")
+    assert "name: zk-steward" in steward
+    assert "Zettelkasten" in steward
+'''
+          Path("tests/test_specialist_roster_hygiene.py").write_text(test, encoding="utf-8")
+          PY
+
+      - name: Commit corrections
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add community/specialists tests/test_specialist_roster_hygiene.py
+          git diff --cached --quiet && exit 0
+          git commit -m "Fix specialist roster audit findings"
+          git push origin HEAD:agent/fix-specialist-roster-audit
