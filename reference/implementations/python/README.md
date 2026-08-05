@@ -7,7 +7,7 @@ It does **not** call model-provider APIs. Provider adapters, credentials, retrie
 ## Install
 
 ```bash
-python -m pip install -e .
+python -m pip install -e '.[test]'
 ```
 
 ## Validate linked configuration
