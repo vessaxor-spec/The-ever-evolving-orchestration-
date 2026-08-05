@@ -1,4 +1,4 @@
-version: 0.2
+version: 0.3
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -145,19 +145,38 @@ scenarios:
           - rollback_plan
 
   - id: deterministic-research-classification
-    purpose: Preserve deterministic task classification when the task type is not supplied.
+    purpose: Preserve deterministic deep-research classification, dedicated worker ownership, researcher activation, and evidence-focused verification.
     task:
       task_id: conformance-research
-      task: Investigate the primary technical sources and compare sources for contradictions.
+      task: Investigate the primary technical sources and compare sources for contradictions using the researcher.
       risk_level: low
+      specialist: researcher
     expect:
       equals:
         task_type: deep_research
+        risk_level: medium
         selected_team: research
-        selected_worker: documentation
+        selected_worker: research
+        selected_specialist: researcher
+        specialist_risk_profile: medium
         selected_implementation.model: gemini-3.1-pro-preview
         fallback_implementation.model: claude-opus-5
+        verification.team: verification
         verification.implementation.model: claude-sonnet-5
+        verification.independent: true
+        verification.human_approval_required: false
+        warnings: []
       contains:
+        required_capabilities:
+          - source_grounding
+          - research_reasoning
+          - synthesis
+          - evidence_validation
+          - contradiction_analysis
+          - uncertainty_calibration
+          - domain_adaptation
+        verification.method:
+          - output_validation
+          - targeted_review
         routing_explanation:
           - Task classified as deep_research by deterministic keyword rules.

@@ -1,0 +1,51 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-05
+
+policy: >-
+  This fixture binds the researcher specialist to a dedicated Research Team core
+  worker. The worker layer is additive and must not replace, compress, weaken,
+  or override the authoritative researcher role card.
+
+binding:
+  specialist: researcher
+  worker: research
+  primary_team: research
+  risk_profile: medium
+  role_card: community/specialists/researcher.md
+  contains:
+    responsibilities:
+      - research_question_scoping
+      - primary_source_discovery
+      - source_quality_assessment
+      - claim_triangulation
+      - domain_framework_application
+      - adversarial_hypothesis_testing
+      - uncertainty_quantification
+      - structured_research_briefing
+    required_capabilities:
+      - source_grounding
+      - research_reasoning
+      - synthesis
+      - evidence_validation
+      - contradiction_analysis
+      - uncertainty_calibration
+      - domain_adaptation
+    verification:
+      - source_independence_check
+      - claim_evidence_trace
+      - counterargument_review
+      - recency_and_staleness_check
+      - confidence_calibration
+    escalation:
+      - insufficient_source_triangulation
+      - material_source_conflict
+      - high_consequence_domain
+      - current_evidence_unavailable
+      - legal_medical_financial_advice_boundary
+    authority_boundaries:
+      - no_business_decision_substitution
+      - no_final_deliverable_ownership
+      - no_code_or_automation_execution
+      - no_inference_presented_as_fact
+      - no_unqualified_legal_medical_financial_advice
