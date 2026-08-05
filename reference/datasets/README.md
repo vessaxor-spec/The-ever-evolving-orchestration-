@@ -36,6 +36,12 @@ The fixture protects source triangulation, evidence traceability, contradiction 
 
 The fixture protects explicit market boundaries, current-data requirements, methodology and source traceability, estimate labeling, moat and lifecycle analysis, weak-signal corroboration, willingness-to-pay weighting, and the separation from campaign execution, paid media, investment decisions, and broad-domain research.
 
+## Analytics worker conformance
+
+[`analytics-worker-conformance.yaml`](analytics-worker-conformance.yaml) binds the `data-analyst` specialist to the dedicated Research Team `analytics` worker.
+
+The fixture protects data-quality validation, statistical power, significance and uncertainty reporting, causal restraint, experiment discipline, anomaly classification, reproducibility, model-QA boundaries, provider-diverse routing, and separation from data-pipeline engineering and business-strategy authority.
+
 ## Configuration warning baseline
 
 [`configuration-warning-baseline.yaml`](configuration-warning-baseline.yaml) records known inconsistencies currently exposed by configuration validation.
