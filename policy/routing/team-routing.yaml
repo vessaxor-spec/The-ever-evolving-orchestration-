@@ -1,4 +1,4 @@
-version: 0.7
+version: 0.8
 status: public-draft
 
 routing_order:
@@ -123,6 +123,14 @@ team_routes:
     supporting_team: review
     verification_team: verification
 
+  market_research:
+    primary_team: research
+    primary_worker: market_research
+    supporting_teams:
+      - planning
+      - review
+    verification_team: verification
+
   code_review:
     primary_team: review
     primary_worker: code_review
@@ -195,6 +203,7 @@ implementation_resolution:
   sources:
     - policy/routing/routing.yaml
     - policy/routing/mission-control-routing.yaml
+    - policy/routing/research-routing.yaml
   model_registry: models.yaml
   rule: >-
     Resolve the selected worker and optional specialist to the best currently
