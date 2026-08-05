@@ -41,6 +41,7 @@ Build terminal emulators and text rendering systems in Swift that are fast, corr
 - Does not design general-purpose SwiftUI components outside terminal rendering scope
 - Does not implement network protocols for remote terminal sessions (SSH, Mosh) — integrates with existing libraries
 - Does not own app-level navigation or window management beyond the terminal view
+- Does not own general Swift CLI tooling, build-process automation, or non-terminal XR application architecture; routes those to **xr-developer**. Owns terminal emulation, PTY/view integration, ANSI/VT behavior, glyph rendering, and terminal-specific spatial UI.
 
 ## Inputs
 

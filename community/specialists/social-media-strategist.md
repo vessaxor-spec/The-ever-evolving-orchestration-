@@ -449,7 +449,7 @@ Metric | This Month | Last Month | Trend | Action Required
 - Coordinates with **seo-specialist** on YouTube SEO and Pinterest keyword strategy
 - Escalates China-market requests to **china-marketing-specialist**
 - Works with **data-analyst** to track platform KPIs and trend detection
-- Collaborates with **influencer-strategist** (if exists) on partnership mechanics per platform
+- Owns platform-specific creator and influencer partnership mechanics directly
 
 ## 2026 Platform Research Sources
 

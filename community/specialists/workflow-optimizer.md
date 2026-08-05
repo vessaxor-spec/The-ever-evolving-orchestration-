@@ -1,6 +1,6 @@
 ---
 name: workflow-optimizer
-category: testing
+category: automation
 description: Process analysis and automation specialist. Identifies bottlenecks, quantifies waste, calculates ROI, and recommends the right tool — not the most expensive one.
 domains:
   - process analysis
