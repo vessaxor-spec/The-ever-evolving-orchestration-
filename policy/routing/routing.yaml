@@ -1,4 +1,4 @@
-version: 0.3
+version: 0.4
 status: public-draft
 reviewed_at: 2026-08-05
 model_registry: models.yaml
@@ -11,9 +11,26 @@ principles:
   separate_execution_and_verification_for_consequential_work: true
   escalate_on_evidence_not_task_label: true
   prefer_reversible_actions_under_uncertainty: true
+  prefer_cross_provider_fallbacks: true
+  provider_scoped_failures_exclude_provider_family: true
+  reserve_opus_for_evidence_based_escalation: true
+  automatic_local_fallbacks: false
 
 defaults:
   max_failed_attempts_before_escalation: 2
+  automatic_local_models_allowed: false
+  prefer_cross_provider_fallbacks: true
+  prefer_cross_provider_verifiers: true
+  same_provider_fallback_allowed_when:
+    - model_specific_failure
+    - no_capable_cross_provider_candidate
+  provider_scoped_failure_signals:
+    - provider_rate_limit
+    - provider_quota_exhausted
+    - provider_authentication_failure
+    - provider_billing_failure
+    - provider_regional_outage
+    - provider_service_outage
   require_independent_verifier_for:
     - security_sensitive
     - financial_logic
@@ -157,11 +174,6 @@ routing:
       agent: agy
       model: gemini-3.1-pro-preview
       profile: sol
-      reasoning: medium
-    local_fallback:
-      agent: sidecar
-      model: local_best_coder
-      profile: terra
       reasoning: medium
     review_when:
       - public_api_changed
@@ -405,9 +417,6 @@ routing:
       - agent: codex
         model: gpt-5.6-luna
         profile: luna
-      - agent: sidecar
-        model: local_best_fit
-        profile: luna
     escalation:
       agent: claude
       model: claude-sonnet-5
@@ -449,13 +458,13 @@ routing:
 
   task_routing:
     classifier:
-      agent: sidecar
-      model: local_best_fit
+      agent: claude
+      model: claude-haiku-4-5
       profile: luna
       reasoning: low
     fallback_classifier:
-      agent: claude
-      model: claude-haiku-4-5
+      agent: agy
+      model: gemini-3.6-flash
       profile: luna
       reasoning: low
     ambiguous_task_interpreter:
@@ -479,55 +488,45 @@ routing:
 
 fallback_order:
   coding:
+    - agent: agy
+      model: gemini-3.1-pro-preview
+    - agent: claude
+      model: claude-sonnet-5
     - agent: codex
       model: gpt-5.6-terra
-    - agent: codex
-      model: gpt-5.6-sol
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: sidecar
-      model: local_best_coder
   engineering_reasoning:
-    - agent: codex
-      model: gpt-5.6-sol
-    - agent: claude
-      model: claude-sonnet-5
-    - agent: claude
-      model: claude-opus-5
     - agent: agy
       model: gemini-3.1-pro-preview
+    - agent: claude
+      model: claude-sonnet-5
+    - agent: codex
+      model: gpt-5.6-sol
   general_reasoning:
-    - agent: claude
-      model: claude-sonnet-5
+    - agent: agy
+      model: gemini-3.1-pro-preview
     - agent: codex
       model: gpt-5.6-sol
     - agent: claude
-      model: claude-opus-5
-    - agent: agy
-      model: gemini-3.1-pro-preview
+      model: claude-sonnet-5
   research:
-    - agent: agy
-      model: gemini-3.1-pro-preview
     - agent: claude
       model: claude-sonnet-5
     - agent: codex
       model: gpt-5.6-sol
+    - agent: agy
+      model: gemini-3.1-pro-preview
   multimodal:
+    - agent: claude
+      model: claude-sonnet-5
     - agent: agy
       model: gemini-3.6-flash
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: claude
-      model: claude-sonnet-5
   throughput:
-    - agent: claude
-      model: claude-haiku-4-5
     - agent: agy
       model: gemini-3.6-flash
     - agent: codex
       model: gpt-5.6-luna
-    - agent: sidecar
-      model: local_best_fit
+    - agent: claude
+      model: claude-haiku-4-5
 
 verification_policy:
   low_risk:
@@ -556,10 +555,13 @@ decision_logging:
     - task_type
     - selected_route
     - selected_model
+    - selected_provider_family
     - fallback_model
+    - fallback_provider_family
     - verification_method
     - risk_level
     - selection_reason
+    - failure_scope
     - outcome
     - failed_attempts
     - escalation_used
