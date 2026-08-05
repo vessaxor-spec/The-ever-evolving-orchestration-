@@ -94,13 +94,17 @@ class ConfigBundle:
             team_routing=_load_yaml(root_path / "policy/routing/team-routing.yaml"),
             routing=_load_routing(
                 root_path / "policy/routing/routing.yaml",
-                (root_path / "policy/routing/mission-control-routing.yaml",),
+                (
+                    root_path / "policy/routing/mission-control-routing.yaml",
+                    root_path / "policy/routing/research-routing.yaml",
+                ),
             ),
             workers=_load_workers(
                 root_path / "community/workers/workers.yaml",
                 (
                     root_path / "community/workers/incident-response-worker.yaml",
                     root_path / "community/workers/research-worker.yaml",
+                    root_path / "community/workers/market-research-worker.yaml",
                 ),
             ),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
