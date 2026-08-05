@@ -10,6 +10,12 @@ The fixtures intentionally assert only routing-significant fields. Runtime ident
 
 A routing change is not rejected merely because it differs from the baseline. It is rejected when the change is silent. Intentional changes must update the affected fixture with the policy or registry change that justifies the new result.
 
+## Mission Control worker conformance
+
+[`mission-control-worker-conformance.yaml`](mission-control-worker-conformance.yaml) binds the `agents-orchestrator`, `operations-manager`, and `project-manager` specialists to distinct Mission Control core workers.
+
+The fixtures verify team ownership, worker binding, specialist risk profile, role-card reference, responsibilities, capabilities, verification requirements, escalation coverage, and authority boundaries. The worker layer is additive and does not replace the authoritative specialist specifications.
+
 ## Configuration warning baseline
 
 [`configuration-warning-baseline.yaml`](configuration-warning-baseline.yaml) records known inconsistencies currently exposed by configuration validation.
