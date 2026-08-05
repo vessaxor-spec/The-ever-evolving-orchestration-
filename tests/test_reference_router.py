@@ -270,6 +270,7 @@ def test_critical_specialist_requires_human_approval(tmp_path: Path) -> None:
         )
     )
     assert dispatch.specialist_risk_profile == "critical"
+    assert dispatch.risk_level == "critical"
     assert dispatch.verification.human_approval_required is True
     assert "human_approval" in dispatch.verification.method
 
