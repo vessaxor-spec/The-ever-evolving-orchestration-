@@ -61,7 +61,7 @@ def test_mission_control_route(scenario: dict[str, Any]) -> None:
 def test_mission_control_route_extension_is_additive() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
 
-    for route_name in ("orchestration", "operations", "project_delivery"):
+    for route_name in ("orchestration", "operations", "project_delivery", "incident_response"):
         assert route_name in bundle.team_routes
         assert route_name in bundle.implementation_routes
 

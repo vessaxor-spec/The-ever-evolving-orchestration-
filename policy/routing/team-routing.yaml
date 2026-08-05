@@ -1,4 +1,4 @@
-version: 0.5
+version: 0.6
 status: public-draft
 
 routing_order:
@@ -50,6 +50,17 @@ team_routes:
       - engineering
       - verification
     verification_team: verification
+
+  incident_response:
+    primary_team: mission_control
+    primary_worker: incident_response
+    supporting_teams:
+      - engineering
+      - review
+      - verification
+    verification_team: verification
+    human_approval_for:
+      - critical
 
   architecture_design:
     primary_team: planning

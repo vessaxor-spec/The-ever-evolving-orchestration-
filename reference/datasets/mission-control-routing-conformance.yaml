@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -119,3 +119,45 @@ scenarios:
           - targeted_review
         routing_explanation:
           - Task classified as project_delivery by deterministic keyword rules.
+
+  - id: incident-response-route
+    purpose: Select critical incident command through Mission Control without granting diagnosis, implementation, communications, or closure authority.
+    task:
+      task_id: conformance-incident-response-route
+      task: Coordinate the production outage as incident commander, assign the war room roles, and establish the SEV1 update cadence.
+      risk_level: low
+      specialist: incident-commander
+    expect:
+      equals:
+        task_type: incident_response
+        risk_level: critical
+        selected_team: mission_control
+        selected_worker: incident_response
+        selected_specialist: incident-commander
+        specialist_risk_profile: critical
+        selected_implementation.model: claude-sonnet-5
+        selected_implementation.source: routing.incident_response.primary
+        fallback_implementation.model: gemini-3.1-pro-preview
+        verification.team: verification
+        verification.implementation.model: gpt-5.6-sol
+        verification.independent: true
+        verification.human_approval_required: true
+        warnings: []
+      contains:
+        required_capabilities:
+          - incident_command
+          - coordination
+          - risk_analysis
+          - operational_communications
+          - timeline_management
+          - reliability_reasoning
+          - evidence_evaluation
+          - clear_writing
+        verification.method:
+          - independent_multi_agent_review
+          - executable_verification
+          - human_approval
+          - audit_trace
+          - rollback_plan
+        routing_explanation:
+          - Task classified as incident_response by deterministic keyword rules.
