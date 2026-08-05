@@ -10,6 +10,8 @@ The fixtures intentionally assert only routing-significant fields. Runtime ident
 
 A routing change is not rejected merely because it differs from the baseline. It is rejected when the change is silent. Intentional changes must update the affected fixture with the policy or registry change that justifies the new result.
 
+Provider-aware fallback behavior is additionally enforced by [`tests/test_provider_fallback_policy.py`](../../tests/test_provider_fallback_policy.py). Active routes must expose a non-local routine fallback from a different provider family, worker and family fallback pools must use canonical provider metadata, and Opus must remain outside routine fallback chains. The underlying methodology is documented in [`docs/methodology/provider-aware-fallbacks.md`](../../docs/methodology/provider-aware-fallbacks.md).
+
 ## Mission Control worker conformance
 
 [`mission-control-worker-conformance.yaml`](mission-control-worker-conformance.yaml) binds the `agents-orchestrator`, `operations-manager`, `project-manager`, and `incident-commander` specialists to distinct Mission Control core workers.
