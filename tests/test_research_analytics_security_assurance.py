@@ -13,7 +13,16 @@ def test_researcher_has_domain_evidence_depth() -> None:
     card = text("researcher.md")
     assert "Consolidates and preserves the durable methods" in card
     assert "## Domain Activation and Minimum Evidence" in card
-    for heading in ["### History", "### Anthropology", "### Geography", "### Psychology", "### Narratology", "### Market Research", "### Investment Research", "### General / New Domain"]:
+    for heading in [
+        "### History",
+        "### Anthropology",
+        "### Geography",
+        "### Psychology",
+        "### Narratology",
+        "### Market Research",
+        "### Investment Research",
+        "### General / New Domain",
+    ]:
         assert heading in card
     assert "## Cross-Domain Claim Ledger" in card
     assert "Three URLs repeating one original source are not triangulation" in card
@@ -23,7 +32,15 @@ def test_researcher_has_domain_evidence_depth() -> None:
 def test_data_analyst_has_high_risk_model_qa_protocol() -> None:
     card = text("data-analyst.md")
     assert "## ML Model QA and Responsible Analytics Protocol" in card
-    for phrase in ["Data Reconstruction and Leakage", "Fairness and Harmful-Bias Evaluation", "equalized odds", "calibration by group", "intersectional slice", "CONDITIONAL GO", "RESEARCH ONLY"]:
+    for phrase in [
+        "Data Reconstruction and Leakage",
+        "Fairness and Harmful-Bias Evaluation",
+        "equalized odds",
+        "calibration by group",
+        "intersectional slice",
+        "CONDITIONAL GO",
+        "RESEARCH ONLY",
+    ]:
         assert phrase in card
     assert "Does not treat removal of protected attributes as proof" in card
     assert "A random row split is rejected" in card
@@ -34,8 +51,7 @@ def test_devsecops_examples_follow_full_sha_policy() -> None:
     card = text("devsecops-engineer.md")
     assert "## Third-Party CI Action Trust and Pinning" in card
     assert "<verified-full-commit-sha>" in card
-    assert not re.search(r"uses:\s+[^
-]+@v\d", card)
+    assert not re.search(r"uses:\s+[^\n]+@v\d", card)
     assert "Fixed 30-, 90-, or annual rotation intervals are not universal" in card
     assert "retained for 90 days minimum" not in card
 
