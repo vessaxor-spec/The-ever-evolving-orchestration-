@@ -98,14 +98,27 @@ def test_worker_and_family_fallbacks_are_canonical_non_local_and_exclude_opus() 
 
 def test_escalation_is_not_loaded_as_automatic_fallback() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
+    opus_locations: list[str] = []
 
     for route_name, route in bundle.implementation_routes.items():
         assert "escalation" not in route, f"{route_name} exposes escalation to automatic fallback"
-        if route_name == "security_review":
-            assert route["primary"]["model"] == "claude-opus-5"
+        primary_key = PRIMARY_KEYS.get(route_name)
+        if primary_key and route[primary_key].get("model") == "claude-opus-5":
+            opus_locations.append(f"{route_name}.{primary_key}")
         conditional = route.get("conditional_escalation")
-        if conditional:
-            assert conditional["model"] == "claude-opus-5"
+        if conditional and conditional.get("model") == "claude-opus-5":
+            opus_locations.append(f"{route_name}.conditional_escalation")
+        fallback = route.get("fallback")
+        if fallback:
+            assert fallback.get("model") != "claude-opus-5", (
+                f"{route_name} uses Opus as a routine fallback"
+            )
+
+    assert "security_review.primary" in opus_locations
+    assert all(
+        location == "security_review.primary" or location.endswith(".conditional_escalation")
+        for location in opus_locations
+    )
 
 
 def test_provider_scoped_blocking_moves_dispatch_across_provider_boundary() -> None:
