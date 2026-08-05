@@ -22,6 +22,12 @@ The fixtures verify team ownership, worker binding, specialist risk profile, rol
 
 The incident-response scenario additionally requires critical-risk verification, qualified human approval, technical sign-off confirmation, and preservation of the incident commander's coordination-only authority.
 
+## Research worker conformance
+
+[`research-worker-conformance.yaml`](research-worker-conformance.yaml) binds the `researcher` specialist to the dedicated Research Team `research` worker.
+
+The fixture protects source triangulation, evidence traceability, contradiction analysis, confidence calibration, escalation boundaries, and the separation between research synthesis and final deliverable writing. Routing conformance separately requires `deep_research` to use this worker while documentation tasks remain on the `documentation` worker.
+
 ## Configuration warning baseline
 
 [`configuration-warning-baseline.yaml`](configuration-warning-baseline.yaml) records known inconsistencies currently exposed by configuration validation.
