@@ -1,4 +1,4 @@
-version: 0.1
+version: 0.2
 status: public-draft
 reviewed_at: 2026-08-05
 
@@ -8,6 +8,67 @@ policy: >-
   authoritative specialist specifications or broad-domain research route.
 
 routing:
+  analytics:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: perform reproducible quantitative analysis, statistical reasoning, experiment evaluation, model QA, and decision-focused synthesis
+    data_execution:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+      purpose: execute SQL, Python, statistical calculations, data validation, and reproducibility checks when tools or datasets are available
+    benchmark_research:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: retrieve current benchmarks, model-evaluation guidance, tool documentation, and external analytical context
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: preserve analytical continuity when the OpenAI route is unavailable
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: independently challenge methodology, causal claims, statistical power, uncertainty, bias, and decision framing
+    reproducibility_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+      use_when:
+        - dataset_or_query_is_available
+        - statistical_results_can_be_recalculated
+        - dashboard_or_model_outputs_require_execution
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - regulated_or_high_consequence_decision
+        - protected_attribute_or_material_bias_risk
+        - unresolved_methodological_disagreement
+        - financial_or_forecast_commitment
+        - model_leakage_or_integrity_failure
+        - evidence_does_not_support_a_go_no_go_recommendation
+    required_controls:
+      - data_quality_validation
+      - methodology_trace
+      - sample_size_and_power_check
+      - uncertainty_and_confidence_reporting
+      - causal_claim_review
+      - reproducibility_evidence
+      - independent_verification
+
   market_research:
     primary:
       agent: agy
