@@ -51,10 +51,16 @@ jobs:
                   'The specialist specification above is authoritative and must remain intact.',
           }
 
+          def eligible(path: Path) -> bool:
+              return (
+                  path.is_file()
+                  and '.git' not in path.parts
+                  and '.github' not in path.parts
+                  and path.suffix.lower() in text_suffixes
+              )
+
           for path in root.rglob('*'):
-              if not path.is_file() or '.git' in path.parts:
-                  continue
-              if path.suffix.lower() not in text_suffixes:
+              if not eligible(path):
                   continue
               try:
                   text = path.read_text(encoding='utf-8')
@@ -98,18 +104,13 @@ jobs:
               if text != original:
                   path.write_text(text, encoding='utf-8')
 
-          for temporary in (
-              Path('.github/workflows/redact-specialist-origin.yml'),
-              Path('.teo-origin-cleanup-trigger'),
-          ):
-              if temporary.exists():
-                  temporary.unlink()
+          trigger = Path('.teo-origin-cleanup-trigger')
+          if trigger.exists():
+              trigger.unlink()
 
           remaining = []
           for path in root.rglob('*'):
-              if not path.is_file() or '.git' in path.parts:
-                  continue
-              if path.suffix.lower() not in text_suffixes:
+              if not eligible(path):
                   continue
               try:
                   text = path.read_text(encoding='utf-8')
