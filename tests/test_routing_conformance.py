@@ -59,6 +59,13 @@ def test_routing_conformance_scenario(scenario: dict[str, Any]) -> None:
     )
 
 
+def test_canonical_verification_policy_keys_are_resolved() -> None:
+    policy = ConfigBundle.load(REPO_ROOT).routing["verification_policy"]
+
+    for risk in ("low", "medium", "high"):
+        assert policy[risk] == policy[f"{risk}_risk"]
+
+
 def test_configuration_warning_baseline_is_exact() -> None:
     baseline = load_yaml(DATASET_ROOT / "configuration-warning-baseline.yaml")
     issues = ConfigBundle.load(REPO_ROOT).validate()
