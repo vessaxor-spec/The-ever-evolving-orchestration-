@@ -57,7 +57,6 @@ def test_corrected_categories_use_existing_taxonomy() -> None:
 def test_known_false_or_retired_instructions_are_absent() -> None:
     combined = "\n".join(card.read_text(encoding="utf-8") for card in cards())
     banned = [
-        "--iref",
         "Replies worth 150x likes",
         "Third-party cookie deprecation is complete",
         "Google's Privacy Sandbox (Topics API)",
@@ -72,6 +71,10 @@ def test_known_false_or_retired_instructions_are_absent() -> None:
     ]
     for phrase in banned:
         assert phrase not in combined, phrase
+
+    image_prompt = (SPECIALISTS / "image-prompt-engineer.md").read_text(encoding="utf-8")
+    assert "Never use or document `--iref`" in image_prompt
+    assert "| `--iref" not in image_prompt
 
 
 def test_freshness_policy_has_required_controls() -> None:
