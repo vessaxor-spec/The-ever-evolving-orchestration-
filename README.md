@@ -62,7 +62,7 @@ The repository now contains:
 - a public roster of 56 preserved specialist role cards
 - machine-readable team, worker, specialist, capability, model, fallback, and verification policies
 - dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
-- dedicated Research Team workers for broad research, market research, analytics, and documentation
+- dedicated Research Team workers for broad research, user research, market research, analytics, and documentation
 - deterministic task classification for the active reference routes
 - risk elevation from specialist profiles
 - provider-aware routine fallbacks
@@ -184,6 +184,7 @@ The Research Team now distinguishes several forms of evidence work that should n
 | Worker | Responsibility |
 |---|---|
 | `research` | source discovery, triangulation, contradiction analysis, confidence calibration, and research synthesis |
+| `user_research` | interviews, surveys, usability findings, feedback themes, JTBD framing, persona evidence, mixed-method triangulation, and user-insight synthesis |
 | `market_research` | competitive landscapes, bounded market sizing, lifecycle analysis, weak signals, willingness-to-pay, and strategic market evidence |
 | `analytics` | quantitative analysis, KPI diagnostics, experiments, funnels, cohorts, forecasting, attribution, and model QA |
 | `documentation` | accurate, usable, maintainable technical documentation and reference material |
@@ -191,6 +192,7 @@ The Research Team now distinguishes several forms of evidence work that should n
 These workers collaborate but remain distinct:
 
 - research synthesis is not quantitative analytics
+- user research is not market intelligence, quantitative analytics, documentation, or UX-design judgment
 - market intelligence is not broad-domain research
 - analytics is not data-pipeline engineering
 - documentation is not the owner of substantive research
@@ -235,6 +237,7 @@ The current control plane includes first-class routes for:
 | `deep_debugging` | root-cause analysis and repair |
 | `repo_wide_refactor` | phased repository-scale structural change |
 | `deep_research` | broad evidence gathering and synthesis |
+| `user_research` | qualitative user evidence and feedback synthesis |
 | `market_research` | current market and competitive intelligence |
 | `analytics` | quantitative and statistical analysis |
 | `code_review` | correctness, scope, contracts, and regression review |
@@ -277,6 +280,7 @@ TEO defines responsibilities independently from providers. The table below recor
 | Engineering reasoning | Codex Sol | Gemini Pro and Claude Sonnet |
 | General planning and semantic review | Claude Sonnet | Gemini Pro and Codex Sol |
 | Broad and market research | Gemini Pro | Claude Sonnet and Codex Sol |
+| Qualitative user research | Claude Sonnet | Gemini Pro with Codex Sol verification |
 | Quantitative analytics | Codex Sol | Gemini Pro with Claude Sonnet verification |
 | Multimodal and rapid collection | Gemini Flash | Claude Sonnet and technical follow-up when needed |
 | High-volume simple processing | Claude Haiku or Gemini Flash | Luna-class processing where eligible |
@@ -399,6 +403,7 @@ The repository contains fixtures for:
 - Mission Control worker bindings
 - Mission Control route behavior
 - broad research worker boundaries
+- user-research worker boundaries
 - market-research worker boundaries
 - analytics worker boundaries
 - exact configuration-warning baselines
@@ -658,10 +663,10 @@ The active work now expands dedicated workers from the preserved specialist corp
 Completed dedicated additions include:
 
 - Mission Control: orchestration, operations, project delivery, incident response
-- Research Team: broad research, market research, analytics
+- Research Team: broad research, user research, market research, analytics
 - Review Team: code review
 
-The next planned worker is `user_research`, derived from the existing feedback-synthesizer specialist and kept separate from analytics and market intelligence.
+The next dedicated worker will be selected from the remaining exact warning baseline using responsibility uniqueness, routing value, risk, and verification needs rather than arbitrary roster order.
 
 Later runtime work includes provider adapters, live retry execution, circuit breakers, telemetry, cost and latency measurement, and evidence-backed route optimization.
 
@@ -702,7 +707,7 @@ Capsules may record:
 - important unknowns
 - a message to future stewards
 
-The first Capsule belongs in [`community/capsules/`](community/capsules/).
+Accepted Capsules are indexed in [`community/capsules/`](community/capsules/).
 
 > If this repository still exists years from now, it belongs to every steward who chose to improve it rather than restart it.
 
