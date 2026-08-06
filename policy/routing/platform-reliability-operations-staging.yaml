@@ -1,0 +1,97 @@
+version: 0.1
+status: staged-not-routable
+reviewed_at: 2026-08-06
+team: platform_reliability
+team_charter: community/teams/platform-reliability-team.md
+
+specialists:
+  performance-engineer:
+    role_card: community/specialists/performance-engineer.md
+    canonical_git_blob_sha: 339252dffb7ef2fad7a39db99d482211642e11d8
+    worker_binding: performance_engineering
+    risk_profile: high
+    freshness_policy: live-verification-required
+  finops-engineer:
+    role_card: community/specialists/finops-engineer.md
+    canonical_git_blob_sha: 1f03b7735675a6b18d033bfa5119efc55ba292f7
+    worker_binding: finops_engineering
+    risk_profile: high
+    freshness_policy: live-verification-required
+  site-reliability-engineer:
+    role_card: community/specialists/site-reliability-engineer.md
+    canonical_git_blob_sha: f71d66f0dbf264f5bc7276280792f0f8db450557
+    worker_binding: site_reliability
+    risk_profile: critical
+    freshness_policy: live-verification-required
+  mlops-engineer:
+    role_card: community/specialists/mlops-engineer.md
+    canonical_git_blob_sha: 2bacf553747f5b81ad9a3097aadbaddd015b8c0f
+    worker_binding: mlops
+    risk_profile: high
+    freshness_policy: live-verification-required
+
+worker_definition:
+  path: community/workers/platform-reliability-operations-workers.yaml
+  canonical_git_blob_sha: 367a0519f28a80d01c475f9b0d0e09dd90a47e47
+  workers:
+    - performance_engineering
+    - finops_engineering
+    - site_reliability
+    - mlops
+
+responsibility_boundaries:
+  performance_engineering:
+    owns: workload_benchmark_profiling_capacity_and_cross_stack_performance_evidence
+    does_not_replace:
+      - qa
+      - site_reliability
+      - database_reliability
+      - network_engineering
+  finops_engineering:
+    owns: technology_cost_allocation_unit_economics_forecasting_commitments_and_realized_savings
+    does_not_replace:
+      - finance
+      - procurement
+      - product
+      - technical_risk_owners
+  site_reliability:
+    owns: production_slos_error_budgets_readiness_capacity_toil_and_reliability_risk
+    does_not_replace:
+      - devops
+      - incident_response
+      - performance_engineering
+      - product
+  mlops:
+    owns: reproducible_ml_lifecycle_lineage_promotion_deployment_monitoring_retraining_and_rollback
+    does_not_replace:
+      - ai_engineering
+      - data_engineering
+      - applied_science
+      - assurance
+
+completed_gates:
+  - team_charter_exists
+  - worker_definition_exists
+  - specialist_cards_exist
+  - independent_verification_defined
+  - critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - canonical_preservation_tests_present
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mappings_exist
+  - provider_diverse_fallbacks_exist
+  - conformance_datasets_exist
+  - existing_devops_and_devsecops_reallocations_are_implemented
+
+activation_rules:
+  - no_active_platform_reliability_route_until_every_pending_gate_is_complete
+  - staged_specialists_must_not_enter_the_canonical_active_registry_before_route_conformance
+  - existing_devops_and_devsecops_cards_remain_unchanged_until_a_separate_allocation_change
+  - site_reliability_must_not_absorb_devops_or_incident_command
+  - performance_engineering_must_not_absorb_qa
+  - mlops_must_not_absorb_ai_engineering_data_engineering_or_applied_science
+  - finops_must_not_substitute_for_finance_procurement_product_or_risk_authority
+  - critical_launch_model_and_commitment_decisions_require_qualified_human_approval
+  - six_card_regulated_evidence_pilot_scope_remains_unchanged
