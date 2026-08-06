@@ -1,0 +1,213 @@
+version: 0.1
+status: approved-foundation
+approved_at: 2026-08-06
+activation: staged
+current_team_count: 6
+target_team_count: 10
+current_specialist_count: 56
+target_specialist_count: 78
+
+retained_teams:
+  - mission_control
+  - planning
+  - engineering
+  - research
+  - review
+  - verification
+
+new_teams:
+  platform_reliability:
+    charter: community/teams/platform-reliability-team.md
+    mission: shared platforms, infrastructure, networks, databases, reliability, performance, ML operations, and technology economics
+    activation_ready: false
+    worker_families:
+      - distributed_systems
+      - database_reliability
+      - network_engineering
+      - platform_engineering
+      - devops
+      - site_reliability
+      - performance_engineering
+      - mlops
+      - finops_engineering
+      - devsecops
+  systems_engineering:
+    charter: community/teams/systems-engineering-team.md
+    mission: stakeholder needs, system requirements, interfaces, integration, technical baselines, and lifecycle coherence
+    activation_ready: false
+    worker_families:
+      - systems_requirements
+      - systems_integration
+      - interface_management
+      - configuration_baseline
+      - system_vv_planning
+      - lifecycle_engineering
+  physical_systems:
+    charter: community/teams/physical-systems-team.md
+    mission: hardware, embedded, civil, robotics, silicon, aerospace, manufacturing, and physical integration
+    activation_ready: false
+    worker_families:
+      - hardware_engineering
+      - embedded_engineering
+      - civil_engineering
+      - robotics_autonomy
+      - silicon_engineering
+      - aerospace_systems
+      - manufacturing_engineering
+      - physical_integration
+  assurance:
+    charter: community/teams/assurance-team.md
+    mission: technical privacy, functional safety, formal correctness, application security, and assurance cases
+    activation_ready: false
+    worker_families:
+      - privacy_engineering
+      - functional_safety
+      - formal_methods
+      - application_security
+      - assurance_case
+
+new_specialists:
+  - id: cloud-architect
+    primary_team: planning
+    worker_binding: cloud_architecture
+    risk_profile: high
+  - id: mobile-engineer
+    primary_team: engineering
+    worker_binding: mobile
+    risk_profile: medium
+  - id: compiler-toolchain-engineer
+    primary_team: engineering
+    worker_binding: compiler_toolchain
+    risk_profile: high
+  - id: distributed-systems-engineer
+    primary_team: platform_reliability
+    worker_binding: distributed_systems
+    risk_profile: high
+  - id: database-reliability-engineer
+    primary_team: platform_reliability
+    worker_binding: database_reliability
+    risk_profile: critical
+  - id: network-engineer
+    primary_team: platform_reliability
+    worker_binding: network_engineering
+    risk_profile: high
+  - id: platform-engineer
+    primary_team: platform_reliability
+    worker_binding: platform_engineering
+    risk_profile: high
+  - id: performance-engineer
+    primary_team: platform_reliability
+    worker_binding: performance_engineering
+    risk_profile: high
+  - id: finops-engineer
+    primary_team: platform_reliability
+    worker_binding: finops_engineering
+    risk_profile: high
+  - id: site-reliability-engineer
+    primary_team: platform_reliability
+    worker_binding: site_reliability
+    risk_profile: critical
+  - id: mlops-engineer
+    primary_team: platform_reliability
+    worker_binding: mlops
+    risk_profile: high
+  - id: systems-requirements-engineer
+    primary_team: systems_engineering
+    worker_binding: systems_requirements
+    risk_profile: high
+  - id: hardware-engineer
+    primary_team: physical_systems
+    worker_binding: hardware_engineering
+    risk_profile: critical
+  - id: robotics-autonomous-systems-engineer
+    primary_team: physical_systems
+    worker_binding: robotics_autonomy
+    risk_profile: critical
+  - id: silicon-asic-engineer
+    primary_team: physical_systems
+    worker_binding: silicon_engineering
+    risk_profile: critical
+  - id: aerospace-satellite-engineer
+    primary_team: physical_systems
+    worker_binding: aerospace_systems
+    risk_profile: critical
+  - id: manufacturing-engineer
+    primary_team: physical_systems
+    worker_binding: manufacturing_engineering
+    risk_profile: high
+  - id: applied-scientist
+    primary_team: research
+    worker_binding: applied_science
+    risk_profile: high
+  - id: privacy-engineer
+    primary_team: assurance
+    worker_binding: privacy_engineering
+    risk_profile: critical
+  - id: functional-safety-engineer
+    primary_team: assurance
+    worker_binding: functional_safety
+    risk_profile: critical
+  - id: formal-methods-engineer
+    primary_team: assurance
+    worker_binding: formal_methods
+    risk_profile: high
+  - id: application-security-engineer
+    primary_team: assurance
+    worker_binding: application_security
+    risk_profile: critical
+
+existing_specialist_reallocations:
+  devops-engineer:
+    from: engineering
+    to: platform_reliability
+    preserve_role_card: true
+  devsecops-engineer:
+    from: engineering
+    to: platform_reliability
+    preserve_role_card: true
+  embedded-engineer:
+    from: engineering
+    to: physical_systems
+    preserve_role_card: true
+  civil-engineer:
+    from: planning
+    to: physical_systems
+    preserve_role_card: true
+
+existing_binding_corrections:
+  rust-engineer:
+    from: systems_engineering
+    to: rust_systems_programming
+    preserve_role_card: true
+
+activation_gates:
+  - team_charter_exists
+  - worker_definition_exists
+  - specialist_card_exists
+  - routing_policy_exists
+  - capability_mapping_exists
+  - provider_diverse_fallback_exists
+  - independent_verification_defined
+  - conformance_dataset_exists
+  - critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - canonical_preservation_test_present
+
+routing_rules:
+  - team_selection_precedes_worker_and_specialist_selection
+  - new_teams_are_not_active_until_all_activation_gates_pass
+  - specialist_allocation_is_additive_and_must_not_reduce_existing_capability
+  - system_lifecycle_work_must_not_route_to_rust_systems_programming_by_name_collision
+  - physical_systems_work_requires_systems_engineering_handoff_when_interfaces_or_lifecycle_baselines_change
+  - assurance_produces_claims_and_evidence_requirements_but_does_not_self_verify
+  - critical_privacy_safety_security_database_reliability_and_physical_decisions_require_qualified_human_approval
+  - evidence_pilot_scope_remains_exactly_six_until_its_maintainability_gate_passes
+
+implementation_sequence:
+  - team_architecture
+  - platform_and_systems
+  - physical_systems
+  - assurance
+  - planning_engineering_research
+  - conformance_and_routing
+  - completion_capsule
