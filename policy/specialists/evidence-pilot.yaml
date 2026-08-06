@@ -30,7 +30,8 @@ pilot_specialists:
           url: https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure
           expected_hosts: [www.uscourts.gov]
           locator: Federal Rules of Civil Procedure, Rule 37(e)
-          published_or_effective_at: 2025-12-01
+          source_date_basis: effective
+          source_date: 2025-12-01
         verified_at: 2026-08-06
         expires_at: 2026-11-04
         verification:
@@ -60,7 +61,8 @@ pilot_specialists:
           url: https://www.irs.gov/businesses/small-businesses-self-employed/how-long-should-i-keep-records
           expected_hosts: [www.irs.gov]
           locator: Period of limitations that apply to income tax returns
-          published_or_effective_at: 2026-06-30
+          source_date_basis: last_updated
+          source_date: 2026-06-30
         verified_at: 2026-08-06
         expires_at: 2026-11-04
         verification:
@@ -90,7 +92,8 @@ pilot_specialists:
           url: https://www.consumerfinance.gov/rules-policy/regulations/1026/interp-43/
           expected_hosts: [www.consumerfinance.gov]
           locator: Official interpretation of paragraph 43(e)(2)
-          published_or_effective_at: 2021-03-01
+          source_date_basis: effective
+          source_date: 2021-03-01
         verified_at: 2026-08-06
         expires_at: 2026-09-05
         verification:
@@ -120,7 +123,8 @@ pilot_specialists:
           url: https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20
           expected_hosts: [www.nist.gov]
           locator: NIST CSWP 29, published February 26 2024
-          published_or_effective_at: 2024-02-26
+          source_date_basis: published
+          source_date: 2024-02-26
         verified_at: 2026-08-06
         expires_at: 2026-11-04
         verification:
@@ -150,7 +154,8 @@ pilot_specialists:
           url: https://www.asce.org/communities/institutes-and-technical-groups/structural-engineering-institute/asce-7-and-sei-standards
           expected_hosts: [www.asce.org]
           locator: Current Edition, ASCE/SEI 7
-          published_or_effective_at: 2021-12-01
+          source_date_basis: observed
+          source_date: 2026-08-06
         verified_at: 2026-08-06
         expires_at: 2026-11-04
         verification:
@@ -174,7 +179,8 @@ pilot_specialists:
           url: https://www.iccsafe.org/advocacy/code-adoption-resources/
           expected_hosts: [www.iccsafe.org]
           locator: Adoption of ICC Codes and Standards FAQ
-          published_or_effective_at: 2026-08-06
+          source_date_basis: observed
+          source_date: 2026-08-06
         verified_at: 2026-08-06
         expires_at: 2026-11-04
         verification:
@@ -204,7 +210,8 @@ pilot_specialists:
           url: https://www.iso.org/standard/82075.html
           expected_hosts: [www.iso.org]
           locator: ISO/IEC 9899:2024, edition 5, status published
-          published_or_effective_at: 2024-10-31
+          source_date_basis: published
+          source_date: 2024-10-31
         verified_at: 2026-08-06
         expires_at: 2026-11-04
         verification:
