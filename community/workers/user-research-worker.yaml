@@ -1,0 +1,79 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-06
+
+policy: >-
+  This worker is an additive core-worker representation of the authoritative
+  feedback-synthesizer specialist role card. It provides routing and
+  verification context without replacing, compressing, weakening, or
+  overriding that role.
+
+workers:
+  user_research:
+    mission: turn ethically collected user evidence into traceable, uncertainty-aware insights that explain user goals, friction, needs, and decision implications without substituting for product ownership
+    owning_team: research
+    responsibilities:
+      - research_question_and_protocol_design
+      - feedback_source_inventory
+      - interview_transcript_synthesis
+      - survey_response_synthesis
+      - usability_finding_synthesis
+      - support_ticket_and_review_synthesis
+      - atomic_observation_extraction
+      - affinity_mapping_and_theme_development
+      - jobs_to_be_done_framing
+      - sentiment_and_trajectory_analysis
+      - persona_and_segment_evidence
+      - qualitative_quantitative_triangulation
+      - insight_confidence_and_limitation_reporting
+      - decision_briefing
+    required_capabilities:
+      - qualitative_research
+      - thematic_analysis
+      - evidence_synthesis
+      - interview_transcript_analysis
+      - survey_analysis
+      - usability_research
+      - mixed_methods_reasoning
+      - source_validation
+      - uncertainty_calibration
+      - privacy_and_research_ethics
+      - user_insight_translation
+    preferred_implementations:
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.1-pro-preview
+      - gpt-5.6-sol
+    verification:
+      - source_and_collection_method_trace
+      - sample_and_recruitment_limit_review
+      - atomic_observation_to_theme_trace
+      - quote_context_and_provenance_check
+      - contradiction_and_negative_case_review
+      - confidence_and_uncertainty_check
+      - quantitative_corroboration_when_available
+      - consent_privacy_and_reidentification_review
+      - independent_insight_review
+    escalation:
+      - vulnerable_or_protected_population
+      - regulated_or_high_consequence_use
+      - sensitive_personal_data_or_reidentification_risk
+      - missing_consent_or_unclear_research_authority
+      - materially_biased_or_nonrepresentative_sample
+      - unsupported_persona_or_segment_claim
+      - unresolved_conflict_between_qualitative_and_quantitative_evidence
+      - irreversible_product_or_policy_commitment
+      - evidence_does_not_support_the_requested_recommendation
+    authority_boundaries:
+      - no_live_human_interview_execution
+      - no_product_decision_substitution
+      - no_market_research_ownership
+      - no_analytics_infrastructure_ownership
+      - no_ux_design_or_accessibility_verdict_substitution
+      - no_invented_quotes_observations_or_participants
+      - no_overgeneralization_from_small_or_biased_samples
+      - no_persona_presented_as_fact_without_empirical_support
+      - no_causal_or_statistical_claim_beyond_available_evidence
+      - no_sensitive_row_level_or_reidentifiable_data_in_outputs

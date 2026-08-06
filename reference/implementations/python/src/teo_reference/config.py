@@ -117,6 +117,7 @@ class ConfigBundle:
                     root_path / "community/workers/research-worker.yaml",
                     root_path / "community/workers/market-research-worker.yaml",
                     root_path / "community/workers/analytics-worker.yaml",
+                    root_path / "community/workers/user-research-worker.yaml",
                 ),
             ),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),

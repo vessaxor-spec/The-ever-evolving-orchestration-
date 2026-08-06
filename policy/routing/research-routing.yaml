@@ -1,6 +1,6 @@
-version: 0.2
+version: 0.3
 status: public-draft
-reviewed_at: 2026-08-05
+reviewed_at: 2026-08-06
 
 policy: >-
   These implementation routes are first-class Research Team routes. They are
@@ -8,6 +8,64 @@ policy: >-
   authoritative specialist specifications or broad-domain research route.
 
 routing:
+  user_research:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: synthesize interviews, surveys, usability findings, support evidence, reviews, and other user feedback into traceable qualitative insights with explicit uncertainty
+    fast_collection:
+      agent: agy
+      model: gemini-3.6-flash
+      profile: luna
+      reasoning: medium
+      purpose: inventory, extract, normalize, and map high-volume feedback sources without deciding themes or product priorities
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: preserve qualitative synthesis and mixed-method reasoning when the Anthropic route is unavailable
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: independently challenge source traceability, sampling limits, theme construction, contradictory evidence, confidence, privacy, and decision framing
+    quantitative_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+      use_when:
+        - structured_survey_or_feedback_dataset_is_available
+        - quantitative_corroboration_requires_recalculation
+        - segment_or_trend_claims_require_execution
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - vulnerable_or_protected_population
+        - regulated_or_high_consequence_use
+        - sensitive_personal_data_or_reidentification_risk
+        - missing_consent_or_unclear_research_authority
+        - materially_biased_or_nonrepresentative_sample
+        - unresolved_conflict_between_qualitative_and_quantitative_evidence
+        - irreversible_product_or_policy_commitment
+        - evidence_does_not_support_the_requested_recommendation
+    required_controls:
+      - research_question_and_method_statement
+      - collection_method_and_sample_trace
+      - atomic_observation_to_theme_trace
+      - quote_context_and_provenance
+      - contradiction_and_negative_case_review
+      - confidence_and_limitation_reporting
+      - privacy_consent_and_reidentification_review
+      - independent_verification
+
   analytics:
     primary:
       agent: codex
