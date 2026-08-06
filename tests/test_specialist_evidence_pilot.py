@@ -38,6 +38,19 @@ def test_every_pilot_card_has_dated_authoritative_claims() -> None:
             assert claim["applicability"]["scope"]
 
 
+def test_schema_rejects_unknown_evidence_fields() -> None:
+    mutant = copy.deepcopy(load_registry(ROOT))
+    claim = mutant["pilot_specialists"]["legal-operations"]["claims"][0]
+    claim["unsupported_field"] = True
+
+    errors = validate_registry(mutant, ROOT, as_of=AS_OF)
+
+    assert any(
+        "Additional properties are not allowed" in error and "unsupported_field" in error
+        for error in errors
+    )
+
+
 def test_authority_resolution_path_checks_every_declared_source_without_live_network() -> None:
     registry = load_registry(ROOT)
     resolved: list[str] = []
