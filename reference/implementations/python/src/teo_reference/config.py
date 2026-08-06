@@ -108,6 +108,7 @@ class ConfigBundle:
                 (
                     root_path / "policy/routing/mission-control-routing.yaml",
                     root_path / "policy/routing/research-routing.yaml",
+                    root_path / "policy/routing/review-routing.yaml",
                 ),
             ),
             workers=_load_workers(
@@ -118,6 +119,7 @@ class ConfigBundle:
                     root_path / "community/workers/market-research-worker.yaml",
                     root_path / "community/workers/analytics-worker.yaml",
                     root_path / "community/workers/user-research-worker.yaml",
+                    root_path / "community/workers/compliance-worker.yaml",
                 ),
             ),
             specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
