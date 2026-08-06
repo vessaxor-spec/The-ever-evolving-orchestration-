@@ -20,6 +20,13 @@ def _load_yaml(path: Path) -> dict[str, Any]:
     return data
 
 
+def _mapping(data: dict[str, Any], key: str, path: Path) -> dict[str, Any]:
+    value = data.get(key)
+    if not isinstance(value, dict):
+        raise ConfigurationError(f"Configuration must contain a {key} mapping: {path}")
+    return value
+
+
 def _separate_conditional_escalations(routes: dict[str, Any]) -> None:
     for route in routes.values():
         if not isinstance(route, dict):
@@ -29,21 +36,50 @@ def _separate_conditional_escalations(routes: dict[str, Any]) -> None:
             route["conditional_escalation"] = escalation
 
 
-def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
+def _load_team_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
     data = _load_yaml(path)
-    routes = data.get("routing")
-    if not isinstance(routes, dict):
-        raise ConfigurationError(f"Routing configuration must contain a routing mapping: {path}")
+    routes = _mapping(data, "team_routes", path)
 
     for extension_path in extension_paths:
         if not extension_path.is_file():
             continue
         extension = _load_yaml(extension_path)
-        extension_routes = extension.get("routing")
-        if not isinstance(extension_routes, dict):
+        extension_routes = _mapping(extension, "team_routes", extension_path)
+        duplicates = sorted(set(routes).intersection(extension_routes))
+        if duplicates:
             raise ConfigurationError(
-                f"Routing extension must contain a routing mapping: {extension_path}"
+                f"Team-routing extension duplicates canonical routes in {extension_path}: "
+                + ", ".join(duplicates)
             )
+        routes.update(extension_routes)
+
+        route_overrides = extension.get("route_overrides", {})
+        if not isinstance(route_overrides, dict):
+            raise ConfigurationError(
+                f"Team-routing extension route_overrides must be a mapping: {extension_path}"
+            )
+        for route_name, override in route_overrides.items():
+            if route_name not in routes:
+                raise ConfigurationError(
+                    f"Team-routing override references unknown route {route_name}: {extension_path}"
+                )
+            if not isinstance(override, dict):
+                raise ConfigurationError(
+                    f"Team-routing override must be a mapping for {route_name}: {extension_path}"
+                )
+            routes[route_name] = override
+    return data
+
+
+def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
+    data = _load_yaml(path)
+    routes = _mapping(data, "routing", path)
+
+    for extension_path in extension_paths:
+        if not extension_path.is_file():
+            continue
+        extension = _load_yaml(extension_path)
+        extension_routes = _mapping(extension, "routing", extension_path)
         duplicates = sorted(set(routes).intersection(extension_routes))
         if duplicates:
             raise ConfigurationError(
@@ -65,19 +101,13 @@ def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[st
 
 def _load_workers(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
     data = _load_yaml(path)
-    workers = data.get("workers")
-    if not isinstance(workers, dict):
-        raise ConfigurationError(f"Worker configuration must contain a workers mapping: {path}")
+    workers = _mapping(data, "workers", path)
 
     for extension_path in extension_paths:
         if not extension_path.is_file():
             continue
         extension = _load_yaml(extension_path)
-        extension_workers = extension.get("workers")
-        if not isinstance(extension_workers, dict):
-            raise ConfigurationError(
-                f"Worker extension must contain a workers mapping: {extension_path}"
-            )
+        extension_workers = _mapping(extension, "workers", extension_path)
         duplicates = sorted(set(workers).intersection(extension_workers))
         if duplicates:
             raise ConfigurationError(
@@ -85,6 +115,69 @@ def _load_workers(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[st
                 + ", ".join(duplicates)
             )
         workers.update(extension_workers)
+
+        overrides = extension.get("worker_overrides", {})
+        if not isinstance(overrides, dict):
+            raise ConfigurationError(
+                f"Worker extension worker_overrides must be a mapping: {extension_path}"
+            )
+        for worker_name, override in overrides.items():
+            if worker_name not in workers:
+                raise ConfigurationError(
+                    f"Worker override references unknown worker {worker_name}: {extension_path}"
+                )
+            if not isinstance(override, dict):
+                raise ConfigurationError(
+                    f"Worker override must be a mapping for {worker_name}: {extension_path}"
+                )
+            workers[worker_name].update(override)
+    return data
+
+
+def _load_specialists(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
+    data = _load_yaml(path)
+    specialists = _mapping(data, "specialists", path)
+    allowed_override_fields = {
+        "primary_team",
+        "supporting_teams",
+        "worker_binding",
+        "risk_profile",
+    }
+
+    for extension_path in extension_paths:
+        if not extension_path.is_file():
+            continue
+        extension = _load_yaml(extension_path)
+        extension_specialists = _mapping(extension, "specialists", extension_path)
+        duplicates = sorted(set(specialists).intersection(extension_specialists))
+        if duplicates:
+            raise ConfigurationError(
+                f"Specialist extension duplicates canonical specialists in {extension_path}: "
+                + ", ".join(duplicates)
+            )
+        specialists.update(extension_specialists)
+
+        overrides = extension.get("allocation_overrides", {})
+        if not isinstance(overrides, dict):
+            raise ConfigurationError(
+                f"Specialist extension allocation_overrides must be a mapping: {extension_path}"
+            )
+        for specialist_name, override in overrides.items():
+            if specialist_name not in specialists:
+                raise ConfigurationError(
+                    f"Specialist override references unknown specialist {specialist_name}: {extension_path}"
+                )
+            if not isinstance(override, dict):
+                raise ConfigurationError(
+                    f"Specialist override must be a mapping for {specialist_name}: {extension_path}"
+                )
+            disallowed = sorted(set(override).difference(allowed_override_fields))
+            if disallowed:
+                raise ConfigurationError(
+                    f"Specialist override changes protected fields for {specialist_name}: "
+                    + ", ".join(disallowed)
+                )
+            specialists[specialist_name].update(override)
     return data
 
 
@@ -102,13 +195,17 @@ class ConfigBundle:
         root_path = Path(root).resolve()
         bundle = cls(
             root=root_path,
-            team_routing=_load_yaml(root_path / "policy/routing/team-routing.yaml"),
+            team_routing=_load_team_routing(
+                root_path / "policy/routing/team-routing.yaml",
+                (root_path / "policy/routing/principal-engineering-team-routing.yaml",),
+            ),
             routing=_load_routing(
                 root_path / "policy/routing/routing.yaml",
                 (
                     root_path / "policy/routing/mission-control-routing.yaml",
                     root_path / "policy/routing/research-routing.yaml",
                     root_path / "policy/routing/review-routing.yaml",
+                    root_path / "policy/routing/principal-engineering-routing.yaml",
                 ),
             ),
             workers=_load_workers(
@@ -120,9 +217,18 @@ class ConfigBundle:
                     root_path / "community/workers/analytics-worker.yaml",
                     root_path / "community/workers/user-research-worker.yaml",
                     root_path / "community/workers/compliance-worker.yaml",
+                    root_path / "community/workers/systems-engineering-worker.yaml",
+                    root_path / "community/workers/platform-reliability-core-workers.yaml",
+                    root_path / "community/workers/platform-reliability-operations-workers.yaml",
+                    root_path / "community/workers/physical-systems-workers.yaml",
+                    root_path / "community/workers/assurance-workers.yaml",
+                    root_path / "community/workers/principal-engineering-active-workers.yaml",
                 ),
             ),
-            specialists=_load_yaml(root_path / "community/specialists/specialists.yaml"),
+            specialists=_load_specialists(
+                root_path / "community/specialists/specialists.yaml",
+                (root_path / "community/specialists/principal-engineering-active.yaml",),
+            ),
             models=_load_yaml(root_path / "models.yaml"),
         )
         errors = [issue for issue in bundle.validate() if issue.startswith("ERROR:")]
