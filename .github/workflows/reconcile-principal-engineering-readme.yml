@@ -1,5 +1,6 @@
 name: Reconcile principal engineering README
 
+# Temporary branch-scoped migration support. Removed after one guarded use.
 on:
   push:
     branches:
