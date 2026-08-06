@@ -1,0 +1,36 @@
+name: Apply compliance engine patch
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.head_ref == 'agent/add-compliance-worker'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out compliance branch
+        uses: actions/checkout@v6
+        with:
+          ref: agent/add-compliance-worker
+          fetch-depth: 0
+
+      - name: Apply guarded engine patch
+        run: python tools/apply_compliance_engine_patch.py
+
+      - name: Commit engine patch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reference/implementations/python/src/teo_reference/engine.py
+          git diff --cached --quiet && exit 0
+          git commit -m "Route compliance reviews deterministically"
+          git push origin HEAD:agent/add-compliance-worker
