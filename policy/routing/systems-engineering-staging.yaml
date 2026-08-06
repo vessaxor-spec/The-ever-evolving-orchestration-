@@ -1,0 +1,65 @@
+version: 0.1
+status: staged-not-routable
+reviewed_at: 2026-08-06
+team: systems_engineering
+team_charter: community/teams/systems-engineering-team.md
+
+specialist:
+  id: systems-requirements-engineer
+  role_card: community/specialists/systems-requirements-engineer.md
+  canonical_git_blob_sha: 5584bf41e4361888d6b8ffe2db1d3e2ac3a3d087
+  worker_binding: systems_requirements
+  risk_profile: high
+  freshness_policy: live-verification-required
+
+worker:
+  id: systems_requirements
+  definition: community/workers/systems-engineering-worker.yaml
+  canonical_git_blob_sha: e1f7e18dc835b6d54cebb4e7a6967cd81fec9993
+
+standards_posture:
+  verified_at: 2026-08-06
+  authorities:
+    - id: iso-15288-2023
+      authority: ISO
+      source_url: https://www.iso.org/standard/81702.html
+      status: published
+      governing_statement: ISO/IEC/IEEE 15288:2023 is the current published system life cycle processes standard.
+    - id: iso-29148-2018
+      authority: ISO
+      source_url: https://www.iso.org/standard/72089.html
+      status: published-current
+      governing_statement: ISO/IEC/IEEE 29148:2018 remains the current published requirements engineering standard until superseded or an authorized project adopts another basis.
+    - id: iso-dis-29148-edition-3
+      authority: ISO
+      source_url: https://www.iso.org/standard/94091.html
+      status: under-development
+      governing_statement: ISO/IEC/IEEE DIS 29148 Edition 3 is a draft under development and must not be represented as the published governing edition by default.
+  application_rules:
+    - resolve_contract_jurisdiction_certification_basis_and_adopted_edition_before_claiming_governance
+    - distinguish_published_current_draft_adopted_contractual_and_certification_basis
+    - do_not_replace_project_authority_with_latest_publication_automatically
+    - refuse_consequential_standards_claims_when_authoritative_status_cannot_be_verified
+
+completed_gates:
+  - team_charter_exists
+  - worker_definition_exists
+  - specialist_card_exists
+  - independent_verification_defined
+  - critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - canonical_preservation_test_present
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mapping_exists
+  - provider_diverse_fallback_exists
+  - conformance_dataset_exists
+
+activation_rules:
+  - no_active_team_route_until_every_pending_gate_is_complete
+  - specialist_must_not_enter_the_canonical_active_registry_before_route_conformance
+  - lifecycle_systems_engineering_must_not_route_to_rust_systems_programming
+  - systems_engineering_cannot_self_approve_its_baselines_or_acceptance_evidence
+  - critical_or_regulated_acceptance_requires_qualified_human_approval
+  - six_card_regulated_evidence_pilot_scope_remains_unchanged
