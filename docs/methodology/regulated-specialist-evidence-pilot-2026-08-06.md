@@ -33,7 +33,7 @@ Every consequential pilot claim must include:
 - jurisdiction and scope applicability;
 - a tier-1 declared authority;
 - HTTPS source URL, expected authority host, and precise locator;
-- publication or effective date;
+- a source date with an explicit provenance basis: published, effective, last updated, or observed;
 - verification date and expiry date;
 - distinct preparer and verifier roles;
 - explicit independent-verification status;
@@ -51,7 +51,7 @@ Every consequential pilot claim must include:
 1. exact six-card pilot scope;
 2. canonical card preservation;
 3. registry structure and required fields;
-4. authority tier and declared host;
+4. authority tier, declared host, and date provenance;
 5. evidence lifetime against the existing volatility policy;
 6. non-expiry for consequential use;
 7. verification independence;
@@ -80,7 +80,7 @@ These tests prove that the controls are enforced rather than merely documented.
 Before a claim expires:
 
 1. resolve the declared authority and inspect the located provision;
-2. confirm jurisdiction, scope, edition, effective date, and transition rules;
+2. confirm jurisdiction, scope, edition, source-date basis, effective date, and transition rules;
 3. update the claim only when the authoritative basis still supports it;
 4. record a new verification date and policy-compliant expiry date;
 5. use a verifier role distinct from the preparer;
