@@ -110,7 +110,10 @@ def test_assurance_workers_enforce_independence_and_human_authority() -> None:
         assert worker["verification"]
         assert worker["escalation"]
         assert worker["authority_boundaries"]
-        assert any("human_approval" in item for item in worker["verification"])
+        assert any(
+            "qualified_human" in item and "approval" in item
+            for item in worker["verification"]
+        )
         assert any(
             "self_approval" in item or "self_verification" in item
             for item in worker["authority_boundaries"]
