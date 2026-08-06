@@ -5,7 +5,11 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXPANSION_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-expansion.yaml"
-ACTIVE_SPECIALISTS_PATH = REPO_ROOT / "community" / "specialists" / "specialists.yaml"
+ACTIVATION_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-activation.yaml"
+CANONICAL_SPECIALISTS_PATH = REPO_ROOT / "community" / "specialists" / "specialists.yaml"
+ACTIVE_EXTENSION_PATH = (
+    REPO_ROOT / "community" / "specialists" / "principal-engineering-active.yaml"
+)
 
 EXPECTED_NEW_SPECIALISTS = {
     "cloud-architect",
@@ -67,23 +71,30 @@ def test_all_twenty_two_approved_specialist_cards_exist() -> None:
         assert "—" not in text
 
 
-def test_approved_specialists_remain_staged_until_routing_completion() -> None:
-    active = load_yaml(ACTIVE_SPECIALISTS_PATH)["specialists"]
+def test_approved_specialists_are_active_through_additive_extension() -> None:
+    canonical = load_yaml(CANONICAL_SPECIALISTS_PATH)["specialists"]
+    active_extension = load_yaml(ACTIVE_EXTENSION_PATH)["specialists"]
+    activation = load_yaml(ACTIVATION_PATH)
 
-    assert EXPECTED_NEW_SPECIALISTS.isdisjoint(active)
+    assert EXPECTED_NEW_SPECIALISTS.isdisjoint(canonical)
+    assert set(active_extension) == EXPECTED_NEW_SPECIALISTS
+    assert activation["status"] == "active"
+    assert activation["scope"]["specialist_count"] == 78
+    assert set(activation["activated_specialists"]) == EXPECTED_NEW_SPECIALISTS
 
+
+def test_foundation_history_and_active_gates_are_both_preserved() -> None:
     expansion = load_yaml(EXPANSION_PATH)
+    activation = load_yaml(ACTIVATION_PATH)
+    gates = set(expansion["activation_gates"])
+    rules = set(expansion["routing_rules"])
+
+    assert expansion["status"] == "approved-foundation"
     assert expansion["activation"] == "staged"
     assert all(
         team["activation_ready"] is False
         for team in expansion["new_teams"].values()
     )
-
-
-def test_expansion_keeps_preservation_and_human_gates() -> None:
-    expansion = load_yaml(EXPANSION_PATH)
-    gates = set(expansion["activation_gates"])
-    rules = set(expansion["routing_rules"])
 
     assert "canonical_preservation_test_present" in gates
     assert "independent_verification_defined" in gates
@@ -94,3 +105,8 @@ def test_expansion_keeps_preservation_and_human_gates() -> None:
     assert "specialist_allocation_is_additive_and_must_not_reduce_existing_capability" in rules
     assert "new_teams_are_not_active_until_all_activation_gates_pass" in rules
     assert "evidence_pilot_scope_remains_exactly_six_until_its_maintainability_gate_passes" in rules
+
+    assert all(activation["activation_gates"].values())
+    assert activation["routing_policy"]["explicit_task_type_required_for_principal_routes"] is True
+    assert activation["routing_policy"]["keyword_only_implicit_principal_activation"] is False
+    assert activation["regulated_evidence_pilot"]["expansion_authorized"] is False
