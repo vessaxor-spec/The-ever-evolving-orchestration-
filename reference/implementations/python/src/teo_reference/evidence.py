@@ -23,6 +23,7 @@ EXPECTED_PILOT = {
     "civil-engineer",
     "embedded-engineer",
 }
+SOURCE_DATE_BASES = {"published", "effective", "last_updated", "observed"}
 
 
 def parse_date(value: object, field: str) -> dt.date:
@@ -261,6 +262,18 @@ def validate_registry(
                 for field in ("organization", "source_type", "locator"):
                     if not isinstance(authority.get(field), str) or not authority[field].strip():
                         errors.append(f"{claim_prefix}: authority.{field} is required")
+                source_date_basis = authority.get("source_date_basis")
+                if source_date_basis not in SOURCE_DATE_BASES:
+                    errors.append(
+                        f"{claim_prefix}: authority.source_date_basis must identify date provenance"
+                    )
+                try:
+                    parse_date(
+                        authority.get("source_date"),
+                        f"{claim_prefix}.authority.source_date",
+                    )
+                except ValueError as exc:
+                    errors.append(str(exc))
                 url = authority.get("url")
                 hosts = authority.get("expected_hosts")
                 parsed_host = (urlparse(url).hostname or "").lower() if isinstance(url, str) else ""
@@ -271,13 +284,6 @@ def validate_registry(
                     errors.append(f"{claim_prefix}: authority.url must use https")
                 if not normalized_hosts or parsed_host not in normalized_hosts:
                     errors.append(f"{claim_prefix}: authority host must be explicitly declared")
-                try:
-                    parse_date(
-                        authority.get("published_or_effective_at"),
-                        f"{claim_prefix}.authority.published_or_effective_at",
-                    )
-                except ValueError as exc:
-                    errors.append(str(exc))
                 if resolve and isinstance(url, str) and normalized_hosts:
                     try:
                         resolution_error = resolver(url, normalized_hosts)
