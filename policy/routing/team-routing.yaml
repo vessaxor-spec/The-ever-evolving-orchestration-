@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 status: public-draft
 
 routing_order:
@@ -156,6 +156,16 @@ team_routes:
       - accessibility
     verification_team: verification
 
+  compliance_review:
+    primary_team: review
+    primary_worker: compliance
+    supporting_teams:
+      - research
+      - verification
+    verification_team: verification
+    human_approval_for:
+      - critical
+
   security_review:
     primary_team: review
     primary_worker: security
@@ -220,6 +230,7 @@ implementation_resolution:
     - policy/routing/routing.yaml
     - policy/routing/mission-control-routing.yaml
     - policy/routing/research-routing.yaml
+    - policy/routing/review-routing.yaml
   model_registry: models.yaml
   rule: >-
     Resolve the selected worker and optional specialist to the best currently
