@@ -91,7 +91,8 @@ def test_specialist_cards_are_full_preserved_allocations() -> None:
         assert "## TEO Allocation" in text
         assert "### Preservation rule" in text
         assert "must remain intact" in text
-        assert "self-approval" in text or "self-approve" in text
+        assert "Independent" in text or "independent" in text
+        assert "qualified human approval" in text
 
 
 def test_worker_contract_matches_cards_and_human_boundaries() -> None:
@@ -102,7 +103,7 @@ def test_worker_contract_matches_cards_and_human_boundaries() -> None:
     assert git_blob_sha(worker_path) == staging["worker_contract"]["canonical_blob_sha"]
     assert set(worker_registry["workers"]) == EXPECTED_WORKERS
 
-    for worker_name, worker in worker_registry["workers"].items():
+    for worker in worker_registry["workers"].values():
         assert worker["owning_team"] == "physical_systems"
         assert worker["responsibilities"]
         assert worker["required_capabilities"]
@@ -112,7 +113,10 @@ def test_worker_contract_matches_cards_and_human_boundaries() -> None:
         assert worker["escalation"]
         assert worker["authority_boundaries"]
         assert any("human_approval" in item for item in worker["verification"])
-        assert any("self_approval" in item or "self_verification" in item for item in worker["authority_boundaries"])
+        assert any(
+            "self_approval" in item or "self_verification" in item
+            for item in worker["authority_boundaries"]
+        )
 
 
 def test_existing_embedded_and_civil_cards_are_not_rewritten() -> None:
@@ -141,7 +145,6 @@ def test_expansion_registry_contains_the_same_five_specialists() -> None:
 
 def test_physical_systems_is_not_active_yet() -> None:
     active_routing = load_yaml(ACTIVE_ROUTING_PATH)
-    active_specialists = load_yaml(ACTIVE_SPECIALISTS_PATH)
     active_text = ACTIVE_SPECIALISTS_PATH.read_text(encoding="utf-8")
 
     assert all(
