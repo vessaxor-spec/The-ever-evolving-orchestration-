@@ -1,16 +1,11 @@
 name: Reference Implementation CI
 
 on:
+  # Run for every pull request so the required status check is always reported,
+  # including documentation-only and capsule-only changes.
   pull_request:
-    paths:
-      - "pyproject.toml"
-      - "models.yaml"
-      - "reference/**"
-      - "tests/**"
-      - "policy/**"
-      - "community/workers/**"
-      - "community/specialists/**"
-      - ".github/workflows/reference-ci.yml"
+
+  # Keep push validation scoped to control-plane-relevant paths on main.
   push:
     branches:
       - main
