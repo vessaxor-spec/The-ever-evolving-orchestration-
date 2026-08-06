@@ -1,0 +1,113 @@
+version: 1.0
+status: active
+activated_at: 2026-08-06
+
+scope:
+  team_count: 10
+  specialist_count: 78
+  new_team_count: 4
+  new_specialist_count: 22
+  explicit_route_count: 27
+
+active_extensions:
+  team_routes: policy/routing/principal-engineering-team-routing.yaml
+  implementation_routes: policy/routing/principal-engineering-routing.yaml
+  specialist_allocations: community/specialists/principal-engineering-active.yaml
+  active_workers: community/workers/principal-engineering-active-workers.yaml
+  conformance: reference/datasets/principal-engineering-routing-conformance.yaml
+
+loaded_staged_workers:
+  - community/workers/systems-engineering-worker.yaml
+  - community/workers/platform-reliability-core-workers.yaml
+  - community/workers/platform-reliability-operations-workers.yaml
+  - community/workers/physical-systems-workers.yaml
+  - community/workers/assurance-workers.yaml
+
+activated_new_teams:
+  - platform_reliability
+  - systems_engineering
+  - physical_systems
+  - assurance
+
+activated_specialists:
+  - cloud-architect
+  - mobile-engineer
+  - compiler-toolchain-engineer
+  - distributed-systems-engineer
+  - database-reliability-engineer
+  - network-engineer
+  - platform-engineer
+  - performance-engineer
+  - finops-engineer
+  - site-reliability-engineer
+  - mlops-engineer
+  - systems-requirements-engineer
+  - hardware-engineer
+  - robotics-autonomous-systems-engineer
+  - silicon-asic-engineer
+  - aerospace-satellite-engineer
+  - manufacturing-engineer
+  - applied-scientist
+  - privacy-engineer
+  - functional-safety-engineer
+  - formal-methods-engineer
+  - application-security-engineer
+
+allocation_corrections:
+  devops-engineer:
+    primary_team: platform_reliability
+    worker_binding: devops
+  devsecops-engineer:
+    primary_team: platform_reliability
+    worker_binding: devsecops
+  embedded-engineer:
+    primary_team: physical_systems
+    worker_binding: embedded
+  civil-engineer:
+    primary_team: physical_systems
+    worker_binding: civil_engineering
+  rust-engineer:
+    primary_team: engineering
+    worker_binding: rust_systems_programming
+
+activation_gates:
+  team_charters_exist: true
+  worker_definitions_exist: true
+  specialist_cards_exist: true
+  specialist_allocations_exist: true
+  deterministic_explicit_routes_exist: true
+  capability_mappings_exist: true
+  provider_diverse_fallbacks_exist: true
+  independent_verification_exists: true
+  conformance_dataset_exists: true
+  critical_human_approval_exists: true
+  freshness_policy_exists: true
+  canonical_preservation_controls_exist: true
+  warning_baseline_updated: true
+
+routing_policy:
+  explicit_task_type_required_for_principal_routes: true
+  keyword_only_implicit_principal_activation: false
+  team_selection_precedes_worker_and_specialist_selection: true
+  specialist_must_match_selected_team_and_worker: true
+  specialist_risk_elevates_effective_risk: true
+  critical_effective_risk_requires_qualified_human_approval: true
+  routine_fallback_must_cross_provider_boundary: true
+  verifier_must_be_independent_from_executor: true
+  local_models_not_used_as_automatic_fallbacks: true
+  opus_not_used_as_routine_fallback: true
+
+preservation_policy:
+  authoritative_role_cards_changed_by_activation: false
+  allocation_overrides_allowed_fields:
+    - primary_team
+    - supporting_teams
+    - worker_binding
+    - risk_profile
+  role_card_paths_must_remain_canonical: true
+  specialist_capabilities_must_not_be_reduced: true
+
+regulated_evidence_pilot:
+  scope_count: 6
+  expansion_authorized: false
+  maintainability_gate_still_required: true
