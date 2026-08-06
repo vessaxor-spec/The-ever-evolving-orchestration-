@@ -42,6 +42,15 @@ worker_contract:
     - mobile
     - compiler_toolchain
     - applied_science
+  status: staged_contracts_not_loaded_by_active_config
+
+existing_active_worker_reconciliation:
+  mobile:
+    active_registry_path: community/workers/workers.yaml
+    current_status: active_core_worker
+    current_owning_team: engineering
+    staged_contract_path: community/workers/final-specialist-workers.yaml
+    activation_requirement: reconcile_the_enriched_contract_into_the_canonical_worker_without_duplicate_definition
 
 preserved_existing_specialists:
   architect:
@@ -103,11 +112,13 @@ pending_gates:
   - provider_diverse_fallbacks_exist
   - conformance_datasets_exist
   - canonical_active_registry_entries_exist
+  - mobile_canonical_worker_reconciliation_exists
 
 activation_rules:
   - no_route_is_activated_from_this_staging_file
-  - all_pending_gates_must_pass_before_any_specialist_becomes_active
-  - existing_mobile_context_override_does_not_activate_the_mobile_worker_or_specialist_without_capability_fallback_and_conformance
+  - all_pending_gates_must_pass_before_any_new_specialist_becomes_active
+  - existing_mobile_worker_and_context_override_remain_active_and_unchanged
+  - the_new_mobile_specialist_and_enriched_contract_remain_staged_until_canonical_reconciliation_and_conformance
   - cloud_architecture_must_not_absorb_general_architecture_or_platform_implementation
   - mobile_engineering_must_not_absorb_product_ux_backend_security_or_privacy_authority
   - compiler_toolchain_must_not_absorb_language_governance_application_ownership_or_target_domain_authority
