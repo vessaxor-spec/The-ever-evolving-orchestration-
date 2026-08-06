@@ -1,0 +1,64 @@
+title: "[Question] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this category for questions about TEO concepts, repository structure, routing behavior, specialist boundaries, or contribution workflow.
+
+        Use an issue instead when you have identified a reproducible defect or a concrete work item.
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - Architecture and terminology
+        - Team, worker, or specialist responsibilities
+        - Routing, fallback, or escalation
+        - Verification, risk, or human approval
+        - Reference implementation and tests
+        - Registries and model bindings
+        - Contribution and governance process
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: State the question as precisely as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Describe what you are trying to understand or accomplish and why the answer matters.
+    validations:
+      required: true
+
+  - type: textarea
+    id: references
+    attributes:
+      label: Relevant files, routes, or commits
+      description: Link or name the repository material you already reviewed.
+    validations:
+      required: false
+
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What you already tried
+      description: Summarize any interpretation, command, validation, or comparison already attempted.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: public-scope
+    attributes:
+      label: Public-scope confirmation
+      options:
+        - label: This question contains no secrets, private prompts, proprietary processes, confidential benchmarks, or identifying operational data.
+          required: true

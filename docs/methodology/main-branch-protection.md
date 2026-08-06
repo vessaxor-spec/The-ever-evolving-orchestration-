@@ -35,6 +35,20 @@ The branch should not be locked or made read-only.
 
 Signed commits are not mandatory at this stage. They may be introduced later through a separate reviewed governance change after contributor tooling and recovery procedures are documented.
 
+## Importable ruleset
+
+The repository stores an import-ready ruleset at:
+
+```text
+.github/rulesets/protect-main.json
+```
+
+The file targets the default branch and encodes the required pull-request path, squash-only merging, resolved conversations, strict `Validate reference router` status checking, linear history, deletion protection, and force-push protection.
+
+GitHub does not automatically apply a ruleset merely because its JSON definition is stored in the repository. A repository administrator must import or create the rule through GitHub's repository rules interface, or use an authenticated administrative API token with repository `Administration: write` permission.
+
+The JSON file is the reviewable canonical configuration. Any later change to the active GitHub rule should be accompanied by a matching reviewed change to this file and this methodology.
+
 ## Administrator treatment
 
 Initial activation may retain administrator bypass while the rule is tested. After a successful protected pull-request cycle, administrators should be included in the rule so routine maintenance follows the same branch, pull-request, CI, and merge path.
