@@ -24,6 +24,7 @@ PRIMARY_KEYS = {
     "repo_wide_refactor": "executor",
     "deep_research": "primary",
     "code_review": "executable_review",
+    "compliance_review": "primary",
     "security_review": "primary",
     "multimodal_analysis": "primary",
     "high_volume_simple": "primary",
@@ -139,6 +140,20 @@ def test_provider_scoped_blocking_moves_dispatch_across_provider_boundary() -> N
     assert research.selected_implementation.provider_family == "anthropic"
     assert research.fallback_implementation is not None
     assert research.fallback_implementation.provider_family == "openai"
+
+    compliance = engine.dispatch(
+        TaskRequest.from_dict(
+            {
+                "task": "Map controls and evidence for a SOC 2 compliance review.",
+                "task_type": "compliance_review",
+                "specialist": "compliance-auditor",
+                "constraints": {"blocked_providers": ["anthropic"]},
+            }
+        )
+    )
+    assert compliance.selected_implementation.provider_family == "openai"
+    assert compliance.fallback_implementation is not None
+    assert compliance.fallback_implementation.provider_family == "google"
 
     security = engine.dispatch(
         TaskRequest.from_dict(
