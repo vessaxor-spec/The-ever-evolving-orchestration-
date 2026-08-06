@@ -97,7 +97,8 @@
             "url",
             "expected_hosts",
             "locator",
-            "published_or_effective_at"
+            "source_date_basis",
+            "source_date"
           ],
           "additionalProperties": false,
           "properties": {
@@ -112,7 +113,8 @@
               "items": {"type": "string", "minLength": 1}
             },
             "locator": {"type": "string", "minLength": 1},
-            "published_or_effective_at": {"type": "string", "format": "date"}
+            "source_date_basis": {"enum": ["published", "effective", "last_updated", "observed"]},
+            "source_date": {"type": "string", "format": "date"}
           }
         },
         "verified_at": {"type": "string", "format": "date"},
