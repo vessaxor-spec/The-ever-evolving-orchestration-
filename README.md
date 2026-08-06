@@ -63,6 +63,7 @@ The repository now contains:
 - machine-readable team, worker, specialist, capability, model, fallback, and verification policies
 - dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
 - dedicated Research Team workers for broad research, user research, market research, analytics, and documentation
+- dedicated Review Team workers for code review and compliance review
 - deterministic task classification for the active reference routes
 - risk elevation from specialist profiles
 - provider-aware routine fallbacks
@@ -202,7 +203,14 @@ These workers collaborate but remain distinct:
 
 The Review Team challenges assumptions, reviews architecture and code, checks requirements alignment, identifies hidden risks, and escalates consequential decisions.
 
-Review includes semantic challenge, adversarial reasoning, security analysis, performance review, accessibility review, and contract integrity checks.
+Its dedicated workers currently include:
+
+| Worker | Responsibility |
+|---|---|
+| `code_review` | correctness, minimal-change discipline, contracts, regression risk, and AI-authored code review |
+| `compliance` | regulatory applicability, control mapping, audit evidence, privacy and AI governance, third-party risk, and human-gated remediation decisions |
+
+Review also includes semantic challenge, adversarial reasoning, security analysis, performance review, accessibility review, and contract integrity checks. Compliance does not issue legal opinions, audit certifications, or technical implementations.
 
 ### Verification Team
 
@@ -241,6 +249,7 @@ The current control plane includes first-class routes for:
 | `market_research` | current market and competitive intelligence |
 | `analytics` | quantitative and statistical analysis |
 | `code_review` | correctness, scope, contracts, and regression review |
+| `compliance_review` | critical compliance applicability, controls, evidence, privacy, and AI-governance review |
 | `security_review` | critical security analysis and verification |
 | `multimodal_analysis` | visual and multimodal interpretation |
 | `high_volume_simple` | economical classification, extraction, and transformation |
@@ -282,6 +291,7 @@ TEO defines responsibilities independently from providers. The table below recor
 | Broad and market research | Gemini Pro | Claude Sonnet and Codex Sol |
 | Qualitative user research | Claude Sonnet | Gemini Pro with Codex Sol verification |
 | Quantitative analytics | Codex Sol | Gemini Pro with Claude Sonnet verification |
+| Compliance and AI governance | Claude Sonnet | Codex Sol fallback with Gemini Pro verification and qualified human approval |
 | Multimodal and rapid collection | Gemini Flash | Claude Sonnet and technical follow-up when needed |
 | High-volume simple processing | Claude Haiku or Gemini Flash | Luna-class processing where eligible |
 | Critical security reasoning | Claude Opus | Codex engineering analysis and Gemini research support |
@@ -294,6 +304,7 @@ The complete machine-readable policies are available in:
 - [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
 - [`policy/routing/mission-control-routing.yaml`](policy/routing/mission-control-routing.yaml)
 - [`policy/routing/research-routing.yaml`](policy/routing/research-routing.yaml)
+- [`policy/routing/review-routing.yaml`](policy/routing/review-routing.yaml)
 - [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml)
 - [`models.yaml`](models.yaml)
 
@@ -406,6 +417,7 @@ The repository contains fixtures for:
 - user-research worker boundaries
 - market-research worker boundaries
 - analytics worker boundaries
+- compliance worker boundaries and critical-risk human approval
 - exact configuration-warning baselines
 - provider-aware fallback behavior
 
@@ -664,7 +676,7 @@ Completed dedicated additions include:
 
 - Mission Control: orchestration, operations, project delivery, incident response
 - Research Team: broad research, user research, market research, analytics
-- Review Team: code review
+- Review Team: code review, compliance review
 
 The next dedicated worker will be selected from the remaining exact warning baseline using responsibility uniqueness, routing value, risk, and verification needs rather than arbitrary roster order.
 
