@@ -1,0 +1,38 @@
+name: Specialist Evidence Resolution
+
+on:
+  schedule:
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: specialist-evidence-resolution
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    name: Resolve regulated evidence authorities
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install reference implementation
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Resolve declared authorities
+        run: python -m teo_reference.evidence --repo-root . --resolve
