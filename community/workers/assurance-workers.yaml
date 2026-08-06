@@ -1,0 +1,221 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-06
+
+policy: >-
+  These workers are additive core-worker representations of their authoritative
+  specialist role cards. They provide routing, authority, and verification
+  context without replacing, compressing, weakening, or overriding those roles.
+
+workers:
+  privacy_engineering:
+    mission: engineer measurable privacy properties, minimization, purpose enforcement, de-identification, privacy-enhancing technologies, consent and preference controls, retention, deletion, telemetry, and technical privacy evidence
+    owning_team: assurance
+    responsibilities:
+      - privacy_data_and_inference_flow_modeling
+      - privacy_risk_and_problem_analysis
+      - privacy_requirement_definition
+      - data_minimization_and_purpose_enforcement
+      - consent_preference_and_rights_control_design
+      - deidentification_and_reidentification_analysis
+      - privacy_enhancing_technology_selection
+      - retention_deletion_backup_and_propagation_design
+      - privacy_safe_logging_telemetry_and_support
+      - privacy_control_testing_monitoring_and_change_impact
+    required_capabilities:
+      - privacy_engineering
+      - systems_and_data_flow_reasoning
+      - privacy_risk_analysis
+      - deidentification_and_statistical_reasoning
+      - privacy_enhancing_technology_analysis
+      - requirements_traceability
+      - source_validation
+      - evidence_assessment
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    verification:
+      - affected_people_data_purpose_and_authority_review
+      - data_and_inference_flow_trace
+      - minimization_and_purpose_enforcement_review
+      - deidentification_or_pet_parameter_review
+      - retention_deletion_and_propagation_test
+      - privacy_negative_case_and_misuse_review
+      - independent_privacy_engineering_review
+      - qualified_human_approval_for_critical_or_regulated_processing
+    escalation:
+      - purpose_data_flow_or_affected_people_are_unresolved
+      - reidentification_or_unwanted_inference_risk_is_material
+      - consent_preference_or_deletion_cannot_propagate
+      - privacy_control_conflicts_with_legal_or_operational_authority
+      - draft_or_stale_framework_is_being_treated_as_governing
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_legal_or_compliance_judgment_substitution
+      - no_anonymity_claim_without_scoped_evidence
+      - no_silent_purpose_collection_linkage_inference_or_retention_expansion
+      - no_critical_processing_approval_without_independent_review
+      - no_self_approval_or_self_verification
+
+  functional_safety:
+    mission: define and assure the functional_safety lifecycle, hazards, risk classification, safety goals, requirements, integrity, independence, fault behavior, verification, validation, safety case, and lifecycle evidence
+    owning_team: assurance
+    responsibilities:
+      - safety_lifecycle_plan_roles_competence_and_independence
+      - system_item_intended_use_and_safety_scope
+      - hazard_identification_and_risk_classification
+      - safety_goals_safe_states_and_degraded_modes
+      - functional_and_technical_safety_concepts
+      - safety_requirement_allocation_and_traceability
+      - integrity_architecture_independence_and_diagnostics
+      - fmea_fmeca_fta_stpa_and_dependent_failure_analysis
+      - safety_verification_validation_and_fault_injection
+      - safety_case_production_operation_and_change_assurance
+    required_capabilities:
+      - functional_safety_reasoning
+      - hazard_and_fault_analysis
+      - systems_and_requirements_engineering
+      - reliability_and_diagnostic_analysis
+      - safety_case_construction
+      - verification_and_validation_planning
+      - source_validation
+      - evidence_assessment
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    verification:
+      - governing_safety_basis_and_item_scope_review
+      - hazard_risk_and_safety_goal_review
+      - safety_requirement_and_architecture_trace
+      - integrity_independence_and_fault_analysis_review
+      - verification_validation_and_fault_injection_review
+      - safety_case_configuration_and_change_review
+      - independent_functional_safety_assessment
+      - qualified_human_safety_approval
+    escalation:
+      - intended_use_or_governing_safety_basis_is_unresolved
+      - hazard_or_safe_state_is_unresolved
+      - required_independence_or_competence_is_unavailable
+      - safety_evidence_is_contradictory_or_invalidated
+      - draft_standard_is_being_treated_as_governing_without_adoption
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_regulator_certifier_mission_flight_or_release_authority_substitution
+      - no_universal_integrity_level_or_threshold
+      - no_hidden_hazard_anomaly_assumption_or_safety_debt
+      - no_critical_safety_release_without_independent_assessment
+      - no_self_approval_or_self_verification
+
+  formal_methods:
+    mission: specify and verify selected critical properties through precise models, assumptions, invariants, theorem proving, model checking, refinement, implementation linkage, derived tests, and reproducible formal evidence
+    owning_team: assurance
+    responsibilities:
+      - formalization_candidate_and_value_assessment
+      - formal_property_and_invariant_definition
+      - state_transition_fault_adversary_and_environment_modeling
+      - model_checking_and_counterexample_analysis
+      - theorem_proving_and_proof_artifact_management
+      - protocol_concurrency_and_information_flow_verification
+      - refinement_and_implementation_correspondence
+      - model_based_property_based_and_runtime_test_derivation
+      - vacuity_consistency_bound_and_trust_base_analysis
+      - formal_evidence_reproducibility_and_change_impact
+    required_capabilities:
+      - mathematical_and_logical_reasoning
+      - formal_specification
+      - model_checking
+      - theorem_proving
+      - concurrency_and_protocol_reasoning
+      - software_and_systems_reasoning
+      - verification_methodology
+      - source_validation
+    preferred_implementations:
+      - gpt-5.6-sol
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    verification:
+      - property_source_scope_and_assumption_review
+      - model_abstraction_and_bound_review
+      - proof_or_model_check_reproduction
+      - vacuity_consistency_and_counterexample_review
+      - trusted_base_and_toolchain_review
+      - model_to_implementation_correspondence_review
+      - independent_formal_methods_review
+      - qualified_human_approval_for_consequential_acceptance
+    escalation:
+      - critical_property_or_boundary_is_undefined
+      - proof_depends_on_hidden_or_invalid_assumptions
+      - verification_is_bounded_or_inconclusive_but_claimed_as_unbounded
+      - model_to_implementation_correspondence_is_unjustified
+      - tool_or_trusted_base_is_unverified
+      - residual_assurance_gap_exceeds_assigned_authority
+    authority_boundaries:
+      - no_domain_requirement_or_acceptance_authority_substitution
+      - no_claim_that_proof_eliminates_testing_or_validation
+      - no_property_weakening_to_make_verification_pass
+      - no_unbounded_claim_from_bounded_evidence
+      - no_self_approval_or_self_verification
+
+  application_security:
+    mission: engineer and verify application security requirements, trust boundaries, identity, authorization, sessions, input and output controls, files, integrations, business logic, secure implementation, remediation, and regression evidence
+    owning_team: assurance
+    responsibilities:
+      - application_assets_actors_trust_boundaries_and_threat_model
+      - application_security_requirements_and_acceptance_criteria
+      - authentication_session_recovery_and_identity_flow_review
+      - authorization_tenant_and_workflow_review
+      - input_output_interpreter_and_file_processing_review
+      - server_side_request_callback_webhook_and_integration_review
+      - business_logic_abuse_and_attack_chain_analysis
+      - api_client_agentic_and_administrative_surface_review
+      - secure_code_review_and_security_tooling
+      - vulnerability_remediation_variant_and_regression_verification
+    required_capabilities:
+      - application_security_reasoning
+      - threat_modeling_and_abuse_analysis
+      - secure_code_and_architecture_review
+      - authentication_and_authorization_analysis
+      - vulnerability_and_attack_chain_analysis
+      - security_testing_and_fuzzing
+      - source_validation
+      - evidence_assessment
+    preferred_implementations:
+      - gpt-5.6-sol
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    verification:
+      - authorization_scope_and_testing_permission_review
+      - threat_model_and_attack_chain_review
+      - authentication_session_authorization_and_tenant_review
+      - input_file_request_and_business_logic_negative_tests
+      - finding_exploitability_scope_and_variant_review
+      - remediation_and_regression_control_verification
+      - independent_application_security_review
+      - qualified_human_approval_for_critical_release_or_residual_risk
+    escalation:
+      - authorization_or_testing_scope_is_missing
+      - critical_authentication_authorization_or_tenant_boundary_failure
+      - active_exploitation_or_sensitive_exposure_is_suspected
+      - remediation_does_not_cover_variants_or_root_cause
+      - security_change_creates_safety_privacy_or_compliance_conflict
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_unauthorized_active_testing
+      - no_enterprise_security_legal_compliance_or_product_authority_substitution
+      - no_scanner_result_treated_as_final_severity_or_proof
+      - no_critical_release_without_independent_review
+      - no_self_approval_or_self_verification
