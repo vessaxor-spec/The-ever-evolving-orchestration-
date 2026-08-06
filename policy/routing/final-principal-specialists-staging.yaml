@@ -1,0 +1,104 @@
+version: 0.1
+status: staged
+reviewed_at: 2026-08-06
+activation_ready: false
+scope: final_principal_specialist_card_tranche
+
+specialists:
+  cloud-architect:
+    card_path: community/specialists/cloud-architect.md
+    canonical_blob_sha: af9d8b1f978261a795fcd7ec98bf49796428c271
+    primary_team: planning
+    worker_binding: cloud_architecture
+    risk_profile: high
+  mobile-engineer:
+    card_path: community/specialists/mobile-engineer.md
+    canonical_blob_sha: 50e883e659edef00f0443266770b9be8baf5323f
+    primary_team: engineering
+    worker_binding: mobile
+    risk_profile: medium
+  compiler-toolchain-engineer:
+    card_path: community/specialists/compiler-toolchain-engineer.md
+    canonical_blob_sha: 8ffef8e4f946f3f3dccfd30eb50620868d023285
+    primary_team: engineering
+    worker_binding: compiler_toolchain
+    risk_profile: high
+  applied-scientist:
+    card_path: community/specialists/applied-scientist.md
+    canonical_blob_sha: 1340139d455ca7b13bdb9ecafd58cc077f0b0f0e
+    primary_team: research
+    worker_binding: applied_science
+    risk_profile: high
+
+worker_contract:
+  path: community/workers/final-principal-expansion-workers.yaml
+  canonical_blob_sha: f937b8b94cfd53d349ac72dbb75defacac608216
+  expected_workers:
+    - cloud_architecture
+    - mobile
+    - compiler_toolchain
+    - applied_science
+
+preserved_existing_specialists:
+  architect:
+    card_path: community/specialists/architect.md
+    canonical_blob_sha: c8e6fa6ba07ac8d49f9b8ea56c256406573fc951
+    boundary: general_cross_domain_architecture_and_structural_tradeoffs
+  ai-engineer:
+    card_path: community/specialists/ai-engineer.md
+    canonical_blob_sha: b48eb3612c8153144f9dae8fbea599c98dfa571c
+    boundary: production_ai_application_and_inference_implementation
+  data-analyst:
+    card_path: community/specialists/data-analyst.md
+    canonical_blob_sha: cbd0f4f71ce0b456364d09b73787ad31766e513b
+    boundary: decision_focused_quantitative_analysis_and_model_qa
+  rust-engineer:
+    card_path: community/specialists/rust-engineer.md
+    canonical_blob_sha: 2262b7384cd06e045ef82b633acb586daa82cd97
+    boundary: rust_language_and_systems_programming
+    intended_worker_binding: rust_systems_programming
+
+methodology_checkpoint:
+  cloud_architecture:
+    principle: required_properties_and_operating_model_precede_provider_service_selection
+    current_provider_evidence_required: true
+  mobile:
+    principle: lifecycle_safe_state_offline_behavior_accessibility_security_and_real_device_evidence_are_first_class
+    platform_rules_are_volatile: true
+  compiler_toolchain:
+    principle: semantic_correctness_compatibility_reproducibility_provenance_and_target_execution_require_distinct_evidence
+    testing_categories_reference: LLVM unit regression and whole program testing
+  applied_science:
+    principle: exploratory_predictive_causal_and_confirmatory_claims_require_distinct_methods_and_authority
+    production_readiness_not_inferred_from_research_prototype: true
+
+completed_gates:
+  - worker_definition_exists
+  - specialist_cards_exist
+  - independent_verification_defined
+  - effective_critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - methodology_posture_documented
+  - canonical_preservation_test_present
+  - responsibility_boundaries_defined
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mapping_exists
+  - provider_diverse_fallback_exists
+  - conformance_dataset_exists
+  - all_twenty_two_specialists_added_to_active_registry
+  - existing_specialist_allocation_changes_applied
+  - rust_worker_binding_corrected_in_active_registry
+
+activation_rules:
+  - no_new_route_is_active_from_this_file
+  - all_pending_gates_must_pass_before_activation
+  - cloud_architecture_does_not_replace_general_architecture_platform_operations_or_procurement
+  - mobile_engineering_does_not_replace_product_ux_backend_platform_or_store_authority
+  - compiler_toolchain_does_not_replace_language_standard_target_application_or_architecture_authority
+  - applied_science_does_not_replace_product_production_ai_mlops_analytics_or_domain_authority
+  - new_specialists_cannot_reduce_adjacent_existing_specialist_capabilities
+  - specialist_execution_cannot_self_review_or_self_verify
+  - consequential_commitment_release_toolchain_or_deployment_decisions_require_qualified_human_approval
+  - evidence_pilot_scope_remains_exactly_six_until_maintainability_gate_passes
