@@ -28,10 +28,17 @@ def test_every_pilot_card_has_dated_authoritative_claims() -> None:
     for specialist, entry in registry["pilot_specialists"].items():
         assert entry["claims"], specialist
         for claim in entry["claims"]:
+            authority = claim["authority"]
             assert claim["consequential_use"] is True
-            assert claim["authority"]["tier"] == 1
-            assert claim["authority"]["url"].startswith("https://")
-            assert claim["authority"]["published_or_effective_at"]
+            assert authority["tier"] == 1
+            assert authority["url"].startswith("https://")
+            assert authority["source_date_basis"] in {
+                "published",
+                "effective",
+                "last_updated",
+                "observed",
+            }
+            assert authority["source_date"]
             assert claim["verified_at"]
             assert claim["expires_at"]
             assert claim["applicability"]["jurisdiction"]
