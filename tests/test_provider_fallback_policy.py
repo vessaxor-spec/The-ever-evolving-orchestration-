@@ -15,6 +15,7 @@ PRIMARY_KEYS = {
     "operations": "primary",
     "project_delivery": "primary",
     "incident_response": "primary",
+    "user_research": "primary",
     "market_research": "primary",
     "analytics": "primary",
     "architecture_design": "primary",
