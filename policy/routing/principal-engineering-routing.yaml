@@ -1,0 +1,378 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-06
+policy: >-
+  These routes provide provider-diverse execution and independent verification
+  for explicit principal-engineering task types. Opus is not used as a routine
+  fallback. Critical decisions remain subject to qualified human approval.
+
+route_templates:
+  planning: &planning
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+
+  engineering_execution: &engineering_execution
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+
+  engineering_reasoning: &engineering_reasoning
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+
+  research: &research
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+
+  physical: &physical
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+
+  assurance: &assurance
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+
+routing:
+  cloud_architecture:
+    <<: *planning
+    purpose: design cloud placement, landing zones, migration, governance, resilience, economics, and exit
+    required_controls:
+      - current_provider_region_service_and_quota_evidence
+      - workload_and_data_placement_trace
+      - failure_recovery_migration_rollback_and_exit_review
+      - independent_verification
+
+  mobile_engineering:
+    <<: *engineering_execution
+    purpose: implement and release lifecycle-safe accessible secure mobile applications
+    required_controls:
+      - platform_and_device_scope
+      - lifecycle_offline_sync_and_migration_tests
+      - accessibility_security_privacy_and_release_review
+      - independent_verification
+
+  compiler_toolchain:
+    <<: *engineering_reasoning
+    purpose: design and validate compilers, build systems, targets, compatibility, reproducibility, and provenance
+    required_controls:
+      - semantic_and_target_contract
+      - differential_conformance_fuzz_and_regression_testing
+      - abi_reproducibility_provenance_and_bootstrap_review
+      - independent_verification
+
+  applied_science:
+    <<: *research
+    purpose: produce reproducible decision-relevant scientific evidence and engineering handoff
+    required_controls:
+      - explicit_question_claim_hypothesis_and_estimand
+      - data_measurement_baseline_and_leakage_review
+      - uncertainty_robustness_reproduction_and_external_validity
+      - independent_verification
+
+  systems_requirements:
+    <<: *planning
+    purpose: control stakeholder needs, requirements, interfaces, baselines, integration, and system verification and validation
+    required_controls:
+      - system_boundary_and_acceptance_authority
+      - bidirectional_traceability
+      - interface_and_baseline_change_control
+      - independent_verification
+
+  distributed_systems:
+    <<: *engineering_reasoning
+    purpose: preserve distributed invariants, consistency, coordination, replication, failure recovery, and reconciliation
+    required_controls:
+      - explicit_failure_and_consistency_model
+      - invariant_and_partition_behavior_review
+      - fault_recovery_and_reconciliation_tests
+      - independent_verification
+
+  database_reliability:
+    <<: *engineering_reasoning
+    purpose: assure operational database durability, availability, failover, restore, migration, capacity, and integrity
+    required_controls:
+      - durability_replication_and_failover_model
+      - backup_restore_and_recovery_test
+      - schema_rollout_capacity_and_integrity_review
+      - independent_verification
+      - qualified_human_approval
+
+  network_engineering:
+    <<: *engineering_reasoning
+    purpose: design and operate routing, DNS, connectivity, segmentation, load balancing, and network observability
+    required_controls:
+      - topology_routing_dns_and_failure_model
+      - segmentation_and_access_boundary_review
+      - packet_flow_failover_and_capacity_validation
+      - independent_verification
+
+  platform_engineering:
+    <<: *engineering_reasoning
+    purpose: build governed self-service platforms, service catalogs, golden paths, platform APIs, and developer experience
+    required_controls:
+      - platform_product_and_user_definition
+      - self_service_policy_and_escape_hatch_review
+      - adoption_reliability_and_cognitive_load_evidence
+      - independent_verification
+
+  performance_engineering:
+    <<: *engineering_reasoning
+    purpose: characterize workloads and verify latency, throughput, saturation, capacity, profiling, and regression behavior
+    required_controls:
+      - representative_workload_and_baseline
+      - benchmark_validity_and_statistical_review
+      - cross_stack_profile_capacity_and_regression_evidence
+      - independent_verification
+
+  finops_engineering:
+    <<: *engineering_reasoning
+    purpose: engineer technology allocation, unit economics, forecasting, commitments, anomaly response, and realized savings
+    required_controls:
+      - billing_usage_and_allocation_trace
+      - cost_performance_reliability_and_sustainability_tradeoff
+      - forecast_commitment_and_realized_savings_review
+      - independent_verification
+
+  site_reliability:
+    <<: *engineering_reasoning
+    purpose: govern production SLOs, error budgets, readiness, capacity, toil, dependency resilience, and reliability learning
+    required_controls:
+      - user_journey_sli_slo_and_error_budget
+      - production_readiness_capacity_and_dependency_review
+      - incident_learning_and_reliability_regression_evidence
+      - independent_verification
+      - qualified_human_approval
+
+  mlops:
+    <<: *engineering_reasoning
+    purpose: govern reproducible model, data, artifact, deployment, monitoring, retraining, rollback, and retirement lifecycle
+    required_controls:
+      - dataset_feature_model_code_and_environment_lineage
+      - evaluation_promotion_deployment_and_rollback_gate
+      - drift_retraining_monitoring_and_retirement_evidence
+      - independent_verification
+
+  devops_engineering:
+    <<: *engineering_execution
+    purpose: implement delivery, infrastructure automation, deployment, observability, rollback, and recovery
+    required_controls:
+      - configuration_and_pipeline_validation
+      - deployment_rollback_and_recovery_test
+      - production_change_authority
+      - independent_verification
+
+  devsecops_engineering:
+    <<: *engineering_execution
+    purpose: implement secure build, dependency, secret, provenance, artifact, deployment, and policy controls
+    required_controls:
+      - secret_dependency_and_permission_review
+      - sbom_provenance_signature_and_artifact_validation
+      - pipeline_policy_and_exception_review
+      - independent_verification
+
+  hardware_engineering:
+    <<: *physical
+    purpose: design and qualify components, schematics, PCB, power, signal, thermal, EMC, DFM, DFT, and hardware behavior
+    required_controls:
+      - requirements_to_hardware_trace
+      - power_signal_thermal_emc_and_component_review
+      - bringup_qualification_and_change_evidence
+      - independent_verification
+      - qualified_human_approval
+
+  robotics_autonomy:
+    <<: *physical
+    purpose: integrate sensing, estimation, planning, control, actuation, degraded modes, and human authority
+    required_controls:
+      - operational_design_domain_and_authority
+      - scenario_simulation_and_hardware_in_loop_evidence
+      - degraded_mode_safe_state_and_human_override_review
+      - independent_verification
+      - qualified_human_approval
+
+  silicon_engineering:
+    <<: *physical
+    purpose: design and verify microarchitecture, RTL, timing, CDC, physical implementation, DFT, characterization, and yield
+    required_controls:
+      - specification_to_microarchitecture_trace
+      - rtl_verification_timing_cdc_reset_and_power_review
+      - dft_characterization_yield_and_errata_evidence
+      - independent_verification
+      - qualified_human_approval
+
+  aerospace_systems:
+    <<: *physical
+    purpose: integrate mission, spacecraft, payload, orbit, avionics, communications, ground, environment, and operations
+    required_controls:
+      - mission_intended_use_and_certification_basis
+      - requirement_interface_budget_and_environmental_review
+      - qualification_fault_management_launch_and_operations_readiness
+      - independent_verification
+      - qualified_human_approval
+
+  manufacturing_engineering:
+    <<: *physical
+    purpose: design and qualify manufacturing processes, tooling, measurement, capability, yield, controls, and production readiness
+    required_controls:
+      - product_to_process_trace
+      - pfmea_control_plan_measurement_and_capability_review
+      - pilot_run_at_rate_yield_capacity_and_change_evidence
+      - independent_verification
+
+  embedded_engineering:
+    <<: *engineering_execution
+    purpose: implement deterministic firmware, drivers, RTOS behavior, memory, timing, power, and device release evidence
+    required_controls:
+      - target_build_static_analysis_and_hardware_test
+      - interrupt_timing_memory_watchdog_and_recovery_review
+      - firmware_release_and_traceability
+      - independent_verification
+
+  civil_engineering:
+    <<: *physical
+    purpose: analyze civil and structural work under governing jurisdiction, adopted codes, site evidence, load paths, and qualified authority
+    required_controls:
+      - jurisdiction_adopted_code_contract_and_site_scope
+      - calculation_load_path_and_constructability_review
+      - inspection_acceptance_and_field_change_evidence
+      - independent_verification
+      - qualified_human_approval
+
+  privacy_engineering:
+    <<: *assurance
+    purpose: engineer privacy risk controls, minimization, purpose enforcement, deidentification, retention, deletion, and privacy evidence
+    required_controls:
+      - affected_people_data_inference_and_purpose_scope
+      - minimization_purpose_deidentification_and_pet_review
+      - retention_deletion_propagation_and_negative_case_tests
+      - independent_verification
+      - qualified_human_approval
+
+  functional_safety:
+    <<: *assurance
+    purpose: govern hazard analysis, safety goals, requirements, integrity, independence, fault behavior, and safety case
+    required_controls:
+      - governing_safety_basis_item_and_intended_use
+      - hazard_risk_goal_requirement_and_architecture_trace
+      - fault_analysis_verification_validation_and_safety_case_review
+      - independent_verification
+      - qualified_human_approval
+
+  formal_methods:
+    <<: *assurance
+    purpose: verify selected critical properties using precise models, invariants, proof, model checking, and implementation linkage
+    required_controls:
+      - property_scope_assumptions_and_trust_base
+      - bound_vacuity_consistency_and_counterexample_review
+      - proof_reproduction_and_model_to_implementation_trace
+      - independent_verification
+
+  application_security:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    purpose: engineer application trust boundaries, identity, authorization, input, files, integrations, abuse resistance, and remediation evidence
+    required_controls:
+      - written_authorization_before_active_testing
+      - threat_model_authentication_authorization_and_business_logic_review
+      - remediation_variant_and_regression_verification
+      - independent_verification
+      - qualified_human_approval
+
+  rust_systems_programming:
+    <<: *engineering_execution
+    purpose: implement and review production Rust ownership, unsafe code, FFI, async, cross-compilation, embedded targets, and performance
+    required_controls:
+      - compiler_clippy_test_and_target_validation
+      - unsafe_invariant_miri_and_ffi_review
+      - concurrency_cancellation_and_performance_review
+      - independent_verification

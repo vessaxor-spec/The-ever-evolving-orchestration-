@@ -1,0 +1,358 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-06
+policy: >-
+  This file extends the canonical specialist allocation registry. New entries
+  add TEO routing context for approved role cards. Allocation overrides may
+  change only team, supporting-team, worker-binding, and risk metadata. They
+  must never rewrite or reduce an authoritative specialist role card.
+
+specialists:
+  cloud-architect:
+    primary_team: planning
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - platform_reliability
+      - assurance
+      - review
+      - verification
+    worker_binding: cloud_architecture
+    risk_profile: high
+    role_card: community/specialists/cloud-architect.md
+
+  mobile-engineer:
+    primary_team: engineering
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - platform_reliability
+      - assurance
+      - review
+      - verification
+    worker_binding: mobile
+    risk_profile: medium
+    role_card: community/specialists/mobile-engineer.md
+
+  compiler-toolchain-engineer:
+    primary_team: engineering
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - platform_reliability
+      - physical_systems
+      - assurance
+      - review
+      - verification
+    worker_binding: compiler_toolchain
+    risk_profile: high
+    role_card: community/specialists/compiler-toolchain-engineer.md
+
+  distributed-systems-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: distributed_systems
+    risk_profile: high
+    role_card: community/specialists/distributed-systems-engineer.md
+
+  database-reliability-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: database_reliability
+    risk_profile: critical
+    role_card: community/specialists/database-reliability-engineer.md
+
+  network-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: network_engineering
+    risk_profile: high
+    role_card: community/specialists/network-engineer.md
+
+  platform-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: platform_engineering
+    risk_profile: high
+    role_card: community/specialists/platform-engineer.md
+
+  performance-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - research
+      - review
+      - verification
+    worker_binding: performance_engineering
+    risk_profile: high
+    role_card: community/specialists/performance-engineer.md
+
+  finops-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - research
+      - review
+      - verification
+    worker_binding: finops_engineering
+    risk_profile: high
+    role_card: community/specialists/finops-engineer.md
+
+  site-reliability-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - mission_control
+      - assurance
+      - review
+      - verification
+    worker_binding: site_reliability
+    risk_profile: critical
+    role_card: community/specialists/site-reliability-engineer.md
+
+  mlops-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: mlops
+    risk_profile: high
+    role_card: community/specialists/mlops-engineer.md
+
+  systems-requirements-engineer:
+    primary_team: systems_engineering
+    supporting_teams:
+      - planning
+      - engineering
+      - platform_reliability
+      - physical_systems
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: systems_requirements
+    risk_profile: high
+    role_card: community/specialists/systems-requirements-engineer.md
+
+  hardware-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: hardware_engineering
+    risk_profile: critical
+    role_card: community/specialists/hardware-engineer.md
+
+  robotics-autonomous-systems-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: robotics_autonomy
+    risk_profile: critical
+    role_card: community/specialists/robotics-autonomous-systems-engineer.md
+
+  silicon-asic-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: silicon_engineering
+    risk_profile: critical
+    role_card: community/specialists/silicon-asic-engineer.md
+
+  aerospace-satellite-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: aerospace_systems
+    risk_profile: critical
+    role_card: community/specialists/aerospace-satellite-engineer.md
+
+  manufacturing-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: manufacturing_engineering
+    risk_profile: high
+    role_card: community/specialists/manufacturing-engineer.md
+
+  applied-scientist:
+    primary_team: research
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - platform_reliability
+      - assurance
+      - review
+      - verification
+    worker_binding: applied_science
+    risk_profile: high
+    role_card: community/specialists/applied-scientist.md
+
+  privacy-engineer:
+    primary_team: assurance
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - platform_reliability
+      - physical_systems
+      - research
+      - review
+      - verification
+    worker_binding: privacy_engineering
+    risk_profile: critical
+    role_card: community/specialists/privacy-engineer.md
+
+  functional-safety-engineer:
+    primary_team: assurance
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - platform_reliability
+      - physical_systems
+      - research
+      - review
+      - verification
+    worker_binding: functional_safety
+    risk_profile: critical
+    role_card: community/specialists/functional-safety-engineer.md
+
+  formal-methods-engineer:
+    primary_team: assurance
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - platform_reliability
+      - physical_systems
+      - research
+      - review
+      - verification
+    worker_binding: formal_methods
+    risk_profile: high
+    role_card: community/specialists/formal-methods-engineer.md
+
+  application-security-engineer:
+    primary_team: assurance
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - platform_reliability
+      - research
+      - review
+      - verification
+    worker_binding: application_security
+    risk_profile: critical
+    role_card: community/specialists/application-security-engineer.md
+
+allocation_overrides:
+  devops-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: devops
+
+  devsecops-engineer:
+    primary_team: platform_reliability
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: devsecops
+
+  embedded-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - engineering
+      - assurance
+      - review
+      - verification
+    worker_binding: embedded
+
+  civil-engineer:
+    primary_team: physical_systems
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - assurance
+      - review
+      - verification
+    worker_binding: civil_engineering
+
+  rust-engineer:
+    primary_team: engineering
+    supporting_teams:
+      - systems_engineering
+      - planning
+      - platform_reliability
+      - assurance
+      - review
+      - verification
+    worker_binding: rust_systems_programming

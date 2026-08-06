@@ -1,0 +1,306 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-06
+policy: >-
+  These cases exercise every activated principal-engineering route through an
+  explicit task type and specialist. Each case begins at low stated risk so the
+  specialist risk profile must determine the effective risk. Provider families
+  record the expected primary, routine fallback, and independent verifier.
+
+cases:
+  - id: cloud-architecture
+    task: Design a governed cloud landing zone and migration plan.
+    task_type: cloud_architecture
+    specialist: cloud-architect
+    expected_team: planning
+    expected_worker: cloud_architecture
+    expected_risk: high
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: mobile-engineering
+    task: Implement an offline-capable mobile application with safe synchronization and release controls.
+    task_type: mobile_engineering
+    specialist: mobile-engineer
+    expected_team: engineering
+    expected_worker: mobile
+    expected_risk: medium
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: compiler-toolchain
+    task: Design and validate a reproducible cross-compilation toolchain.
+    task_type: compiler_toolchain
+    specialist: compiler-toolchain-engineer
+    expected_team: engineering
+    expected_worker: compiler_toolchain
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: applied-science
+    task: Design a reproducible experiment and translate the evidence into engineering requirements.
+    task_type: applied_science
+    specialist: applied-scientist
+    expected_team: research
+    expected_worker: applied_science
+    expected_risk: high
+    primary_provider: google
+    fallback_provider: anthropic
+    verifier_provider: openai
+
+  - id: systems-requirements
+    task: Build the system requirements, interface controls, and verification matrix.
+    task_type: systems_requirements
+    specialist: systems-requirements-engineer
+    expected_team: systems_engineering
+    expected_worker: systems_requirements
+    expected_risk: high
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: distributed-systems
+    task: Define consistency, replication, partition, and recovery invariants for a distributed service.
+    task_type: distributed_systems
+    specialist: distributed-systems-engineer
+    expected_team: platform_reliability
+    expected_worker: distributed_systems
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: database-reliability
+    task: Design database failover, backup restoration, schema rollout, and capacity controls.
+    task_type: database_reliability
+    specialist: database-reliability-engineer
+    expected_team: platform_reliability
+    expected_worker: database_reliability
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: network-engineering
+    task: Design DNS, routing, load balancing, segmentation, and failure recovery.
+    task_type: network_engineering
+    specialist: network-engineer
+    expected_team: platform_reliability
+    expected_worker: network_engineering
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: platform-engineering
+    task: Design a governed internal developer platform with self-service golden paths.
+    task_type: platform_engineering
+    specialist: platform-engineer
+    expected_team: platform_reliability
+    expected_worker: platform_engineering
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: performance-engineering
+    task: Define a representative workload and diagnose cross-stack latency and saturation.
+    task_type: performance_engineering
+    specialist: performance-engineer
+    expected_team: platform_reliability
+    expected_worker: performance_engineering
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: finops-engineering
+    task: Model technology unit economics, commitments, anomalies, and realized savings.
+    task_type: finops_engineering
+    specialist: finops-engineer
+    expected_team: platform_reliability
+    expected_worker: finops_engineering
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: site-reliability
+    task: Define SLOs, error budgets, production readiness, capacity, and reliability controls.
+    task_type: site_reliability
+    specialist: site-reliability-engineer
+    expected_team: platform_reliability
+    expected_worker: site_reliability
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: mlops
+    task: Design model lineage, promotion, deployment, monitoring, retraining, rollback, and retirement.
+    task_type: mlops
+    specialist: mlops-engineer
+    expected_team: platform_reliability
+    expected_worker: mlops
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: devops-engineering
+    task: Implement a controlled delivery pipeline with deployment, observability, rollback, and recovery.
+    task_type: devops_engineering
+    specialist: devops-engineer
+    expected_team: platform_reliability
+    expected_worker: devops
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: devsecops-engineering
+    task: Implement secure build, dependency, secret, provenance, signing, and deployment controls.
+    task_type: devsecops_engineering
+    specialist: devsecops-engineer
+    expected_team: platform_reliability
+    expected_worker: devsecops
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: hardware-engineering
+    task: Design and qualify electronics, PCB, power, signal, thermal, EMC, DFM, and DFT behavior.
+    task_type: hardware_engineering
+    specialist: hardware-engineer
+    expected_team: physical_systems
+    expected_worker: hardware_engineering
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: robotics-autonomy
+    task: Design sensing, estimation, planning, control, degraded behavior, and human override.
+    task_type: robotics_autonomy
+    specialist: robotics-autonomous-systems-engineer
+    expected_team: physical_systems
+    expected_worker: robotics_autonomy
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: silicon-engineering
+    task: Design and verify microarchitecture, RTL, timing, CDC, DFT, characterization, and yield.
+    task_type: silicon_engineering
+    specialist: silicon-asic-engineer
+    expected_team: physical_systems
+    expected_worker: silicon_engineering
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: aerospace-systems
+    task: Define mission, spacecraft, payload, orbit, avionics, environmental, and operational evidence.
+    task_type: aerospace_systems
+    specialist: aerospace-satellite-engineer
+    expected_team: physical_systems
+    expected_worker: aerospace_systems
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: manufacturing-engineering
+    task: Design process flow, tooling, measurement, capability, yield, controls, and production readiness.
+    task_type: manufacturing_engineering
+    specialist: manufacturing-engineer
+    expected_team: physical_systems
+    expected_worker: manufacturing_engineering
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: embedded-engineering
+    task: Implement deterministic firmware, drivers, RTOS behavior, timing, memory, and device tests.
+    task_type: embedded_engineering
+    specialist: embedded-engineer
+    expected_team: physical_systems
+    expected_worker: embedded
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
+
+  - id: civil-engineering
+    task: Review structural loads, site conditions, adopted codes, constructability, and inspection evidence.
+    task_type: civil_engineering
+    specialist: civil-engineer
+    expected_team: physical_systems
+    expected_worker: civil_engineering
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: privacy-engineering
+    task: Engineer minimization, purpose controls, de-identification, retention, deletion, and privacy evidence.
+    task_type: privacy_engineering
+    specialist: privacy-engineer
+    expected_team: assurance
+    expected_worker: privacy_engineering
+    expected_risk: critical
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: functional-safety
+    task: Build hazard analysis, safety requirements, fault evidence, independence, and a safety case.
+    task_type: functional_safety
+    specialist: functional-safety-engineer
+    expected_team: assurance
+    expected_worker: functional_safety
+    expected_risk: critical
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: formal-methods
+    task: Specify and verify critical invariants with explicit assumptions and implementation linkage.
+    task_type: formal_methods
+    specialist: formal-methods-engineer
+    expected_team: assurance
+    expected_worker: formal_methods
+    expected_risk: high
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: application-security
+    task: Threat-model authentication, authorization, input handling, business logic, and remediation evidence.
+    task_type: application_security
+    specialist: application-security-engineer
+    expected_team: assurance
+    expected_worker: application_security
+    expected_risk: critical
+    primary_provider: openai
+    fallback_provider: anthropic
+    verifier_provider: google
+
+  - id: rust-systems-programming
+    task: Review unsafe Rust, FFI, async cancellation, cross-compilation, and target behavior.
+    task_type: rust_systems_programming
+    specialist: rust-engineer
+    expected_team: engineering
+    expected_worker: rust_systems_programming
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: google
+    verifier_provider: anthropic
