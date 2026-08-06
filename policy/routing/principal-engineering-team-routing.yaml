@@ -1,0 +1,224 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-06
+policy: >-
+  These routes activate the approved principal-engineering responsibility
+  families. Consequential specialist routes require explicit task_type rather
+  than broad keyword activation. Team selection remains before worker and
+  specialist selection.
+
+team_routes:
+  cloud_architecture:
+    primary_team: planning
+    primary_worker: cloud_architecture
+    supporting_teams: [systems_engineering, platform_reliability, assurance, review]
+    verification_team: verification
+
+  mobile_engineering:
+    primary_team: engineering
+    primary_worker: mobile
+    supporting_teams: [systems_engineering, planning, platform_reliability, assurance, review]
+    verification_team: verification
+
+  compiler_toolchain:
+    primary_team: engineering
+    primary_worker: compiler_toolchain
+    supporting_teams: [systems_engineering, planning, platform_reliability, physical_systems, assurance, review]
+    verification_team: verification
+
+  applied_science:
+    primary_team: research
+    primary_worker: applied_science
+    supporting_teams: [systems_engineering, planning, engineering, platform_reliability, assurance, review]
+    verification_team: verification
+
+  systems_requirements:
+    primary_team: systems_engineering
+    primary_worker: systems_requirements
+    supporting_teams: [planning, engineering, platform_reliability, physical_systems, research, assurance, review]
+    verification_team: verification
+
+  distributed_systems:
+    primary_team: platform_reliability
+    primary_worker: distributed_systems
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+
+  database_reliability:
+    primary_team: platform_reliability
+    primary_worker: database_reliability
+    supporting_teams: [systems_engineering, engineering, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  network_engineering:
+    primary_team: platform_reliability
+    primary_worker: network_engineering
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+
+  platform_engineering:
+    primary_team: platform_reliability
+    primary_worker: platform_engineering
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+
+  performance_engineering:
+    primary_team: platform_reliability
+    primary_worker: performance_engineering
+    supporting_teams: [systems_engineering, engineering, research, review]
+    verification_team: verification
+
+  finops_engineering:
+    primary_team: platform_reliability
+    primary_worker: finops_engineering
+    supporting_teams: [systems_engineering, planning, research, review]
+    verification_team: verification
+
+  site_reliability:
+    primary_team: platform_reliability
+    primary_worker: site_reliability
+    supporting_teams: [systems_engineering, mission_control, engineering, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  mlops:
+    primary_team: platform_reliability
+    primary_worker: mlops
+    supporting_teams: [systems_engineering, engineering, research, assurance, review]
+    verification_team: verification
+
+  devops_engineering:
+    primary_team: platform_reliability
+    primary_worker: devops
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+
+  devsecops_engineering:
+    primary_team: platform_reliability
+    primary_worker: devsecops
+    supporting_teams: [systems_engineering, engineering, assurance, review]
+    verification_team: verification
+
+  hardware_engineering:
+    primary_team: physical_systems
+    primary_worker: hardware_engineering
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  robotics_autonomy:
+    primary_team: physical_systems
+    primary_worker: robotics_autonomy
+    supporting_teams: [systems_engineering, planning, engineering, research, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  silicon_engineering:
+    primary_team: physical_systems
+    primary_worker: silicon_engineering
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  aerospace_systems:
+    primary_team: physical_systems
+    primary_worker: aerospace_systems
+    supporting_teams: [systems_engineering, planning, engineering, research, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  manufacturing_engineering:
+    primary_team: physical_systems
+    primary_worker: manufacturing_engineering
+    supporting_teams: [systems_engineering, planning, engineering, assurance, review]
+    verification_team: verification
+
+  embedded_engineering:
+    primary_team: physical_systems
+    primary_worker: embedded
+    supporting_teams: [systems_engineering, engineering, assurance, review]
+    verification_team: verification
+
+  civil_engineering:
+    primary_team: physical_systems
+    primary_worker: civil_engineering
+    supporting_teams: [systems_engineering, planning, assurance, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  privacy_engineering:
+    primary_team: assurance
+    primary_worker: privacy_engineering
+    supporting_teams: [systems_engineering, planning, engineering, platform_reliability, physical_systems, research, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  functional_safety:
+    primary_team: assurance
+    primary_worker: functional_safety
+    supporting_teams: [systems_engineering, planning, engineering, platform_reliability, physical_systems, research, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  formal_methods:
+    primary_team: assurance
+    primary_worker: formal_methods
+    supporting_teams: [systems_engineering, planning, engineering, platform_reliability, physical_systems, research, review]
+    verification_team: verification
+
+  application_security:
+    primary_team: assurance
+    primary_worker: application_security
+    supporting_teams: [systems_engineering, planning, engineering, platform_reliability, research, review]
+    verification_team: verification
+    human_approval_for: [critical]
+
+  rust_systems_programming:
+    primary_team: engineering
+    primary_worker: rust_systems_programming
+    supporting_teams: [systems_engineering, planning, platform_reliability, assurance, review]
+    verification_team: verification
+
+route_overrides:
+  daily_coding:
+    primary_team: engineering
+    primary_worker: backend
+    worker_override_by_context:
+      frontend: frontend
+      mobile: mobile
+      database: database
+      data_pipeline: data_engineering
+      ai_system: ai_engineering
+    review_team: review
+    verification_team: verification
+
+  deep_debugging:
+    primary_team: engineering
+    primary_worker: backend
+    worker_override_by_context:
+      frontend: frontend
+      mobile: mobile
+      database: database
+      data_pipeline: data_engineering
+      ai_system: ai_engineering
+    supporting_workers:
+      - performance
+      - database
+      - devops
+    review_team: review
+    verification_team: verification
+
+  repo_wide_refactor:
+    primary_team: planning
+    primary_worker: architecture
+    execution_team: engineering
+    execution_worker: backend
+    execution_worker_override_by_context:
+      frontend: frontend
+      mobile: mobile
+      database: database
+      data_pipeline: data_engineering
+      ai_system: ai_engineering
+    review_team: review
+    verification_team: verification
