@@ -1,0 +1,66 @@
+title: "[Idea] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this category for proposals that are still being explored. Once an idea is sufficiently scoped and accepted, convert it into an issue or pull request.
+
+        Do not include credentials, proprietary workflows, employer-specific material, private prompts, or identifying operational data.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of TEO would this idea affect?
+      options:
+        - Team or responsibility architecture
+        - Worker or specialist allocation
+        - Routing or fallback policy
+        - Verification or governance
+        - Provider, model, capability, or benchmark registry
+        - Reference implementation or runtime
+        - Documentation or community process
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: Describe the current limitation, ambiguity, or opportunity.
+      placeholder: What is difficult, missing, unsafe, stale, or unnecessarily complex today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed direction
+      description: Explain the change you think should be considered without assuming it is already approved.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence and alternatives
+      description: Include sources, examples, measurements, competing approaches, and known limitations where available.
+    validations:
+      required: false
+
+  - type: textarea
+    id: boundaries
+    attributes:
+      label: Preservation and compatibility boundaries
+      description: State what must not be weakened, removed, conflated, or made provider-dependent.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: public-scope
+    attributes:
+      label: Public-scope confirmation
+      options:
+        - label: This discussion contains no secrets, private prompts, proprietary processes, confidential benchmarks, or identifying operational data.
+          required: true
