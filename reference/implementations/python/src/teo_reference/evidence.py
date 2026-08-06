@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import hashlib
+import json
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -10,6 +11,7 @@ from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
 
 MANDATED_REFUSAL = "refuse_consequential_claim"
 MANDATED_CONFLICT = "escalate_and_present_conflict"
@@ -58,6 +60,42 @@ def load_freshness_policy(root: Path) -> dict[str, Any]:
     return payload
 
 
+def load_evidence_schema(root: Path) -> dict[str, Any]:
+    path = root / "reference" / "schemas" / "specialist-evidence-pilot.schema.json"
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("evidence pilot schema must be an object")
+    Draft202012Validator.check_schema(payload)
+    return payload
+
+
+def normalize_for_schema(value: object) -> object:
+    if isinstance(value, dt.datetime):
+        return value.date().isoformat()
+    if isinstance(value, dt.date):
+        return value.isoformat()
+    if isinstance(value, dict):
+        return {str(key): normalize_for_schema(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [normalize_for_schema(item) for item in value]
+    return value
+
+
+def validate_schema(registry: dict[str, Any], root: Path) -> list[str]:
+    schema = load_evidence_schema(root)
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    normalized = normalize_for_schema(registry)
+    failures = sorted(
+        validator.iter_errors(normalized),
+        key=lambda error: tuple(str(part) for part in error.absolute_path),
+    )
+    errors: list[str] = []
+    for failure in failures:
+        location = ".".join(str(part) for part in failure.absolute_path) or "$"
+        errors.append(f"schema {location}: {failure.message}")
+    return errors
+
+
 def resolve_authority(url: str, expected_hosts: set[str], timeout: float = 20.0) -> str | None:
     request = Request(
         url,
@@ -87,12 +125,12 @@ def validate_registry(
     resolve: bool = False,
     resolver: Callable[[str, set[str]], str | None] = resolve_authority,
 ) -> list[str]:
-    errors: list[str] = []
+    errors = validate_schema(registry, root)
     as_of = as_of or dt.date.today()
 
     controls = registry.get("controls")
     if not isinstance(controls, dict):
-        return ["controls must be an object"]
+        return errors + ["controls must be an object"]
 
     required_controls = {
         "consequential_use_requires_unexpired_evidence": True,
