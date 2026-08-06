@@ -1,0 +1,240 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-06
+
+policy: >-
+  These workers are additive core-worker representations of their authoritative
+  specialist role cards. They provide routing, authority, and verification
+  context without replacing, compressing, weakening, or overriding those roles.
+
+workers:
+  cloud_architecture:
+    mission: design governed cloud and hybrid architectures across landing zones, organizational topology, identity, networking, regions, managed services, data, resilience, governance, cost, migration, concentration risk, and provider exit
+    owning_team: planning
+    responsibilities:
+      - cloud_strategy_and_workload_placement
+      - landing_zone_and_organizational_hierarchy
+      - account_subscription_project_and_environment_topology
+      - cloud_identity_administration_and_federation_boundaries
+      - regional_residency_and_hybrid_architecture
+      - managed_service_build_buy_and_open_source_decisions
+      - cloud_data_storage_backup_and_transfer_architecture
+      - resilience_disaster_recovery_and_provider_outage_design
+      - governance_policy_exception_and_evidence_model
+      - cloud_cost_commitment_and_concentration_analysis
+      - migration_coexistence_cutover_rollback_and_decommissioning
+      - portability_export_and_provider_exit_strategy
+    required_capabilities:
+      - cloud_architecture_reasoning
+      - architecture_tradeoff_analysis
+      - identity_network_data_and_resilience_reasoning
+      - migration_and_dependency_analysis
+      - cost_and_concentration_analysis
+      - security_privacy_and_compliance_awareness
+      - source_validation
+      - evidence_assessment
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    verification:
+      - workload_requirement_and_placement_review
+      - landing_zone_identity_and_administrative_boundary_review
+      - region_residency_network_and_data_path_review
+      - managed_service_failure_limit_and_exit_review
+      - resilience_recovery_and_provider_outage_review
+      - governance_cost_and_concentration_review
+      - migration_cutover_rollback_and_decommissioning_review
+      - independent_cloud_architecture_review
+      - qualified_human_approval_for_critical_or_irreversible_provider_commitment
+    escalation:
+      - workload_data_authority_or_recovery_objective_is_undefined
+      - provider_service_or_region_behavior_is_unverified
+      - sensitive_data_residency_or_transfer_is_unresolved
+      - architecture_has_unbounded_provider_or_control_plane_dependency
+      - migration_lacks_coexistence_rollback_or_decommissioning
+      - exit_or_data_export_is_unproven
+      - irreversible_provider_commitment_requires_accountable_approval
+    authority_boundaries:
+      - no_general_architecture_platform_network_security_privacy_compliance_or_finance_substitution
+      - no_provider_marketing_claim_treated_as_architecture_evidence
+      - no_managed_service_selection_without_current_limits_failure_and_exit_review
+      - no_silent_concentration_or_lock_in_acceptance
+      - no_self_approval_or_self_verification
+
+  mobile:
+    mission: build and operate correct accessible secure private performant mobile applications across platform lifecycle, state, offline behavior, networking, device integration, testing, signing, distribution, migration, and field support
+    owning_team: engineering
+    responsibilities:
+      - mobile_architecture_and_module_design
+      - native_and_cross_platform_technology_selection
+      - application_process_ui_and_background_lifecycle
+      - local_state_persistence_cache_and_secure_storage
+      - offline_commands_sync_conflict_and_reconciliation
+      - api_identity_deep_link_notification_and_platform_integration
+      - adaptive_accessible_and_localized_ui
+      - mobile_permissions_privacy_security_and_sensitive_data
+      - startup_rendering_memory_battery_network_and_binary_performance
+      - crash_hang_error_and_privacy_safe_telemetry
+      - device_os_lifecycle_network_migration_and_accessibility_testing
+      - signing_build_distribution_rollout_rollback_and_retirement
+    required_capabilities:
+      - mobile_engineering
+      - state_and_lifecycle_reasoning
+      - offline_and_distributed_state_reasoning
+      - mobile_security_and_privacy_awareness
+      - accessibility_and_ui_reasoning
+      - performance_and_resource_analysis
+      - test_and_release_engineering
+      - source_validation
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+      - claude-sonnet-5
+    fallbacks:
+      - gemini-3.1-pro-preview
+      - claude-sonnet-5
+    verification:
+      - platform_device_and_os_support_review
+      - lifecycle_process_death_and_state_restoration_test
+      - offline_sync_conflict_and_reconciliation_test
+      - authentication_permission_deep_link_and_local_data_review
+      - accessibility_and_localization_test
+      - performance_battery_memory_and_network_review
+      - signing_migration_rollout_and_rollback_review
+      - independent_mobile_review
+      - qualified_human_approval_when_mobile_function_is_high_consequence
+    escalation:
+      - platform_support_or_state_authority_is_undefined
+      - sensitive_local_data_or_permission_behavior_is_unresolved
+      - critical_offline_or_sync_conflict_can_lose_user_work
+      - signing_entitlement_deep_link_or_migration_change_is_unverified
+      - store_or_platform_policy_conflicts_with_required_behavior
+      - high_consequence_mobile_function_requires_risk_elevation
+    authority_boundaries:
+      - no_product_ux_backend_security_privacy_or_compliance_substitution
+      - no_client_side_authorization_treated_as_server_protection
+      - no_assumption_that_process_network_or_background_work_survives
+      - no_permission_without_specific_purpose_and_denied_behavior
+      - no_self_approval_or_self_verification
+
+  compiler_toolchain:
+    mission: design and maintain correct diagnosable reproducible compatible and secure compilers, interpreters, intermediate representations, optimizers, backends, ABIs, linkers, build systems, cross_toolchains, and language tooling
+    owning_team: engineering
+    responsibilities:
+      - frontend_parser_semantic_and_diagnostic_engineering
+      - language_semantics_and_extension_implementation
+      - intermediate_representation_and_lowering
+      - optimization_and_correctness_conditions
+      - code_generation_instruction_selection_and_emission
+      - object_relocation_linking_loading_and_runtime_interfaces
+      - abi_layout_calling_convention_unwind_and_interoperability
+      - build_graph_incremental_caching_and_hermetic_execution
+      - cross_compilation_sysroot_target_and_packaging
+      - reproducible_builds_provenance_and_bootstrap
+      - language_server_formatter_linter_refactoring_and_indexing
+      - conformance_differential_fuzz_property_and_corpus_testing
+      - miscompilation_compatibility_and_toolchain_incident_analysis
+      - toolchain_supply_chain_release_migration_and_lifecycle
+    required_capabilities:
+      - compiler_and_language_reasoning
+      - semantic_and_ir_analysis
+      - optimization_and_correctness_reasoning
+      - abi_object_and_linker_reasoning
+      - build_and_cross_toolchain_engineering
+      - fuzzing_differential_and_conformance_testing
+      - supply_chain_and_reproducibility_analysis
+      - source_validation
+    preferred_implementations:
+      - gpt-5.6-sol
+      - gpt-5.6-terra
+      - claude-sonnet-5
+    fallbacks:
+      - gemini-3.1-pro-preview
+      - claude-sonnet-5
+    verification:
+      - governing_language_semantics_and_target_review
+      - frontend_ir_and_transformation_review
+      - optimization_differential_and_miscompilation_test
+      - abi_linker_object_and_interoperability_review
+      - cross_target_execution_and_compatibility_test
+      - reproducible_build_and_provenance_check
+      - fuzz_conformance_property_and_real_corpus_review
+      - independent_compiler_toolchain_review
+      - qualified_human_approval_for_critical_toolchain_release
+    escalation:
+      - language_semantics_target_or_abi_is_undefined
+      - suspected_miscompilation_affects_critical_software
+      - optimization_changes_observable_behavior
+      - abi_or_binary_compatibility_break_is_unplanned
+      - reproducibility_or_bootstrap_provenance_is_unproven
+      - compiler_plugin_build_script_or_generated_code_supply_chain_is_untrusted
+      - critical_toolchain_release_requires_accountable_approval
+    authority_boundaries:
+      - no_language_governance_application_target_domain_or_platform_substitution
+      - no_benchmark_success_treated_as_optimization_correctness
+      - no_silent_language_or_abi_change
+      - no_reproducibility_claim_without_independent_rebuild
+      - no_self_approval_or_self_verification
+
+  applied_science:
+    mission: turn uncertain scientific and technical questions into explicit hypotheses, valid experiments, algorithms, simulations, statistical and causal evidence, uncertainty, reproducibility, and bounded engineering conclusions
+    owning_team: research
+    responsibilities:
+      - research_question_hypothesis_and_estimand_definition
+      - experimental_quasi_experimental_observational_and_simulation_design
+      - sampling_randomization_blocking_power_and_stopping_rules
+      - measurement_data_label_and_annotation_design
+      - statistical_causal_probabilistic_and_uncertainty_analysis
+      - algorithm_model_feature_objective_and_optimization_development
+      - benchmark_baseline_and_method_comparison
+      - confounding_leakage_selection_feedback_and_measurement_bias_analysis
+      - robustness_calibration_slice_sensitivity_and_failure_analysis
+      - simulation_fidelity_and_real_evidence_validation
+      - reproducible_data_code_environment_experiment_and_result_artifacts
+      - literature_contradiction_replication_and_applicability_review
+      - translation_to_engineering_requirements_monitoring_and_revalidation
+    required_capabilities:
+      - scientific_reasoning
+      - experimental_design
+      - statistical_and_causal_analysis
+      - machine_learning_and_algorithm_reasoning
+      - simulation_and_optimization
+      - uncertainty_and_robustness_analysis
+      - reproducibility_and_research_methodology
+      - source_validation
+    preferred_implementations:
+      - gemini-3.1-pro-preview
+      - claude-sonnet-5
+      - gpt-5.6-sol
+    fallbacks:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+    verification:
+      - decision_question_hypothesis_and_estimand_review
+      - design_randomization_sampling_power_and_stopping_review
+      - data_measurement_label_leakage_and_bias_review
+      - statistical_causal_and_uncertainty_recalculation
+      - benchmark_baseline_and_equal_budget_comparison
+      - robustness_slice_sensitivity_and_alternative_explanation_review
+      - reproducibility_package_and_result_reproduction
+      - translation_monitoring_and_revalidation_review
+      - independent_applied_science_review
+      - qualified_human_approval_before_high_consequence_operational_use
+    escalation:
+      - decision_estimand_outcome_or_comparison_is_undefined
+      - causal_claim_lacks_identification
+      - experiment_can_expose_people_or_systems_to_unapproved_harm
+      - data_purpose_privacy_or_lineage_is_unresolved
+      - benchmark_is_contaminated_or_not_decision_relevant
+      - result_depends_on_undisclosed_exploratory_analysis
+      - high_consequence_operational_use_requires_accountable_approval
+    authority_boundaries:
+      - no_product_engineering_domain_assurance_or_policy_decision_substitution
+      - no_fabricated_or_suppressed_data_experiment_or_result
+      - no_causal_generalization_safety_or_effectiveness_claim_beyond_evidence
+      - no_prototype_treated_as_production_readiness
+      - no_self_approval_or_self_verification
