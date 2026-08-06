@@ -1,0 +1,82 @@
+version: 0.1
+status: staged
+reviewed_at: 2026-08-06
+team: physical_systems
+team_charter: community/teams/physical-systems-team.md
+activation_ready: false
+
+specialists:
+  hardware-engineer:
+    card_path: community/specialists/hardware-engineer.md
+    canonical_blob_sha: 02c9c2f5e20e9ee994ecd426d02ee802931d1e95
+    worker_binding: hardware_engineering
+    risk_profile: critical
+  robotics-autonomous-systems-engineer:
+    card_path: community/specialists/robotics-autonomous-systems-engineer.md
+    canonical_blob_sha: 9c52db0d8def86f1eb1217d997a2f107a41f4217
+    worker_binding: robotics_autonomy
+    risk_profile: critical
+  silicon-asic-engineer:
+    card_path: community/specialists/silicon-asic-engineer.md
+    canonical_blob_sha: a8eea4013ffae8b7e391d26f59ad807e39ee4686
+    worker_binding: silicon_engineering
+    risk_profile: critical
+  aerospace-satellite-engineer:
+    card_path: community/specialists/aerospace-satellite-engineer.md
+    canonical_blob_sha: 1e89bffc2047877f0e5fbd0127510e030f85a97b
+    worker_binding: aerospace_systems
+    risk_profile: critical
+  manufacturing-engineer:
+    card_path: community/specialists/manufacturing-engineer.md
+    canonical_blob_sha: 6f4fd5b26a6468370c099ec9674748ce92d03d4c
+    worker_binding: manufacturing_engineering
+    risk_profile: high
+
+worker_contract:
+  path: community/workers/physical-systems-workers.yaml
+  canonical_blob_sha: cbbfeeb425d17ab722a5933b2149940f0ee3df66
+  expected_workers:
+    - hardware_engineering
+    - robotics_autonomy
+    - silicon_engineering
+    - aerospace_systems
+    - manufacturing_engineering
+
+preserved_existing_specialists:
+  embedded-engineer:
+    card_path: community/specialists/embedded-engineer.md
+    canonical_blob_sha: a5be65553c08cd024057260e2ba33e6f6ecf580e
+    allocation_change_status: deferred
+    intended_primary_team: physical_systems
+  civil-engineer:
+    card_path: community/specialists/civil-engineer.md
+    canonical_blob_sha: 139f8d61dce126846db6bc5e672572e04921193f
+    allocation_change_status: deferred
+    intended_primary_team: physical_systems
+
+completed_gates:
+  - team_charter_exists
+  - worker_definition_exists
+  - specialist_cards_exist
+  - independent_verification_defined
+  - critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - canonical_preservation_test_present
+  - responsibility_boundaries_defined
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mapping_exists
+  - provider_diverse_fallback_exists
+  - conformance_dataset_exists
+  - existing_specialist_reallocations_applied
+
+activation_rules:
+  - no_physical_systems_route_is_active_from_this_file
+  - all_pending_gates_must_pass_before_team_activation
+  - physical_systems_changes_that_affect_requirements_interfaces_or_baselines_require_systems_engineering_handoff
+  - safety_related_work_requires_assurance_handoff
+  - specialist_execution_cannot_self_review_or_self_verify
+  - critical_release_operation_tapeout_flight_or_production_decisions_require_qualified_human_approval
+  - existing_embedded_and_civil_role_cards_must_not_be_changed_by_reallocation
+  - evidence_pilot_scope_remains_exactly_six_until_maintainability_gate_passes
