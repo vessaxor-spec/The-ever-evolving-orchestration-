@@ -11,7 +11,7 @@ TEO now contains the final four specialist cards approved by the principal-engin
 - Compiler and Toolchain Engineer
 - Applied Scientist
 
-These specialists remain staged. This change does not activate new routes, capability mappings, implementation bindings, or canonical active-registry entries.
+These specialist cards remain staged. This change does not add new specialist routes, capability mappings, implementation bindings, conformance fixtures, or canonical active-specialist entries.
 
 ## Why these specialists remain in different teams
 
@@ -29,7 +29,9 @@ Mobile Engineering belongs to the Engineering Team because it implements and ope
 
 It does not replace Product, UX, Backend, Application Security, Privacy, or platform authorities.
 
-The existing `mobile` context override in `team-routing.yaml` is not treated as activation of this worker or specialist. Active use still requires a complete worker route, capability mapping, provider-diverse fallback, conformance dataset, and canonical active-registry entry.
+TEO already has a basic active `mobile` worker in `community/workers/workers.yaml` and a corresponding context override in `team-routing.yaml`. This tranche does not modify or deactivate that existing worker.
+
+The new Mobile Engineer specialist remains staged. Its richer worker contract is stored in the staged worker file and must later be reconciled into the canonical `mobile` worker without creating a duplicate definition. The specialist still requires a canonical registry entry, capability mapping, provider-diverse route, and conformance evidence before activation.
 
 ### Compiler and Toolchain Engineer
 
@@ -48,7 +50,7 @@ It does not replace broad research synthesis, quantitative analytics, AI Enginee
 The staging manifest records exact Git blob SHAs for:
 
 - all four new specialist cards
-- the shared worker contract
+- the shared staged worker contract
 - the existing Architect
 - the existing AI Engineer
 - the existing Researcher
@@ -62,7 +64,7 @@ An intentional amendment must update the affected role card, staging record, and
 Completed:
 
 - four full specialist cards
-- four worker contracts
+- four staged worker contracts
 - independent verification requirements
 - high-consequence human-approval boundaries
 - freshness policies
@@ -71,13 +73,14 @@ Completed:
 
 Pending:
 
-- active routing policies
+- active specialist routing policies
 - stable capability mappings
 - provider-diverse routine fallbacks
 - conformance datasets
-- canonical active-registry entries
+- canonical active-specialist entries
+- reconciliation of the enriched Mobile worker contract into the existing canonical Mobile worker
 
-Until those gates pass, these four specialists remain non-routable additions.
+Until those gates pass, these four specialist cards remain non-routable additions. The pre-existing basic Mobile worker remains active and unchanged.
 
 ## Freshness boundary
 
