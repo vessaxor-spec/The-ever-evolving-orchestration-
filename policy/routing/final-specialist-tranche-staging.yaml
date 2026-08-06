@@ -1,0 +1,128 @@
+version: 0.1
+status: staged
+reviewed_at: 2026-08-06
+activation_ready: false
+tranche: planning_engineering_research
+
+specialists:
+  cloud-architect:
+    primary_team: planning
+    card_path: community/specialists/cloud-architect.md
+    canonical_blob_sha: ec3995cd7980db196c8f528951af10584901a0e5
+    worker_binding: cloud_architecture
+    risk_profile: high
+    freshness_policy: live-verification-required
+  mobile-engineer:
+    primary_team: engineering
+    card_path: community/specialists/mobile-engineer.md
+    canonical_blob_sha: 3f64436b87f22ca886bc0b0e9f73d8241731ebdd
+    worker_binding: mobile
+    risk_profile: medium
+    freshness_policy: live-verification-required
+  compiler-toolchain-engineer:
+    primary_team: engineering
+    card_path: community/specialists/compiler-toolchain-engineer.md
+    canonical_blob_sha: 255b6912484f9fe37ccdc4eb26e9abdc32390b03
+    worker_binding: compiler_toolchain
+    risk_profile: high
+    freshness_policy: live-verification-required
+  applied-scientist:
+    primary_team: research
+    card_path: community/specialists/applied-scientist.md
+    canonical_blob_sha: eee81e687fca508d57047a777286a90a1594d13e
+    worker_binding: applied_science
+    risk_profile: high
+    freshness_policy: live-verification-required
+
+worker_contract:
+  path: community/workers/final-specialist-workers.yaml
+  canonical_blob_sha: a7617f2352f99698cf10d0aa0a25a06d65b30e40
+  expected_workers:
+    - cloud_architecture
+    - mobile
+    - compiler_toolchain
+    - applied_science
+  status: staged_contracts_not_loaded_by_active_config
+
+existing_active_worker_reconciliation:
+  mobile:
+    active_registry_path: community/workers/workers.yaml
+    current_status: active_core_worker
+    current_owning_team: engineering
+    staged_contract_path: community/workers/final-specialist-workers.yaml
+    activation_requirement: reconcile_the_enriched_contract_into_the_canonical_worker_without_duplicate_definition
+
+preserved_existing_specialists:
+  architect:
+    card_path: community/specialists/architect.md
+    canonical_blob_sha: c8e6fa6ba07ac8d49f9b8ea56c256406573fc951
+    boundary: owns_general_system_architecture_and_cross_domain_tradeoffs
+  ai-engineer:
+    card_path: community/specialists/ai-engineer.md
+    canonical_blob_sha: b48eb3612c8153144f9dae8fbea599c98dfa571c
+    boundary: owns_production_ai_model_rag_voice_and_application_integration
+  researcher:
+    card_path: community/specialists/researcher.md
+    canonical_blob_sha: bd31a7f4483c053b829e77e8d20553648dc0ddb0
+    boundary: owns_broad_domain_source_discovery_triangulation_and_research_synthesis
+
+responsibility_boundaries:
+  cloud_architecture:
+    owns: cloud_landing_zones_provider_topology_regions_services_resilience_migration_governance_and_exit
+    does_not_replace:
+      - architecture
+      - platform_engineering
+      - network_engineering
+      - security_privacy_compliance_or_finops
+  mobile:
+    owns: mobile_application_lifecycle_state_offline_platform_integration_accessibility_performance_testing_and_release
+    does_not_replace:
+      - product
+      - ux_design
+      - backend
+      - application_security_or_privacy
+  compiler_toolchain:
+    owns: compiler_interpreter_ir_optimization_codegen_abi_build_link_cross_toolchain_and_language_tooling
+    does_not_replace:
+      - language_governance
+      - rust_systems_programming
+      - application_engineering
+      - target_domain_engineering
+  applied_science:
+    owns: scientific_hypothesis_experiment_algorithm_simulation_inference_uncertainty_reproducibility_and_method_evidence
+    does_not_replace:
+      - research_synthesis
+      - analytics
+      - ai_engineering
+      - mlops
+      - product_or_domain_authority
+
+completed_gates:
+  - worker_definition_exists
+  - specialist_cards_exist
+  - independent_verification_defined
+  - high_consequence_human_approval_boundaries_defined
+  - freshness_policy_present
+  - canonical_preservation_tests_present
+  - responsibility_boundaries_defined
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mappings_exist
+  - provider_diverse_fallbacks_exist
+  - conformance_datasets_exist
+  - canonical_active_registry_entries_exist
+  - mobile_canonical_worker_reconciliation_exists
+
+activation_rules:
+  - no_route_is_activated_from_this_staging_file
+  - all_pending_gates_must_pass_before_any_new_specialist_becomes_active
+  - existing_mobile_worker_and_context_override_remain_active_and_unchanged
+  - the_new_mobile_specialist_and_enriched_contract_remain_staged_until_canonical_reconciliation_and_conformance
+  - cloud_architecture_must_not_absorb_general_architecture_or_platform_implementation
+  - mobile_engineering_must_not_absorb_product_ux_backend_security_or_privacy_authority
+  - compiler_toolchain_must_not_absorb_language_governance_application_ownership_or_target_domain_authority
+  - applied_science_must_not_absorb_research_analytics_ai_engineering_mlops_product_or_domain_authority
+  - specialist_execution_cannot_self_review_or_self_verify
+  - high_consequence_cloud_mobile_toolchain_or_scientific_use_requires_qualified_human_approval
+  - evidence_pilot_scope_remains_exactly_six_until_maintainability_gate_passes
