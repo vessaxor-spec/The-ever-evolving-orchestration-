@@ -30,6 +30,12 @@ The incident-response scenario additionally requires critical-risk verification,
 
 The fixture protects source triangulation, evidence traceability, contradiction analysis, confidence calibration, escalation boundaries, and the separation between research synthesis and final deliverable writing. Routing conformance separately requires `deep_research` to use this worker while documentation tasks remain on the `documentation` worker.
 
+## User research worker conformance
+
+[`user-research-worker-conformance.yaml`](user-research-worker-conformance.yaml) binds the `feedback-synthesizer` specialist to the dedicated Research Team `user_research` worker.
+
+The fixture protects collection-method and sample traceability, atomic-observation-to-theme evidence, quote provenance, contradiction and negative-case review, mixed-method triangulation, privacy and consent boundaries, provider-diverse routing, and separation from analytics, market research, broad research, documentation, product authority, and UX-design judgment.
+
 ## Market research worker conformance
 
 [`market-research-worker-conformance.yaml`](market-research-worker-conformance.yaml) binds the `market-analyst` specialist to the dedicated Research Team `market_research` worker.
