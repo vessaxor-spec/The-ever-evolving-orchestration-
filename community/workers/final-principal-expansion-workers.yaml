@@ -1,0 +1,221 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-06
+
+policy: >-
+  These workers are additive core-worker representations of their authoritative
+  specialist role cards. They provide routing, authority, and verification
+  context without replacing, compressing, weakening, or overriding those roles.
+
+workers:
+  cloud_architecture:
+    mission: define provider-neutral cloud, hybrid, and multicloud architecture, landing zones, placement, identity and network boundaries, service selection, resilience, migration, economics, governance, and exit strategy within approved system requirements
+    owning_team: planning
+    responsibilities:
+      - cloud_architecture_principles_scope_and_decision_criteria
+      - landing_zone_and_organizational_hierarchy
+      - workload_placement_and_service_selection
+      - hybrid_multicloud_and_edge_boundaries
+      - region_zone_sovereignty_and_data_placement
+      - identity_network_security_and_shared_service_boundaries
+      - reliability_recovery_observability_and_operating_model
+      - migration_coexistence_cutover_rollback_and_decommissioning
+      - cost_commitment_egress_sustainability_and_exit_analysis
+      - architecture_risk_exception_and_review_governance
+    required_capabilities:
+      - cloud_architecture_reasoning
+      - systems_and_requirements_reasoning
+      - provider_and_service_research
+      - reliability_and_failure_analysis
+      - security_privacy_and_compliance_reasoning
+      - technology_economics
+      - migration_and_dependency_analysis
+      - source_validation
+    preferred_implementations:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    fallbacks:
+      - gpt-5.6-sol
+      - gemini-3.1-pro-preview
+    verification:
+      - workload_requirements_and_placement_review
+      - provider_service_region_quota_and_lifecycle_check
+      - identity_network_data_and_trust_boundary_review
+      - state_dependency_failure_and_recovery_review
+      - migration_cutover_rollback_and_decommissioning_review
+      - cost_lockin_reversibility_and_exit_review
+      - independent_cloud_architecture_review
+      - qualified_human_approval_for_consequential_provider_commitment
+    escalation:
+      - workload_or_data_requirements_are_unresolved
+      - current_provider_or_region_evidence_is_unavailable
+      - critical_dependency_lacks_recovery_or_exit
+      - sovereignty_residency_or_transfer_is_unresolved
+      - migration_is_irreversible_or_lacks_rollback
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_general_architecture_platform_operations_or_procurement_authority_substitution
+      - no_provider_selection_from_brand_novelty_or_feature_count_alone
+      - no_provider_marketing_treated_as_independent_evidence
+      - no_consequential_commitment_without_independent_review
+      - no_self_approval_or_self_verification
+
+  mobile:
+    mission: implement and sustain production mobile applications across lifecycle, state, offline behavior, platform capabilities, security, privacy, accessibility, performance, testing, signing, distribution, and release evidence
+    owning_team: engineering
+    responsibilities:
+      - mobile_architecture_modules_and_dependency_boundaries
+      - native_or_cross_platform_selection
+      - state_navigation_restoration_and_lifecycle_behavior
+      - local_persistence_offline_sync_conflict_and_reconciliation
+      - api_identity_notification_deeplink_and_integration
+      - permission_device_capability_and_background_work
+      - mobile_security_privacy_and_sensitive_data_controls
+      - adaptive_accessible_and_multiformfactor_interfaces
+      - performance_energy_crash_and_operational_telemetry
+      - testing_build_signing_distribution_rollout_and_rollback
+    required_capabilities:
+      - mobile_software_engineering
+      - lifecycle_and_state_reasoning
+      - offline_and_distributed_data_reasoning
+      - platform_security_and_privacy
+      - accessibility_engineering
+      - performance_and_energy_analysis
+      - testing_and_release_engineering
+      - source_validation
+    preferred_implementations:
+      - gpt-5.6-terra
+      - gpt-5.6-sol
+      - claude-sonnet-5
+    fallbacks:
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    verification:
+      - architecture_state_and_lifecycle_review
+      - offline_sync_conflict_and_recovery_tests
+      - permission_security_privacy_and_deeplink_review
+      - device_formfactor_network_and_background_tests
+      - accessibility_assistive_technology_review
+      - migration_signing_rollout_and_rollback_review
+      - independent_mobile_code_and_release_review
+      - qualified_human_approval_when_effective_risk_is_critical
+    escalation:
+      - platform_data_or_offline_requirements_are_unresolved
+      - synchronization_can_lose_or_duplicate_committed_actions
+      - sensitive_data_permission_or_identity_control_is_inadequate
+      - accessibility_blocker_remains
+      - migration_or_release_lacks_recovery
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_product_ux_backend_store_legal_or_compliance_authority_substitution
+      - no_insecure_storage_logging_or_permission_bypass
+      - no_simulator_only_release_claim
+      - no_critical_release_without_independent_review
+      - no_self_approval_or_self_verification
+
+  compiler_toolchain:
+    mission: design and validate compilers, linkers, runtimes, language tooling, build systems, cross-compilation, optimization, diagnostics, compatibility, reproducibility, bootstrap, provenance, and release evidence
+    owning_team: engineering
+    responsibilities:
+      - language_frontend_semantics_and_diagnostics
+      - intermediate_representation_and_transformation_invariants
+      - target_codegen_abi_object_and_linking
+      - runtime_standard_library_and_platform_boundaries
+      - build_graph_configuration_cache_and_hermeticity
+      - native_cross_compilation_sysroots_and_sdks
+      - source_binary_abi_plugin_and_artifact_compatibility
+      - optimization_correctness_and_generated_code_quality
+      - reproducible_build_provenance_and_bootstrap_trust
+      - differential_fuzz_conformance_regression_and_release_testing
+    required_capabilities:
+      - compiler_and_language_reasoning
+      - systems_programming
+      - build_and_dependency_graph_analysis
+      - target_abi_and_binary_analysis
+      - formal_and_semantic_reasoning
+      - performance_and_benchmark_analysis
+      - supply_chain_and_provenance_analysis
+      - source_validation
+    preferred_implementations:
+      - gpt-5.6-sol
+      - gpt-5.6-terra
+      - claude-sonnet-5
+    fallbacks:
+      - claude-sonnet-5
+      - gemini-3.1-pro-preview
+    verification:
+      - language_target_and_abi_scope_review
+      - semantic_transformation_and_optimization_review
+      - differential_conformance_fuzz_and_regression_tests
+      - target_execution_and_mixed_version_compatibility_tests
+      - reproducible_build_provenance_and_bootstrap_review
+      - migration_parallel_validation_and_rollback_review
+      - independent_toolchain_review
+      - qualified_human_approval_for_critical_toolchain_or_abi_change
+    escalation:
+      - language_target_or_abi_contract_is_unresolved
+      - transformation_depends_on_hidden_or_undefined_behavior
+      - target_execution_or_compatibility_evidence_is_missing
+      - build_inputs_or_bootstrap_trust_are_uncontrolled
+      - migration_combines_multiple_irreversible_changes
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_architecture_language_standard_target_or_application_authority_substitution
+      - no_semantic_compatibility_or_reproducibility_claim_without_evidence
+      - no_benchmark_success_treated_as_correctness_proof
+      - no_critical_release_without_independent_review
+      - no_self_approval_or_self_verification
+
+  applied_science:
+    mission: design and execute decision_relevant scientific investigations, experiments, models, simulations, and prototypes with explicit hypotheses, measurement, uncertainty, reproducibility, limitations, and engineering handoffs
+    owning_team: research
+    responsibilities:
+      - decision_context_research_question_and_claim_definition
+      - hypothesis_estimand_and_analysis_plan
+      - experimental_observational_simulation_and_benchmark_design
+      - data_sampling_measurement_label_and_quality_design
+      - baseline_control_ablation_and_falsification_design
+      - statistical_machine_learning_causal_and_optimization_analysis
+      - uncertainty_calibration_robustness_and_sensitivity
+      - population_environment_failure_and_external_validation
+      - reproducibility_provenance_and_independent_replication
+      - engineering_requirements_technology_transfer_and_followup
+    required_capabilities:
+      - scientific_reasoning
+      - experimental_design
+      - statistical_and_causal_analysis
+      - machine_learning_and_model_evaluation
+      - simulation_and_uncertainty_analysis
+      - reproducible_research
+      - responsible_analytics
+      - source_validation
+    preferred_implementations:
+      - gemini-3.1-pro-preview
+      - claude-sonnet-5
+      - gpt-5.6-sol
+    fallbacks:
+      - claude-sonnet-5
+      - gpt-5.6-sol
+    verification:
+      - research_question_claim_and_estimand_review
+      - data_sampling_measurement_and_leakage_review
+      - statistical_recalculation_and_assumption_review
+      - baseline_ablation_robustness_and_sensitivity_review
+      - population_slice_failure_and_external_validity_review
+      - independent_reproduction_of_critical_results
+      - independent_applied_science_review
+      - qualified_human_approval_for_consequential_deployment_decision
+    escalation:
+      - decision_question_estimand_or_population_is_undefined
+      - data_or_measurement_cannot_support_the_claim
+      - leakage_contamination_or_uncontrolled_analysis_flexibility_is_material
+      - results_are_fragile_contradictory_or_not_reproducible
+      - research_to_production_assumptions_are_unvalidated
+      - residual_risk_exceeds_assigned_authority
+    authority_boundaries:
+      - no_product_production_ai_mlops_ethics_or_regulatory_authority_substitution
+      - no_exploratory_result_presented_as_confirmatory_or_causal
+      - no_benchmark_or_statistical_threshold_used_as_universal_decision_rule
+      - no_consequential_deployment_without_independent_review
+      - no_self_approval_or_self_verification
