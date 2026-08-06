@@ -1,0 +1,93 @@
+version: 0.1
+status: staged-not-routable
+reviewed_at: 2026-08-06
+team: platform_reliability
+team_charter: community/teams/platform-reliability-team.md
+
+specialists:
+  distributed-systems-engineer:
+    role_card: community/specialists/distributed-systems-engineer.md
+    canonical_git_blob_sha: c7eb7f3c147ff6c25adc0a83ea3a1167506b2d0c
+    worker_binding: distributed_systems
+    risk_profile: high
+    freshness_policy: live-verification-required
+  database-reliability-engineer:
+    role_card: community/specialists/database-reliability-engineer.md
+    canonical_git_blob_sha: 8eb63cf5616e490de8f04620575c0fce2184879e
+    worker_binding: database_reliability
+    risk_profile: critical
+    freshness_policy: live-verification-required
+  network-engineer:
+    role_card: community/specialists/network-engineer.md
+    canonical_git_blob_sha: c300a5b18a1f589f8177ca65310cd28053abc2a4
+    worker_binding: network_engineering
+    risk_profile: high
+    freshness_policy: live-verification-required
+  platform-engineer:
+    role_card: community/specialists/platform-engineer.md
+    canonical_git_blob_sha: 1d8b0be178206e0969308d2b0a863449174cf656
+    worker_binding: platform_engineering
+    risk_profile: high
+    freshness_policy: live-verification-required
+
+worker_definition:
+  path: community/workers/platform-reliability-core-workers.yaml
+  canonical_git_blob_sha: 845432fba9e4c5140e19707a6dc814322b1e4e54
+  workers:
+    - distributed_systems
+    - database_reliability
+    - network_engineering
+    - platform_engineering
+
+responsibility_boundaries:
+  distributed_systems:
+    owns: distributed_invariants_consistency_coordination_replication_and_recovery
+    does_not_replace:
+      - architecture
+      - database_reliability
+      - network_engineering
+      - application_implementation
+  database_reliability:
+    owns: operational_database_durability_recovery_safe_change_and_fleet_reliability
+    does_not_replace:
+      - data_engineering
+      - distributed_systems
+      - application_business_logic
+  network_engineering:
+    owns: routing_dns_load_balancing_connectivity_segmentation_and_packet_path_correctness
+    does_not_replace:
+      - application_authorization
+      - distributed_state_correctness
+      - security_authority
+  platform_engineering:
+    owns: internal_platform_products_self_service_catalogs_golden_paths_and_platform_governance
+    does_not_replace:
+      - devops_implementation
+      - service_team_ownership
+      - external_product_management
+
+completed_gates:
+  - team_charter_exists
+  - worker_definition_exists
+  - specialist_cards_exist
+  - independent_verification_defined
+  - critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - canonical_preservation_tests_present
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mappings_exist
+  - provider_diverse_fallbacks_exist
+  - conformance_datasets_exist
+  - existing_devops_and_devsecops_reallocations_are_implemented
+
+activation_rules:
+  - no_active_platform_reliability_route_until_every_pending_gate_is_complete
+  - staged_specialists_must_not_enter_the_canonical_active_registry_before_route_conformance
+  - existing_devops_and_devsecops_cards_remain_unchanged_until_a_separate_allocation_change
+  - database_reliability_must_not_absorb_data_engineering
+  - network_reachability_must_not_be_treated_as_application_authorization
+  - platform_engineering_must_not_absorb_service_team_ownership
+  - critical_database_and_shared_platform_changes_require_qualified_human_approval
+  - six_card_regulated_evidence_pilot_scope_remains_unchanged
