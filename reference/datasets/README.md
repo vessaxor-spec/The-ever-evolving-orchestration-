@@ -48,6 +48,12 @@ The fixture protects explicit market boundaries, current-data requirements, meth
 
 The fixture protects data-quality validation, statistical power, significance and uncertainty reporting, causal restraint, experiment discipline, anomaly classification, reproducibility, model-QA boundaries, provider-diverse routing, and separation from data-pipeline engineering and business-strategy authority.
 
+## Compliance worker conformance
+
+[`compliance-worker-conformance.yaml`](compliance-worker-conformance.yaml) binds the `compliance-auditor` specialist to the dedicated Review Team `compliance` worker.
+
+The fixture protects jurisdiction and role applicability, current-authority traceability, control-to-evidence mapping, design versus operating-effectiveness classification, privacy and data-flow review, audit-impact triage, critical-risk human approval, provider-diverse routing, and separation from legal opinions, audit certification, technical implementation, security engineering, and self-approval.
+
 ## Configuration warning baseline
 
 [`configuration-warning-baseline.yaml`](configuration-warning-baseline.yaml) records known inconsistencies currently exposed by configuration validation.
