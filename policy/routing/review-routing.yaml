@@ -1,0 +1,69 @@
+version: 0.1
+status: public-draft
+reviewed_at: 2026-08-06
+
+policy: >-
+  These implementation routes are first-class Review Team routes. They are
+  loaded alongside the shared routing policy without changing or weakening
+  authoritative specialist specifications or existing review routes.
+
+routing:
+  compliance_review:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+      purpose: determine applicability, evaluate control design and operating evidence, classify findings, and produce traceable compliance and governance conclusions
+    authority_research:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: retrieve current laws, regulator guidance, standards, enforcement materials, framework versions, and authoritative implementation evidence
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+      purpose: preserve compliance reasoning, control mapping, and evidence analysis when the Anthropic route is unavailable
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+      purpose: independently verify applicability, governing authority, framework version, evidence sufficiency, finding severity, exceptions, and remediation logic
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+      use_when:
+        - configuration_or_repository_evidence_is_available
+        - control_operation_can_be_executably_checked
+        - data_flow_or_access_control_claim_requires_validation
+        - evidence_collection_logic_requires_reproduction
+    escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+      use_when:
+        - active_or_likely_regulatory_violation
+        - prohibited_or_high_risk_ai_use
+        - material_personal_or_regulated_data_exposure
+        - critical_control_failure
+        - audit_qualification_or_certification_risk
+        - regulator_or_customer_notification_trigger
+        - material_conflict_between_authorities_or_frameworks
+        - evidence_does_not_support_compliance_claim
+    required_controls:
+      - jurisdiction_role_and_scope_determination
+      - current_authority_and_version_trace
+      - design_vs_operating_effectiveness_classification
+      - control_to_evidence_trace
+      - privacy_and_data_flow_review_when_applicable
+      - audit_impact_and_residual_risk_classification
+      - remediation_owner_and_deadline
+      - independent_verification
+      - qualified_human_approval
