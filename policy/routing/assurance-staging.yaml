@@ -1,0 +1,92 @@
+version: 0.1
+status: staged
+reviewed_at: 2026-08-06
+team: assurance
+team_charter: community/teams/assurance-team.md
+activation_ready: false
+
+specialists:
+  privacy-engineer:
+    card_path: community/specialists/privacy-engineer.md
+    canonical_blob_sha: 7a458680726905ed2d259392a3efda9d32c04fc2
+    worker_binding: privacy_engineering
+    risk_profile: critical
+  functional-safety-engineer:
+    card_path: community/specialists/functional-safety-engineer.md
+    canonical_blob_sha: 01a489a93ee2564933344b862614dc47f3e6484f
+    worker_binding: functional_safety
+    risk_profile: critical
+  formal-methods-engineer:
+    card_path: community/specialists/formal-methods-engineer.md
+    canonical_blob_sha: 1f050acc85c5466ee2165c02736e4d951cc8f25a
+    worker_binding: formal_methods
+    risk_profile: high
+  application-security-engineer:
+    card_path: community/specialists/application-security-engineer.md
+    canonical_blob_sha: 770620ce035dfeced3de01c281f514a1b7b5789f
+    worker_binding: application_security
+    risk_profile: critical
+
+worker_contract:
+  path: community/workers/assurance-workers.yaml
+  canonical_blob_sha: 036f957c1866decf99a793b8b9b7765fe4b60ed9
+  expected_workers:
+    - privacy_engineering
+    - functional_safety
+    - formal_methods
+    - application_security
+
+preserved_existing_specialists:
+  compliance-auditor:
+    card_path: community/specialists/compliance-auditor.md
+    canonical_blob_sha: 438022d8543b219b6e5cb40b649c141e43b0aac0
+    boundary: compliance_applicability_control_mapping_and_audit_evidence
+  security-engineer:
+    card_path: community/specialists/security-engineer.md
+    canonical_blob_sha: 4d132a2e2042b59763124a968deda308425c6791
+    boundary: broad_security_architecture_detection_threat_and_cross_domain_assurance
+
+standards_checkpoint:
+  privacy_engineering:
+    published_framework: NIST Privacy Framework 1.0
+    draft_not_governing_by_default: NIST Privacy Framework 1.1 Initial Public Draft
+  functional_safety:
+    horizontal_reference: IEC 61508 series
+    published_part_checkpoint: IEC 61508-6:2010 Edition 2.0
+    automotive_published_series: ISO 26262:2018 Edition 2
+    automotive_draft_not_governing_by_default: ISO 26262 Edition 3 working drafts
+  formal_methods:
+    principle: formal_evidence_is_bounded_by_model_assumptions_trusted_base_and_implementation_correspondence
+    testing_still_required: true
+  application_security:
+    latest_stable_verification_standard: OWASP ASVS 5.0.0
+    versioned_requirement_references_required: true
+
+completed_gates:
+  - team_charter_exists
+  - worker_definition_exists
+  - specialist_cards_exist
+  - independent_verification_defined
+  - critical_risk_has_qualified_human_approval
+  - freshness_policy_present
+  - standards_posture_documented
+  - canonical_preservation_test_present
+  - responsibility_boundaries_defined
+
+pending_gates:
+  - routing_policy_exists
+  - capability_mapping_exists
+  - provider_diverse_fallback_exists
+  - conformance_dataset_exists
+
+activation_rules:
+  - no_assurance_route_is_active_from_this_file
+  - all_pending_gates_must_pass_before_team_activation
+  - assurance_defines_and_builds_claims_controls_and_evidence_but_does_not_self_verify
+  - compliance_legal_security_product_and_domain_authorities_remain_distinct
+  - privacy_engineering_does_not_issue_legal_or_compliance_judgment
+  - functional_safety_does_not_replace_regulator_certifier_or_release_authority
+  - formal_methods_does_not_turn_bounded_or_assumption_dependent_evidence_into_unbounded_claims
+  - application_security_requires_written_authorization_before_active_testing
+  - critical_privacy_safety_or_application_security_decisions_require_qualified_human_approval
+  - evidence_pilot_scope_remains_exactly_six_until_maintainability_gate_passes
