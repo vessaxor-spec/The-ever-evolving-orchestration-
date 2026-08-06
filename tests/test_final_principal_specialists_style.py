@@ -11,6 +11,8 @@ ARTIFACTS = [
     REPO_ROOT / "community" / "workers" / "final-principal-expansion-workers.yaml",
     REPO_ROOT / "policy" / "routing" / "final-principal-specialists-staging.yaml",
     REPO_ROOT / "docs" / "methodology" / "final-principal-specialists-staging-2026-08-06.md",
+    REPO_ROOT / "tests" / "test_final_principal_specialists_staging.py",
+    REPO_ROOT / "tests" / "test_final_principal_specialists_style.py",
 ]
 
 
