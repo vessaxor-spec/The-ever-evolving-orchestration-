@@ -1,0 +1,223 @@
+version: 0.1
+status: pilot
+reviewed_at: 2026-08-06
+purpose: Prove maintainable evidence-backed freshness for consequential specialist use before any registry-wide rollout.
+
+controls:
+  consequential_use_requires_unexpired_evidence: true
+  high_and_critical_require_independent_verification: true
+  stale_or_unavailable_behavior: refuse_consequential_claim
+  conflicting_authorities_behavior: escalate_and_present_conflict
+  source_resolution_cadence_days: 7
+
+pilot_specialists:
+  legal-operations:
+    card_path: community/specialists/legal-operations.md
+    canonical_blob_sha: f92624a12585e0ae54aff7c9dcb0e82d417cad5f
+    risk_tier: critical
+    claims:
+      - id: legal-us-frcp-37e-preservation
+        statement: Rule 37(e) applies when electronically stored information that should have been preserved in anticipation or conduct of United States federal civil litigation is lost because reasonable preservation steps were not taken.
+        volatility_class: slow_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: United States
+          scope: federal civil litigation and electronically stored information
+        authority:
+          tier: 1
+          organization: Administrative Office of the United States Courts
+          source_type: primary_law
+          url: https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure
+          expected_hosts: [www.uscourts.gov]
+          locator: Federal Rules of Civil Procedure, Rule 37(e)
+          source_date_basis: effective
+          source_date: 2025-12-01
+        verified_at: 2026-08-06
+        expires_at: 2026-11-04
+        verification:
+          prepared_by: research
+          verified_by: legal_review
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict
+
+  tax-strategist:
+    card_path: community/specialists/tax-strategist.md
+    canonical_blob_sha: a8552816a87a202549300db9ac091cd292246011
+    risk_tier: critical
+    claims:
+      - id: tax-us-record-retention
+        statement: For United States federal income tax, records supporting income, deductions, or credits must generally be retained until the applicable period of limitations expires, with longer periods applying in specified cases.
+        volatility_class: slow_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: United States
+          scope: federal income-tax recordkeeping
+        authority:
+          tier: 1
+          organization: Internal Revenue Service
+          source_type: regulator
+          url: https://www.irs.gov/businesses/small-businesses-self-employed/how-long-should-i-keep-records
+          expected_hosts: [www.irs.gov]
+          locator: Period of limitations that apply to income tax returns
+          source_date_basis: last_updated
+          source_date: 2026-06-30
+        verified_at: 2026-08-06
+        expires_at: 2026-11-04
+        verification:
+          prepared_by: research
+          verified_by: tax_review
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict
+
+  loan-officer-assistant:
+    card_path: community/specialists/loan-officer-assistant.md
+    canonical_blob_sha: 0f153d2d31dfca7c6448dc81842c0de23a4bf190
+    risk_tier: critical
+    claims:
+      - id: lending-us-general-qm-dti
+        statement: The current United States General Qualified Mortgage definition does not impose the former universal 43 percent debt-to-income ceiling; the 2021 amendments replaced it with annual-percentage-rate thresholds while preserving ability-to-repay requirements.
+        volatility_class: fast_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: United States
+          scope: Regulation Z General Qualified Mortgage classification
+        authority:
+          tier: 1
+          organization: Consumer Financial Protection Bureau
+          source_type: regulator
+          url: https://www.consumerfinance.gov/rules-policy/regulations/1026/interp-43/
+          expected_hosts: [www.consumerfinance.gov]
+          locator: Official interpretation of paragraph 43(e)(2)
+          source_date_basis: effective
+          source_date: 2021-03-01
+        verified_at: 2026-08-06
+        expires_at: 2026-09-05
+        verification:
+          prepared_by: research
+          verified_by: lending_compliance
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict
+
+  compliance-auditor:
+    card_path: community/specialists/compliance-auditor.md
+    canonical_blob_sha: 438022d8543b219b6e5cb40b649c141e43b0aac0
+    risk_tier: critical
+    claims:
+      - id: compliance-nist-csf-2-govern
+        statement: NIST Cybersecurity Framework 2.0 organizes cybersecurity outcomes into six functions and adds Govern as a first-class function.
+        volatility_class: slow_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: framework-defined
+          scope: voluntary cybersecurity risk-management use
+        authority:
+          tier: 1
+          organization: National Institute of Standards and Technology
+          source_type: standards_body
+          url: https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20
+          expected_hosts: [www.nist.gov]
+          locator: NIST CSWP 29, published February 26 2024
+          source_date_basis: published
+          source_date: 2024-02-26
+        verified_at: 2026-08-06
+        expires_at: 2026-11-04
+        verification:
+          prepared_by: research
+          verified_by: compliance
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict
+
+  civil-engineer:
+    card_path: community/specialists/civil-engineer.md
+    canonical_blob_sha: 139f8d61dce126846db6bc5e672572e04921193f
+    risk_tier: critical
+    claims:
+      - id: civil-asce-7-current-publication
+        statement: ASCE/SEI 7-22 is the current published edition of the ASCE 7 minimum-design-load standard.
+        volatility_class: slow_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: standard publication status
+          scope: structural loading standard selection
+        authority:
+          tier: 1
+          organization: American Society of Civil Engineers
+          source_type: standards_body
+          url: https://www.asce.org/communities/institutes-and-technical-groups/structural-engineering-institute/asce-7-and-sei-standards
+          expected_hosts: [www.asce.org]
+          locator: Current Edition, ASCE/SEI 7
+          source_date_basis: observed
+          source_date: 2026-08-06
+        verified_at: 2026-08-06
+        expires_at: 2026-11-04
+        verification:
+          prepared_by: research
+          verified_by: civil_engineering_review
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict
+      - id: civil-model-code-adoption
+        statement: A model building code becomes legally effective only through adoption by the authority having jurisdiction, which may adopt a specified edition with local amendments.
+        volatility_class: slow_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: authority having jurisdiction
+          scope: building-code applicability and edition selection
+        authority:
+          tier: 1
+          organization: International Code Council
+          source_type: standards_body
+          url: https://www.iccsafe.org/advocacy/code-adoption-resources/
+          expected_hosts: [www.iccsafe.org]
+          locator: Adoption of ICC Codes and Standards FAQ
+          source_date_basis: observed
+          source_date: 2026-08-06
+        verified_at: 2026-08-06
+        expires_at: 2026-11-04
+        verification:
+          prepared_by: research
+          verified_by: civil_engineering_review
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict
+
+  embedded-engineer:
+    card_path: community/specialists/embedded-engineer.md
+    canonical_blob_sha: a5be65553c08cd024057260e2ba33e6f6ecf580e
+    risk_tier: high
+    claims:
+      - id: embedded-c-language-current-standard
+        statement: ISO/IEC 9899:2024 is the published fifth edition of the C programming-language standard and supersedes the withdrawn 2018 edition.
+        volatility_class: slow_moving
+        consequential_use: true
+        applicability:
+          jurisdiction: international standard
+          scope: C language edition and conformance claims
+        authority:
+          tier: 1
+          organization: International Organization for Standardization
+          source_type: standards_body
+          url: https://www.iso.org/standard/82075.html
+          expected_hosts: [www.iso.org]
+          locator: ISO/IEC 9899:2024, edition 5, status published
+          source_date_basis: published
+          source_date: 2024-10-31
+        verified_at: 2026-08-06
+        expires_at: 2026-11-04
+        verification:
+          prepared_by: research
+          verified_by: embedded_systems_review
+          independent: true
+        required_behavior:
+          stale_or_unavailable: refuse_consequential_claim
+          conflict: escalate_and_present_conflict

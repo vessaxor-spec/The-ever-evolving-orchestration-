@@ -18,6 +18,7 @@ on:
       - "community/workers/**"
       - "community/specialists/**"
       - ".github/workflows/reference-ci.yml"
+      - ".github/workflows/specialist-evidence-resolution.yml"
   workflow_dispatch:
 
 permissions:
@@ -54,6 +55,9 @@ jobs:
 
       - name: Run automated tests
         run: pytest -q
+
+      - name: Validate regulated specialist evidence
+        run: python -m teo_reference.evidence --repo-root .
 
       - name: Parse JSON schemas
         run: |
