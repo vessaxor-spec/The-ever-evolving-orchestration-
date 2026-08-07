@@ -35,6 +35,7 @@ from .runtime_telemetry import (
     InMemoryRuntimeTelemetrySink,
     JsonlRuntimeTelemetrySink,
     RuntimeTelemetryEvent,
+    RuntimeTelemetryPolicy,
     RuntimeTelemetrySink,
 )
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
@@ -74,6 +75,7 @@ __all__ = [
     "RetryExecution",
     "RetryPolicy",
     "RuntimeTelemetryEvent",
+    "RuntimeTelemetryPolicy",
     "RuntimeTelemetrySink",
     "SpecialistRoutingEngine",
     "TaskRequest",
