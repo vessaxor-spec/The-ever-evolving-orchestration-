@@ -1,9 +1,12 @@
 """TEO Phase 5 reference orchestration engine."""
 
 from .anthropic_adapter import AnthropicMessagesAdapter, execute_anthropic_canary_once
+from .anthropic_verifier import AnthropicLiveVerifier
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
 from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
+from .google_verifier import GoogleLiveVerifier
 from .openai_adapter import OpenAIResponsesAdapter, execute_openai_canary_once
+from .openai_verifier import OpenAILiveVerifier
 from .provider_adapter import (
     ProviderAdapter,
     ProviderAdapterContractError,
@@ -38,12 +41,24 @@ from .runtime_telemetry import (
     RuntimeTelemetryPolicy,
     RuntimeTelemetrySink,
 )
+from .runtime_verification import (
+    active_execution_from_outcome,
+    execute_live_verification,
+    verify_guarded_canary_outcome,
+)
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 from .specialist_routing import SpecialistRoutingEngine
+from .verification_adapter import (
+    LiveVerificationDecision,
+    LiveVerificationError,
+    LiveVerificationRequest,
+    LiveVerificationResponse,
+)
 
 OrchestrationEngine = SpecialistRoutingEngine
 
 __all__ = [
+    "AnthropicLiveVerifier",
     "AnthropicMessagesAdapter",
     "BaseOrchestrationEngine",
     "CanaryRuntimeOutcome",
@@ -51,11 +66,17 @@ __all__ = [
     "DispatchRecord",
     "FinalOutcome",
     "GeminiInteractionsAdapter",
+    "GoogleLiveVerifier",
     "HeaderProviderConnection",
     "InMemoryCircuitStateStore",
     "InMemoryRuntimeTelemetrySink",
     "JsonFileCircuitStateStore",
     "JsonlRuntimeTelemetrySink",
+    "LiveVerificationDecision",
+    "LiveVerificationError",
+    "LiveVerificationRequest",
+    "LiveVerificationResponse",
+    "OpenAILiveVerifier",
     "OpenAIResponsesAdapter",
     "OrchestrationEngine",
     "ProviderAdapter",
@@ -80,10 +101,13 @@ __all__ = [
     "SpecialistRoutingEngine",
     "TaskRequest",
     "VerificationResult",
+    "active_execution_from_outcome",
     "execute_anthropic_canary_once",
     "execute_gemini_canary_once",
     "execute_guarded_canary",
+    "execute_live_verification",
     "execute_openai_canary_once",
     "execute_provider_once",
     "execute_with_transient_retry",
+    "verify_guarded_canary_outcome",
 ]
