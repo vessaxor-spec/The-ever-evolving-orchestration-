@@ -1,5 +1,6 @@
 """TEO Phase 5 reference orchestration engine."""
 
+from .anthropic_adapter import AnthropicMessagesAdapter, execute_anthropic_canary_once
 from .engine import OrchestrationEngine
 from .provider_adapter import (
     ProviderAdapter,
@@ -9,18 +10,23 @@ from .provider_adapter import (
     ProviderFailure,
     execute_provider_once,
 )
+from .provider_connection import HeaderProviderConnection, ProviderConnection
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 
 __all__ = [
+    "AnthropicMessagesAdapter",
     "DispatchRecord",
     "FinalOutcome",
+    "HeaderProviderConnection",
     "OrchestrationEngine",
     "ProviderAdapter",
     "ProviderAdapterContractError",
+    "ProviderConnection",
     "ProviderExecutionRequest",
     "ProviderExecutionResponse",
     "ProviderFailure",
     "TaskRequest",
     "VerificationResult",
+    "execute_anthropic_canary_once",
     "execute_provider_once",
 ]
