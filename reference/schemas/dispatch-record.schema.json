@@ -3,20 +3,22 @@
   "$id": "https://teo.example/schemas/dispatch-record.schema.json",
   "title": "TEO Dispatch Record",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "task_id", "dispatch_id", "created_at", "task", "task_type", "risk_level",
-    "selected_team", "selected_worker", "required_capabilities",
-    "selected_implementation", "verification", "routing_explanation", "status"
+    "selected_team", "selected_worker", "selected_specialist", "specialist_source",
+    "specialist_risk_profile", "required_capabilities", "selected_implementation",
+    "fallback_implementation", "verification", "routing_explanation", "warnings", "status"
   ],
   "properties": {
-    "task_id": {"type": "string"},
-    "dispatch_id": {"type": "string"},
+    "task_id": {"type": "string", "minLength": 1},
+    "dispatch_id": {"type": "string", "minLength": 1},
     "created_at": {"type": "string", "format": "date-time"},
-    "task": {"type": "string"},
-    "task_type": {"type": "string"},
+    "task": {"type": "string", "minLength": 1},
+    "task_type": {"type": "string", "minLength": 1},
     "risk_level": {"enum": ["low", "medium", "high", "critical"]},
-    "selected_team": {"type": "string"},
-    "selected_worker": {"type": "string"},
+    "selected_team": {"type": "string", "minLength": 1},
+    "selected_worker": {"type": "string", "minLength": 1},
     "selected_specialist": {"type": ["string", "null"]},
     "specialist_source": {"type": ["string", "null"]},
     "specialist_risk_profile": {"type": ["string", "null"]},
@@ -25,9 +27,10 @@
     "fallback_implementation": {"oneOf": [{"$ref": "#/$defs/implementation"}, {"type": "null"}]},
     "verification": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["team", "method", "implementation", "independent", "human_approval_required"],
       "properties": {
-        "team": {"type": "string"},
+        "team": {"type": "string", "minLength": 1},
         "method": {"type": "array", "items": {"type": "string"}},
         "implementation": {"$ref": "#/$defs/implementation"},
         "independent": {"const": true},
@@ -41,14 +44,15 @@
   "$defs": {
     "implementation": {
       "type": "object",
-      "required": ["agent", "model", "source"],
+      "additionalProperties": false,
+      "required": ["agent", "model", "profile", "provider_family", "availability", "source", "reasoning"],
       "properties": {
-        "agent": {"type": "string"},
-        "model": {"type": "string"},
+        "agent": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
         "profile": {"type": ["string", "null"]},
         "provider_family": {"type": ["string", "null"]},
         "availability": {"type": ["string", "null"]},
-        "source": {"type": "string"},
+        "source": {"type": "string", "minLength": 1},
         "reasoning": {"type": ["string", "null"]}
       }
     }
