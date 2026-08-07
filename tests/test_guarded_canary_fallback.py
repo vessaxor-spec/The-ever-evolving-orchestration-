@@ -139,6 +139,8 @@ def test_provider_failure_redispatches_to_declared_fallback_with_new_verifier(tm
         outcome.fallback_dispatch.verification.implementation.model
         != outcome.primary_dispatch.verification.implementation.model
     )
+    assert outcome.primary_attempts == 1
+    assert outcome.fallback_attempts == 1
     assert len(anthropic_calls) == 1
     assert len(google_calls) == 1
     assert openai_calls == []
@@ -167,7 +169,7 @@ def test_model_failure_redispatches_with_failed_model_blocked(tmp_path: Path) ->
     assert len(google_calls) == 1
 
 
-def test_transient_failure_does_not_fallback_before_retry_policy_exists(tmp_path: Path) -> None:
+def test_transient_failure_retries_same_dispatch_without_fallback(tmp_path: Path) -> None:
     anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
     outcome = execute_guarded_canary(
@@ -178,17 +180,21 @@ def test_transient_failure_does_not_fallback_before_retry_policy_exists(tmp_path
             "google": connection("google", google_calls, status=200, payload=gemini_success()),
         },
         artifact_root=tmp_path,
+        sleeper=lambda _: None,
+        random_source=lambda: 0.5,
     )
 
     assert outcome.status == "execution_failed"
     assert outcome.primary_response.failure is not None
     assert outcome.primary_response.failure.scope == "transient"
+    assert outcome.primary_attempts == 2
+    assert outcome.primary_retry_delays_seconds == (0.5,)
     assert outcome.fallback_dispatch is None
-    assert len(anthropic_calls) == 1
+    assert len(anthropic_calls) == 2
     assert google_calls == []
 
 
-def test_request_failure_does_not_fallback(tmp_path: Path) -> None:
+def test_request_failure_does_not_retry_or_fallback(tmp_path: Path) -> None:
     anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
     outcome = execute_guarded_canary(
@@ -212,6 +218,7 @@ def test_request_failure_does_not_fallback(tmp_path: Path) -> None:
     assert outcome.status == "execution_failed"
     assert outcome.primary_response.failure is not None
     assert outcome.primary_response.failure.scope == "request"
+    assert outcome.primary_attempts == 1
     assert outcome.fallback_dispatch is None
     assert google_calls == []
 
@@ -236,14 +243,19 @@ def test_failed_fallback_does_not_chain_to_a_third_provider(tmp_path: Path) -> N
             "openai": connection("openai", openai_calls, status=200, payload={}),
         },
         artifact_root=tmp_path,
+        sleeper=lambda _: None,
+        random_source=lambda: 0.5,
     )
 
     assert outcome.status == "execution_failed"
     assert outcome.fallback_dispatch is not None
     assert outcome.fallback_response is not None
     assert outcome.fallback_response.failure is not None
+    assert outcome.primary_attempts == 1
+    assert outcome.fallback_attempts == 2
+    assert outcome.fallback_retry_delays_seconds == (0.5,)
     assert len(anthropic_calls) == 1
-    assert len(google_calls) == 1
+    assert len(google_calls) == 2
     assert openai_calls == []
 
 
