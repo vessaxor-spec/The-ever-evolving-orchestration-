@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 
 from teo_reference.verifier_calibration import (
     CalibrationError,
@@ -53,6 +53,7 @@ def observation(
     model: str = "gemini-3.6-flash",
     reasoning: str | None = "medium",
     run_id: str = "run-1",
+    observed_at: str = "2026-08-07T13:00:00Z",
     rubric_version: str = "1.0",
     verification_policy_version: str = "1.1",
     **extra,
@@ -63,6 +64,7 @@ def observation(
         "verifier_model": model,
         "verifier_reasoning": reasoning,
         "run_id": run_id,
+        "observed_at": observed_at,
         "rubric_version": rubric_version,
         "verification_policy_version": verification_policy_version,
         "decision": gold,
@@ -151,6 +153,7 @@ def test_perfect_observations_produce_zero_conditional_error_without_claiming_qu
             case.case_id,
             gold_dict(case),
             run_id=f"run-{index}",
+            observed_at=f"2026-08-07T13:{index:02d}:00Z",
             duration_ms=100 + index,
             input_tokens=10,
             output_tokens=5,
@@ -177,6 +180,9 @@ def test_perfect_observations_produce_zero_conditional_error_without_claiming_qu
     assert report.repeatability_agreement_rate is None
     assert report.cross_verifier_disagreement_cases == []
     assert report.verifier_routes == ["google/gemini-3.6-flash/medium"]
+    assert report.verifier_provider_families == ["google"]
+    assert report.observation_window_start == "2026-08-07T13:01:00Z"
+    assert report.observation_window_end == "2026-08-07T13:08:00Z"
     assert report.total_input_tokens == 80
     assert report.total_output_tokens == 40
 
@@ -273,6 +279,7 @@ def test_observation_contract_rejects_content_and_unknown_fields(tmp_path: Path)
                 "verifier_model": "gemini-3.6-flash",
                 "verifier_reasoning": "medium",
                 "run_id": "run-1",
+                "observed_at": "2026-08-07T13:00:00Z",
                 "rubric_version": "1.0",
                 "verification_policy_version": "1.1",
                 "execution_role": "primary",
@@ -296,9 +303,30 @@ def test_observation_contract_rejects_content_and_unknown_fields(tmp_path: Path)
         ("retry_count", True, "retry_count must be a non-negative integer"),
         ("fallback_used", "false", "fallback_used must be a boolean"),
         ("case_id", 42, "case_id must be a non-empty string"),
+        ("observed_at", "2026-08-07 13:00:00", "observed_at must include a UTC offset"),
     ],
 )
-def test_parser_rejects_schema_incompatible_type_coercion(field, value, message) -> None:
+def test_parser_rejects_schema_incompatible_type_or_time_coercion(field, value, message) -> None:
+    payload = {
+        "case_id": "correct-two-labels",
+        "verifier_provider_family": "google",
+        "verifier_model": "gemini-3.6-flash",
+        "verifier_reasoning": "medium",
+        "run_id": "run-1",
+        "observed_at": "2026-08-07T13:00:00Z",
+        "rubric_version": "1.0",
+        "verification_policy_version": "1.1",
+        "execution_role": "primary",
+        "retry_count": 0,
+        "fallback_used": False,
+        "decision": decision("passed"),
+    }
+    payload[field] = value
+    with pytest.raises(CalibrationError, match=message):
+        CalibrationObservation.from_dict(payload)
+
+
+def test_parser_rejects_missing_required_observation_fields() -> None:
     payload = {
         "case_id": "correct-two-labels",
         "verifier_provider_family": "google",
@@ -312,8 +340,7 @@ def test_parser_rejects_schema_incompatible_type_coercion(field, value, message)
         "fallback_used": False,
         "decision": decision("passed"),
     }
-    payload[field] = value
-    with pytest.raises(CalibrationError, match=message):
+    with pytest.raises(CalibrationError, match="missing required fields: observed_at"):
         CalibrationObservation.from_dict(payload)
 
 
@@ -330,13 +357,14 @@ def test_parser_rejects_execution_role_fallback_disagreement() -> None:
 def test_observation_json_schema_is_strict_content_free_and_route_consistent() -> None:
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
-    validator = Draft202012Validator(schema)
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
     valid = {
         "case_id": "correct-two-labels",
         "verifier_provider_family": "google",
         "verifier_model": "gemini-3.6-flash",
         "verifier_reasoning": "medium",
         "run_id": "run-1",
+        "observed_at": "2026-08-07T13:00:00Z",
         "rubric_version": "1.0",
         "verification_policy_version": "1.1",
         "execution_role": "primary",
@@ -357,6 +385,14 @@ def test_observation_json_schema_is_strict_content_free_and_route_consistent() -
     string_retry["retry_count"] = "1"
     assert list(validator.iter_errors(string_retry))
 
+    missing_timestamp = dict(valid)
+    del missing_timestamp["observed_at"]
+    assert list(validator.iter_errors(missing_timestamp))
+
+    invalid_timestamp = dict(valid)
+    invalid_timestamp["observed_at"] = "not-a-time"
+    assert list(validator.iter_errors(invalid_timestamp))
+
     inconsistent_fallback = dict(valid)
     inconsistent_fallback["execution_role"] = "fallback"
     inconsistent_fallback["fallback_used"] = False
@@ -375,7 +411,7 @@ def test_duplicate_observation_identity_is_rejected() -> None:
 @pytest.mark.parametrize(
     ("field", "value", "message"),
     [
-        ("rubric_version", "0.9", "unsupported rubric version"),
+        ("rubric_version", "0.9", "rubric version"),
         ("verification_policy_version", "1.0", "unsupported verification policy version"),
     ],
 )
@@ -409,10 +445,42 @@ def test_evidence_readiness_stays_closed_when_routes_or_repeats_are_missing() ->
     assert readiness.data_requirements_met is False
     assert readiness.distinct_verifier_routes == 1
     assert readiness.required_distinct_verifier_routes == 3
+    assert readiness.distinct_verifier_provider_families == 1
+    assert readiness.required_distinct_verifier_provider_families == 3
     assert readiness.undercovered_case_routes
     assert readiness.independent_human_review_required is True
     assert readiness.quality_claims_authorized is False
     assert readiness.scope_expansion_authorized is False
+
+
+def test_three_routes_from_one_provider_do_not_satisfy_provider_diversity() -> None:
+    policy = load_calibration_policy(POLICY_PATH)
+    cases = load_gold_cases(GOLD_PATH, policy=policy)
+    routes = [
+        ("google", "gemini-3.6-flash", "low"),
+        ("google", "gemini-3.6-flash", "medium"),
+        ("google", "gemini-3.1-pro-preview", "high"),
+    ]
+    observations = []
+    for case in cases:
+        for route_index, (provider, model, reasoning) in enumerate(routes, start=1):
+            for run in range(1, 4):
+                observations.append(
+                    observation(
+                        case.case_id,
+                        gold_dict(case),
+                        provider=provider,
+                        model=model,
+                        reasoning=reasoning,
+                        run_id=f"{case.case_id}-{route_index}-{run}",
+                    )
+                )
+
+    readiness = assess_evidence_readiness(cases, observations, policy)
+
+    assert readiness.distinct_verifier_routes == 3
+    assert readiness.distinct_verifier_provider_families == 1
+    assert readiness.data_requirements_met is False
 
 
 def test_evidence_readiness_can_confirm_data_coverage_but_never_self_authorize() -> None:
@@ -443,6 +511,7 @@ def test_evidence_readiness_can_confirm_data_coverage_but_never_self_authorize()
     assert len(observations) == 72
     assert readiness.data_requirements_met is True
     assert readiness.distinct_verifier_routes == 3
+    assert readiness.distinct_verifier_provider_families == 3
     assert readiness.undercovered_case_routes == []
     assert readiness.independent_human_review_required is True
     assert readiness.quality_claims_authorized is False
@@ -460,6 +529,7 @@ def test_calibration_policy_has_no_routing_quality_or_scope_authority() -> None:
     assert policy_raw["gold_corpus"]["deterministic_validation_first"] is True
     assert policy.minimum_runs_per_case_per_verifier == 3
     assert policy.minimum_distinct_verifier_routes == 3
+    assert policy.minimum_distinct_verifier_provider_families == 3
     assert policy.expected_rubric_version == "1.0"
     assert policy.expected_verification_policy_version == "1.1"
     assert policy_raw["expansion_gate"]["automatic_expansion"] is False
