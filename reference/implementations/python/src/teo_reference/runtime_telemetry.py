@@ -7,11 +7,96 @@ from math import isfinite
 from pathlib import Path
 from typing import Any, Literal, Protocol
 
+import yaml
+
 from .provider_adapter import ProviderAdapterContractError, ProviderExecutionResponse, ProviderUsage
 from .schemas import DispatchRecord
 
 TELEMETRY_VERSION = "1"
+TELEMETRY_POLICY_PATH = "policy/runtime/runtime-telemetry.yaml"
 AttemptRole = Literal["primary", "fallback"]
+
+
+@dataclass(frozen=True, slots=True)
+class RuntimeTelemetryPolicy:
+    task_types: frozenset[str]
+    risk_levels: frozenset[str]
+    event_type: str
+    record_every_provider_attempt: bool
+    default_sink: str
+    default_filename: str
+    include_task_or_prompt_content: bool
+    include_model_output_content: bool
+    include_provider_native_payloads: bool
+    include_provider_headers: bool
+    include_credentials_or_authorization: bool
+    include_connection_mechanism: bool
+    calculate_cost: bool
+    calculate_quality: bool
+
+    @classmethod
+    def load(cls, repo_root: str | Path) -> "RuntimeTelemetryPolicy":
+        path = Path(repo_root) / TELEMETRY_POLICY_PATH
+        if not path.is_file():
+            raise ProviderAdapterContractError(f"Runtime telemetry policy not found: {path}")
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict) or data.get("status") != "active":
+            raise ProviderAdapterContractError("Runtime telemetry policy must be an active mapping")
+        scope = data.get("scope")
+        telemetry = data.get("telemetry")
+        if not isinstance(scope, dict) or not isinstance(telemetry, dict):
+            raise ProviderAdapterContractError("Runtime telemetry policy requires scope and telemetry mappings")
+        policy = cls(
+            task_types=frozenset(str(item) for item in scope.get("task_types", [])),
+            risk_levels=frozenset(str(item) for item in scope.get("risk_levels", [])),
+            event_type=str(telemetry.get("event_type") or ""),
+            record_every_provider_attempt=bool(telemetry.get("record_every_provider_attempt", False)),
+            default_sink=str(telemetry.get("default_sink") or ""),
+            default_filename=str(telemetry.get("default_filename") or ""),
+            include_task_or_prompt_content=bool(telemetry.get("include_task_or_prompt_content", False)),
+            include_model_output_content=bool(telemetry.get("include_model_output_content", False)),
+            include_provider_native_payloads=bool(telemetry.get("include_provider_native_payloads", False)),
+            include_provider_headers=bool(telemetry.get("include_provider_headers", False)),
+            include_credentials_or_authorization=bool(
+                telemetry.get("include_credentials_or_authorization", False)
+            ),
+            include_connection_mechanism=bool(telemetry.get("include_connection_mechanism", False)),
+            calculate_cost=bool(telemetry.get("calculate_cost", False)),
+            calculate_quality=bool(telemetry.get("calculate_quality", False)),
+        )
+        policy.validate()
+        return policy
+
+    def validate(self) -> None:
+        if self.task_types != {"high_volume_simple"}:
+            raise ProviderAdapterContractError(
+                "Guarded runtime telemetry must remain scoped to high_volume_simple"
+            )
+        if self.risk_levels != {"low", "medium"}:
+            raise ProviderAdapterContractError(
+                "Guarded runtime telemetry must remain scoped to low and medium risk"
+            )
+        if self.event_type != "provider_attempt":
+            raise ProviderAdapterContractError("Runtime telemetry must record provider_attempt events")
+        if not self.record_every_provider_attempt:
+            raise ProviderAdapterContractError("Runtime telemetry must record every provider attempt")
+        if self.default_sink != "jsonl" or self.default_filename != "runtime-telemetry.jsonl":
+            raise ProviderAdapterContractError("Reference runtime telemetry must use the declared JSONL sink")
+        forbidden_flags = {
+            "task_or_prompt_content": self.include_task_or_prompt_content,
+            "model_output_content": self.include_model_output_content,
+            "provider_native_payloads": self.include_provider_native_payloads,
+            "provider_headers": self.include_provider_headers,
+            "credentials_or_authorization": self.include_credentials_or_authorization,
+            "connection_mechanism": self.include_connection_mechanism,
+            "calculated_cost": self.calculate_cost,
+            "calculated_quality": self.calculate_quality,
+        }
+        enabled = sorted(name for name, value in forbidden_flags.items() if value)
+        if enabled:
+            raise ProviderAdapterContractError(
+                f"Runtime telemetry policy enables unsupported sensitive or derived fields: {', '.join(enabled)}"
+            )
 
 
 @dataclass(frozen=True, slots=True)
