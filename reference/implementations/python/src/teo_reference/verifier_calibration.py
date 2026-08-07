@@ -4,6 +4,7 @@ import argparse
 import json
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from pathlib import Path
 from statistics import mean
 from typing import Any, Literal
@@ -30,6 +31,7 @@ class CalibrationPolicy:
     required_categories: frozenset[str]
     minimum_runs_per_case_per_verifier: int
     minimum_distinct_verifier_routes: int
+    minimum_distinct_verifier_provider_families: int
     expected_rubric_version: str
     expected_verification_policy_version: str
     require_independent_human_review: bool
@@ -60,12 +62,13 @@ class CalibrationObservation:
     verifier_model: str
     verifier_reasoning: str | None
     run_id: str
+    observed_at: str
     rubric_version: str
     verification_policy_version: str
     decision: LiveVerificationDecision
-    execution_role: ExecutionRole = "primary"
-    retry_count: int = 0
-    fallback_used: bool = False
+    execution_role: ExecutionRole
+    retry_count: int
+    fallback_used: bool
     duration_ms: float | None = None
     input_tokens: int | None = None
     output_tokens: int | None = None
@@ -83,6 +86,7 @@ class CalibrationObservation:
             "verifier_model",
             "verifier_reasoning",
             "run_id",
+            "observed_at",
             "rubric_version",
             "verification_policy_version",
             "decision",
@@ -93,29 +97,48 @@ class CalibrationObservation:
             "input_tokens",
             "output_tokens",
         }
+        required = {
+            "case_id",
+            "verifier_provider_family",
+            "verifier_model",
+            "verifier_reasoning",
+            "run_id",
+            "observed_at",
+            "rubric_version",
+            "verification_policy_version",
+            "decision",
+            "execution_role",
+            "retry_count",
+            "fallback_used",
+        }
         unknown = sorted(set(data) - allowed)
+        missing = sorted(required - set(data))
         if unknown:
             raise CalibrationError(
                 "Calibration observation contains unsupported fields: " + ", ".join(unknown)
             )
+        if missing:
+            raise CalibrationError(
+                "Calibration observation is missing required fields: " + ", ".join(missing)
+            )
 
-        decision = data.get("decision")
+        decision = data["decision"]
         if not isinstance(decision, dict):
             raise CalibrationError("Calibration observation decision must be an object")
 
-        role_raw = data.get("execution_role", "primary")
+        role_raw = data["execution_role"]
         if not isinstance(role_raw, str) or role_raw not in {"primary", "fallback"}:
             raise CalibrationError(
                 "Calibration observation execution_role must be primary or fallback"
             )
 
-        retry_raw = data.get("retry_count", 0)
+        retry_raw = data["retry_count"]
         if isinstance(retry_raw, bool) or not isinstance(retry_raw, int) or retry_raw < 0:
             raise CalibrationError(
                 "Calibration observation retry_count must be a non-negative integer"
             )
 
-        fallback_raw = data.get("fallback_used", False)
+        fallback_raw = data["fallback_used"]
         if not isinstance(fallback_raw, bool):
             raise CalibrationError("Calibration observation fallback_used must be a boolean")
         if (role_raw == "fallback") != fallback_raw:
@@ -123,7 +146,7 @@ class CalibrationObservation:
                 "Calibration observation execution_role and fallback_used must agree"
             )
 
-        reasoning_raw = data.get("verifier_reasoning")
+        reasoning_raw = data["verifier_reasoning"]
         if reasoning_raw is not None and (
             not isinstance(reasoning_raw, str) or not reasoning_raw.strip()
         ):
@@ -140,16 +163,17 @@ class CalibrationObservation:
             raise CalibrationError(str(exc)) from exc
 
         return cls(
-            case_id=_required_text(data.get("case_id"), "case_id"),
+            case_id=_required_text(data["case_id"], "case_id"),
             verifier_provider_family=_required_text(
-                data.get("verifier_provider_family"), "verifier_provider_family"
+                data["verifier_provider_family"], "verifier_provider_family"
             ),
-            verifier_model=_required_text(data.get("verifier_model"), "verifier_model"),
+            verifier_model=_required_text(data["verifier_model"], "verifier_model"),
             verifier_reasoning=(reasoning_raw.strip() if reasoning_raw is not None else None),
-            run_id=_required_text(data.get("run_id"), "run_id"),
-            rubric_version=_required_text(data.get("rubric_version"), "rubric_version"),
+            run_id=_required_text(data["run_id"], "run_id"),
+            observed_at=_required_offset_datetime(data["observed_at"], "observed_at"),
+            rubric_version=_required_text(data["rubric_version"], "rubric_version"),
             verification_policy_version=_required_text(
-                data.get("verification_policy_version"), "verification_policy_version"
+                data["verification_policy_version"], "verification_policy_version"
             ),
             decision=parsed_decision,
             execution_role=role_raw,  # type: ignore[arg-type]
@@ -184,6 +208,9 @@ class CalibrationReport:
     repeatability_groups: int
     cross_verifier_disagreement_cases: list[str]
     verifier_routes: list[str]
+    verifier_provider_families: list[str]
+    observation_window_start: str
+    observation_window_end: str
     average_duration_ms: float | None
     p95_duration_ms: float | None
     total_input_tokens: int
@@ -199,6 +226,8 @@ class CalibrationEvidenceReadiness:
     data_requirements_met: bool
     distinct_verifier_routes: int
     required_distinct_verifier_routes: int
+    distinct_verifier_provider_families: int
+    required_distinct_verifier_provider_families: int
     minimum_runs_per_case_per_verifier: int
     undercovered_case_routes: list[str]
     independent_human_review_required: bool
@@ -213,6 +242,18 @@ def _required_text(value: object, name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise CalibrationError(f"{name} must be a non-empty string")
     return value.strip()
+
+
+def _required_offset_datetime(value: object, name: str) -> str:
+    text = _required_text(value, name)
+    normalized = text[:-1] + "+00:00" if text.endswith("Z") else text
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError as exc:
+        raise CalibrationError(f"{name} must be an RFC 3339-compatible timestamp") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise CalibrationError(f"{name} must include a UTC offset")
+    return text
 
 
 def _required_bool(value: object, name: str) -> bool:
@@ -286,6 +327,10 @@ def load_calibration_policy(path: str | Path) -> CalibrationPolicy:
         minimum_distinct_verifier_routes=_required_positive_int(
             observations.get("minimum_distinct_verifier_routes"),
             "observation_requirements.minimum_distinct_verifier_routes",
+        ),
+        minimum_distinct_verifier_provider_families=_required_positive_int(
+            observations.get("minimum_distinct_verifier_provider_families"),
+            "observation_requirements.minimum_distinct_verifier_provider_families",
         ),
         expected_rubric_version=_required_text(
             observations.get("rubric_version"), "observation_requirements.rubric_version"
@@ -584,6 +629,8 @@ def evaluate_calibration(
         lambda: {"observations": 0, "correct": 0}
     )
     verifier_routes: set[str] = set()
+    provider_families: set[str] = set()
+    observed_times: list[tuple[datetime, str]] = []
 
     for observation in observations:
         gold = by_case[observation.case_id].gold
@@ -618,8 +665,15 @@ def evaluate_calibration(
 
         route = observation.verifier_route
         verifier_routes.add(route)
+        provider_families.add(observation.verifier_provider_family)
         repeatability[(observation.case_id, route)].append(predicted.status)
         cross_verifier[observation.case_id].append((route, predicted.status))
+        normalized_time = (
+            observation.observed_at[:-1] + "+00:00"
+            if observation.observed_at.endswith("Z")
+            else observation.observed_at
+        )
+        observed_times.append((datetime.fromisoformat(normalized_time), observation.observed_at))
 
         if observation.execution_role == "fallback":
             path = "fallback"
@@ -664,6 +718,7 @@ def evaluate_calibration(
             "exact_status_accuracy": counts["correct"] / observations_count,
         }
 
+    observed_times.sort(key=lambda item: item[0])
     return CalibrationReport(
         total_gold_cases=len(cases),
         total_observations=total,
@@ -688,6 +743,9 @@ def evaluate_calibration(
         repeatability_groups=len(repeatability_scores),
         cross_verifier_disagreement_cases=sorted(disagreement_cases),
         verifier_routes=sorted(verifier_routes),
+        verifier_provider_families=sorted(provider_families),
+        observation_window_start=observed_times[0][1],
+        observation_window_end=observed_times[-1][1],
         average_duration_ms=(mean(durations) if durations else None),
         p95_duration_ms=_percentile(durations, 0.95) if durations else None,
         total_input_tokens=total_input_tokens,
@@ -704,6 +762,9 @@ def assess_evidence_readiness(
     _validate_observation_set(cases, observations, policy=policy)
 
     routes = sorted({observation.verifier_route for observation in observations})
+    provider_families = sorted(
+        {observation.verifier_provider_family for observation in observations}
+    )
     counts: Counter[tuple[str, str]] = Counter(
         (observation.case_id, observation.verifier_route)
         for observation in observations
@@ -719,6 +780,7 @@ def assess_evidence_readiness(
 
     data_requirements_met = (
         len(routes) >= policy.minimum_distinct_verifier_routes
+        and len(provider_families) >= policy.minimum_distinct_verifier_provider_families
         and not undercovered
         and len(cases) >= policy.minimum_cases
         and policy.required_categories.issubset({case.category for case in cases})
@@ -727,6 +789,8 @@ def assess_evidence_readiness(
         data_requirements_met=data_requirements_met,
         distinct_verifier_routes=len(routes),
         required_distinct_verifier_routes=policy.minimum_distinct_verifier_routes,
+        distinct_verifier_provider_families=len(provider_families),
+        required_distinct_verifier_provider_families=policy.minimum_distinct_verifier_provider_families,
         minimum_runs_per_case_per_verifier=policy.minimum_runs_per_case_per_verifier,
         undercovered_case_routes=undercovered,
         independent_human_review_required=policy.require_independent_human_review,
