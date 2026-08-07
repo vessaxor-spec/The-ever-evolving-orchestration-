@@ -1,0 +1,350 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+policy: >-
+  These worker definitions complete the stable worker layer required by preserved
+  specialist role cards. They are additive routing responsibilities only. The
+  authoritative specialist role card remains the source of domain methodology,
+  boundaries, responsibilities, and output requirements and must not be reduced
+  by these worker definitions.
+
+workers:
+  automation:
+    mission: govern workflow automation and optimization implementation under explicit scope and verification
+    owning_team: engineering
+    responsibilities: [workflow_automation, integration_design, failure_handling, testing]
+    required_capabilities: [coding, high_reasoning, tool_execution, testing]
+    preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
+    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    verification: [targeted_tests, integration_validation, independent_review]
+    escalation: [production_side_effect, irreversible_automation, authority_boundary_change]
+
+  blockchain:
+    mission: coordinate blockchain engineering implementation and review without replacing the authoritative specialist role
+    owning_team: engineering
+    responsibilities: [protocol_implementation, smart_contract_engineering, integration, testing]
+    required_capabilities: [coding, high_reasoning, tool_execution, testing]
+    preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
+    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    verification: [targeted_tests, adversarial_review, independent_review]
+    escalation: [asset_loss_risk, irreversible_state_change, security_critical]
+
+  game_engineering:
+    mission: coordinate game engineering implementation, runtime behavior, and test evidence
+    owning_team: engineering
+    responsibilities: [gameplay_systems, runtime_integration, performance, testing]
+    required_capabilities: [coding, high_reasoning, tool_execution, testing]
+    preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
+    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    verification: [build_validation, runtime_tests, regression_review]
+    escalation: [platform_contract_change, destructive_migration]
+
+  terminal_ui:
+    mission: implement and verify terminal and spatial terminal interface behavior
+    owning_team: engineering
+    responsibilities: [terminal_interface_implementation, interaction_behavior, accessibility, testing]
+    required_capabilities: [coding, high_reasoning, tool_execution, testing]
+    preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
+    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    verification: [build_validation, interaction_tests, accessibility_review]
+    escalation: [security_sensitive_terminal_action, destructive_command_path]
+
+  xr_engineering:
+    mission: implement and verify extended reality applications, interactions, and device integration
+    owning_team: engineering
+    responsibilities: [xr_architecture, device_integration, interaction_implementation, testing]
+    required_capabilities: [coding, high_reasoning, tool_execution, testing]
+    preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
+    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    verification: [device_or_emulator_tests, interaction_validation, regression_review]
+    escalation: [safety_sensitive_interaction, privacy_sensitive_sensor_use]
+
+  brand_design:
+    mission: plan and govern brand design work while preserving specialist creative authority and review boundaries
+    owning_team: planning
+    responsibilities: [brand_system_planning, design_direction, consistency, handoff]
+    required_capabilities: [planning, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [brief_alignment, consistency_review, independent_review]
+    escalation: [regulated_claim, trademark_or_legal_conflict]
+
+  ecommerce_strategy:
+    mission: plan cross-border ecommerce strategy, dependencies, evidence, and controlled execution handoffs
+    owning_team: planning
+    responsibilities: [market_strategy, channel_planning, dependency_analysis, measurement_plan]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [source_review, assumption_review, independent_review]
+    escalation: [regulated_market, tax_or_legal_dependency]
+
+  customer_success:
+    mission: plan customer-success interventions, operating motions, and measurable outcomes
+    owning_team: planning
+    responsibilities: [customer_outcome_planning, adoption_strategy, escalation_design, measurement]
+    required_capabilities: [planning, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [customer_context_review, metric_trace, independent_review]
+    escalation: [contractual_commitment, regulated_customer_data]
+
+  learning_design:
+    mission: plan learning experiences, instructional sequencing, assessment, and evidence of effectiveness
+    owning_team: planning
+    responsibilities: [learning_objectives, instructional_design, assessment_design, evaluation]
+    required_capabilities: [planning, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [objective_alignment, assessment_review, independent_review]
+    escalation: [regulated_training, safety_critical_instruction]
+
+  paid_search:
+    mission: plan paid-search strategy, targeting, measurement, and controlled campaign handoff
+    owning_team: planning
+    responsibilities: [search_strategy, targeting, measurement, optimization_plan]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [platform_policy_review, measurement_review, independent_review]
+    escalation: [regulated_advertising, material_budget_change]
+
+  paid_social:
+    mission: plan paid-social strategy, targeting, creative coordination, and measurement
+    owning_team: planning
+    responsibilities: [social_ad_strategy, audience_planning, measurement, optimization_plan]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [platform_policy_review, measurement_review, independent_review]
+    escalation: [regulated_advertising, material_budget_change]
+
+  product_strategy:
+    mission: plan product strategy, requirements, tradeoffs, sequencing, and outcome measurement
+    owning_team: planning
+    responsibilities: [product_strategy, prioritization, requirements, outcome_definition]
+    required_capabilities: [planning, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [requirement_trace, tradeoff_review, independent_review]
+    escalation: [irreversible_product_commitment, regulated_product_behavior]
+
+  programmatic_media:
+    mission: plan programmatic media buying, targeting, measurement, and platform-control handoffs
+    owning_team: planning
+    responsibilities: [media_strategy, inventory_strategy, targeting, measurement]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [platform_policy_review, measurement_review, independent_review]
+    escalation: [regulated_advertising, material_budget_change]
+
+  regional_marketing:
+    mission: plan region-specific marketing under local platform, cultural, regulatory, and evidence constraints
+    owning_team: planning
+    responsibilities: [regional_strategy, localization, channel_planning, measurement]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [local_source_review, applicability_review, independent_review]
+    escalation: [regulatory_uncertainty, unsupported_local_claim]
+
+  sales_enablement:
+    mission: plan sales coaching and enablement systems with traceable objectives and outcomes
+    owning_team: planning
+    responsibilities: [enablement_strategy, coaching_design, asset_planning, measurement]
+    required_capabilities: [planning, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [objective_alignment, evidence_review, independent_review]
+    escalation: [regulated_claim, contractual_commitment]
+
+  sales_strategy:
+    mission: plan sales strategy, segmentation, coverage, motions, and measurable execution handoffs
+    owning_team: planning
+    responsibilities: [sales_strategy, segmentation, coverage_planning, measurement]
+    required_capabilities: [planning, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [assumption_review, metric_trace, independent_review]
+    escalation: [material_commercial_commitment, regulated_market]
+
+  social_strategy:
+    mission: plan social-media strategy, content systems, platform constraints, and measurement
+    owning_team: planning
+    responsibilities: [social_strategy, content_planning, channel_governance, measurement]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [platform_policy_review, brand_review, independent_review]
+    escalation: [regulated_claim, reputational_crisis]
+
+  solution_engineering:
+    mission: plan technical solution fit, requirements, integration, demonstration, and handoff boundaries
+    owning_team: planning
+    responsibilities: [solution_design, requirement_mapping, integration_planning, validation]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [requirement_trace, feasibility_review, independent_review]
+    escalation: [unsupported_product_commitment, security_or_compliance_dependency]
+
+  supply_chain:
+    mission: plan supply-chain strategy, dependencies, risk, resilience, and measurable controls
+    owning_team: planning
+    responsibilities: [supply_chain_strategy, dependency_mapping, resilience, measurement]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [dependency_review, evidence_review, independent_review]
+    escalation: [critical_supplier_dependency, regulatory_or_trade_constraint]
+
+  generative_media:
+    mission: plan and govern generative-media prompting and production handoffs with current tool constraints
+    owning_team: planning
+    responsibilities: [prompt_system_design, media_workflow_planning, tool_constraint_review, quality_control]
+    required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    verification: [tool_freshness_check, output_review, independent_review]
+    escalation: [rights_or_identity_risk, unsupported_tool_claim]
+
+  content:
+    mission: produce and govern evidence-aware content work under research-team ownership
+    owning_team: research
+    responsibilities: [content_research, synthesis, drafting, evidence_trace]
+    required_capabilities: [research, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    verification: [source_review, factual_review, independent_review]
+    escalation: [regulated_claim, unsupported_material_fact]
+
+  financial_analysis:
+    mission: perform financial analysis under explicit evidence, uncertainty, and authority boundaries
+    owning_team: research
+    responsibilities: [financial_research, quantitative_analysis, evidence_synthesis, uncertainty]
+    required_capabilities: [research, source_grounding, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    verification: [source_review, calculation_review, independent_review]
+    escalation: [investment_or_transaction_authority, unsupported_financial_claim]
+
+  knowledge_management:
+    mission: organize knowledge, provenance, retrieval, and durable information structures
+    owning_team: research
+    responsibilities: [knowledge_structure, provenance, retrieval_design, synthesis]
+    required_capabilities: [research, source_grounding, structured_output]
+    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    verification: [source_trace, structure_review, independent_review]
+    escalation: [conflicting_authoritative_sources, sensitive_information_scope]
+
+  osint:
+    mission: conduct bounded open-source intelligence research with source, legality, privacy, and uncertainty controls
+    owning_team: research
+    responsibilities: [source_discovery, source_validation, synthesis, uncertainty]
+    required_capabilities: [research, source_grounding, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    verification: [source_trace, contradiction_review, independent_review]
+    escalation: [privacy_or_safety_risk, unsupported_identity_claim]
+
+  real_estate:
+    mission: research real-estate information and decision inputs under jurisdiction and evidence constraints
+    owning_team: research
+    responsibilities: [market_research, property_evidence, applicability, synthesis]
+    required_capabilities: [research, source_grounding, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    verification: [source_review, jurisdiction_review, independent_review]
+    escalation: [legal_or_financial_advice_boundary, material_transaction_claim]
+
+  revenue_analytics:
+    mission: analyze revenue performance, drivers, forecasts, and evidence with traceable assumptions
+    owning_team: research
+    responsibilities: [revenue_analysis, forecasting, driver_analysis, evidence_synthesis]
+    required_capabilities: [research, high_reasoning, structured_output]
+    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    verification: [calculation_review, assumption_review, independent_review]
+    escalation: [material_financial_decision, unsupported_forecast]
+
+  legal:
+    mission: coordinate legal-operations analysis with current primary authority and qualified-human boundaries
+    owning_team: review
+    responsibilities: [legal_operations_review, applicability, evidence_assessment, escalation]
+    required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [primary_authority_review, independent_review, qualified_human_review]
+    escalation: [consequential_legal_conclusion, conflicting_authority]
+
+  lending_compliance:
+    mission: review lending and loan-assistance work under current regulation, evidence, and human authority
+    owning_team: review
+    responsibilities: [lending_review, regulatory_applicability, evidence_assessment, escalation]
+    required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [primary_authority_review, independent_review, qualified_human_review]
+    escalation: [consequential_credit_decision, conflicting_authority]
+
+  malware_analysis:
+    mission: review malware evidence and defensive analysis under explicit authorization and containment boundaries
+    owning_team: review
+    responsibilities: [malware_analysis, behavior_review, evidence_assessment, defensive_guidance]
+    required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [artifact_review, independent_security_review, scope_check]
+    escalation: [active_intrusion, destructive_or_offensive_action]
+
+  security_advisory:
+    mission: conduct bounded adversarial security review and red-team advisory under explicit authorization
+    owning_team: review
+    responsibilities: [threat_analysis, abuse_case_review, control_challenge, remediation_review]
+    required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [authorization_check, independent_security_review, evidence_trace]
+    escalation: [critical_vulnerability, active_testing_request, production_access]
+
+  seo_review:
+    mission: review SEO strategy and claims against current platform evidence and measurable outcomes
+    owning_team: review
+    responsibilities: [seo_review, source_validation, claim_review, measurement_review]
+    required_capabilities: [semantic_review, evidence_verification, source_grounding, structured_output]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [current_source_review, claim_review, independent_review]
+    escalation: [unsupported_platform_claim, regulated_content]
+
+  tax_review:
+    mission: review tax strategy inputs under current primary authority, jurisdiction, and qualified-human boundaries
+    owning_team: review
+    responsibilities: [tax_review, jurisdiction, applicability, evidence_assessment]
+    required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [primary_authority_review, independent_review, qualified_human_review]
+    escalation: [consequential_tax_conclusion, conflicting_authority]
+
+  ux_review:
+    mission: review user-experience design for requirements, accessibility, evidence, and failure modes
+    owning_team: review
+    responsibilities: [ux_review, accessibility_review, interaction_review, evidence_assessment]
+    required_capabilities: [semantic_review, adversarial_review, evidence_verification, structured_output]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [requirement_trace, accessibility_review, independent_review]
+    escalation: [safety_critical_interface, regulated_accessibility_requirement]
+
+  documentation_verification:
+    mission: verify technical documentation for factual, technical, structural, and source correctness
+    owning_team: verification
+    responsibilities: [documentation_validation, source_checking, technical_accuracy, acceptance_trace]
+    required_capabilities: [evidence_verification, source_grounding, structured_output]
+    preferred_implementations: [gpt-5.6-terra, claude-sonnet-5, gemini-3.6-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    verification: [source_check, technical_review, acceptance_criteria_trace]
+    escalation: [unsupported_technical_claim, conflicting_primary_sources]
