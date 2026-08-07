@@ -32,6 +32,7 @@ from .runtime_telemetry import (
     AttemptRole,
     JsonlRuntimeTelemetrySink,
     RuntimeTelemetryEvent,
+    RuntimeTelemetryPolicy,
     RuntimeTelemetrySink,
 )
 from .schemas import DispatchRecord, TaskConstraints, TaskRequest
@@ -207,6 +208,7 @@ def execute_guarded_canary(
     artifact_root: str | Path = ".teo/runtime/artifacts",
     retry_policy: RetryPolicy | None = None,
     circuit_breaker: ProviderCircuitBreaker | None = None,
+    telemetry_policy: RuntimeTelemetryPolicy | None = None,
     telemetry_sink: RuntimeTelemetrySink | None = None,
     sleeper: Sleeper = sleep,
     random_source: RandomSource = random,
@@ -226,12 +228,19 @@ def execute_guarded_canary(
 
     policy = retry_policy or RetryPolicy.load(engine.config.root)
     policy.validate()
+    observation_policy = telemetry_policy or RuntimeTelemetryPolicy.load(engine.config.root)
+    observation_policy.validate()
+    if task.task_type not in observation_policy.task_types:
+        raise ProviderAdapterContractError("Task is outside the active runtime telemetry scope")
+
     root = Path(artifact_root)
     circuit = circuit_breaker or ProviderCircuitBreaker(
         ProviderCircuitPolicy.load(engine.config.root),
         JsonFileCircuitStateStore(root.parent / "provider-circuits.json"),
     )
-    telemetry = telemetry_sink or JsonlRuntimeTelemetrySink(root / "runtime-telemetry.jsonl")
+    telemetry = telemetry_sink or JsonlRuntimeTelemetrySink(
+        root / observation_policy.default_filename
+    )
 
     prepared_task = circuit.prepare_task(task)
     circuit_blocks = _circuit_block_delta(task, prepared_task)
@@ -240,6 +249,8 @@ def execute_guarded_canary(
         raise ProviderAdapterContractError(
             "Guarded automatic fallback refuses high and critical risk dispatches"
         )
+    if primary_dispatch.risk_level not in observation_policy.risk_levels:
+        raise ProviderAdapterContractError("Dispatch is outside the active runtime telemetry risk scope")
     circuit.claim_dispatch(primary_dispatch)
 
     primary_execution = _execute_with_retry(
