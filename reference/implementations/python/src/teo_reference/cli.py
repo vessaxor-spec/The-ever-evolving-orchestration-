@@ -9,7 +9,7 @@ import yaml
 
 from .audit import append_jsonl
 from .config import ConfigBundle, ConfigurationError
-from .engine import OrchestrationEngine, RoutingError
+from .engine import RoutingError
 from .schemas import (
     DispatchRecord,
     ExecutionResult,
@@ -18,6 +18,7 @@ from .schemas import (
     VerificationPlan,
     VerificationResult,
 )
+from .specialist_routing import SpecialistRoutingEngine
 
 
 def _load(path: str) -> dict[str, Any]:
@@ -83,7 +84,7 @@ def main(argv: list[str] | None = None) -> int:
             _print({"status": status, "issues": issues})
             return 0
 
-        engine = OrchestrationEngine(bundle)
+        engine = SpecialistRoutingEngine(bundle)
         if args.action == "plan":
             dispatch = engine.dispatch(TaskRequest.from_dict(_load(args.task)))
             result = dispatch.to_dict()
