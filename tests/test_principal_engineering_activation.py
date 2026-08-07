@@ -20,6 +20,7 @@ WARNING_BASELINE_PATH = (
     REPO_ROOT / "reference" / "datasets" / "configuration-warning-baseline.yaml"
 )
 EVIDENCE_PILOT_PATH = REPO_ROOT / "policy" / "specialists" / "evidence-pilot.yaml"
+PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
 
 EXPECTED_NEW_SPECIALISTS = {
     "cloud-architect",
@@ -179,6 +180,7 @@ def test_conformance_dispatches_risk_provider_and_verification() -> None:
                     "task_type": case["task_type"],
                     "risk_level": "low",
                     "specialist": case["specialist"],
+                    "constraints": {"accepted_preview_models": PREVIEW_MODELS},
                 }
             )
         )
