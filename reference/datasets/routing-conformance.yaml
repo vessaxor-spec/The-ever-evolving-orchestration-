@@ -1,6 +1,6 @@
 version: 0.5
 status: public-draft
-reviewed_at: 2026-08-05
+reviewed_at: 2026-08-07
 
 scenarios:
   - id: architecture-high-risk
@@ -22,6 +22,7 @@ scenarios:
         fallback_implementation.provider_family: google
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
+        verification.implementation.provider_family: openai
         verification.independent: true
         verification.human_approval_required: false
       contains:
@@ -55,6 +56,7 @@ scenarios:
         fallback_implementation.model: gemini-3.1-pro-preview
         fallback_implementation.provider_family: google
         verification.implementation.model: claude-sonnet-5
+        verification.implementation.provider_family: anthropic
         verification.independent: true
       contains:
         required_capabilities:
@@ -86,6 +88,7 @@ scenarios:
         fallback_implementation.model: claude-sonnet-5
         fallback_implementation.provider_family: anthropic
         verification.implementation.model: claude-sonnet-5
+        verification.implementation.provider_family: anthropic
         verification.independent: true
       contains:
         required_capabilities:
@@ -94,7 +97,7 @@ scenarios:
           - tool_execution
 
   - id: code-review-owned-worker
-    purpose: Preserve Review Team ownership, the dedicated code-review worker, specialist activation, and provider-diverse fallback.
+    purpose: Preserve Review Team ownership, the dedicated code-review worker, specialist activation, provider-diverse fallback, and provider-diverse independent verification.
     task:
       task_id: conformance-code-review
       task: Review this pull request for correctness, scope discipline, and regression risk.
@@ -112,7 +115,8 @@ scenarios:
         selected_implementation.provider_family: openai
         fallback_implementation.model: gemini-3.1-pro-preview
         fallback_implementation.provider_family: google
-        verification.implementation.model: gpt-5.6-sol
+        verification.implementation.model: claude-sonnet-5
+        verification.implementation.provider_family: anthropic
         verification.independent: true
         warnings: []
       contains:
@@ -145,6 +149,7 @@ scenarios:
         fallback_implementation.model: gpt-5.6-sol
         fallback_implementation.provider_family: openai
         verification.implementation.model: gpt-5.6-terra
+        verification.implementation.provider_family: openai
         verification.human_approval_required: true
       contains:
         verification.method:
@@ -175,6 +180,7 @@ scenarios:
         fallback_implementation.provider_family: anthropic
         verification.team: verification
         verification.implementation.model: claude-sonnet-5
+        verification.implementation.provider_family: anthropic
         verification.independent: true
         verification.human_approval_required: false
         warnings: []
@@ -215,6 +221,7 @@ scenarios:
         fallback_implementation.provider_family: openai
         verification.team: verification
         verification.implementation.model: claude-sonnet-5
+        verification.implementation.provider_family: anthropic
         verification.independent: true
         verification.human_approval_required: false
         warnings: []
