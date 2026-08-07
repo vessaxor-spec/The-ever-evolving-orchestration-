@@ -1,6 +1,6 @@
 version: 0.5
 status: public-draft
-reviewed_at: 2026-08-05
+reviewed_at: 2026-08-07
 model_registry: models.yaml
 provider_evidence: registry/models/models.yaml
 
@@ -466,6 +466,12 @@ routing:
       - agent: codex
         model: gpt-5.6-luna
         profile: luna
+    verifier:
+      agent: agy
+      model: gemini-3.6-flash
+      profile: luna
+      reasoning: medium
+      purpose: provider-diverse pointwise validation of bounded high-volume output
     escalation:
       agent: claude
       model: claude-sonnet-5
