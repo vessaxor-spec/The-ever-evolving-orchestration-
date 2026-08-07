@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from jsonschema import Draft202012Validator, FormatChecker
 
 from .audit import append_jsonl
 from .config import ConfigBundle, ConfigurationError
@@ -30,6 +31,26 @@ def _load(path: str) -> dict[str, Any]:
     return data
 
 
+def _validate_schema(
+    repo_root: str | Path,
+    schema_name: str,
+    data: dict[str, Any],
+    label: str,
+) -> None:
+    path = Path(repo_root).resolve() / "reference" / "schemas" / schema_name
+    schema = json.loads(path.read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    validator = Draft202012Validator(schema, format_checker=FormatChecker())
+    failures = sorted(
+        validator.iter_errors(data),
+        key=lambda error: tuple(str(item) for item in error.absolute_path),
+    )
+    if failures:
+        failure = failures[0]
+        location = ".".join(str(item) for item in failure.absolute_path) or "$"
+        raise ValueError(f"{label} failed schema validation at {location}: {failure.message}")
+
+
 def _choice(data: dict[str, Any]) -> ImplementationChoice:
     return ImplementationChoice(**data)
 
@@ -51,7 +72,7 @@ def _print(data: dict[str, Any]) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="teo", description="TEO Phase 5 reference router")
+    parser = argparse.ArgumentParser(prog="teo", description="TEO reference router")
     parser.add_argument("--repo-root", default=".", help="TEO repository root")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -82,12 +103,15 @@ def main(argv: list[str] | None = None) -> int:
             issues = bundle.validate()
             status = "valid" if not any(issue.startswith("ERROR:") for issue in issues) else "invalid"
             _print({"status": status, "issues": issues})
-            return 0
+            return 0 if status == "valid" else 2
 
         engine = SpecialistRoutingEngine(bundle)
         if args.action == "plan":
-            dispatch = engine.dispatch(TaskRequest.from_dict(_load(args.task)))
+            task_data = _load(args.task)
+            _validate_schema(args.repo_root, "task.schema.json", task_data, "task input")
+            dispatch = engine.dispatch(TaskRequest.from_dict(task_data))
             result = dispatch.to_dict()
+            _validate_schema(args.repo_root, "dispatch-record.schema.json", result, "dispatch output")
             if args.output:
                 Path(args.output).write_text(
                     json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
@@ -97,11 +121,18 @@ def main(argv: list[str] | None = None) -> int:
             _print(result)
             return 0
 
-        dispatch = _dispatch(_load(args.dispatch))
-        execution = ExecutionResult.from_dict(_load(args.execution))
-        verification = VerificationResult.from_dict(_load(args.verification))
+        dispatch_data = _load(args.dispatch)
+        execution_data = _load(args.execution)
+        verification_data = _load(args.verification)
+        _validate_schema(args.repo_root, "dispatch-record.schema.json", dispatch_data, "dispatch input")
+        _validate_schema(args.repo_root, "execution-result.schema.json", execution_data, "execution input")
+        _validate_schema(args.repo_root, "verification-result.schema.json", verification_data, "verification input")
+        dispatch = _dispatch(dispatch_data)
+        execution = ExecutionResult.from_dict(execution_data)
+        verification = VerificationResult.from_dict(verification_data)
         outcome = engine.finalize(dispatch, execution, verification)
         result = outcome.to_dict()
+        _validate_schema(args.repo_root, "final-outcome.schema.json", result, "final outcome")
         if args.output:
             Path(args.output).write_text(
                 json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8"
@@ -110,7 +141,7 @@ def main(argv: list[str] | None = None) -> int:
             append_jsonl(args.audit_log, "final_outcome", result)
         _print(result)
         return 0
-    except (ConfigurationError, RoutingError, ValueError, OSError) as exc:
+    except (ConfigurationError, RoutingError, ValueError, OSError, json.JSONDecodeError) as exc:
         parser = build_parser()
         parser.error(str(exc))
         return 2
