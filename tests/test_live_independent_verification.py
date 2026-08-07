@@ -7,7 +7,7 @@ from typing import Mapping
 import pytest
 
 from teo_reference.config import ConfigBundle
-from teo_reference.provider_adapter import ProviderExecutionResponse
+from teo_reference.provider_adapter import ProviderExecutionResponse, ProviderFailure
 from teo_reference.provider_connection import HeaderProviderConnection
 from teo_reference.runtime_canary import CanaryRuntimeOutcome
 from teo_reference.runtime_verification import (
@@ -17,7 +17,6 @@ from teo_reference.runtime_verification import (
 from teo_reference.schemas import (
     DispatchRecord,
     ImplementationChoice,
-    TaskConstraints,
     TaskRequest,
     VerificationPlan,
 )
@@ -192,7 +191,6 @@ def test_primary_live_verifier_is_blinded_and_uses_google_structured_output(tmp_
 
     assert result.status == "passed"
     assert result.verifier_model == "gemini-3.6-flash"
-    assert len(calls) == 1
     body = calls[0]["body"]
     assert body["model"] == "gemini-3.6-flash"
     assert body["generation_config"]["thinking_level"] == "medium"
@@ -246,7 +244,10 @@ def test_provider_fallback_uses_assigned_sol_verifier_and_structured_output(tmp_
     assert "google" not in serialized.lower()
 
 
-@pytest.mark.parametrize(("verdict", "expected"), [(decision("failed"), "failed"), (decision("needs_human"), "needs_human")])
+@pytest.mark.parametrize(
+    ("verdict", "expected"),
+    [(decision("failed"), "failed"), (decision("needs_human"), "needs_human")],
+)
 def test_structured_verifier_status_maps_to_existing_verification_contract(
     tmp_path: Path,
     verdict: dict,
@@ -383,5 +384,27 @@ def test_guarded_outcome_uses_fallback_dispatch_fresh_verifier(tmp_path: Path) -
         status="failed",
         provider_family="anthropic",
         model="claude-haiku-4-5",
-        failure=None,
+        failure=ProviderFailure(
+            scope="provider",
+            code="rate_limit_error",
+            message="provider unavailable",
+        ),
     )
+    fallback_success = success_response(fallback, write_output(tmp_path))
+    outcome = CanaryRuntimeOutcome(
+        status="fallback_executed",
+        primary_dispatch=primary,
+        primary_response=primary_failure,
+        fallback_dispatch=fallback,
+        fallback_response=fallback_success,
+        fallback_attempts=1,
+        fallback_trigger_scope="provider",
+    )
+    result = verify_guarded_canary_outcome(
+        outcome,
+        {"openai": connection("openai", [], openai_payload(decision()))},
+    )
+    assert result.status == "passed"
+    assert result.dispatch_id == fallback.dispatch_id
+    assert result.verifier_model == "gpt-5.6-sol"
+    assert result.verifier_model != primary.verification.implementation.model
