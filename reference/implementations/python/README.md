@@ -10,9 +10,11 @@ The guarded live canary supports three provider families for `high_volume_simple
 - OpenAI GPT-5.6 Luna
 - Google Gemini 3.6 Flash
 
-Each adapter performs one attempt only. Adapters do not own fallback, retry, verification, escalation, or human approval.
+Each adapter performs one provider attempt only. Adapters do not own retry, fallback, verification, escalation, or human approval.
 
-The runtime coordinator can perform one guarded automatic fallback after a `model` or `provider` failure. It returns the failure to TEO, applies the failed model or provider block, creates a new dispatch ID, assigns a fresh independent verifier, and then executes the newly selected provider once. Request, transient, and capability failures do not trigger this fallback, and a failed fallback never chains automatically to a third provider.
+The runtime coordinator may retry a `transient` failure once under the same dispatch. The retry preserves provider, model, reasoning effort, verifier, specialist, worker, and risk authority. The current policy uses bounded backoff with jitter and permits at most two provider attempts per dispatch.
+
+The runtime coordinator can also perform one guarded automatic fallback after a `model` or `provider` failure. It returns the failure to TEO, applies the failed model or provider block, creates a new dispatch ID, assigns a fresh independent verifier, and then executes the newly selected provider. Request, capability, and exhausted transient failures do not directly trigger fallback, and a failed fallback never chains automatically to a third provider.
 
 Connection method is deliberately separate from routing. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
 
@@ -40,15 +42,18 @@ teo --repo-root . plan reference/examples/phase5-task.yaml \
 
 ## Provider execution boundary
 
-Provider execution is split into two independent concerns:
+Provider execution is split into independent concerns:
 
 1. TEO routing authorizes a provider family, model, and reasoning effort through `ProviderExecutionRequest`.
 2. Runtime supplies a provider-specific `ProviderConnection` without exposing credential material to the dispatch or audit record.
+3. The retry controller may repeat only a transient failure under the same dispatch.
+4. The fallback coordinator may redispatch only after eligible model or provider failure.
 
 The general contracts are documented in:
 
 - `docs/specification/provider-adapter-contract.md`
 - `docs/specification/provider-connection-boundary.md`
+- `docs/specification/bounded-transient-retry.md`
 - `docs/specification/guarded-canary-fallback.md`
 
 Current guarded implementations are:
@@ -63,8 +68,10 @@ Single-attempt convenience helpers are:
 - `execute_openai_canary_once`
 - `execute_gemini_canary_once`
 
-The guarded orchestration helper is:
+Runtime coordination is exposed through:
 
+- `RetryPolicy`
+- `execute_with_transient_retry`
 - `execute_guarded_canary`
 
 OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to Interactions API `generation_config.thinking_level`. Claude Haiku 4.5 does not support Anthropic's newer `output_config.effort` parameter, so the adapter does not invent one.
