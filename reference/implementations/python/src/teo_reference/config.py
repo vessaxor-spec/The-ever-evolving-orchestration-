@@ -181,6 +181,22 @@ def _load_specialists(path: Path, extension_paths: tuple[Path, ...] = ()) -> dic
     return data
 
 
+def _known_models(models: dict[str, Any]) -> set[str]:
+    known: set[str] = set()
+    registry = models.get("models", {})
+    if not isinstance(registry, dict):
+        return known
+    for name, entry in registry.items():
+        known.add(str(name))
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("concrete_model"):
+            known.add(str(entry["concrete_model"]))
+        for candidate in entry.get("candidate_implementations", []):
+            known.add(str(candidate))
+    return known
+
+
 @dataclass(slots=True)
 class ConfigBundle:
     root: Path
@@ -189,6 +205,7 @@ class ConfigBundle:
     workers: dict[str, Any]
     specialists: dict[str, Any]
     models: dict[str, Any]
+    capabilities: dict[str, Any]
 
     @classmethod
     def load(cls, root: str | Path) -> "ConfigBundle":
@@ -197,7 +214,10 @@ class ConfigBundle:
             root=root_path,
             team_routing=_load_team_routing(
                 root_path / "policy/routing/team-routing.yaml",
-                (root_path / "policy/routing/principal-engineering-team-routing.yaml",),
+                (
+                    root_path / "policy/routing/principal-engineering-team-routing.yaml",
+                    root_path / "policy/routing/specialist-spawn-team-routing.yaml",
+                ),
             ),
             routing=_load_routing(
                 root_path / "policy/routing/routing.yaml",
@@ -206,6 +226,7 @@ class ConfigBundle:
                     root_path / "policy/routing/research-routing.yaml",
                     root_path / "policy/routing/review-routing.yaml",
                     root_path / "policy/routing/principal-engineering-routing.yaml",
+                    root_path / "policy/routing/specialist-spawn-routing.yaml",
                 ),
             ),
             workers=_load_workers(
@@ -223,6 +244,7 @@ class ConfigBundle:
                     root_path / "community/workers/physical-systems-workers.yaml",
                     root_path / "community/workers/assurance-workers.yaml",
                     root_path / "community/workers/principal-engineering-active-workers.yaml",
+                    root_path / "community/workers/specialist-completion-workers.yaml",
                 ),
             ),
             specialists=_load_specialists(
@@ -230,6 +252,7 @@ class ConfigBundle:
                 (root_path / "community/specialists/principal-engineering-active.yaml",),
             ),
             models=_load_yaml(root_path / "models.yaml"),
+            capabilities=_load_yaml(root_path / "registry/capabilities/capabilities.yaml"),
         )
         errors = [issue for issue in bundle.validate() if issue.startswith("ERROR:")]
         if errors:
@@ -243,6 +266,7 @@ class ConfigBundle:
         workers = self.workers.get("workers")
         specialists = self.specialists.get("specialists")
         models = self.models.get("models")
+        capabilities = self.capabilities.get("capabilities")
 
         for name, value in {
             "team_routes": routes,
@@ -250,6 +274,7 @@ class ConfigBundle:
             "workers": workers,
             "specialists": specialists,
             "models": models,
+            "capabilities": capabilities,
         }.items():
             if not isinstance(value, dict) or not value:
                 issues.append(f"ERROR: missing or empty {name}")
@@ -261,19 +286,42 @@ class ConfigBundle:
         assert isinstance(routing, dict)
         assert isinstance(workers, dict)
         assert isinstance(specialists, dict)
+        assert isinstance(models, dict)
 
+        known_models = _known_models(self.models)
+        reachable_pairs: set[tuple[str, str]] = set()
         for route_name, route in routes.items():
             if route_name not in routing and route_name != "release":
                 issues.append(f"WARNING: team route {route_name} has no implementation route")
-            worker_name = route.get("primary_worker")
-            team_name = route.get("primary_team")
+            worker_name = str(route.get("primary_worker") or "")
+            team_name = str(route.get("primary_team") or "")
             if worker_name not in workers:
-                issues.append(f"WARNING: route {route_name} references unregistered worker {worker_name}")
+                issues.append(f"ERROR: route {route_name} references unregistered worker {worker_name}")
             elif workers[worker_name].get("owning_team") != team_name:
                 issues.append(
-                    f"WARNING: route {route_name} selects {team_name}/{worker_name}, but the worker belongs to "
+                    f"ERROR: route {route_name} selects {team_name}/{worker_name}, but the worker belongs to "
                     f"{workers[worker_name].get('owning_team')}"
                 )
+            else:
+                reachable_pairs.add((team_name, worker_name))
+
+            overrides = route.get("worker_override_by_context", {})
+            if overrides is not None and not isinstance(overrides, dict):
+                issues.append(f"ERROR: route {route_name} worker_override_by_context must be a mapping")
+                continue
+            for context, override_worker in (overrides or {}).items():
+                override_name = str(override_worker)
+                if override_name not in workers:
+                    issues.append(
+                        f"ERROR: route {route_name} context {context} references unregistered worker {override_name}"
+                    )
+                elif workers[override_name].get("owning_team") != team_name:
+                    issues.append(
+                        f"ERROR: route {route_name} context {context} selects {team_name}/{override_name}, but the worker belongs to "
+                        f"{workers[override_name].get('owning_team')}"
+                    )
+                else:
+                    reachable_pairs.add((team_name, override_name))
 
         missing_bindings = sorted(
             {
@@ -284,8 +332,46 @@ class ConfigBundle:
         )
         if missing_bindings:
             issues.append(
-                "WARNING: specialist bindings without core worker definitions: " + ", ".join(missing_bindings)
+                "ERROR: specialist bindings without worker definitions: " + ", ".join(missing_bindings)
             )
+
+        unreachable = sorted(
+            name
+            for name, entry in specialists.items()
+            if (
+                str(entry.get("primary_team") or ""),
+                str(entry.get("worker_binding") or ""),
+            )
+            not in reachable_pairs
+        )
+        if unreachable:
+            issues.append(
+                "ERROR: active specialists without a deterministic Team -> Worker spawn path: "
+                + ", ".join(unreachable)
+            )
+
+        for worker_name, worker in workers.items():
+            if not isinstance(worker, dict):
+                issues.append(f"ERROR: worker {worker_name} must be a mapping")
+                continue
+            team = str(worker.get("owning_team") or "")
+            required_capabilities = worker.get("required_capabilities", [])
+            if not isinstance(required_capabilities, list) or not required_capabilities:
+                issues.append(f"ERROR: worker {worker_name} requires a non-empty required_capabilities list")
+            for source_key in ("preferred_implementations", "fallbacks"):
+                values = worker.get(source_key, [])
+                if not isinstance(values, list) or not values:
+                    issues.append(f"ERROR: worker {worker_name} requires a non-empty {source_key} list")
+                    continue
+                unknown_models = sorted(str(model) for model in values if str(model) not in known_models)
+                if unknown_models:
+                    issues.append(
+                        f"ERROR: worker {worker_name} references unregistered models in {source_key}: "
+                        + ", ".join(unknown_models)
+                    )
+            if not team:
+                issues.append(f"ERROR: worker {worker_name} requires owning_team")
+
         return issues
 
     @property
@@ -307,3 +393,27 @@ class ConfigBundle:
     @property
     def model_registry(self) -> dict[str, Any]:
         return self.models["models"]
+
+    @property
+    def capability_registry(self) -> dict[str, Any]:
+        base = self.capabilities.get("capabilities", {})
+        registry: dict[str, Any] = {
+            str(name): dict(entry) if isinstance(entry, dict) else {"definition": str(entry)}
+            for name, entry in base.items()
+        }
+        for worker_name, worker in self.worker_registry.items():
+            if not isinstance(worker, dict):
+                continue
+            team = str(worker.get("owning_team") or "")
+            evidence = [str(item) for item in worker.get("verification", [])]
+            for capability in worker.get("required_capabilities", []):
+                name = str(capability)
+                if name in registry:
+                    continue
+                registry[name] = {
+                    "definition": f"Worker-declared provider-neutral capability required by {worker_name}",
+                    "typical_teams": [team] if team else [],
+                    "evidence": evidence,
+                    "derived_from_workers": [worker_name],
+                }
+        return registry
