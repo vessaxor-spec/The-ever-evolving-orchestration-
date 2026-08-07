@@ -22,9 +22,11 @@ Provider-family circuit state persists across separate canary executions. Repeat
 
 After cooldown an open circuit becomes half-open. The reference runtime allows one recovery probe at a time and requires two successful probes before restoring normal routing. Repeated trips progressively increase cooldown within a bounded policy limit.
 
-Every actual provider attempt is now recorded as persistent content-free runtime telemetry. The default JSONL record captures dispatch/provider/model/effort identity, primary or fallback role, attempt number, latency, normalized failure state, retry timing, assigned verifier, and provider-reported token usage. It does not persist prompts, task text, model output, provider-native payloads, credentials, authorization headers, or connection mechanism.
+Every actual provider attempt is recorded as persistent content-free runtime telemetry. The default JSONL record captures dispatch/provider/model/effort identity, primary or fallback role, attempt number, latency, normalized failure state, retry timing, assigned verifier, and provider-reported token usage. It does not persist prompts, task text, model output, provider-native payloads, credentials, authorization headers, or connection mechanism.
 
-Connection method is deliberately separate from routing, telemetry, and provider-health classification. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
+A successful guarded execution can now be submitted to the dispatch-assigned live verifier. The verifier is required to use a different model and provider family from the active executor, receives a blinded task/output rubric, and returns structured `passed`, `failed`, or `needs_human` evidence. Verifier retry and verifier fallback remain disabled in this first slice. Verification infrastructure failure fails closed and is not converted into a model judgment.
+
+Connection method is deliberately separate from routing, telemetry, verification, and provider-health classification. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
 
 ## Install
 
@@ -59,6 +61,7 @@ Provider execution is split into independent concerns:
 5. The retry controller may repeat only a transient failure under the same dispatch and remains bound by the attempt budget.
 6. The telemetry layer records each completed provider attempt before later retry or fallback action.
 7. The fallback coordinator may redispatch only after eligible model or provider failure.
+8. The live verification layer executes only the verifier assigned by the active dispatch and returns evidence through the existing `VerificationResult` contract.
 
 The general contracts are documented in:
 
@@ -69,20 +72,28 @@ The general contracts are documented in:
 - `docs/specification/guarded-canary-fallback.md`
 - `docs/specification/provider-circuit-breaker.md`
 - `docs/specification/runtime-telemetry.md`
+- `docs/specification/live-independent-verification.md`
 
 The runtime research records include:
 
 - `research/runtime/2026-08-07-provider-circuit-breaker.md`
 - `research/runtime/2026-08-07-provider-directed-retry-timing.md`
 - `research/runtime/2026-08-07-persistent-runtime-telemetry.md`
+- `research/runtime/2026-08-07-live-independent-verification.md`
 
-Current guarded implementations are:
+Current guarded execution implementations are:
 
 - `teo_reference.anthropic_adapter.AnthropicMessagesAdapter`
 - `teo_reference.openai_adapter.OpenAIResponsesAdapter`
 - `teo_reference.google_adapter.GeminiInteractionsAdapter`
 
-Single-attempt convenience helpers are:
+Current guarded verifier implementations are:
+
+- `teo_reference.google_verifier.GoogleLiveVerifier`
+- `teo_reference.anthropic_verifier.AnthropicLiveVerifier`
+- `teo_reference.openai_verifier.OpenAILiveVerifier`
+
+Single-attempt execution helpers are:
 
 - `execute_anthropic_canary_once`
 - `execute_openai_canary_once`
@@ -99,6 +110,9 @@ Runtime coordination is exposed through:
 - `RuntimeTelemetryEvent`
 - `InMemoryRuntimeTelemetrySink`
 - `JsonlRuntimeTelemetrySink`
+- `LiveVerificationPolicy`
+- `execute_live_verification`
+- `verify_guarded_canary_outcome`
 - `execute_guarded_canary`
 
 OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to Interactions API `generation_config.thinking_level`. Claude Haiku 4.5 does not support Anthropic's newer `output_config.effort` parameter, so the adapter does not invent one.
@@ -113,11 +127,11 @@ The default guarded runtime writes attempt telemetry to:
 
 The JSONL telemetry and JSON circuit-state stores are single-process reference implementations. Multi-process or distributed runtimes require shared persistence with appropriate concurrency, access control, retention, and export behavior.
 
-All canaries refuse high or critical risk before provider execution.
+All execution canaries and the live verifier refuse high or critical risk.
 
-A successful provider execution is not a completed TEO outcome. Independent verification, and qualified human approval when required, remain separate gates.
+A successful provider execution is not a completed TEO outcome. Live independent verification can now satisfy the model-verification gate for the guarded canary, but qualified human approval remains separate whenever policy requires it.
 
-## Finalize an executed result
+## Finalize an executed and verified result
 
 ```bash
 teo --repo-root . finalize \
