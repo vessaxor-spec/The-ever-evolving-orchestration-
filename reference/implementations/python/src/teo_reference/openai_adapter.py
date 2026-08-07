@@ -10,6 +10,7 @@ from .provider_adapter import (
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    retry_after_seconds_from_headers,
     validate_provider_response,
 )
 from .provider_connection import (
@@ -277,6 +278,7 @@ class OpenAIResponsesAdapter:
                 code=code,
                 message=message,
             ),
+            retry_after_seconds=retry_after_seconds_from_headers(connection_response.headers),
         )
 
 
