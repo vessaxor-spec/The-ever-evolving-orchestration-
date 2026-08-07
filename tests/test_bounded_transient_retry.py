@@ -104,6 +104,23 @@ def gemini_success() -> dict:
     }
 
 
+def policy_kwargs(**overrides):
+    values = {
+        "eligible_failure_scopes": frozenset({"transient"}),
+        "max_attempts_per_dispatch": 2,
+        "initial_delay_seconds": 0.5,
+        "backoff_multiplier": 2.0,
+        "max_delay_seconds": 2.0,
+        "jitter_ratio": 0.2,
+        "honor_provider_retry_after": True,
+        "max_provider_retry_after_seconds": 60.0,
+        "provider_retry_after_exceeds_budget": "stop",
+        "fallback_after_transient_exhaustion": False,
+    }
+    values.update(overrides)
+    return values
+
+
 def test_retry_policy_loads_as_two_attempt_transient_only_control() -> None:
     policy = RetryPolicy.load(REPO_ROOT)
     assert policy.eligible_failure_scopes == {"transient"}
@@ -112,6 +129,9 @@ def test_retry_policy_loads_as_two_attempt_transient_only_control() -> None:
     assert policy.backoff_multiplier == 2.0
     assert policy.max_delay_seconds == 2.0
     assert policy.jitter_ratio == 0.2
+    assert policy.honor_provider_retry_after is True
+    assert policy.max_provider_retry_after_seconds == 60.0
+    assert policy.provider_retry_after_exceeds_budget == "stop"
     assert policy.fallback_after_transient_exhaustion is False
 
 
@@ -235,28 +255,18 @@ def test_transient_retry_can_surface_provider_failure_then_redispatch(tmp_path: 
 
 
 def test_retry_policy_rejects_fallback_after_transient_exhaustion() -> None:
-    policy = RetryPolicy(
-        eligible_failure_scopes=frozenset({"transient"}),
-        max_attempts_per_dispatch=2,
-        initial_delay_seconds=0.5,
-        backoff_multiplier=2.0,
-        max_delay_seconds=2.0,
-        jitter_ratio=0.2,
-        fallback_after_transient_exhaustion=True,
-    )
+    policy = RetryPolicy(**policy_kwargs(fallback_after_transient_exhaustion=True))
     with pytest.raises(ProviderAdapterContractError, match="cannot silently authorize fallback"):
         policy.validate()
 
 
 def test_retry_policy_refuses_more_than_two_attempts() -> None:
-    policy = RetryPolicy(
-        eligible_failure_scopes=frozenset({"transient"}),
-        max_attempts_per_dispatch=3,
-        initial_delay_seconds=0.5,
-        backoff_multiplier=2.0,
-        max_delay_seconds=2.0,
-        jitter_ratio=0.2,
-        fallback_after_transient_exhaustion=False,
-    )
+    policy = RetryPolicy(**policy_kwargs(max_attempts_per_dispatch=3))
     with pytest.raises(ProviderAdapterContractError, match="one or two attempts"):
+        policy.validate()
+
+
+def test_retry_policy_refuses_early_retry_when_provider_wait_exceeds_budget() -> None:
+    policy = RetryPolicy(**policy_kwargs(provider_retry_after_exceeds_budget="clamp"))
+    with pytest.raises(ProviderAdapterContractError, match="must stop rather than retry early"):
         policy.validate()
