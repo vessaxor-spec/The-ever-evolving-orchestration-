@@ -1,8 +1,12 @@
 # TEO Python Reference Router
 
-This is the minimal runnable Phase 5 control plane. It reads TEO's existing YAML policy and registries, creates a structured dispatch, assigns an independent verifier, and records a final evidence-bearing outcome.
+This is the runnable reference control plane for The Ever-Evolving Orchestration. It reads TEO's YAML policy and registries, creates a structured dispatch, assigns an independent verifier, and records a final evidence-bearing outcome.
 
-It does **not** call model-provider APIs. Provider adapters, credentials, retries, streaming, and cost telemetry are later implementation layers. Keeping them outside this first boundary makes the routing behavior inspectable and testable without vendor access.
+The router itself remains provider-neutral. Live provider execution is optional and occurs only through the provider-adapter boundary after routing has already selected the authorized provider family and model.
+
+The first guarded live canary supports Anthropic Claude Haiku 4.5 for `high_volume_simple` tasks at low or medium risk. It performs one attempt only. It does not own fallback, retry, verification, escalation, or human approval.
+
+Connection method is deliberately separate from routing. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
 
 ## Install
 
@@ -26,7 +30,26 @@ teo --repo-root . plan reference/examples/phase5-task.yaml \
   --audit-log /tmp/teo-audit.jsonl
 ```
 
-## Finalize an externally executed result
+## Provider execution boundary
+
+Provider execution is split into two independent concerns:
+
+1. TEO routing authorizes a provider family and model through `ProviderExecutionRequest`.
+2. Runtime supplies a provider-specific `ProviderConnection` without exposing credential material to the dispatch or audit record.
+
+The general contract is documented in:
+
+- `docs/specification/provider-adapter-contract.md`
+- `docs/specification/provider-connection-boundary.md`
+
+The current guarded Anthropic implementation is:
+
+- `teo_reference.anthropic_adapter.AnthropicMessagesAdapter`
+- `teo_reference.anthropic_adapter.execute_anthropic_canary_once`
+
+The canary accepts only a dispatch already routed to Anthropic Claude Haiku 4.5 for `high_volume_simple`, and refuses high or critical risk before network execution.
+
+## Finalize an executed result
 
 ```bash
 teo --repo-root . finalize \
@@ -36,7 +59,7 @@ teo --repo-root . finalize \
   --audit-log /tmp/teo-audit.jsonl
 ```
 
-The execution and verification records must reference the dispatch ID. The verifier must match the assigned verification implementation and must be independent from the selected worker implementation.
+Execution and verification records must reference the dispatch ID. The verifier must match the assigned verification implementation and must remain independent from the selected worker implementation.
 
 ## End-to-end demonstration
 
