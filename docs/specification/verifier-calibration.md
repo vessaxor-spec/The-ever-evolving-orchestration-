@@ -12,7 +12,7 @@ The machine-readable policy is `policy/verification/verifier-calibration.yaml`.
 
 The live verifier is itself a model-based decision component. Passing a schema and producing internally consistent judgments are necessary controls, but they do not establish empirical correctness.
 
-Calibration measures how verifier judgments compare with independently defined expected outcomes while preserving enough route and runtime context to identify disagreement, instability, and execution-path effects.
+Calibration measures how verifier judgments compare with independently defined expected outcomes while preserving enough route, time, and runtime context to identify disagreement, instability, drift, and execution-path effects.
 
 ## Gold corpus
 
@@ -67,6 +67,7 @@ Live or replayed verifier observations are content-free relative to the public g
 - verifier model
 - verifier reasoning effort, or explicit null when the route has no applicable effort control
 - run ID
+- offset-aware observation timestamp
 - rubric version
 - live-verification policy version
 - structured verifier decision
@@ -78,7 +79,9 @@ Live or replayed verifier observations are content-free relative to the public g
 
 The initial evidence policy pins observations to rubric version `1.0` and live-verification policy version `1.1`.
 
-Observation records must not persist the task or candidate output again. They join to the fixed corpus by case ID. Unknown fields are rejected. Type coercion is rejected for control fields such as retry count and fallback state. Execution role and fallback state must agree.
+Observation records must not persist the task or candidate output again. They join to the fixed corpus by case ID. Unknown fields are rejected. Required evidence fields cannot be omitted. Type coercion is rejected for control fields such as retry count and fallback state. Execution role and fallback state must agree.
+
+The observation timestamp must include a UTC offset. This preserves the empirical measurement window so later reviewers can distinguish observations collected before and after provider, model, policy, or infrastructure changes.
 
 The schema is `reference/schemas/verifier-calibration-observation.schema.json`.
 
@@ -110,6 +113,8 @@ The reference evaluator calculates:
 - repeated-run agreement for the same verifier route
 - cross-verifier disagreement cases
 - observed verifier routes
+- observed verifier provider families
+- observation-window start and end timestamps
 - average verifier duration
 - p95 verifier duration
 - total normalized input tokens
@@ -135,7 +140,7 @@ A false fail is a `failed` judgment when the gold status is `passed`.
 
 One observation per case cannot establish repeatability.
 
-The active policy requires at least three runs per case per verifier route and at least three distinct verifier routes before the data-coverage gate can be satisfied.
+The active policy requires at least three runs per case per verifier route, at least three distinct verifier routes, and at least three distinct verifier provider families before the data-coverage gate can be satisfied.
 
 Repeated-run agreement is measured within the same case and verifier route.
 
@@ -151,12 +156,16 @@ The data requirements are met only when:
 
 - the gold corpus meets its minimum size and category requirements
 - the minimum number of distinct verifier routes has been observed
+- the minimum number of distinct provider families has been observed
 - every gold case has the required number of repeated observations on every observed verifier route
+- observations carry offset-aware timestamps
 - observation rubric and live-verification policy versions match the active calibration policy
+
+Three route strings from one provider do not satisfy the provider-diversity requirement. This prevents reasoning-effort or model variants from being counted as independent provider evidence.
 
 The readiness result can report `data_requirements_met: true`. It cannot report either `quality_claims_authorized: true` or `scope_expansion_authorized: true`.
 
-Independent human review remains mandatory after evidence coverage is complete. The human review must examine measured errors, uncertainty behavior, repeatability, disagreement, adversarial performance, latency, usage, execution-path effects, and residual risk.
+Independent human review remains mandatory after evidence coverage is complete. The human review must examine measured errors, uncertainty behavior, repeatability, disagreement, adversarial performance, latency, usage, execution-path effects, observation timing, and residual risk.
 
 This separation prevents a data-completeness gate from becoming accidental decision authority.
 
@@ -182,7 +191,7 @@ The public corpus can expand with additional adversarial cases through reviewed 
 
 The calibration harness deliberately contains no automatic route-update or scope-expansion mechanism.
 
-A valid corpus, complete repeated observations, and favorable metrics still require independent human review before TEO can claim calibrated verifier quality or broaden live verification.
+A valid corpus, complete repeated observations, provider-diverse coverage, and favorable metrics still require independent human review before TEO can claim calibrated verifier quality or broaden live verification.
 
 The expansion review must consider at least:
 
@@ -193,6 +202,7 @@ The expansion review must consider at least:
 - cross-provider and cross-model disagreement
 - adversarial performance
 - latency and usage
+- observation window and evidence recency
 - retry and fallback relationship
 - residual risk
 
