@@ -155,9 +155,11 @@ class LiveVerificationDecision:
 
     def to_verification_result(self, dispatch: DispatchRecord, *, evidence: list[str]) -> VerificationResult:
         checks = [f"{name}:{verdict}" for name, verdict in self.verdicts.items()]
-        notes = []
-        if self.status == "needs_human":
-            notes.append(f"live_verifier_human_reason:{self.human_reason}")
+        notes = (
+            f"live_verifier_human_reason:{self.human_reason}"
+            if self.status == "needs_human"
+            else None
+        )
         return VerificationResult(
             dispatch_id=dispatch.dispatch_id,
             status=self.status,
