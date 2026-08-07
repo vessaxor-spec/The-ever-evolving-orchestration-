@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 from pathlib import Path
 from typing import Any, Callable, Mapping
@@ -15,6 +14,7 @@ from .provider_adapter import (
     ProviderFailure,
     validate_provider_response,
 )
+from .provider_connection import ProviderConnection
 from .schemas import DispatchRecord
 
 ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages"
@@ -69,13 +69,13 @@ def _error_details(payload: dict[str, Any] | None) -> tuple[str, str]:
 def _failure_scope(status_code: int, error_type: str) -> str:
     if error_type in {"authentication_error", "billing_error", "permission_error", "rate_limit_error"}:
         return "provider"
-    if error_type in {"not_found_error"}:
+    if error_type == "not_found_error":
         return "model"
-    if error_type in {"request_too_large"} or status_code == 413:
+    if error_type == "request_too_large" or status_code == 413:
         return "capability"
     if error_type in {"invalid_request_error", "conflict_error"} or status_code in {400, 409, 422}:
         return "request"
-    if error_type in {"overloaded_error"} or status_code == 529:
+    if error_type == "overloaded_error" or status_code == 529:
         return "provider"
     if error_type in {"api_error", "timeout_error"} or status_code in {408, 425, 500, 502, 503, 504}:
         return "transient"
@@ -109,20 +109,26 @@ def _provider_model_matches(requested_model: str, provider_model: str | None) ->
 
 
 class AnthropicMessagesAdapter:
-    """Single-attempt Anthropic Messages API adapter for the guarded TEO canary."""
+    """Single-attempt Anthropic Messages adapter for the guarded TEO canary.
+
+    The adapter is intentionally connection-neutral. Routing selects Anthropic and a model.
+    A runtime-supplied ProviderConnection decides how authorized request headers are obtained.
+    """
 
     provider_family = "anthropic"
 
     def __init__(
         self,
-        api_key: str,
+        connection: ProviderConnection,
         artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic",
         timeout_seconds: float = 30.0,
         transport: Transport | None = None,
     ) -> None:
-        if not api_key or not api_key.strip():
-            raise ProviderAdapterContractError("ANTHROPIC_API_KEY is required for live Anthropic execution")
-        self._api_key = api_key
+        if connection.provider_family != self.provider_family:
+            raise ProviderAdapterContractError(
+                "Anthropic adapter requires an Anthropic provider connection"
+            )
+        self._connection = connection
         self._artifact_dir = Path(artifact_dir)
         self._timeout_seconds = float(timeout_seconds)
         self._transport = transport or _default_transport
@@ -158,11 +164,19 @@ class AnthropicMessagesAdapter:
                 "messages": [{"role": "user", "content": task}],
             }
         ).encode("utf-8")
-        headers = {
+        base_headers = {
             "content-type": "application/json",
-            "x-api-key": self._api_key,
             "anthropic-version": ANTHROPIC_VERSION,
         }
+        headers = dict(self._connection.authorize_headers(base_headers))
+        if headers.get("content-type") != "application/json":
+            raise ProviderAdapterContractError(
+                "Provider connection must preserve the Anthropic JSON content type"
+            )
+        if headers.get("anthropic-version") != ANTHROPIC_VERSION:
+            raise ProviderAdapterContractError(
+                "Provider connection must preserve the required Anthropic API version"
+            )
 
         try:
             status_code, response_headers, response_body = self._transport(
@@ -254,9 +268,9 @@ class AnthropicMessagesAdapter:
 
 def execute_anthropic_canary_once(
     dispatch: DispatchRecord,
+    connection: ProviderConnection,
     input_payload: dict[str, Any] | None = None,
     *,
-    api_key: str | None = None,
     artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic",
     timeout_seconds: float = 30.0,
     transport: Transport | None = None,
@@ -279,9 +293,8 @@ def execute_anthropic_canary_once(
             "Live Anthropic canary requires a Claude Haiku 4.5 selected implementation"
         )
 
-    resolved_api_key = api_key if api_key is not None else os.environ.get("ANTHROPIC_API_KEY")
     adapter = AnthropicMessagesAdapter(
-        resolved_api_key or "",
+        connection,
         artifact_dir=artifact_dir,
         timeout_seconds=timeout_seconds,
         transport=transport,
