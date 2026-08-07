@@ -1,5 +1,6 @@
-version: 0.1
+version: 0.2
 status: public
+reviewed_at: 2026-08-07
 
 registry_rules:
   - capability_names_are_provider_neutral
@@ -79,6 +80,14 @@ capabilities:
       - test_plan
       - test_results
       - skipped_or_unavailable_checks
+
+  configuration_validation:
+    definition: validate linked configuration structure, references, constraints, and policy invariants before execution or acceptance
+    typical_teams: [engineering, verification, mission_control]
+    evidence:
+      - schema_validation
+      - linked_reference_validation
+      - configuration_invariant_results
 
   research:
     definition: collect, compare, and synthesize relevant external or internal evidence
