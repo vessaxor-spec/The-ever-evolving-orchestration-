@@ -2,15 +2,15 @@
 
 ## Status
 
-This specification defines the first runtime retry control for the guarded TEO canary.
+This specification defines the runtime retry control for the guarded TEO canary.
 
-Retry is intentionally separate from fallback.
+Retry is intentionally separate from fallback and circuit state.
 
-A retry means the routing decision is still valid and the same authorized dispatch is attempted again because the failure is temporary. A fallback means the routing decision must be reconsidered and TEO creates a new dispatch.
+A retry means the routing decision is still valid and the same authorized dispatch is attempted again because the failure is temporary. A fallback means the routing decision must be reconsidered and TEO creates a new dispatch. A circuit breaker remembers repeated service-health failure across separate executions and can block a provider before a future dispatch.
 
 ## Scope
 
-The active policy is:
+The active retry policy is:
 
 - task type: `high_volume_simple`
 - risk: low or medium
@@ -65,13 +65,25 @@ Jitter exists to reduce synchronized retries against a recovering provider. Test
 A retry sequence can end in four ways:
 
 1. success, which keeps the original dispatch active
-2. exhausted transient failure, which returns execution failure without fallback
+2. exhausted transient failure, which returns execution failure without direct fallback
 3. model failure, which leaves retry and may enter guarded model fallback
 4. provider failure, which leaves retry and may enter guarded provider fallback
 
 Request and capability failures terminate immediately and do not consume another retry attempt.
 
-An exhausted transient failure is not relabeled as a provider failure. That distinction is preserved for future circuit-breaker and outage policy.
+An exhausted transient failure is not relabeled as a provider failure.
+
+## Circuit-breaker interaction
+
+Provider circuit observation happens after the retry sequence finishes.
+
+This means a single retryable provider error does not by itself become cross-execution health evidence. If the retry succeeds, the circuit observes success. If the retry sequence ends in a declared service-health failure, that final response contributes one health observation to the provider-family circuit.
+
+If enough service-health observations trip the circuit, future tasks may route around that provider before execution. The active exhausted transient task is not retroactively converted into fallback authority merely because the circuit opened.
+
+The circuit specification is:
+
+- `docs/specification/provider-circuit-breaker.md`
 
 ## Adapter boundary
 
@@ -101,18 +113,20 @@ The reference tests prove that:
 - failed fallback retries do not create a third provider chain
 - policy cannot silently enable fallback after transient exhaustion
 - policy cannot exceed two attempts in the guarded canary
+- circuit observation occurs only after the retry sequence returns its final response
 
 The conformance suites are:
 
 - `tests/test_bounded_transient_retry.py`
 - `tests/test_guarded_canary_fallback.py`
+- `tests/test_provider_circuit_breaker.py`
 
 ## Non-goals
 
-This slice does not implement:
+This retry layer does not implement:
 
-- circuit breakers
-- provider health aggregation
+- circuit-state persistence itself
+- provider health classification itself
 - adaptive retry budgets
 - Retry-After header interpretation
 - cost-aware retry decisions
@@ -120,3 +134,5 @@ This slice does not implement:
 - high or critical risk retries
 - verifier execution
 - human approval integration
+
+Provider circuit state is implemented separately by `docs/specification/provider-circuit-breaker.md`.
