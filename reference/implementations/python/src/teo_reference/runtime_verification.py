@@ -60,7 +60,10 @@ def execute_live_verification(
     if dispatch.verification.human_approval_required and policy.human_approval_satisfied_by_model_verifier:
         raise LiveVerificationError("Model verification cannot satisfy qualified-human approval")
 
-    output_text = read_execution_output(execution.output_ref)
+    output_text = read_execution_output(
+        execution.output_ref,
+        max_bytes=policy.max_output_bytes,
+    )
     request = LiveVerificationRequest.from_execution(dispatch, output_text)
     if policy.require_provider_diversity and request.verifier_provider_family == execution.provider_family:
         raise LiveVerificationError(
