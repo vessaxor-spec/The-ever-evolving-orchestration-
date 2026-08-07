@@ -15,6 +15,7 @@ from teo_reference.verifier_calibration import (
 )
 from teo_reference.verifier_calibration_empirical import (
     COLLECTION_ROLE,
+    HumanCalibrationLabel,
     assess_human_label_readiness,
     build_human_gold_cases,
     collect_live_observations,
@@ -22,7 +23,6 @@ from teo_reference.verifier_calibration_empirical import (
     load_empirical_policy,
     planned_collection,
     validate_empirical_policy_against_base,
-    HumanCalibrationLabel,
 )
 
 
@@ -430,7 +430,11 @@ def test_empirical_observations_cannot_predate_completed_human_labels(tmp_path: 
     empirical, base, cases = context()
     labels = human_labels(cases, reviewed_at="2026-08-07T16:00:00Z")
     calls: list[dict] = []
-    with pytest.raises(CalibrationError, match="predates completion"):
+    output = tmp_path / "observations.jsonl"
+    with pytest.raises(
+        CalibrationError,
+        match="cannot start before independent human labels",
+    ):
         collect_live_observations(
             cases,
             labels,
@@ -438,10 +442,9 @@ def test_empirical_observations_cannot_predate_completed_human_labels(tmp_path: 
             base,
             all_connections(empirical, cases, calls),
             collector_revision="abcdef1234567890",
-            output_path=tmp_path / "observations.jsonl",
+            output_path=output,
             providers={"google"},
             now=lambda: "2026-08-07T15:00:00Z",
         )
-    # The first provider call completed, but the observation was rejected before it
-    # could become valid empirical evidence.
-    assert len(calls) == 1
+    assert calls == []
+    assert not output.exists()
