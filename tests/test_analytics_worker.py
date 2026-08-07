@@ -12,6 +12,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/analytics-worker-conformance.yaml"
+PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -62,6 +63,7 @@ def test_analytics_dispatch_is_high_risk_and_provider_diverse() -> None:
                 "task": "Analyze the dataset and design an A/B test using the data analyst.",
                 "risk_level": "low",
                 "specialist": "data-analyst",
+                "constraints": {"accepted_preview_models": PREVIEW_MODELS},
             }
         )
     )
