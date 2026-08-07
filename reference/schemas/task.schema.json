@@ -20,6 +20,7 @@
         "required_capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
         "blocked_implementations": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
         "blocked_providers": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "accepted_preview_models": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
         "require_human_approval": {"type": "boolean"}
       }
     }
