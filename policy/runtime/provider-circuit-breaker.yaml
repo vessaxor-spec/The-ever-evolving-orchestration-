@@ -1,0 +1,68 @@
+version: 1
+status: active
+scope: provider_family
+applies_to:
+  task_types:
+    - high_volume_simple
+  risk_levels:
+    - low
+    - medium
+
+trip_policy:
+  failure_threshold: 3
+  failure_window_seconds: 120
+  base_open_cooldown_seconds: 60
+  open_cooldown_multiplier: 2.0
+  max_open_cooldown_seconds: 300
+
+half_open:
+  max_probe_dispatches: 1
+  successes_required_to_close: 2
+
+service_health_signals:
+  anthropic:
+    - overloaded_error
+    - api_error
+    - timeout_error
+  openai:
+    - server_error
+    - internal_server_error
+    - internal_error
+    - service_unavailable
+    - overloaded_error
+    - timeout_error
+  google:
+    - unavailable
+    - internal
+    - deadline_exceeded
+    - service_unavailable
+
+never_global_health_signals:
+  - authentication_error
+  - unauthenticated
+  - permission_error
+  - permission_denied
+  - billing_error
+  - quota_exceeded
+  - resource_exhausted
+  - rate_limit_error
+  - rate_limit_exceeded
+  - model_not_found
+  - not_found_error
+  - invalid_request_error
+  - invalid_argument
+  - connection_error
+
+state:
+  format_version: 1
+  fail_on_corrupt_state: true
+  reference_store: json_file
+  production_distributed_store_required_for_multi_process: true
+
+principles:
+  - provider circuits represent service health, not user entitlement or connection health
+  - adapters remain stateless and never own circuit state
+  - open provider circuits influence new routing through blocked provider constraints
+  - half-open recovery uses bounded probes
+  - successful recovery probes close only after the configured success threshold
+  - connection, authentication, billing, permission, and quota failures never open a provider-family circuit
