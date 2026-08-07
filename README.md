@@ -86,10 +86,12 @@ The repository now contains:
 - guarded one-shot live execution of the dispatch-assigned provider-diverse verifier using structured pointwise criteria
 - authorized-root confinement for live verification artifacts and explicit treatment of candidate output as untrusted data
 - a fixed verifier-calibration control corpus with deterministic checks, strict observation contracts, repeatability and disagreement metrics, and mutation resistance
-- an empirical verifier-calibration protocol that requires blinded independent human labels before live observations, three provider-diverse verifier routes, three repeated runs per case per route, measured duration, provider-reported token usage, and route-specific quality reporting
+- an empirical verifier-calibration protocol that requires blinded independent human labels before human-backed live observations, three provider-diverse verifier routes, three repeated runs per case per route, measured duration, provider-reported token usage, and route-specific quality reporting
 - blinded human-review packet generation using random review-item aliases, a separate private alias map, a two-reviewer minimum, and distinct adjudication when reviewers disagree
+- a separate provisional machine-panel evidence tier for periods when independent human reviewers are unavailable, using three provider-diverse blinded machine judges whose exact models differ from the verifier routes being evaluated
+- separate content-free schemas and evidence semantics for machine-panel labels and provisional live observations so machine evidence cannot be silently represented as human-rated evidence
 - strict separation between calibration evidence and routing authority: complete or favorable measurements do not automatically change routes, authorize quality claims, or expand live execution scope
-- strict JSON Schema enforcement at external task, dispatch, execution, verification, final-outcome, human-review, human-label, and empirical-observation boundaries
+- strict JSON Schema enforcement at external task, dispatch, execution, verification, final-outcome, human-review, human-label, machine-panel, and empirical-observation boundaries
 - clean linked-configuration validation, including all-78 specialist spawnability, routed-model registration, model-registry consistency, and explicit verifier-diversity checks
 - worker and routing conformance datasets, including 27 principal-engineering cases
 - a six-card regulated evidence/freshness pilot with CI validation and mutation testing
@@ -97,7 +99,7 @@ The repository now contains:
 - reproducible reference CI with pinned runner, Python version, action commits, and validation dependencies
 - CI that compiles the implementation, runs the tests, validates regulated evidence, parses schemas, validates linked configuration, and executes the end-to-end example
 
-The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium effective risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, calibration, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. The calibration instrument and empirical collection machinery are implemented, but TEO does not yet claim measured verifier quality. The immediate evidence gate is completion of blinded independent human labels followed by 72 repeated live verifier observations across Google, Anthropic, and OpenAI. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, route-outcome learning, and qualified-human approval integration remain later runtime work.
+The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium effective risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, calibration, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. The calibration instrument, human-review workflow, and empirical collection machinery are implemented, but TEO does not yet claim measured verifier quality. The stronger evidence path remains independent blinded human review followed by 72 repeated live verifier observations. When independent human reviewers are unavailable, TEO now permits a separate provisional path consisting of 24 blinded judgments from three provider-diverse machine judges followed by the same 72-call verifier study, for 96 planned live calls in total. That provisional path measures reference-control performance and cross-provider machine consensus but does not constitute human ground truth and cannot authorize routing changes, quality claims, automatic route updates, or broader live execution. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, route-outcome learning, and qualified-human approval integration remain later runtime work.
 
 ## Core architecture
 
@@ -409,6 +411,7 @@ The complete machine-readable policies are available in:
 - [`policy/runtime/live-verification.yaml`](policy/runtime/live-verification.yaml)
 - [`policy/verification/verifier-calibration.yaml`](policy/verification/verifier-calibration.yaml)
 - [`policy/verification/verifier-calibration-empirical.yaml`](policy/verification/verifier-calibration-empirical.yaml)
+- [`policy/verification/verifier-calibration-machine-panel.yaml`](policy/verification/verifier-calibration-machine-panel.yaml)
 - [`models.yaml`](models.yaml)
 
 ## Public specialist roster
@@ -472,16 +475,22 @@ The calibration and evidence tooling currently provides:
 - deterministic pre-verifier checks where the expected property is objectively machine-checkable
 - a content-free calibration observation contract with provider, model, reasoning, timestamp, retry/fallback state, duration, token usage, and structured decision evidence
 - blinded human-review packet generation with random review aliases and a separate private alias map
-- a minimum of two independent reviewers per case, with distinct blinded adjudication when their structured decisions disagree
-- chronology enforcement requiring human labels to be complete before any live empirical verifier observation
-- an operator-run empirical collector for three provider-diverse verifier routes and three runs per case per route
+- a minimum of two independent human reviewers per case, with distinct blinded adjudication when their structured decisions disagree
+- chronology enforcement requiring human labels to be complete before human-backed live empirical verifier observation
+- an operator-run human-backed empirical collector for three provider-diverse verifier routes and three runs per case per route
+- a provisional provider-diverse machine-panel tier for use when independent human reviewers are unavailable
+- three blinded machine-panel routes using `gpt-5.6-terra`, `claude-opus-5`, and `gemini-3.1-pro-preview`, each using an exact model different from the verifier route being evaluated for that provider family
+- preservation of three-way machine disagreement as unresolved rather than force-adjudicating it into artificial certainty
+- a separate provisional observation path that remains distinguishable from human-backed empirical evidence
 - append, flush, fsync, and resume behavior without duplicate provider calls
 - aggregate and per-route metrics for false passes, false failures, missed or unnecessary human escalation, criterion accuracy, repeatability, disagreement, latency, and normalized usage
-- explicit authority controls that keep quality claims, routing changes, automatic route updates, and scope expansion disabled until independent residual-risk review and human acceptance
+- explicit authority controls that keep human-ground-truth claims, quality claims, routing changes, automatic route updates, and scope expansion disabled for provisional machine-panel evidence
 
 Live provider execution and live model verification are currently restricted to explicit `high_volume_simple` tasks at low or medium effective risk. A successful provider call is not a completed TEO outcome. The active verifier must run and existing finalization still checks verifier identity, provider diversity, verification status, and any human-approval requirement. Model verification never satisfies qualified-human approval.
 
-Calibration infrastructure is now executable, but calibration evidence is not yet complete. The current next gate is independent blinded human review of the fixed corpus, followed by the planned 72 live verifier observations. Until that evidence is collected, analyzed, independently reviewed, and accepted, TEO does not claim empirical verifier quality and does not broaden live verification authority.
+Calibration infrastructure is executable, but live calibration evidence is not yet complete. The strongest evidence path remains independent blinded human review of the fixed corpus followed by the planned 72 live verifier observations. When independent human reviewers are unavailable, the provisional machine-panel path can proceed with 24 blinded machine judgments followed by 72 provisional verifier observations. Results from that path are explicitly labeled provisional, compared against the fixed reference control, and reported separately from cross-provider machine consensus. They do not establish human-aligned ground truth or authorize a verifier-quality claim, routing change, or live-scope expansion.
+
+More detail is available in [`docs/specification/verifier-calibration-machine-panel.md`](docs/specification/verifier-calibration-machine-panel.md).
 
 ### Install
 
@@ -563,6 +572,8 @@ The repository contains fixtures and executable tests for:
 - fixed-corpus verifier calibration, deterministic control checks, error-rate denominator correctness, repeatability, cross-verifier disagreement, provider-family evidence floors, and calibration mutation resistance
 - blinded human-review packet and private-alias separation, reviewer blinding attestations, disagreement/adjudication controls, canonical-label normalization, and prevention of reference-control leakage through semantic case IDs
 - empirical calibration collection across a synthetic 72-observation matrix in CI, including chronology, provider usage, measured duration, single collector revision, durable append/resume behavior, no duplicate calls, and content-free persistence
+- provisional machine-panel collection across a synthetic 24-judgment matrix in CI, including provider diversity, exact-model separation from evaluated verifier routes, blinding, usage evidence, content-free persistence, resume behavior, unresolved no-majority preservation, and authority-boundary enforcement
+- a separate synthetic 72-observation provisional verifier matrix that proves machine-panel evidence remains distinguishable from human-backed empirical evidence
 - route-specific empirical reporting that prevents aggregate results from hiding a missing or weak configured verifier route
 - external JSON Schema boundary enforcement
 - regulated evidence/freshness validation and mutation resistance
@@ -580,7 +591,7 @@ The CI workflow in [`.github/workflows/reference-ci.yml`](.github/workflows/refe
 6. linked TEO configuration validation
 7. the end-to-end reference example, including model and provider verifier independence
 
-The Operational Evidence Phase 2 merge was accepted after the final pinned CI run passed 464 automated tests, regulated evidence validation, 16 JSON Schema parses, zero-issue linked configuration validation, and the provider-diverse end-to-end reference lifecycle. That result validates the evidence machinery as tested; it is not itself live empirical verifier-quality evidence.
+The provisional machine-panel evidence merge was accepted after the final pinned CI run passed 471 automated tests, regulated evidence validation, 18 JSON Schema parses, zero-issue linked configuration validation, and the provider-diverse end-to-end reference lifecycle. That result validates the provisional evidence machinery as tested; it is not itself live calibration evidence or a verifier-quality claim.
 
 ## Registry status
 
@@ -602,7 +613,7 @@ The initial registry was reviewed on **2026-08-05**. Provider documentation esta
 - Benchmark evidence: [`registry/benchmarks/`](registry/benchmarks/)
 - Registry validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
 
-The live canary can collect provider-attempt latency and normalized usage evidence. TEO also now has an executable verifier-calibration instrument and controlled empirical collection protocol, but it has not yet completed the independent blinded human labels and repeated live observations required for a verifier-quality claim. A controlled common-harness comparison of model quality, reliability, or monetary cost also remains incomplete. Cost attribution requires dated pricing evidence, and routing-quality claims must remain tied to accepted empirical evidence rather than provider documentation alone.
+The live canary can collect provider-attempt latency and normalized usage evidence. TEO also now has an executable verifier-calibration instrument, a human-backed empirical collection protocol, and a separate provisional provider-diverse machine-panel protocol for use when independent human reviewers are unavailable. Neither protocol has yet produced accepted live verifier-quality evidence. A controlled common-harness comparison of model quality, reliability, or monetary cost also remains incomplete. Cost attribution requires dated pricing evidence, and routing-quality claims must remain tied to accepted empirical evidence rather than provider documentation alone.
 
 ## Example workflow
 
@@ -862,16 +873,20 @@ Completed runtime and evidence additions include:
 - calibration observation schema, evidence-readiness metrics, repeatability and cross-provider disagreement analysis, and mutation controls
 - blinded independent-human review workflow with random aliases, a private alias map, two-reviewer coverage, and adjudication on disagreement
 - empirical calibration collector for three provider-diverse verifier routes with three runs per case per route, provider-reported usage, measured duration, durable resume behavior, and route-specific reporting
+- provisional machine-panel calibration policy, content-free label schema, and direct provider-diverse panel collection using exact models distinct from the evaluated verifier routes
+- separate provisional observation semantics that prevent machine-panel evidence from being confused with human-backed empirical evidence
 - authority controls preventing calibration evidence from automatically changing routes, authorizing quality claims, or broadening live execution scope
 
-The immediate next operational gate is empirical evidence collection, not additional architectural expansion:
+The immediate next operational gate is live provisional evidence collection because independent human reviewers are not currently available for the stronger human-backed tier:
 
-1. complete two blinded independent human reviews of all eight fixed calibration cases
-2. adjudicate any reviewer disagreements with a third distinct blinded reviewer
-3. normalize and validate the resulting canonical human labels
-4. collect the planned 72 live verifier observations across Google, Anthropic, and OpenAI
-5. measure aggregate and route-specific false passes, false failures, human-escalation errors, criterion accuracy, repeatability, disagreement, latency, and usage
-6. perform independent residual-risk review before accepting any verifier-quality claim or routing change
+1. collect one blinded machine judgment for each of the eight fixed calibration cases from each of the three configured provider-diverse panel routes, for 24 panel calls
+2. retain any three-way disagreement as unresolved rather than force-adjudicating it
+3. confirm complete three-route panel coverage and preserve cross-provider consensus separately from the fixed reference-control truth
+4. collect the planned 72 provisional live verifier observations across Google, Anthropic, and OpenAI
+5. measure aggregate and route-specific false passes, false failures, human-escalation errors, criterion accuracy, repeatability, disagreement, latency, and usage against the fixed reference control
+6. perform independent residual-risk review and require explicit human acceptance before any future verifier-quality claim, routing change, or scope expansion
+
+The independent-human calibration tier remains available as the stronger evidence path when suitable reviewers become available. The provisional machine-panel tier does not satisfy or replace it.
 
 After that gate, remaining production-hardening work includes distributed circuit-state coordination, distributed telemetry export and retention controls, source-backed cost attribution, route-outcome evaluation, qualified-human approval integration, streaming/runtime latency expansion, and continued observation of the six-card regulated evidence pilot.
 
