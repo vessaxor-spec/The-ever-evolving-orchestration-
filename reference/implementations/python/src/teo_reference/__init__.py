@@ -10,6 +10,7 @@ from .provider_adapter import (
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    ProviderUsage,
     ReasoningEffort,
     execute_provider_once,
 )
@@ -30,6 +31,12 @@ from .runtime_circuit_breaker import (
     ProviderCircuitRecord,
 )
 from .runtime_retry import RetryExecution, RetryPolicy, execute_with_transient_retry
+from .runtime_telemetry import (
+    InMemoryRuntimeTelemetrySink,
+    JsonlRuntimeTelemetrySink,
+    RuntimeTelemetryEvent,
+    RuntimeTelemetrySink,
+)
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 from .specialist_routing import SpecialistRoutingEngine
 
@@ -45,7 +52,9 @@ __all__ = [
     "GeminiInteractionsAdapter",
     "HeaderProviderConnection",
     "InMemoryCircuitStateStore",
+    "InMemoryRuntimeTelemetrySink",
     "JsonFileCircuitStateStore",
+    "JsonlRuntimeTelemetrySink",
     "OpenAIResponsesAdapter",
     "OrchestrationEngine",
     "ProviderAdapter",
@@ -60,9 +69,12 @@ __all__ = [
     "ProviderExecutionRequest",
     "ProviderExecutionResponse",
     "ProviderFailure",
+    "ProviderUsage",
     "ReasoningEffort",
     "RetryExecution",
     "RetryPolicy",
+    "RuntimeTelemetryEvent",
+    "RuntimeTelemetrySink",
     "SpecialistRoutingEngine",
     "TaskRequest",
     "VerificationResult",
