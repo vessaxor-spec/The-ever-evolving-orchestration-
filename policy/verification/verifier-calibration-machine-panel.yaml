@@ -1,0 +1,77 @@
+version: "1.0"
+status: provisional
+reviewed_at: 2026-08-07
+
+base_calibration:
+  empirical_policy: policy/verification/verifier-calibration-empirical.yaml
+  control_corpus: reference/datasets/verifier-calibration-gold.yaml
+  rubric_version: "1.0"
+  live_verification_policy_version: "1.1"
+
+evidence_tier: provisional_machine_panel
+
+panel:
+  collection_role: calibration_panel_direct
+  minimum_distinct_provider_families: 3
+  require_all_routes: true
+  require_blinded_packet: true
+  require_reference_control_labels_blinded_during_judging: true
+  require_model_observations_blinded_during_judging: true
+  require_distinct_exact_models_from_evaluated_verifier_routes: true
+  require_provider_reported_usage: true
+  require_duration_measurement: true
+  require_offset_aware_timestamp: true
+  unresolved_if_no_majority: true
+  persist_prompt_or_candidate_content: false
+  persist_provider_native_payload: false
+  persist_credentials_or_authorization: false
+  persist_connection_mechanism: false
+  persist_provider_request_identifiers: false
+  default_panel_labels_path: .teo/runtime/verifier-calibration/machine-panel-labels.jsonl
+  default_provisional_observations_path: .teo/runtime/verifier-calibration/provisional-observations.jsonl
+
+panel_routes:
+  - provider_family: openai
+    model: gpt-5.6-terra
+    reasoning: medium
+    rationale: executable verification model distinct from the evaluated OpenAI verifier route
+  - provider_family: anthropic
+    model: claude-opus-5
+    reasoning: medium
+    rationale: high-reasoning review model distinct from the evaluated Anthropic verifier route
+  - provider_family: google
+    model: gemini-3.1-pro-preview
+    reasoning: high
+    preview_acknowledged: true
+    rationale: deep-reasoning review model distinct from the evaluated Google verifier route
+
+provisional_collection:
+  evaluated_routes_source: empirical_policy
+  runs_per_case_per_route: 3
+  require_panel_readiness_before_live_collection: true
+  require_single_collector_revision_per_evidence_set: true
+  resume_without_duplicate_calls: true
+  stop_on_verifier_infrastructure_error: true
+
+acceptance:
+  human_ground_truth_claim_authorized: false
+  empirical_quality_claims_authorized: false
+  live_scope_expansion_authorized: false
+  routing_authority: false
+  automatic_route_update: false
+  human_review_tier_replaced: false
+  may_collect_provisional_live_evidence: true
+  require_explicit_human_acceptance_for_any_future_route_change: true
+  require_independent_residual_risk_review_before_any_future_route_change: true
+
+policy: >-
+  The provisional machine-panel tier exists for periods when independent human reviewers
+  are unavailable. It does not impersonate, replace, or satisfy the independent-human
+  evidence tier. Three provider-diverse machine judges evaluate the same blinded review
+  items using exact models distinct from the verifier routes being measured. Majority
+  agreement is recorded as provisional consensus; a case with no majority remains
+  unresolved rather than being force-adjudicated. Reference-control decisions remain the
+  objective test anchor for deterministic calibration cases, while machine-panel agreement
+  is reported separately as cross-provider consensus evidence. Panel consensus is not human
+  ground truth and cannot self-authorize a verifier-quality claim, routing change, automatic
+  route update, broader live execution, or removal of the stronger human-review tier.
