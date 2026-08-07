@@ -12,7 +12,8 @@
     "model",
     "output_ref",
     "evidence",
-    "failure"
+    "failure",
+    "retry_after_seconds"
   ],
   "properties": {
     "contract_version": {"const": "1"},
@@ -39,6 +40,10 @@
           }
         }
       ]
+    },
+    "retry_after_seconds": {
+      "type": ["number", "null"],
+      "minimum": 0
     }
   },
   "allOf": [
@@ -47,7 +52,8 @@
       "then": {
         "properties": {
           "output_ref": {"type": "string", "minLength": 1},
-          "failure": {"type": "null"}
+          "failure": {"type": "null"},
+          "retry_after_seconds": {"type": "null"}
         }
       }
     },
