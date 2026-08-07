@@ -29,7 +29,11 @@
       ]
     },
     "run_id": {"type": "string", "minLength": 1},
-    "observed_at": {"type": "string", "format": "date-time", "minLength": 1},
+    "observed_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d+)?)?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
     "rubric_version": {"type": "string", "minLength": 1},
     "verification_policy_version": {"type": "string", "minLength": 1},
     "execution_role": {"enum": ["primary", "fallback"]},
