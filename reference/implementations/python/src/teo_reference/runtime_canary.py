@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from random import random
-from time import sleep
+from time import monotonic, sleep
 from typing import Literal, Mapping
 
 from .anthropic_adapter import execute_anthropic_canary_once
@@ -20,11 +20,19 @@ from .runtime_circuit_breaker import (
     ProviderCircuitPolicy,
 )
 from .runtime_retry import (
+    AttemptClock,
+    AttemptObserver,
     RandomSource,
     RetryExecution,
     RetryPolicy,
     Sleeper,
     execute_with_transient_retry,
+)
+from .runtime_telemetry import (
+    AttemptRole,
+    JsonlRuntimeTelemetrySink,
+    RuntimeTelemetryEvent,
+    RuntimeTelemetrySink,
 )
 from .schemas import DispatchRecord, TaskConstraints, TaskRequest
 from .specialist_routing import SpecialistRoutingEngine
@@ -143,6 +151,8 @@ def _execute_with_retry(
     retry_policy: RetryPolicy,
     sleeper: Sleeper,
     random_source: RandomSource,
+    attempt_observer: AttemptObserver,
+    attempt_clock: AttemptClock,
 ) -> RetryExecution:
     return execute_with_transient_retry(
         dispatch,
@@ -152,6 +162,8 @@ def _execute_with_retry(
         retry_policy,
         sleeper=sleeper,
         random_source=random_source,
+        attempt_observer=attempt_observer,
+        attempt_clock=attempt_clock,
     )
 
 
@@ -164,6 +176,29 @@ def _circuit_block_delta(original: TaskRequest, prepared: TaskRequest) -> tuple[
     )
 
 
+def _telemetry_observer(
+    sink: RuntimeTelemetrySink,
+    role: AttemptRole,
+) -> AttemptObserver:
+    def observe(
+        dispatch: DispatchRecord,
+        attempt_number: int,
+        response: ProviderExecutionResponse,
+        duration_seconds: float,
+    ) -> None:
+        sink.append(
+            RuntimeTelemetryEvent.from_attempt(
+                dispatch,
+                response,
+                role=role,
+                attempt_number=attempt_number,
+                duration_seconds=duration_seconds,
+            )
+        )
+
+    return observe
+
+
 def execute_guarded_canary(
     engine: SpecialistRoutingEngine,
     task: TaskRequest,
@@ -172,14 +207,17 @@ def execute_guarded_canary(
     artifact_root: str | Path = ".teo/runtime/artifacts",
     retry_policy: RetryPolicy | None = None,
     circuit_breaker: ProviderCircuitBreaker | None = None,
+    telemetry_sink: RuntimeTelemetrySink | None = None,
     sleeper: Sleeper = sleep,
     random_source: RandomSource = random,
+    attempt_clock: AttemptClock = monotonic,
 ) -> CanaryRuntimeOutcome:
     """Execute one primary dispatch and at most one policy-driven redispatch fallback.
 
     Each dispatch may use bounded transient retry. Provider-family circuit state is applied
-    before routing and observed only after the dispatch's retry sequence finishes. Adapters
-    remain stateless and never own retry, fallback, or circuit-breaker authority.
+    before routing and observed only after the dispatch's retry sequence finishes. Every
+    provider attempt is persisted as content-free telemetry before later retry or fallback.
+    Adapters remain stateless and never own retry, fallback, circuit, or telemetry authority.
     """
     if task.task_type != "high_volume_simple":
         raise ProviderAdapterContractError(
@@ -193,6 +231,7 @@ def execute_guarded_canary(
         ProviderCircuitPolicy.load(engine.config.root),
         JsonFileCircuitStateStore(root.parent / "provider-circuits.json"),
     )
+    telemetry = telemetry_sink or JsonlRuntimeTelemetrySink(root / "runtime-telemetry.jsonl")
 
     prepared_task = circuit.prepare_task(task)
     circuit_blocks = _circuit_block_delta(task, prepared_task)
@@ -210,6 +249,8 @@ def execute_guarded_canary(
         policy,
         sleeper,
         random_source,
+        _telemetry_observer(telemetry, "primary"),
+        attempt_clock,
     )
     primary_response = primary_execution.response
     primary_circuit = circuit.observe(primary_dispatch, primary_response)
@@ -277,6 +318,8 @@ def execute_guarded_canary(
         policy,
         sleeper,
         random_source,
+        _telemetry_observer(telemetry, "fallback"),
+        attempt_clock,
     )
     fallback_response = fallback_execution.response
     fallback_circuit = circuit.observe(fallback_dispatch, fallback_response)
