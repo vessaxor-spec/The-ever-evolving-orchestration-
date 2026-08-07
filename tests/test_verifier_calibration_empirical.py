@@ -149,10 +149,12 @@ def mock_connection(provider: str, model: str, cases, calls: list[dict], *, incl
         prompt = request_prompt(provider, decoded)
         matched = None
         for case in cases:
-            if (
-                f"ORIGINAL TASK:\n{case.task}" in prompt
-                and f"CANDIDATE OUTPUT:\n{case.candidate_output}" in prompt
-            ):
+            expected = (
+                f"ORIGINAL TASK:\n{case.task}\n\n"
+                f"CANDIDATE OUTPUT:\n{case.candidate_output}\n\n"
+                "Criteria:\n"
+            )
+            if expected in prompt:
                 matched = case
                 break
         assert matched is not None
