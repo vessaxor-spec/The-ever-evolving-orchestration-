@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/live-verification-decision.schema.json",
+  "title": "TEO Live Verification Decision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "output_present",
+    "task_adherence",
+    "format_consistency",
+    "unsupported_claims_absent",
+    "human_reason"
+  ],
+  "properties": {
+    "status": {"enum": ["passed", "failed", "needs_human"]},
+    "output_present": {"enum": ["pass", "fail", "uncertain"]},
+    "task_adherence": {"enum": ["pass", "fail", "uncertain"]},
+    "format_consistency": {"enum": ["pass", "fail", "uncertain"]},
+    "unsupported_claims_absent": {"enum": ["pass", "fail", "uncertain"]},
+    "human_reason": {
+      "enum": [
+        "none",
+        "insufficient_evidence",
+        "ambiguous_task",
+        "unverifiable_output",
+        "conflicting_evidence"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "passed"}}},
+      "then": {
+        "properties": {
+          "output_present": {"const": "pass"},
+          "task_adherence": {"const": "pass"},
+          "format_consistency": {"const": "pass"},
+          "unsupported_claims_absent": {"const": "pass"},
+          "human_reason": {"const": "none"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "needs_human"}}},
+      "then": {
+        "properties": {
+          "human_reason": {
+            "enum": [
+              "insufficient_evidence",
+              "ambiguous_task",
+              "unverifiable_output",
+              "conflicting_evidence"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}
