@@ -245,6 +245,7 @@ class ConfigBundle:
                     root_path / "community/workers/assurance-workers.yaml",
                     root_path / "community/workers/principal-engineering-active-workers.yaml",
                     root_path / "community/workers/specialist-completion-workers.yaml",
+                    root_path / "community/workers/runtime-worker-overrides.yaml",
                 ),
             ),
             specialists=_load_specialists(
