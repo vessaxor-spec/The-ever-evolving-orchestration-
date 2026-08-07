@@ -4,13 +4,13 @@
 
 This specification defines the first automatic live fallback path in the TEO reference runtime.
 
-The scope is intentionally narrow. It applies only to explicit `high_volume_simple` tasks at low or medium risk and allows at most one fallback execution attempt.
+The scope is intentionally narrow. It applies only to explicit `high_volume_simple` tasks at low or medium risk and allows at most one fallback redispatch.
 
 ## Core rule
 
 Fallback is a new TEO dispatch, not an adapter chain.
 
-When an eligible primary execution fails, the runtime returns the failure to orchestration. TEO creates a new dispatch after applying the appropriate execution block. The new dispatch receives its own dispatch ID, selected implementation, routine fallback state, and independent verifier assignment before execution resumes.
+When an eligible execution fails, the runtime returns the failure to orchestration. TEO creates a new dispatch after applying the appropriate execution block. The new dispatch receives its own dispatch ID, selected implementation, routine fallback state, and independent verifier assignment before execution resumes.
 
 An adapter never invokes another adapter directly.
 
@@ -25,13 +25,15 @@ A model-scoped failure blocks the failed implementation model before redispatch.
 
 A provider-scoped failure blocks the failed provider family before redispatch. The replacement execution must therefore use another provider family.
 
-The following scopes do not trigger automatic fallback in this version:
+The following scopes do not directly trigger automatic fallback:
 
 - `request`
 - `transient`
 - `capability`
 
-Request failures require correction or rejection. Transient failures are reserved for the future bounded retry policy. Capability failures return to capability resolution rather than silently substituting a model.
+Request failures require correction or rejection. Transient failures may use the separate bounded same-dispatch retry policy. Exhausted transient retries remain transient and do not automatically become fallback authority. Capability failures return to capability resolution rather than silently substituting a model.
+
+If a transient retry later returns a `model` or `provider` failure, that new normalized failure may enter the guarded fallback path.
 
 ## Redispatch requirements
 
@@ -46,9 +48,11 @@ An eligible fallback must satisfy all of the following:
 7. assign an independent verifier different from the fallback execution model
 8. assign a fresh verifier implementation rather than reusing the primary dispatch verifier
 9. execute through the provider adapter and connection boundaries
-10. perform at most one fallback execution attempt
+10. create at most one fallback dispatch
 
 A failed fallback does not chain automatically to a third provider.
+
+The primary and fallback dispatches may each consume the separately governed transient retry budget without changing these redispatch limits.
 
 ## Verification boundary
 
@@ -73,9 +77,14 @@ A missing connection for the newly selected provider fails closed. It does not a
 
 ## Retry boundary
 
-This version intentionally does not retry transient failures.
+Transient retry is governed separately by:
 
-Retry budgets, delay, backoff, jitter, and circuit breakers are a separate runtime control. Keeping them separate prevents a transient retry from being confused with a policy fallback or from consuming an undeclared number of attempts.
+- `policy/runtime/canary-retry.yaml`
+- `docs/specification/bounded-transient-retry.md`
+
+A retry preserves the existing dispatch, provider, model, reasoning effort, and verifier. A fallback changes the routing context and therefore requires a new dispatch.
+
+This separation prevents retry attempts from being confused with policy fallback and makes both attempt budgets observable.
 
 ## Conformance
 
@@ -86,25 +95,25 @@ The reference tests verify that:
 - fallback uses the policy-selected implementation
 - fallback receives a fresh independent verifier
 - request failures do not fallback
-- transient failures do not fallback
+- exhausted transient retries do not fallback
+- a retry that later produces model or provider failure may redispatch
 - fallback failure does not chain to a third provider
 - original task constraints are not mutated
 - automatic fallback requires an explicit `high_volume_simple` task type
 
-The conformance suite is:
+The conformance suites are:
 
 - `tests/test_guarded_canary_fallback.py`
+- `tests/test_bounded_transient_retry.py`
 
 ## Non-goals
 
 This slice does not implement:
 
-- transient retry budgets
-- exponential backoff or jitter
 - circuit breakers
 - automatic fallback for high or critical risk
 - capability-driven rerouting after execution failure
 - verifier execution
 - human approval integration
 - cost, latency, reliability, or quality telemetry
-- more than one fallback attempt
+- more than one fallback redispatch
