@@ -4,7 +4,7 @@
 
 This document defines the runtime-execution boundary for the TEO reference implementation.
 
-The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, fallback, verification, or approval authority.
+The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, retry, fallback, verification, or approval authority.
 
 Contract version: `1`
 
@@ -32,15 +32,15 @@ An adapter must not:
 - select another model
 - switch provider family
 - silently increase or decrease the selected reasoning effort
+- retry itself
 - invoke the preselected fallback
-- perform an automatic orchestration-level retry
 - select or perform independent verification
 - waive or satisfy human approval
 - modify the dispatch
 - return a provider-native payload as the runtime contract
 - serialize credentials, authorization headers, secrets, passwords, or access tokens into the request or normalized result
 
-Provider SDK initialization, connection establishment, and credential acquisition remain runtime concerns outside the serialized contract.
+Provider SDK initialization, connection establishment, credential acquisition, retry control, and fallback coordination remain runtime concerns outside the adapter.
 
 ## Request envelope
 
@@ -103,7 +103,7 @@ The response must echo the active dispatch, provider family, and model. Any chan
 
 ## Current provider implementations
 
-The guarded reference runtime currently includes single-attempt adapters for the bounded `high_volume_simple` canary path:
+The guarded reference runtime includes single-attempt adapters for the bounded `high_volume_simple` canary path:
 
 - Anthropic Claude Haiku 4.5 through the Messages API
 - OpenAI GPT-5.6 Luna through the Responses API
@@ -115,25 +115,33 @@ OpenAI and Gemini map the TEO reasoning-effort field directly to their current p
 
 ## Failure taxonomy
 
-Version 1 uses the same bounded failure scopes already established by TEO routing policy:
+Version 1 uses the bounded failure scopes established by TEO routing policy:
 
 | Scope | Meaning | Runtime implication |
 |---|---|---|
-| `request` | The request itself is invalid or cannot be fulfilled as submitted | Correct or reject the request before another execution attempt |
-| `transient` | A temporary execution condition interrupted the attempt | Future runtime may apply bounded retry policy |
-| `model` | The selected model is unavailable or unsuitable while the provider may remain usable | Future orchestration may redispatch with the implementation blocked |
-| `provider` | The provider family is unavailable or unusable for the request | Future orchestration may redispatch with the provider blocked |
+| `request` | The request itself is invalid or cannot be fulfilled as submitted | Correct or reject the request |
+| `transient` | A temporary execution condition interrupted the attempt | Guarded canary may apply bounded same-dispatch retry |
+| `model` | The selected model is unavailable or unsuitable while the provider may remain usable | Guarded canary may redispatch with the implementation blocked |
+| `provider` | The provider family is unavailable or unusable for the request | Guarded canary may redispatch with the provider blocked |
 | `capability` | The selected execution path cannot satisfy a required capability | Return to capability and routing resolution |
 
 The adapter reports the failure scope. It does not decide the recovery action.
 
-## Single-attempt rule
+## Single-attempt adapter rule
 
-`execute_provider_once` performs one adapter call.
+`execute_provider_once` and each provider adapter perform one provider invocation.
 
-If that attempt fails, the returned `ExecutionResult` is failed and records one failed attempt. The adapter layer does not call the fallback. Existing orchestration logic remains responsible for deciding whether another dispatch, fallback, or escalation is required.
+Retry and fallback are implemented above this boundary:
 
-This separation is deliberate. A hidden adapter retry or fallback would make provider selection, independent verification, audit history, retry budgets, and failure-scope handling less observable.
+- bounded transient retry may invoke the same adapter again under the same dispatch
+- model or provider fallback returns to TEO and creates a new dispatch before another provider execution
+
+This separation keeps provider attempts, routing changes, independent verification, and failure transitions observable.
+
+The active runtime specifications are:
+
+- `docs/specification/bounded-transient-retry.md`
+- `docs/specification/guarded-canary-fallback.md`
 
 ## Contract validation
 
@@ -164,31 +172,27 @@ The reference conformance suites include:
 - `tests/test_provider_adapter_contract.py`
 - `tests/test_anthropic_live_canary.py`
 - `tests/test_multi_provider_live_canary.py`
+- `tests/test_guarded_canary_fallback.py`
+- `tests/test_bounded_transient_retry.py`
 
-## Non-goals for version 1
+## Current runtime boundaries
 
-The current provider layer does not implement:
+The guarded runtime now supports:
 
-- automatic live fallback execution
-- orchestration-level retry budgets
-- backoff or jitter
+- three live provider canaries
+- selected reasoning-effort propagation
+- at most two attempts for transient failure within one dispatch
+- one model/provider fallback redispatch with a fresh independent verifier
+
+It does not yet implement:
+
 - circuit breakers
+- adaptive or provider-specific retry budgets
+- Retry-After header interpretation
 - streaming
-- cost, latency, or quality telemetry
+- cost, latency, reliability, or quality telemetry persistence
 - verifier execution
 - qualified-human approval integration
 - broad high-risk provider execution
 
-Those layers should be added only after provider parity remains stable under conformance testing.
-
-## Acceptance gate before automatic fallback
-
-Automatic fallback execution should not be added until the provider layer demonstrates that:
-
-1. dispatch-selected provider, model, and supported reasoning effort cannot be silently changed by an adapter
-2. failed execution returns to orchestration without hidden fallback
-3. failure scope is normalized into the five declared categories across all active provider adapters
-4. provider-native responses cannot leak across the adapter boundary
-5. credentials are not part of serialized execution records
-6. provider connection method does not alter routing semantics
-7. existing routing, verification, finalization, evidence-pilot, specialist-preservation, and provider conformance tests remain green
+Those controls should be added as separate layers rather than weakening the adapter contract.
