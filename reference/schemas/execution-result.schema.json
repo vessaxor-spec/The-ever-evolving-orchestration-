@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/execution-result.schema.json",
+  "title": "TEO Execution Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["dispatch_id", "status"],
+  "properties": {
+    "dispatch_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["succeeded", "failed"]},
+    "output_ref": {"type": ["string", "null"]},
+    "evidence": {"type": "array", "items": {"type": "string"}},
+    "failed_attempts": {"type": "integer", "minimum": 0}
+  }
+}

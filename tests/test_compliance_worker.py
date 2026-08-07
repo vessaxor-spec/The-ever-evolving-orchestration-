@@ -12,6 +12,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/compliance-worker-conformance.yaml"
+PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -62,6 +63,7 @@ def test_compliance_dispatch_is_critical_provider_diverse_and_human_gated() -> N
                 "task": "Run a SOC 2 compliance audit and control mapping using the compliance auditor.",
                 "risk_level": "low",
                 "specialist": "compliance-auditor",
+                "constraints": {"accepted_preview_models": PREVIEW_MODELS},
             }
         )
     )

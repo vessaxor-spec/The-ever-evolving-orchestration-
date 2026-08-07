@@ -8,7 +8,7 @@ constraints:
   contexts:
     - backend
   required_capabilities:
-    - configuration_validation
+    - testing
   blocked_implementations: []
   blocked_providers: []
   require_human_approval: false

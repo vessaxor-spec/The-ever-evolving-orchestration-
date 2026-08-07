@@ -12,6 +12,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/user-research-worker-conformance.yaml"
+PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -62,6 +63,7 @@ def test_user_research_dispatch_is_medium_risk_and_provider_diverse() -> None:
                 "task": "Synthesize customer feedback and interview transcripts into user pain points using the feedback synthesizer.",
                 "risk_level": "low",
                 "specialist": "feedback-synthesizer",
+                "constraints": {"accepted_preview_models": PREVIEW_MODELS},
             }
         )
     )

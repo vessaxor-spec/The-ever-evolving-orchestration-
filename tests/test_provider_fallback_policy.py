@@ -9,6 +9,7 @@ from teo_reference.schemas import TaskRequest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
 
 PRIMARY_KEYS = {
     "orchestration": "primary",
@@ -147,7 +148,10 @@ def test_provider_scoped_blocking_moves_dispatch_across_provider_boundary() -> N
                 "task": "Map controls and evidence for a SOC 2 compliance review.",
                 "task_type": "compliance_review",
                 "specialist": "compliance-auditor",
-                "constraints": {"blocked_providers": ["anthropic"]},
+                "constraints": {
+                    "blocked_providers": ["anthropic"],
+                    "accepted_preview_models": PREVIEW_MODELS,
+                },
             }
         )
     )
@@ -161,7 +165,10 @@ def test_provider_scoped_blocking_moves_dispatch_across_provider_boundary() -> N
                 "task": "Review authentication and authorization controls.",
                 "task_type": "security_review",
                 "specialist": "security-engineer",
-                "constraints": {"blocked_providers": ["anthropic"]},
+                "constraints": {
+                    "blocked_providers": ["anthropic"],
+                    "accepted_preview_models": PREVIEW_MODELS,
+                },
             }
         )
     )

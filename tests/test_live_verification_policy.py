@@ -25,12 +25,19 @@ def test_live_verification_policy_loads_guarded_independent_defaults() -> None:
     assert policy.verifier_fallback is False
     assert policy.structured_output_required is True
     assert policy.blinded_executor_identity is True
+    assert policy.artifact_root_confinement is True
+    assert policy.candidate_output_is_untrusted_data is True
     assert policy.expose_retry_history is False
     assert policy.expose_fallback_history is False
     assert policy.expose_runtime_telemetry is False
     assert policy.semantic_ground_truth_must_not_be_invented is True
     assert policy.infrastructure_failure_is_not_a_verification_judgment is True
     assert policy.human_approval_satisfied_by_model_verifier is False
+    assert policy.status_precedence == (
+        "any_fail_means_failed",
+        "otherwise_any_uncertain_means_needs_human",
+        "otherwise_passed",
+    )
     assert policy.checks == VERIFICATION_CHECKS
     assert policy.statuses == {"passed", "failed", "needs_human"}
 
@@ -47,12 +54,15 @@ def test_live_verification_policy_loads_guarded_independent_defaults() -> None:
         {"verifier_fallback": True},
         {"blinded_executor_identity": False},
         {"structured_output_required": False},
+        {"artifact_root_confinement": False},
+        {"candidate_output_is_untrusted_data": False},
         {"expose_retry_history": True},
         {"expose_fallback_history": True},
         {"expose_runtime_telemetry": True},
         {"semantic_ground_truth_must_not_be_invented": False},
         {"infrastructure_failure_is_not_a_verification_judgment": False},
         {"human_approval_satisfied_by_model_verifier": True},
+        {"status_precedence": ("uncertain_first",)},
     ],
 )
 def test_live_verification_policy_rejects_authority_or_bias_weakening(mutation: dict) -> None:

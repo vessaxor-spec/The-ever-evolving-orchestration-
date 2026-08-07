@@ -16,12 +16,29 @@ _CREDENTIAL_FIELDS = {
     "api_key",
     "apikey",
     "authorization",
+    "authorization_code",
+    "bearer_token",
+    "client_secret",
     "credential",
     "credentials",
     "password",
+    "private_key",
+    "refresh_token",
     "secret",
+    "service_account_key",
+    "session_token",
     "token",
+    "access_token",
 }
+_CREDENTIAL_SUFFIXES = (
+    "_api_key",
+    "_credential",
+    "_credentials",
+    "_password",
+    "_private_key",
+    "_secret",
+    "_token",
+)
 
 
 class ProviderAdapterContractError(RuntimeError):
@@ -46,7 +63,7 @@ def _assert_no_credential_fields(value: Any, path: str = "input_payload") -> Non
     if isinstance(value, dict):
         for key, nested in value.items():
             normalized = str(key).strip().lower().replace("-", "_")
-            if normalized in _CREDENTIAL_FIELDS:
+            if normalized in _CREDENTIAL_FIELDS or normalized.endswith(_CREDENTIAL_SUFFIXES):
                 raise ProviderAdapterContractError(
                     f"Credential material must not be serialized in {path}: {key}"
                 )

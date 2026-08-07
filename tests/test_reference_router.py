@@ -3,10 +3,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 import yaml
 
 from teo_reference.audit import append_jsonl
-from teo_reference.config import ConfigBundle
+from teo_reference.config import ConfigBundle, ConfigurationError
 from teo_reference.engine import OrchestrationEngine, RoutingError
 from teo_reference.schemas import ExecutionResult, TaskRequest, VerificationResult
 
@@ -70,8 +71,8 @@ def build_repo(root: Path) -> Path:
             "fallback_order": {
                 "coding": [
                     {"agent": "codex", "model": "gpt-terra"},
-                    {"agent": "codex", "model": "gpt-sol"},
                     {"agent": "agy", "model": "gemini-pro"},
+                    {"agent": "claude", "model": "claude-sonnet"},
                 ],
                 "engineering_reasoning": [
                     {"agent": "codex", "model": "gpt-sol"},
@@ -100,25 +101,25 @@ def build_repo(root: Path) -> Path:
                     "owning_team": "engineering",
                     "required_capabilities": ["coding", "debugging", "tool_execution"],
                     "preferred_implementations": ["gpt-terra", "gpt-sol"],
-                    "fallbacks": ["gemini-pro"],
+                    "fallbacks": ["gemini-pro", "claude-sonnet"],
                 },
                 "frontend": {
                     "owning_team": "engineering",
                     "required_capabilities": ["coding", "visual_reasoning"],
                     "preferred_implementations": ["gpt-terra"],
-                    "fallbacks": ["gemini-pro"],
+                    "fallbacks": ["gemini-pro", "claude-sonnet"],
                 },
                 "security": {
                     "owning_team": "review",
                     "required_capabilities": ["high_reasoning", "adversarial_review"],
                     "preferred_implementations": ["claude-opus", "gpt-sol"],
-                    "fallbacks": ["claude-sonnet"],
+                    "fallbacks": ["claude-sonnet", "gpt-terra"],
                 },
                 "architecture": {
                     "owning_team": "planning",
                     "required_capabilities": ["high_reasoning", "planning"],
                     "preferred_implementations": ["claude-sonnet", "gpt-sol"],
-                    "fallbacks": ["claude-opus"],
+                    "fallbacks": ["claude-opus", "gemini-pro"],
                 },
             }
         },
@@ -139,12 +140,18 @@ def build_repo(root: Path) -> Path:
                     "risk_profile": "critical",
                     "role_card": "community/specialists/security-engineer.md",
                 },
-                "unresolved-role": {
-                    "primary_team": "planning",
-                    "worker_binding": "missing_worker",
-                    "risk_profile": "medium",
-                    "role_card": "community/specialists/unresolved-role.md",
-                },
+            }
+        },
+    )
+    write_yaml(
+        root / "registry/capabilities/capabilities.yaml",
+        {
+            "capabilities": {
+                "configuration_validation": {
+                    "definition": "validate linked configuration",
+                    "typical_teams": ["engineering"],
+                    "evidence": ["configuration_check"],
+                }
             }
         },
     )
@@ -185,6 +192,18 @@ def build_repo(root: Path) -> Path:
             }
         },
     )
+    write_yaml(
+        root / "registry/models/models.yaml",
+        {
+            "models": {
+                "gpt-terra": {"provider": "openai", "availability": "current"},
+                "gpt-sol": {"provider": "openai", "availability": "current"},
+                "gemini-pro": {"provider": "google", "availability": "preview"},
+                "claude-sonnet": {"provider": "anthropic", "availability": "ga"},
+                "claude-opus": {"provider": "anthropic", "availability": "ga"},
+            }
+        },
+    )
     return root
 
 
@@ -192,11 +211,20 @@ def engine(tmp_path: Path) -> OrchestrationEngine:
     return OrchestrationEngine(ConfigBundle.load(build_repo(tmp_path)))
 
 
-def test_config_loading_surfaces_registry_drift(tmp_path: Path) -> None:
-    bundle = ConfigBundle.load(build_repo(tmp_path))
-    issues = bundle.validate()
-    assert any("missing_worker" in issue for issue in issues)
-    assert not any(issue.startswith("ERROR:") for issue in issues)
+def test_config_loading_fails_closed_on_unreachable_specialist_binding(tmp_path: Path) -> None:
+    root = build_repo(tmp_path)
+    specialist_path = root / "community/specialists/specialists.yaml"
+    payload = yaml.safe_load(specialist_path.read_text(encoding="utf-8"))
+    payload["specialists"]["unresolved-role"] = {
+        "primary_team": "planning",
+        "worker_binding": "missing_worker",
+        "risk_profile": "medium",
+        "role_card": "community/specialists/unresolved-role.md",
+    }
+    write_yaml(specialist_path, payload)
+
+    with pytest.raises(ConfigurationError, match="missing_worker"):
+        ConfigBundle.load(root)
 
 
 def test_dispatch_resolves_complete_route(tmp_path: Path) -> None:
@@ -210,7 +238,10 @@ def test_dispatch_resolves_complete_route(tmp_path: Path) -> None:
                 "risk_level": "medium",
                 "domain": "backend",
                 "specialist": "backend-engineer",
-                "constraints": {"required_capabilities": ["configuration_validation"]},
+                "constraints": {
+                    "required_capabilities": ["configuration_validation"],
+                    "accepted_preview_models": ["gemini-pro"],
+                },
             }
         )
     )
@@ -232,7 +263,10 @@ def test_blocked_implementations_apply_fallback(tmp_path: Path) -> None:
             {
                 "task": "Implement a backend endpoint.",
                 "task_type": "daily_coding",
-                "constraints": {"blocked_implementations": ["gpt-terra", "gpt-sol"]},
+                "constraints": {
+                    "blocked_implementations": ["gpt-terra", "gpt-sol"],
+                    "accepted_preview_models": ["gemini-pro"],
+                },
             }
         )
     )
@@ -249,12 +283,8 @@ def test_specialist_binding_mismatch_fails_closed(tmp_path: Path) -> None:
             "specialist": "security-engineer",
         }
     )
-    try:
+    with pytest.raises(RoutingError, match="does not match"):
         router.dispatch(task)
-    except RoutingError as exc:
-        assert "does not match" in str(exc)
-    else:
-        raise AssertionError("Expected specialist binding mismatch")
 
 
 def test_critical_specialist_requires_human_approval(tmp_path: Path) -> None:

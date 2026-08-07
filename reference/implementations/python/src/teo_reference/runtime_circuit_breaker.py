@@ -318,6 +318,7 @@ class ProviderCircuitBreaker:
             required_capabilities=list(task.constraints.required_capabilities),
             blocked_implementations=list(task.constraints.blocked_implementations),
             blocked_providers=blocked,
+            accepted_preview_models=list(task.constraints.accepted_preview_models),
             require_human_approval=task.constraints.require_human_approval,
         )
         return TaskRequest(
@@ -381,9 +382,16 @@ class ProviderCircuitBreaker:
         health_failure = self.is_service_health_failure(response)
 
         if record.state == "half_open":
-            if health_failure or code == "connection_error":
+            if health_failure:
                 return self._open(replace(record, probe_in_flight=False), now, code)
-            return self._close(record, now)
+            updated = replace(
+                record,
+                probe_in_flight=False,
+                last_failure_code=code,
+                last_transition_at=now,
+            )
+            self.store.save(updated)
+            return updated
 
         if not health_failure:
             return self._close(record, now)

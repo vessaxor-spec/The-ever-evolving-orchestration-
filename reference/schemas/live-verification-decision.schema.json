@@ -45,10 +45,6 @@
       "if": {"properties": {"status": {"const": "failed"}}},
       "then": {
         "properties": {
-          "output_present": {"not": {"const": "uncertain"}},
-          "task_adherence": {"not": {"const": "uncertain"}},
-          "format_consistency": {"not": {"const": "uncertain"}},
-          "unsupported_claims_absent": {"not": {"const": "uncertain"}},
           "human_reason": {"const": "none"}
         },
         "anyOf": [

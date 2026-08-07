@@ -244,17 +244,31 @@ def test_retry_exhausted_server_failures_trip_circuit_across_executions(tmp_path
     assert "anthropic" in rerouted.circuit_blocked_providers
 
 
+def _open_anthropic_circuit(
+    breaker: ProviderCircuitBreaker,
+    store: InMemoryCircuitStateStore,
+    dispatch,
+) -> None:
+    failure = ProviderExecutionResponse(
+        dispatch_id=dispatch.dispatch_id,
+        status="failed",
+        provider_family="anthropic",
+        model="claude-haiku-4-5",
+        failure=ProviderFailure(scope="provider", code="overloaded_error", message="test failure"),
+    )
+    for _ in range(3):
+        breaker.observe(dispatch, failure)
+    assert store.load_all()["anthropic"].state == "open"
+
+
 def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_cooldown() -> None:
     now = [0.0]
     store = InMemoryCircuitStateStore()
     breaker = ProviderCircuitBreaker(policy(), store, clock=lambda: now[0])
     dispatch = engine().dispatch(canary_task("task-half-open"))
 
-    failure = failed_response("anthropic", "provider", "overloaded_error")
-    for _ in range(3):
-        breaker.observe(dispatch, failure)
+    _open_anthropic_circuit(breaker, store, dispatch)
     opened = store.load_all()["anthropic"]
-    assert opened.state == "open"
     assert opened.reopen_at == pytest.approx(60.0)
 
     now[0] = 60.0
@@ -286,11 +300,45 @@ def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_c
     closed = breaker.observe(probe_two, second_success)
     assert closed.state == "closed"
 
-    for _ in range(3):
-        breaker.observe(dispatch, failure)
+    _open_anthropic_circuit(breaker, store, dispatch)
     reopened = store.load_all()["anthropic"]
     assert reopened.trip_count == 2
     assert reopened.reopen_at == pytest.approx(now[0] + 120.0)
+
+
+def test_half_open_connection_error_does_not_poison_provider_health_or_count_as_recovery() -> None:
+    now = [0.0]
+    store = InMemoryCircuitStateStore()
+    breaker = ProviderCircuitBreaker(policy(), store, clock=lambda: now[0])
+    dispatch = engine().dispatch(canary_task("task-half-open-connection"))
+    _open_anthropic_circuit(breaker, store, dispatch)
+    opened = store.load_all()["anthropic"]
+    trip_count = opened.trip_count
+
+    now[0] = opened.reopen_at or 60.0
+    probe = engine().dispatch(breaker.prepare_task(canary_task("task-half-open-connection-probe")))
+    breaker.claim_dispatch(probe)
+    connection_failure = ProviderExecutionResponse(
+        dispatch_id=probe.dispatch_id,
+        status="failed",
+        provider_family="anthropic",
+        model="claude-haiku-4-5",
+        failure=ProviderFailure(
+            scope="transient",
+            code="connection_error",
+            message="local connection failed",
+        ),
+    )
+    observed = breaker.observe(probe, connection_failure)
+
+    assert observed.state == "half_open"
+    assert observed.trip_count == trip_count
+    assert observed.half_open_successes == 0
+    assert observed.probe_in_flight is False
+    assert observed.last_failure_code == "connection_error"
+
+    next_task = breaker.prepare_task(canary_task("task-next-probe"))
+    assert "anthropic" not in next_task.constraints.blocked_providers
 
 
 def test_json_store_fails_closed_on_corrupt_state(tmp_path: Path) -> None:

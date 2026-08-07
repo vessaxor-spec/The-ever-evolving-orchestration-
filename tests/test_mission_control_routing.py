@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/mission-control-routing-conformance.yaml"
+PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -30,6 +32,13 @@ def value_at_path(data: dict[str, Any], dotted_path: str) -> Any:
     return value
 
 
+def conformance_task(data: dict[str, Any]) -> TaskRequest:
+    payload = deepcopy(data)
+    constraints = payload.setdefault("constraints", {})
+    constraints.setdefault("accepted_preview_models", PREVIEW_MODELS)
+    return TaskRequest.from_dict(payload)
+
+
 SCENARIOS = load_yaml(DATASET)["scenarios"]
 
 
@@ -37,7 +46,7 @@ SCENARIOS = load_yaml(DATASET)["scenarios"]
 def test_mission_control_route(scenario: dict[str, Any]) -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     engine = OrchestrationEngine(bundle)
-    dispatch = engine.dispatch(TaskRequest.from_dict(scenario["task"]))
+    dispatch = engine.dispatch(conformance_task(scenario["task"]))
     actual = dispatch.to_dict()
 
     assert scenario["expect"]["equals"]["task_type"] in bundle.implementation_routes
@@ -56,6 +65,10 @@ def test_mission_control_route(scenario: dict[str, Any]) -> None:
             )
 
     assert dispatch.selected_implementation.model != dispatch.verification.implementation.model
+    assert (
+        dispatch.selected_implementation.provider_family
+        != dispatch.verification.implementation.provider_family
+    )
 
 
 def test_mission_control_route_extension_is_additive() -> None:

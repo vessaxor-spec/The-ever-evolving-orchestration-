@@ -34,6 +34,7 @@ class TaskConstraints:
     required_capabilities: list[str] = field(default_factory=list)
     blocked_implementations: list[str] = field(default_factory=list)
     blocked_providers: list[str] = field(default_factory=list)
+    accepted_preview_models: list[str] = field(default_factory=list)
     require_human_approval: bool = False
 
     @classmethod
@@ -44,6 +45,7 @@ class TaskConstraints:
             required_capabilities=list(data.get("required_capabilities", [])),
             blocked_implementations=list(data.get("blocked_implementations", [])),
             blocked_providers=list(data.get("blocked_providers", [])),
+            accepted_preview_models=list(data.get("accepted_preview_models", [])),
             require_human_approval=bool(data.get("require_human_approval", False)),
         )
 

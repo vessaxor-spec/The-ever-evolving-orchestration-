@@ -23,12 +23,15 @@ class LiveVerificationPolicy:
     verifier_fallback: bool
     structured_output_required: bool
     blinded_executor_identity: bool
+    artifact_root_confinement: bool
+    candidate_output_is_untrusted_data: bool
     expose_retry_history: bool
     expose_fallback_history: bool
     expose_runtime_telemetry: bool
     semantic_ground_truth_must_not_be_invented: bool
     infrastructure_failure_is_not_a_verification_judgment: bool
     human_approval_satisfied_by_model_verifier: bool
+    status_precedence: tuple[str, ...]
     checks: tuple[str, ...]
     statuses: frozenset[str]
 
@@ -56,6 +59,10 @@ class LiveVerificationPolicy:
             verifier_fallback=bool(verification.get("verifier_fallback", False)),
             structured_output_required=bool(verification.get("structured_output_required", False)),
             blinded_executor_identity=bool(verification.get("blinded_executor_identity", False)),
+            artifact_root_confinement=bool(verification.get("artifact_root_confinement", False)),
+            candidate_output_is_untrusted_data=bool(
+                verification.get("candidate_output_is_untrusted_data", False)
+            ),
             expose_retry_history=bool(verification.get("expose_retry_history", False)),
             expose_fallback_history=bool(verification.get("expose_fallback_history", False)),
             expose_runtime_telemetry=bool(verification.get("expose_runtime_telemetry", False)),
@@ -68,6 +75,7 @@ class LiveVerificationPolicy:
             human_approval_satisfied_by_model_verifier=bool(
                 verification.get("human_approval_satisfied_by_model_verifier", False)
             ),
+            status_precedence=tuple(str(item) for item in verification.get("status_precedence", [])),
             checks=tuple(str(item) for item in verification.get("checks", [])),
             statuses=frozenset(str(item) for item in verification.get("statuses", [])),
         )
@@ -89,6 +97,10 @@ class LiveVerificationPolicy:
             raise LiveVerificationError("Guarded live verifier must perform exactly one attempt with no retry or fallback")
         if not self.structured_output_required or not self.blinded_executor_identity:
             raise LiveVerificationError("Live verification requires structured output and blinded executor identity")
+        if not self.artifact_root_confinement:
+            raise LiveVerificationError("Live verification must confine execution artifacts to the authorized root")
+        if not self.candidate_output_is_untrusted_data:
+            raise LiveVerificationError("Live verification must treat candidate output as untrusted data")
         if self.expose_retry_history or self.expose_fallback_history or self.expose_runtime_telemetry:
             raise LiveVerificationError("Live verifier must not receive retry, fallback, or telemetry history")
         if not self.semantic_ground_truth_must_not_be_invented:
@@ -97,6 +109,12 @@ class LiveVerificationPolicy:
             raise LiveVerificationError("Verification infrastructure failure must fail closed outside model judgment")
         if self.human_approval_satisfied_by_model_verifier:
             raise LiveVerificationError("Model verification cannot satisfy qualified-human approval")
+        if self.status_precedence != (
+            "any_fail_means_failed",
+            "otherwise_any_uncertain_means_needs_human",
+            "otherwise_passed",
+        ):
+            raise LiveVerificationError("Live verification status precedence must remain fail, uncertain, pass")
         if self.checks != VERIFICATION_CHECKS:
             raise LiveVerificationError("Live verification checks must match the fixed guarded rubric")
         if self.statuses != {"passed", "failed", "needs_human"}:

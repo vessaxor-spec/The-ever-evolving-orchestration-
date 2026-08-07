@@ -11,6 +11,7 @@ from teo_reference.specialist_routing import SpecialistRoutingEngine
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = REPO_ROOT / "policy/routing/specialist-model-routing.yaml"
+PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro-preview"]}
 
 
 def engine() -> SpecialistRoutingEngine:
@@ -43,6 +44,7 @@ def test_security_specialist_uses_opus_xhigh_with_sol_fallback_and_gemini_verifi
                 "task_type": "security_review",
                 "risk_level": "low",
                 "specialist": "security-engineer",
+                "constraints": PREVIEW_ACCEPTANCE,
             }
         )
     )
@@ -72,6 +74,7 @@ def test_backend_specialist_uses_terra_medium_with_flash_fallback_and_sonnet_ver
                 "task_type": "daily_coding",
                 "risk_level": "low",
                 "specialist": "backend-engineer",
+                "constraints": PREVIEW_ACCEPTANCE,
             }
         )
     )
@@ -93,6 +96,7 @@ def test_research_specialist_uses_gemini_pro_with_sonnet_fallback_and_sol_verifi
                 "task_type": "deep_research",
                 "risk_level": "medium",
                 "specialist": "researcher",
+                "constraints": PREVIEW_ACCEPTANCE,
             }
         )
     )
@@ -112,7 +116,10 @@ def test_blocked_specialist_primary_can_promote_cross_provider_fallback() -> Non
                 "task": "Review authentication and authorization controls with the security engineer.",
                 "task_type": "security_review",
                 "specialist": "security-engineer",
-                "constraints": {"blocked_providers": ["anthropic"]},
+                "constraints": {
+                    "blocked_providers": ["anthropic"],
+                    "accepted_preview_models": ["gemini-3.1-pro-preview"],
+                },
             }
         )
     )
@@ -145,6 +152,7 @@ def test_specialist_model_refinement_never_changes_team_worker_or_specialist_sou
             "task_type": "daily_coding",
             "risk_level": "medium",
             "specialist": "backend-engineer",
+            "constraints": PREVIEW_ACCEPTANCE,
         }
     )
     base = router.__class__.__mro__[1].dispatch(router, task)

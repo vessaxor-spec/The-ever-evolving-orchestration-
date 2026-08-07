@@ -1,6 +1,6 @@
-version: 0.1
+version: 0.2
 status: pilot
-reviewed_at: 2026-08-06
+reviewed_at: 2026-08-07
 purpose: Prove maintainable evidence-backed freshness for consequential specialist use before any registry-wide rollout.
 
 controls:
@@ -29,11 +29,11 @@ pilot_specialists:
           source_type: primary_law
           url: https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure
           expected_hosts: [www.uscourts.gov]
-          locator: Federal Rules of Civil Procedure, Rule 37(e)
-          source_date_basis: effective
-          source_date: 2025-12-01
-        verified_at: 2026-08-06
-        expires_at: 2026-11-04
+          locator: Current Federal Rules of Civil Procedure, Rule 37(e); the preservation rewrite became effective December 1 2015
+          source_date_basis: observed
+          source_date: 2026-08-07
+        verified_at: 2026-08-07
+        expires_at: 2026-11-05
         verification:
           prepared_by: research
           verified_by: legal_review
@@ -209,11 +209,11 @@ pilot_specialists:
           source_type: standards_body
           url: https://www.iso.org/standard/82075.html
           expected_hosts: [www.iso.org]
-          locator: ISO/IEC 9899:2024, edition 5, status published
+          locator: ISO lifecycle stage 60.60, International Standard published October 31 2024; edition 5
           source_date_basis: published
           source_date: 2024-10-31
-        verified_at: 2026-08-06
-        expires_at: 2026-11-04
+        verified_at: 2026-08-07
+        expires_at: 2026-11-05
         verification:
           prepared_by: research
           verified_by: embedded_systems_review

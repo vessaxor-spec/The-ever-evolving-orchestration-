@@ -1,0 +1,22 @@
+# Exact dependency set for the Python 3.11.15 GitHub Actions validation environment.
+# Update intentionally and validate the complete suite before changing versions.
+# Direct project and test dependencies
+PyYAML==6.0.3
+jsonschema==4.26.0
+pytest==9.1.1
+
+# jsonschema transitive dependencies for Python 3.11
+attrs==26.1.0
+jsonschema-specifications==2025.9.1
+referencing==0.37.0
+rpds-py==2026.6.3
+typing-extensions==4.16.0
+
+# pytest transitive dependencies for Python 3.11
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+Pygments==2.20.0
+
+# Build backend used with --no-build-isolation
+setuptools==83.0.0

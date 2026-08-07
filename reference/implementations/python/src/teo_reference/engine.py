@@ -365,13 +365,24 @@ class OrchestrationEngine:
             raise RoutingError("Verification was not performed by the assigned verifier")
         if dispatch.verification.independent and verification.verifier_model == dispatch.selected_implementation.model:
             raise RoutingError("Independent verification cannot use the selected execution model")
+        if (
+            dispatch.verification.independent
+            and dispatch.verification.implementation.provider_family
+            and dispatch.selected_implementation.provider_family
+            and dispatch.verification.implementation.provider_family
+            == dispatch.selected_implementation.provider_family
+        ):
+            raise RoutingError("Independent verification cannot use the selected execution provider family")
 
         notes: list[str] = []
         escalation_used = False
         if execution.status == "failed":
-            status = "escalated" if dispatch.fallback_implementation else "failed"
-            escalation_used = bool(dispatch.fallback_implementation)
-            notes.append("Execution failed; fallback or escalation is required.")
+            if dispatch.fallback_implementation:
+                status = "escalated"
+                notes.append("Execution failed; an eligible fallback is available but is not recorded as executed.")
+            else:
+                status = "failed"
+                notes.append("Execution failed and no eligible fallback is available.")
         elif verification.status == "failed":
             status = "failed"
             notes.append("Independent verification failed; the outcome is not accepted.")
@@ -409,12 +420,42 @@ class OrchestrationEngine:
         raise RoutingError("Task type is ambiguous; supply task_type rather than allowing an invented route")
 
     def _assess_risk(self, task: TaskRequest):
-        if task.risk_level:
-            return task.risk_level, f"Explicit risk level {task.risk_level} was accepted."
         text = task.task.lower()
+        content_risk = "low"
+        content_trigger: str | None = None
         for risk in ("critical", "high", "medium"):
-            if any(pattern in text for pattern in RISK_PATTERNS[risk]):
-                return risk, f"Risk assessed as {risk} from task content."
+            matched = next((pattern for pattern in RISK_PATTERNS[risk] if pattern in text), None)
+            if matched:
+                content_risk = risk
+                content_trigger = matched
+                break
+
+        declared_risk = task.risk_level or "low"
+        effective_risk = (
+            declared_risk
+            if RISK_ORDER[declared_risk] >= RISK_ORDER[content_risk]
+            else content_risk
+        )
+
+        if task.risk_level and RISK_ORDER[task.risk_level] < RISK_ORDER[content_risk]:
+            return (
+                effective_risk,
+                f"Declared risk {task.risk_level} could not lower the content-derived {content_risk} risk floor"
+                + (f" triggered by {content_trigger!r}." if content_trigger else "."),
+            )
+        if task.risk_level and RISK_ORDER[task.risk_level] > RISK_ORDER[content_risk]:
+            return (
+                effective_risk,
+                f"Declared risk {task.risk_level} elevated the content-derived {content_risk} risk floor.",
+            )
+        if task.risk_level:
+            return effective_risk, f"Declared risk {task.risk_level} matched the effective risk floor."
+        if content_risk != "low":
+            return (
+                content_risk,
+                f"Risk assessed as {content_risk} from task content"
+                + (f" using trigger {content_trigger!r}." if content_trigger else "."),
+            )
         return "low", "Risk assessed as low because no higher-risk trigger was detected."
 
     def _resolve_worker(self, route: dict[str, Any], task: TaskRequest) -> str:
@@ -459,9 +500,26 @@ class OrchestrationEngine:
 
     def _resolve_capabilities(self, task: TaskRequest, worker: str) -> list[str]:
         worker_entry = self.config.worker_registry[worker]
+        worker_team = str(worker_entry.get("owning_team") or "")
+        registry = self.config.capability_registry
+        for capability in task.constraints.required_capabilities:
+            entry = registry.get(capability)
+            if not entry:
+                raise RoutingError(f"Required capability is not registered: {capability}")
+            typical_teams = set(str(item) for item in entry.get("typical_teams", []))
+            if typical_teams and "all" not in typical_teams and worker_team not in typical_teams:
+                raise RoutingError(
+                    f"Selected worker {worker} cannot satisfy required capability {capability} for team {worker_team}"
+                )
         return _unique(
             [*worker_entry.get("required_capabilities", []), *task.constraints.required_capabilities]
         )
+
+    def _worker_allows_model(self, worker: str, choice: ImplementationChoice) -> bool:
+        worker_entry = self.config.worker_registry[worker]
+        allowed = set(str(item) for item in worker_entry.get("preferred_implementations", []))
+        allowed.update(str(item) for item in worker_entry.get("fallbacks", []))
+        return choice.model in allowed
 
     def _resolve_primary(self, task_type: str, worker: str, task: TaskRequest) -> ImplementationChoice:
         route = self.config.implementation_routes.get(task_type, {})
@@ -469,14 +527,14 @@ class OrchestrationEngine:
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
                 choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if self._eligible(choice, task):
+                if self._eligible(choice, task) and self._worker_allows_model(worker, choice):
                     return choice
 
-        for key in ("fallback", "local_fallback", "escalation"):
+        for key in ("fallback", "local_fallback", "conditional_escalation"):
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
                 choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if self._eligible(choice, task):
+                if self._eligible(choice, task) and self._worker_allows_model(worker, choice):
                     return choice
 
         worker_entry = self.config.worker_registry[worker]
@@ -496,24 +554,40 @@ class OrchestrationEngine:
         capabilities: list[str],
         task: TaskRequest,
         exclude: set[str],
+        exclude_providers: set[str] | None = None,
     ) -> ImplementationChoice | None:
+        blocked_providers = exclude_providers or set()
         route = self.config.implementation_routes.get(task_type, {})
-        for key in ("fallback", "local_fallback", "escalation"):
+        for key in ("fallback", "local_fallback", "conditional_escalation"):
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
                 choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if choice.model not in exclude and self._eligible(choice, task):
+                if (
+                    choice.model not in exclude
+                    and choice.provider_family not in blocked_providers
+                    and self._eligible(choice, task)
+                    and self._worker_allows_model(worker, choice)
+                ):
                     return choice
 
         for model in self.config.worker_registry[worker].get("fallbacks", []):
             choice = self._choice({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
-            if choice.model not in exclude and self._eligible(choice, task):
+            if (
+                choice.model not in exclude
+                and choice.provider_family not in blocked_providers
+                and self._eligible(choice, task)
+            ):
                 return choice
 
         family = self._fallback_family(capabilities)
         for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
             choice = self._choice(candidate, f"fallback_order.{family}")
-            if choice.model not in exclude and self._eligible(choice, task):
+            if (
+                choice.model not in exclude
+                and choice.provider_family not in blocked_providers
+                and self._eligible(choice, task)
+                and self._worker_allows_model(worker, choice)
+            ):
                 return choice
         return None
 
@@ -534,14 +608,34 @@ class OrchestrationEngine:
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
                 possible = self._choice(candidate, f"routing.{task_type}.{key}")
-                if possible.model != primary.model and self._eligible(possible, task):
+                if (
+                    possible.model != primary.model
+                    and possible.provider_family
+                    and primary.provider_family
+                    and possible.provider_family != primary.provider_family
+                    and self._eligible(possible, task)
+                ):
                     choice = possible
                     break
         if choice is None:
             capabilities = ["high_reasoning"]
-            choice = self._resolve_fallback(task_type, worker, capabilities, task, {primary.model})
-        if choice is None or choice.model == primary.model:
-            raise RoutingError("No independent verifier is available for the selected implementation")
+            excluded_providers = {primary.provider_family} if primary.provider_family else set()
+            choice = self._resolve_fallback(
+                task_type,
+                worker,
+                capabilities,
+                task,
+                {primary.model},
+                excluded_providers,
+            )
+        if (
+            choice is None
+            or choice.model == primary.model
+            or not choice.provider_family
+            or not primary.provider_family
+            or choice.provider_family == primary.provider_family
+        ):
+            raise RoutingError("No provider-diverse independent verifier is available for the selected implementation")
 
         specialist_risk = (specialist_entry or {}).get("risk_profile")
         effective_risk = risk
@@ -585,6 +679,8 @@ class OrchestrationEngine:
         if choice.model in task.constraints.blocked_implementations:
             return False
         if choice.provider_family and choice.provider_family in task.constraints.blocked_providers:
+            return False
+        if choice.availability == "preview" and choice.model not in task.constraints.accepted_preview_models:
             return False
         return True
 

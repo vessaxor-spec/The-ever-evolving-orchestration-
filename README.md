@@ -8,7 +8,7 @@
 
 ### Models evolve. Responsibilities endure.
 
-An open, vendor-neutral orchestration framework and runnable reference control plane for coordinating intelligent systems through teams, workers, specialists, capabilities, implementations, fallbacks, and independent verification.
+A publicly viewable, vendor-neutral orchestration specification with a runnable reference control plane for coordinating intelligent systems through teams, workers, specialists, capabilities, implementations, fallbacks, and independent verification.
 
 **Navigate by principles. Adapt by evidence.**
 
@@ -32,7 +32,7 @@ The Ever-Evolving Orchestration separates those layers so a system can adopt bet
 
 ## What is TEO?
 
-TEO is a public framework for answering one durable question:
+TEO is a publicly viewable orchestration specification and reference implementation for answering one durable question:
 
 > **How should an intelligent system decide which intelligence to use, under what authority, with which fallback, and with what verification?**
 
@@ -59,7 +59,7 @@ It is intended for engineers, AI agents, researchers, and organizations building
 The repository now contains:
 
 - ten active organizational teams: Mission Control, Planning, Engineering, Platform and Reliability, Systems Engineering, Physical Systems, Research, Assurance, Review, and Verification
-- a public roster of 78 preserved specialist role cards
+- a public roster of 78 preserved specialist role cards, each with a deterministic Team -> Worker -> Specialist spawn path
 - machine-readable team, worker, specialist, capability, model, fallback, verification, retry, provider-health, and runtime-telemetry policies
 - dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
 - dedicated Platform and Reliability workers for distributed systems, database reliability, networks, platforms, performance, FinOps, SRE, MLOps, DevOps, and DevSecOps
@@ -69,8 +69,11 @@ The repository now contains:
 - dedicated Assurance workers for privacy engineering, functional safety, formal methods, and application security
 - dedicated Review Team workers for code review and compliance review
 - deterministic task classification for established routes and explicit task types for principal-engineering routes
+- a non-lowerable effective-risk floor derived from task content, caller declaration, specialist profile, and policy
 - specialist-driven risk elevation and qualified human approval for critical effective risk
 - effort-aware specialist model refinement across all 78 active specialists
+- capability and worker-implementation eligibility checks before execution selection
+- explicit task-level authorization before preview implementations may be selected
 - provider-aware routine fallbacks and independent provider-diverse verification
 - conditional escalation separated from ordinary availability fallback
 - a connection-neutral provider boundary that keeps API keys, OAuth, delegated identity, service accounts, connector sessions, and other access mechanisms outside routing semantics
@@ -79,15 +82,18 @@ The repository now contains:
 - provider-directed minimum retry timing without transferring retry authority to providers
 - guarded model/provider fallback through a new canonical redispatch and fresh independent verifier
 - persistent provider-family circuit state with Closed, Open, and Half-Open recovery
-- persistent content-free provider-attempt telemetry for latency, failure state, retry timing, verifier identity, and normalized token usage
+- persistent content-free provider-attempt telemetry for latency, failure state, retry timing, verifier identity, and normalized token usage using opaque runtime correlation rather than caller-controlled task identifiers
 - guarded one-shot live execution of the dispatch-assigned provider-diverse verifier using structured pointwise criteria
-- exact configuration-warning baselines
+- authorized-root confinement for live verification artifacts and explicit treatment of candidate output as untrusted data
+- strict JSON Schema enforcement at external task, dispatch, execution, verification, and final-outcome boundaries
+- clean linked-configuration validation, including all-78 specialist spawnability, routed-model registration, model-registry consistency, and explicit verifier-diversity checks
 - worker and routing conformance datasets, including 27 principal-engineering cases
 - a six-card regulated evidence/freshness pilot with CI validation and mutation testing
 - a runnable Python reference router with validation, planning, finalization, runtime execution controls, live verification, and audit output
+- reproducible reference CI with pinned runner, Python version, action commits, and validation dependencies
 - CI that compiles the implementation, runs the tests, validates regulated evidence, parses schemas, validates linked configuration, and executes the end-to-end example
 
-The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, verifier calibration, route-outcome learning, and qualified-human approval integration remain later runtime work.
+The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium effective risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, verifier calibration, route-outcome learning, and qualified-human approval integration remain later runtime work.
 
 ## Core architecture
 
@@ -366,17 +372,19 @@ TEO defines responsibilities independently from providers. The table below summa
 | Capability direction | Current primary use | Cross-provider support |
 |---|---|---|
 | Engineering execution | GPT-5.6 Terra | Gemini 3.6 Flash fallback with Claude Sonnet 5 verification where mapped |
-| Difficult engineering reasoning | GPT-5.6 Sol | Claude Sonnet 5 fallback with Gemini 3.1 Pro verification |
-| High-consequence specialist reasoning | Claude Opus 5 | GPT-5.6 Sol fallback with Gemini 3.1 Pro verification |
-| General planning and semantic work | Claude Sonnet 5 | GPT-5.6 Sol fallback with Gemini 3.1 Pro verification |
-| Broad research and grounded synthesis | Gemini 3.1 Pro Preview | Claude Sonnet 5 fallback with GPT-5.6 Sol verification |
+| Difficult engineering reasoning | GPT-5.6 Sol | Claude Sonnet 5 fallback with Gemini 3.1 Pro Preview verification when explicitly accepted |
+| High-consequence specialist reasoning | Claude Opus 5 | GPT-5.6 Sol fallback with Gemini 3.1 Pro Preview verification when explicitly accepted |
+| General planning and semantic work | Claude Sonnet 5 | GPT-5.6 Sol fallback with Gemini 3.1 Pro Preview verification when explicitly accepted |
+| Broad research and grounded synthesis | Gemini 3.1 Pro Preview, only with explicit task acceptance | Claude Sonnet 5 fallback with GPT-5.6 Sol verification |
 | Fast bounded and multimodal execution | Gemini 3.6 Flash | GPT-5.6 Terra fallback with Claude Sonnet 5 verification |
 | Economical high-volume work | GPT-5.6 Luna or Claude Haiku 4.5 where routed | cross-provider Flash/Haiku/Luna paths under explicit policy |
 | Executable verification | GPT-5.6 Terra or GPT-5.6 Sol | independent semantic, research, or qualified human verification |
 
 Claude Opus 5 is deliberately used as a primary for selected high-consequence specialists whose work is dominated by complex reasoning, safety, regulation, formal reasoning, systems requirements, difficult physical systems, or critical decision framing. It is not a generic routine fallback.
 
-Reasoning effort is part of the executable dispatch contract. Current provider controls are mapped only when the selected model supports them; unsupported effort values fail closed rather than being silently changed.
+Preview status is an execution constraint rather than a recommendation. A preview implementation remains ineligible until the concrete preview model is listed in `constraints.accepted_preview_models` for that task.
+
+Reasoning effort is part of the executable dispatch contract. Current provider controls are mapped only when the selected model supports them; unsupported effort values fail closed rather than being silently changed. Configuration validation cross-checks declared routed effort against canonical model evidence when that evidence publishes an explicit supported-level set.
 
 The complete machine-readable policies are available in:
 
@@ -388,6 +396,8 @@ The complete machine-readable policies are available in:
 - [`policy/routing/principal-engineering-team-routing.yaml`](policy/routing/principal-engineering-team-routing.yaml)
 - [`policy/routing/principal-engineering-routing.yaml`](policy/routing/principal-engineering-routing.yaml)
 - [`policy/routing/principal-engineering-activation.yaml`](policy/routing/principal-engineering-activation.yaml)
+- [`policy/routing/specialist-spawn-team-routing.yaml`](policy/routing/specialist-spawn-team-routing.yaml)
+- [`policy/routing/specialist-spawn-routing.yaml`](policy/routing/specialist-spawn-routing.yaml)
 - [`policy/routing/specialist-model-routing.yaml`](policy/routing/specialist-model-routing.yaml)
 - [`policy/runtime/canary-retry.yaml`](policy/runtime/canary-retry.yaml)
 - [`policy/runtime/provider-circuit-breaker.yaml`](policy/runtime/provider-circuit-breaker.yaml)
@@ -406,6 +416,7 @@ Each specialist has:
 - a primary TEO team
 - supporting teams where needed
 - a stable worker binding
+- a deterministic Team -> Worker spawn path
 - activation and handoff requirements
 - a risk profile
 - verification requirements
@@ -449,7 +460,7 @@ The guarded live runtime currently provides:
 - one-shot live execution of the dispatch-assigned provider-diverse verifier
 - strict structured verification statuses: `passed`, `failed`, or `needs_human`
 
-Live provider execution and live model verification are currently restricted to explicit `high_volume_simple` tasks at low or medium risk. A successful provider call is not a completed TEO outcome. The active verifier must run and existing finalization still checks verifier identity, verification status, and any human-approval requirement. Model verification never satisfies qualified-human approval.
+Live provider execution and live model verification are currently restricted to explicit `high_volume_simple` tasks at low or medium effective risk. A successful provider call is not a completed TEO outcome. The active verifier must run and existing finalization still checks verifier identity, provider diversity, verification status, and any human-approval requirement. Model verification never satisfies qualified-human approval.
 
 ### Install
 
@@ -464,7 +475,7 @@ python -m pip install -e '.[test]'
 teo --repo-root ../../.. validate
 ```
 
-Validation exposes unresolved worker bindings and policy inconsistencies without silently rewriting canonical team, worker, or specialist definitions.
+Validation fails closed on unresolved worker bindings, unreachable active specialists, unregistered routed models, model-registry provider mismatches, unsupported declared reasoning levels where canonical evidence supplies the allowed set, missing provider-diverse verifier candidates, and other linked policy inconsistencies. It does not silently rewrite canonical team, worker, specialist, model, or routing definitions.
 
 ### Create a dispatch
 
@@ -485,7 +496,7 @@ teo --repo-root ../../.. finalize \
   --audit-log /tmp/teo-audit.jsonl
 ```
 
-The execution and verification records must reference the dispatch ID. The verifier must match the assigned verification implementation and remain independent from the execution implementation.
+External task, dispatch, execution, verification, and generated final-outcome records are checked against the repository's JSON Schemas. The execution and verification records must reference the dispatch ID. The verifier must match the assigned verification implementation and remain model- and provider-independent from the execution implementation.
 
 ### Run the end-to-end example
 
@@ -519,14 +530,16 @@ The repository contains fixtures and executable tests for:
 - research, user-research, market-research, analytics, compliance, and review boundaries
 - 27 principal-engineering team, worker, specialist, risk, fallback, verifier, and human-approval cases
 - all 78 specialist model-routing assignments and reasoning-effort behavior
+- all 78 active specialist Team -> Worker -> Specialist spawn paths
 - cross-provider routine fallback and independent verifier diversity
-- exact configuration-warning baselines
+- clean linked-configuration validation and configuration-invariant mutation tests
 - provider adapter contract and three live provider canaries
 - bounded transient retry and provider-directed retry timing
 - guarded fallback redispatch with a fresh verifier
-- persistent provider-family circuit state and half-open recovery
-- persistent content-free provider-attempt telemetry and normalized provider usage
-- provider-diverse live verifier routing, strict structured decisions, and verification-policy mutation resistance
+- persistent provider-family circuit state and half-open recovery, including separation of local connection failure from provider service health
+- persistent content-free provider-attempt telemetry, opaque runtime correlation, and normalized provider usage
+- provider-diverse live verifier routing, authorized artifact roots, untrusted candidate-output handling, strict structured decisions, and verification-policy mutation resistance
+- external JSON Schema boundary enforcement
 - regulated evidence/freshness validation and mutation resistance
 - refusal of ambiguous implicit principal-specialist routing
 
@@ -534,12 +547,13 @@ Intentional routing or runtime-control changes must update the relevant fixture 
 
 The CI workflow in [`.github/workflows/reference-ci.yml`](.github/workflows/reference-ci.yml) performs:
 
-1. Python source compilation
-2. the complete automated test suite
-3. regulated specialist evidence validation
-4. JSON-schema parsing
-5. linked TEO configuration validation
-6. the end-to-end reference example
+1. installation from a pinned validation dependency graph on a fixed runner and Python patch version
+2. Python source compilation
+3. the complete automated test suite
+4. regulated specialist evidence validation
+5. JSON-schema parsing
+6. linked TEO configuration validation
+7. the end-to-end reference example, including model and provider verifier independence
 
 ## Registry status
 
@@ -650,7 +664,7 @@ Task
   -> Outcome
 ```
 
-For consequential work, do not allow one implementation to become the sole planner, executor, reviewer, and verifier.
+For consequential work, do not allow one implementation or provider family to become the sole planner, executor, reviewer, and verifier.
 
 ## Repository structure
 
@@ -666,6 +680,9 @@ For consequential work, do not allow one implementation to become the sole plann
 ├── ROADMAP.md
 ├── CHANGELOG.md
 ├── models.yaml
+│
+├── ci/
+│   └── requirements-ci.lock
 │
 ├── docs/
 │   ├── philosophy/
@@ -713,7 +730,7 @@ For consequential work, do not allow one implementation to become the sole plann
     └── proposals/
 ```
 
-Not every future layer is complete. The structure establishes where each type of artifact belongs as the framework evolves.
+Not every future layer is complete. The structure establishes where each type of artifact belongs as the specification evolves.
 
 ## Documentation
 
@@ -782,12 +799,15 @@ All examples, policies, registries, specialists, and discussions should be safe 
 ### Phase 5: Reference control plane - complete
 
 - linked YAML configuration loading
-- task and risk classification
-- team, worker, specialist, implementation, fallback, and verifier resolution
+- task and non-lowerable effective-risk classification
+- team, worker, specialist, capability, implementation, fallback, and verifier resolution
+- all-78 specialist spawnability
 - effort-aware specialist-model routing
+- preview-model authorization gates
 - structured dispatch and final outcomes
+- external JSON Schema enforcement
 - audit logging
-- schemas, conformance datasets, tests, and CI
+- conformance datasets, tests, and reproducible CI
 
 ### Runtime execution: active
 
@@ -807,8 +827,8 @@ Completed runtime additions include:
 - persistent provider-family circuit state
 - Closed, Open, and Half-Open recovery behavior
 - provider-health separation from authentication, billing, permission, quota/rate-limit, and local connection failures
-- persistent content-free provider-attempt telemetry with normalized usage evidence
-- provider-diverse one-shot live verifier execution with strict structured decisions
+- persistent content-free provider-attempt telemetry with opaque correlation and normalized usage evidence
+- provider-diverse one-shot live verifier execution with strict structured decisions and authorized artifact roots
 
 The next operational horizon includes distributed circuit-state coordination, distributed telemetry export and retention controls, source-backed cost attribution, verifier calibration against independent or human-rated outcomes, route outcome evaluation, qualified-human approval integration, streaming/runtime latency expansion, and continued observation of the six-card regulated evidence pilot.
 
@@ -816,9 +836,9 @@ The directional scope is tracked in [`ROADMAP.md`](ROADMAP.md).
 
 ## Community
 
-TEO is intended to evolve through public collaboration.
+TEO is intended to evolve through publicly reviewable stewardship.
 
-Contributions should improve one or more of the following:
+Future contributions, once licensing and contribution terms are finalized, should improve one or more of the following:
 
 - routing quality
 - verification quality
@@ -829,9 +849,11 @@ Contributions should improve one or more of the following:
 - reference implementations
 - documentation clarity
 
+Until those terms are finalized, external code contributions should wait. Public review, discussion, and evidence-backed critique can still inform future stewardship without implying reuse or contribution rights that have not been granted.
+
 Model updates should include evidence, limitations, provider metadata, and the routing role affected. A newer model should not replace an existing default solely because it is newer or stronger on one benchmark.
 
-The repository owner is `vessaxor-spec`. The project was initiated by Sylvester Roxas in 2026 and is intended to grow through community stewardship.
+The repository owner is `vessaxor-spec`. The project was initiated by Sylvester Roxas in 2026 and is intended to grow through community stewardship once the applicable terms are established.
 
 The public specialist roster was created by Sylvester Roxas. Creator attribution is preserved in every specialist role card and in the canonical specialist registry.
 
@@ -863,6 +885,6 @@ Until a license is added, the repository is publicly viewable but is not yet off
 
 <div align="center">
 
-**The best orchestration framework is not the one that predicts the future. It is the one that remains useful when the future arrives.**
+**The best orchestration specification is not the one that predicts the future. It is the one that remains useful when the future arrives.**
 
 </div>

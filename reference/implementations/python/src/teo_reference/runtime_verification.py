@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Mapping
 
 from .anthropic_verifier import AnthropicLiveVerifier
@@ -39,6 +40,7 @@ def execute_live_verification(
     execution: ProviderExecutionResponse,
     connections: Mapping[str, ProviderConnection],
     *,
+    artifact_root: str | Path,
     verification_policy: LiveVerificationPolicy | None = None,
 ) -> VerificationResult:
     """Execute the verifier already assigned by the active TEO dispatch exactly once."""
@@ -62,6 +64,7 @@ def execute_live_verification(
 
     output_text = read_execution_output(
         execution.output_ref,
+        allowed_root=artifact_root,
         max_bytes=policy.max_output_bytes,
     )
     request = LiveVerificationRequest.from_execution(dispatch, output_text)
@@ -96,6 +99,7 @@ def verify_guarded_canary_outcome(
     outcome: CanaryRuntimeOutcome,
     connections: Mapping[str, ProviderConnection],
     *,
+    artifact_root: str | Path,
     verification_policy: LiveVerificationPolicy | None = None,
 ) -> VerificationResult:
     """Run the active dispatch's assigned independent verifier after guarded execution."""
@@ -105,5 +109,6 @@ def verify_guarded_canary_outcome(
         dispatch,
         execution,
         connections,
+        artifact_root=artifact_root,
         verification_policy=verification_policy,
     )

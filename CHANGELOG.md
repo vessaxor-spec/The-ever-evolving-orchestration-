@@ -1,50 +1,59 @@
 # Changelog
 
-All notable public changes to TEO will be recorded here.
+All notable public changes to TEO are recorded here.
 
 ## Unreleased
 
 ### Added
 
-- Foundation documents
-- Public scope and stewardship rules
-- Initial repository architecture
-- Initial routing policy
-- Visual identity and core architecture assets
-- Standard contracts for Mission Control and the five core teams
-- Routing validation methodology
-- Eleven representative routing validation cases
-- Before-and-after validation results with explicit verification outcomes
-- Verification evidence, independence, and final recommendation rules
-- Public roster of 56 specialist role cards created by Sylvester Roxas
-- Machine-readable specialist allocation registry
-- Specialist allocation methodology and validation report
-- Source-backed provider registry for OpenAI, Anthropic, Google, and local Ollama execution
-- Current routing-relevant model registry with availability classes and primary sources
-- Stable provider-neutral capability registry with required evidence
-- Benchmark evidence grades, methodology, result template, and initial evidence register
-- Root registry navigation index
+- ten-team organizational architecture
+- public roster of 78 preserved specialist role cards
+- principal-engineering specialist and worker activation
+- effort-aware cross-provider specialist model routing
+- provider-neutral execution contract and connection-neutral provider boundary
+- guarded Anthropic, OpenAI, and Google live execution adapters
+- bounded transient retry and provider-directed retry timing
+- canonical model/provider fallback redispatch with fresh verifier assignment
+- persistent provider-family circuit state
+- content-free provider-attempt telemetry with normalized usage
+- provider-diverse live independent verification
+- six-card regulated evidence/freshness pilot with CI source validation and mutation testing
+- explicit preview-model authorization in task constraints
+- deterministic all-78 specialist spawn routes and spawnability conformance
+- strict CLI JSON Schema validation for task, dispatch, execution, verification, and final outcome records
+- repository protection for local `.teo/` runtime artifacts
 
 ### Changed
 
-- Added context-aware worker selection for deep debugging
-- Added context-aware execution worker selection for repo-wide refactors
-- Added an explicit documentation team route
-- Added the Verification Team to high-volume sampled review routes
-- Extended the routing order with an optional specialist layer between worker and capability
-- Linked specialist bindings into the team and worker architecture
-- Updated the README and architecture diagram for the public specialist layer
-- Normalized current model aliases and exposed preview or deployment-specific status
+- effective risk now preserves the highest content-derived, declared, and specialist risk signal rather than allowing caller input to lower the risk floor
+- active specialist worker bindings are complete rather than retained as known configuration warnings
+- capability resolution now rejects unknown or team-incompatible caller-requested capabilities
+- base implementation selection is constrained by worker-authorized implementations
+- preview implementations are ineligible until the concrete preview model is explicitly accepted by the task
+- independent verification requires both model and provider-family separation from execution
+- half-open provider circuits no longer treat local connection failure as provider service-health failure
+- live verification confines output artifacts to an authorized runtime root
+- verifier candidate output is explicitly untrusted data
+- verifier status precedence now preserves mixed failed and uncertain criterion evidence
+- runtime telemetry no longer persists caller-controlled task identifiers and explicitly fails closed on required persistence failure
+- regulated evidence provenance for Rule 37(e) and ISO/IEC 9899:2024 was rechecked and corrected or clarified against primary sources
+- `AI_INSTRUCTIONS.md`, `ROADMAP.md`, runtime specifications, and capability guidance now describe the active control plane
 
 ### Validation
 
-- Baseline routing accepted 7 of 11 cases and exposed 4 policy defects
-- The revised routing accepted all 11 cases on full rerun
-- No cases were rejected or inconclusive after correction
-- All 56 specialists have a primary team, worker binding, risk profile, public role card, verification requirement, and creator credit
-- Phase 4 registry entries distinguish TEO observations, independent evidence, provider claims, and deployment-specific facts
-- Live cross-model quality, cost, and latency results remain unrecorded until controlled runs exist
+- all active specialists must have a deterministic Team -> Worker -> Specialist spawn path
+- known specialist binding warnings are no longer accepted as a configuration baseline
+- credential-boundary tests cover common token, secret, and private-key field forms
+- circuit tests cover half-open connection-health separation
+- live verification tests cover artifact-root escape and candidate-output prompt injection
+- telemetry tests prove caller identifiers and content remain absent
+- routing tests prove a caller cannot lower content-derived risk and preview models require explicit acceptance
+- CLI tests prove unknown schema fields fail at the external boundary
 
 ### Status
 
-Phases 1 through 4 are complete. The project is ready for Phase 5 reference implementation work. Registry facts remain time-sensitive and must be refreshed from primary sources before consequential routing changes.
+Phases 1 through 5 are complete. Runtime execution remains intentionally guarded to explicit `high_volume_simple` work at low or medium effective risk.
+
+Current work is operational evidence: control integrity, verifier calibration, route-outcome evaluation, source-backed cost attribution, qualified-human approval integration, distributed runtime hardening, and continued observation of the six-card regulated evidence pilot.
+
+High and critical live execution remain unauthorized.

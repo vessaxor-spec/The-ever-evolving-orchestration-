@@ -25,12 +25,14 @@ class RuntimeTelemetryPolicy:
     record_every_provider_attempt: bool
     default_sink: str
     default_filename: str
+    sink_failure_behavior: str
     include_task_or_prompt_content: bool
     include_model_output_content: bool
     include_provider_native_payloads: bool
     include_provider_headers: bool
     include_credentials_or_authorization: bool
     include_connection_mechanism: bool
+    include_user_identifiers: bool
     calculate_cost: bool
     calculate_quality: bool
 
@@ -53,6 +55,7 @@ class RuntimeTelemetryPolicy:
             record_every_provider_attempt=bool(telemetry.get("record_every_provider_attempt", False)),
             default_sink=str(telemetry.get("default_sink") or ""),
             default_filename=str(telemetry.get("default_filename") or ""),
+            sink_failure_behavior=str(telemetry.get("sink_failure_behavior") or ""),
             include_task_or_prompt_content=bool(telemetry.get("include_task_or_prompt_content", False)),
             include_model_output_content=bool(telemetry.get("include_model_output_content", False)),
             include_provider_native_payloads=bool(telemetry.get("include_provider_native_payloads", False)),
@@ -61,6 +64,7 @@ class RuntimeTelemetryPolicy:
                 telemetry.get("include_credentials_or_authorization", False)
             ),
             include_connection_mechanism=bool(telemetry.get("include_connection_mechanism", False)),
+            include_user_identifiers=bool(telemetry.get("include_user_identifiers", False)),
             calculate_cost=bool(telemetry.get("calculate_cost", False)),
             calculate_quality=bool(telemetry.get("calculate_quality", False)),
         )
@@ -82,6 +86,8 @@ class RuntimeTelemetryPolicy:
             raise ProviderAdapterContractError("Runtime telemetry must record every provider attempt")
         if self.default_sink != "jsonl" or self.default_filename != "runtime-telemetry.jsonl":
             raise ProviderAdapterContractError("Reference runtime telemetry must use the declared JSONL sink")
+        if self.sink_failure_behavior != "fail_closed":
+            raise ProviderAdapterContractError("Runtime telemetry persistence failure must fail closed")
         forbidden_flags = {
             "task_or_prompt_content": self.include_task_or_prompt_content,
             "model_output_content": self.include_model_output_content,
@@ -89,6 +95,7 @@ class RuntimeTelemetryPolicy:
             "provider_headers": self.include_provider_headers,
             "credentials_or_authorization": self.include_credentials_or_authorization,
             "connection_mechanism": self.include_connection_mechanism,
+            "user_identifiers": self.include_user_identifiers,
             "calculated_cost": self.calculate_cost,
             "calculated_quality": self.calculate_quality,
         }
@@ -104,7 +111,6 @@ class RuntimeTelemetryEvent:
     """Content-free evidence for one provider attempt."""
 
     recorded_at: str
-    task_id: str
     dispatch_id: str
     task_type: str
     risk_level: str
@@ -131,7 +137,6 @@ class RuntimeTelemetryEvent:
             raise ProviderAdapterContractError("Unsupported runtime telemetry event type")
         for name in (
             "recorded_at",
-            "task_id",
             "dispatch_id",
             "task_type",
             "risk_level",
@@ -182,7 +187,6 @@ class RuntimeTelemetryEvent:
         verifier = dispatch.verification.implementation
         return cls(
             recorded_at=recorded_at or datetime.now(timezone.utc).isoformat(),
-            task_id=dispatch.task_id,
             dispatch_id=dispatch.dispatch_id,
             task_type=dispatch.task_type,
             risk_level=dispatch.risk_level,
@@ -207,7 +211,6 @@ class RuntimeTelemetryEvent:
             "telemetry_version",
             "event_type",
             "recorded_at",
-            "task_id",
             "dispatch_id",
             "task_type",
             "risk_level",
@@ -237,7 +240,6 @@ class RuntimeTelemetryEvent:
             telemetry_version=str(data.get("telemetry_version")),  # type: ignore[arg-type]
             event_type=str(data.get("event_type")),  # type: ignore[arg-type]
             recorded_at=str(data.get("recorded_at") or ""),
-            task_id=str(data.get("task_id") or ""),
             dispatch_id=str(data.get("dispatch_id") or ""),
             task_type=str(data.get("task_type") or ""),
             risk_level=str(data.get("risk_level") or ""),
@@ -275,7 +277,6 @@ class RuntimeTelemetryEvent:
             "telemetry_version": self.telemetry_version,
             "event_type": self.event_type,
             "recorded_at": self.recorded_at,
-            "task_id": self.task_id,
             "dispatch_id": self.dispatch_id,
             "task_type": self.task_type,
             "risk_level": self.risk_level,

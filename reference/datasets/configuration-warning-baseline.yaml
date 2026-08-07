@@ -1,11 +1,10 @@
-version: 1.0
-status: public-draft
-reviewed_at: 2026-08-06
+version: 2.0
+status: active
+reviewed_at: 2026-08-07
 
 policy: >-
-  These warnings are known configuration inconsistencies, not ignored failures.
-  CI compares the exact warning set. Resolving, adding, removing, or rewording a
-  warning requires an intentional baseline update in the same reviewed change.
+  Active configuration is expected to be internally complete. CI compares the exact
+  issue set. Any new warning or error requires an intentional reviewed change rather
+  than normalization into a standing inconsistency baseline.
 
-expected_issues:
-  - "WARNING: specialist bindings without core worker definitions: automation, blockchain, brand_design, content, customer_success, documentation_verification, ecommerce_strategy, financial_analysis, game_engineering, generative_media, knowledge_management, learning_design, legal, lending_compliance, malware_analysis, osint, paid_search, paid_social, product_strategy, programmatic_media, real_estate, regional_marketing, revenue_analytics, sales_enablement, sales_strategy, security_advisory, seo_review, social_strategy, solution_engineering, supply_chain, tax_review, terminal_ui, ux_review, xr_engineering"
+expected_issues: []
