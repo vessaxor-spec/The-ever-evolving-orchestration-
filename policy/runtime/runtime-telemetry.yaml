@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 status: active
 reviewed_at: 2026-08-07
 
@@ -14,19 +14,23 @@ telemetry:
   record_every_provider_attempt: true
   default_sink: jsonl
   default_filename: runtime-telemetry.jsonl
+  sink_failure_behavior: fail_closed
   include_task_or_prompt_content: false
   include_model_output_content: false
   include_provider_native_payloads: false
   include_provider_headers: false
   include_credentials_or_authorization: false
   include_connection_mechanism: false
+  include_user_identifiers: false
   calculate_cost: false
   calculate_quality: false
 
 policy: >-
   Runtime telemetry records content-free provider-attempt evidence after every actual
-  provider invocation. Telemetry may record routing identity, latency, normalized
-  failure state, retry timing, verifier identity, and normalized provider usage.
-  It must not persist prompts, task text, model output, provider-native payloads,
-  headers, credentials, authorization material, or connection mechanism by default.
+  provider invocation. Telemetry may record internal dispatch identity, latency,
+  normalized failure state, retry timing, verifier identity, and normalized provider
+  usage. It must not persist caller-controlled task identifiers, prompts, task text,
+  model output, provider-native payloads, headers, credentials, authorization material,
+  connection mechanism, or user identifiers by default. Persistence failure fails
+  closed so an execution attempt is not silently detached from its required evidence.
   Monetary cost and quality remain separate evidence layers.
