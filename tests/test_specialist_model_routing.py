@@ -126,7 +126,7 @@ def test_non_specialist_route_preserves_existing_model_and_exposes_existing_reas
     dispatch = engine().dispatch(
         TaskRequest.from_dict(
             {
-                "task": "Implement a small backend endpoint.",
+                "task": "Implement a small endpoint.",
                 "task_type": "daily_coding",
                 "risk_level": "low",
             }
