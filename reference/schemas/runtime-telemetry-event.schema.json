@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/runtime-telemetry-event.schema.json",
+  "title": "TEO Runtime Telemetry Provider Attempt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "telemetry_version",
+    "event_type",
+    "recorded_at",
+    "task_id",
+    "dispatch_id",
+    "task_type",
+    "risk_level",
+    "role",
+    "attempt_number",
+    "provider_family",
+    "model",
+    "reasoning_effort",
+    "verifier_provider_family",
+    "verifier_model",
+    "status",
+    "failure_scope",
+    "failure_code",
+    "duration_ms",
+    "retry_after_seconds",
+    "usage"
+  ],
+  "properties": {
+    "telemetry_version": {"const": "1"},
+    "event_type": {"const": "provider_attempt"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "task_id": {"type": "string", "minLength": 1},
+    "dispatch_id": {"type": "string", "minLength": 1},
+    "task_type": {"type": "string", "minLength": 1},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "role": {"enum": ["primary", "fallback"]},
+    "attempt_number": {"type": "integer", "minimum": 1},
+    "provider_family": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "reasoning_effort": {
+      "oneOf": [
+        {"type": "null"},
+        {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]}
+      ]
+    },
+    "verifier_provider_family": {"type": ["string", "null"]},
+    "verifier_model": {"type": "string", "minLength": 1},
+    "status": {"enum": ["succeeded", "failed"]},
+    "failure_scope": {
+      "oneOf": [
+        {"type": "null"},
+        {"enum": ["request", "transient", "model", "provider", "capability"]}
+      ]
+    },
+    "failure_code": {"type": ["string", "null"]},
+    "duration_ms": {"type": "number", "minimum": 0},
+    "retry_after_seconds": {"type": ["number", "null"], "minimum": 0},
+    "usage": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "input_tokens",
+            "output_tokens",
+            "cached_input_tokens",
+            "cache_creation_input_tokens",
+            "reasoning_output_tokens",
+            "tool_tokens",
+            "total_tokens"
+          ],
+          "properties": {
+            "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+            "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+            "cached_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+            "cache_creation_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+            "reasoning_output_tokens": {"type": ["integer", "null"], "minimum": 0},
+            "tool_tokens": {"type": ["integer", "null"], "minimum": 0},
+            "total_tokens": {"type": ["integer", "null"], "minimum": 0}
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "succeeded"}}},
+      "then": {
+        "properties": {
+          "failure_scope": {"type": "null"},
+          "failure_code": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "failed"}}},
+      "then": {
+        "properties": {
+          "failure_scope": {"type": "string"},
+          "failure_code": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  ]
+}
