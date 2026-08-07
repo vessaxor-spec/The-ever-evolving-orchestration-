@@ -54,6 +54,7 @@ from .verification_adapter import (
     LiveVerificationRequest,
     LiveVerificationResponse,
 )
+from .verification_policy import LiveVerificationPolicy
 
 OrchestrationEngine = SpecialistRoutingEngine
 
@@ -74,6 +75,7 @@ __all__ = [
     "JsonlRuntimeTelemetrySink",
     "LiveVerificationDecision",
     "LiveVerificationError",
+    "LiveVerificationPolicy",
     "LiveVerificationRequest",
     "LiveVerificationResponse",
     "OpenAILiveVerifier",
