@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/verifier-calibration-machine-panel-label.schema.json",
+  "title": "TEO Verifier Calibration Provisional Machine Panel Label",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "review_item_id",
+    "judge_provider_family",
+    "judge_model",
+    "judge_reasoning",
+    "observed_at",
+    "rubric_version",
+    "evidence_tier",
+    "collection_role",
+    "reference_control_labels_blinded",
+    "model_observations_blinded",
+    "duration_ms",
+    "input_tokens",
+    "output_tokens",
+    "decision"
+  ],
+  "properties": {
+    "review_item_id": {"type": "string", "minLength": 8},
+    "judge_provider_family": {"enum": ["google", "anthropic", "openai"]},
+    "judge_model": {"type": "string", "minLength": 1},
+    "judge_reasoning": {"type": ["string", "null"]},
+    "observed_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d+)?)?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "rubric_version": {"type": "string", "minLength": 1},
+    "evidence_tier": {"const": "provisional_machine_panel"},
+    "collection_role": {"const": "calibration_panel_direct"},
+    "reference_control_labels_blinded": {"const": true},
+    "model_observations_blinded": {"const": true},
+    "duration_ms": {"type": "number", "minimum": 0},
+    "input_tokens": {"type": "integer", "minimum": 0},
+    "output_tokens": {"type": "integer", "minimum": 0},
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "output_present",
+        "task_adherence",
+        "format_consistency",
+        "unsupported_claims_absent",
+        "human_reason"
+      ],
+      "properties": {
+        "status": {"enum": ["passed", "failed", "needs_human"]},
+        "output_present": {"enum": ["pass", "fail", "uncertain"]},
+        "task_adherence": {"enum": ["pass", "fail", "uncertain"]},
+        "format_consistency": {"enum": ["pass", "fail", "uncertain"]},
+        "unsupported_claims_absent": {"enum": ["pass", "fail", "uncertain"]},
+        "human_reason": {
+          "enum": [
+            "none",
+            "insufficient_evidence",
+            "ambiguous_task",
+            "unverifiable_output",
+            "conflicting_evidence"
+          ]
+        }
+      }
+    }
+  }
+}
