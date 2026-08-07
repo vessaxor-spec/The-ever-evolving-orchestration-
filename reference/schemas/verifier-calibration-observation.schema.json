@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/verifier-calibration-observation.schema.json",
+  "title": "TEO Verifier Calibration Observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "verifier_provider_family",
+    "verifier_model",
+    "verifier_reasoning",
+    "run_id",
+    "observed_at",
+    "rubric_version",
+    "verification_policy_version",
+    "execution_role",
+    "retry_count",
+    "fallback_used",
+    "decision"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "verifier_provider_family": {"type": "string", "minLength": 1},
+    "verifier_model": {"type": "string", "minLength": 1},
+    "verifier_reasoning": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "null"}
+      ]
+    },
+    "run_id": {"type": "string", "minLength": 1},
+    "observed_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d+)?)?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "rubric_version": {"type": "string", "minLength": 1},
+    "verification_policy_version": {"type": "string", "minLength": 1},
+    "execution_role": {"enum": ["primary", "fallback"]},
+    "retry_count": {"type": "integer", "minimum": 0},
+    "fallback_used": {"type": "boolean"},
+    "duration_ms": {"type": ["number", "null"], "minimum": 0},
+    "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "output_present",
+        "task_adherence",
+        "format_consistency",
+        "unsupported_claims_absent",
+        "human_reason"
+      ],
+      "properties": {
+        "status": {"enum": ["passed", "failed", "needs_human"]},
+        "output_present": {"enum": ["pass", "fail", "uncertain"]},
+        "task_adherence": {"enum": ["pass", "fail", "uncertain"]},
+        "format_consistency": {"enum": ["pass", "fail", "uncertain"]},
+        "unsupported_claims_absent": {"enum": ["pass", "fail", "uncertain"]},
+        "human_reason": {
+          "enum": [
+            "none",
+            "insufficient_evidence",
+            "ambiguous_task",
+            "unverifiable_output",
+            "conflicting_evidence"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"execution_role": {"const": "fallback"}},
+        "required": ["execution_role"]
+      },
+      "then": {
+        "properties": {"fallback_used": {"const": true}},
+        "required": ["fallback_used"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"execution_role": {"const": "primary"}},
+        "required": ["execution_role"]
+      },
+      "then": {
+        "properties": {"fallback_used": {"const": false}},
+        "required": ["fallback_used"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"fallback_used": {"const": true}},
+        "required": ["fallback_used"]
+      },
+      "then": {
+        "properties": {"execution_role": {"const": "fallback"}},
+        "required": ["execution_role"]
+      }
+    }
+  ]
+}
