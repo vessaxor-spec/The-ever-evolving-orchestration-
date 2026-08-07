@@ -192,6 +192,18 @@ def build_repo(root: Path) -> Path:
             }
         },
     )
+    write_yaml(
+        root / "registry/models/models.yaml",
+        {
+            "models": {
+                "gpt-terra": {"provider": "openai", "availability": "current"},
+                "gpt-sol": {"provider": "openai", "availability": "current"},
+                "gemini-pro": {"provider": "google", "availability": "preview"},
+                "claude-sonnet": {"provider": "anthropic", "availability": "ga"},
+                "claude-opus": {"provider": "anthropic", "availability": "ga"},
+            }
+        },
+    )
     return root
 
 
