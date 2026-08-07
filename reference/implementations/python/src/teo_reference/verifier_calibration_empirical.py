@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 import subprocess
-from collections import Counter, defaultdict
+from collections import defaultdict
 from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
@@ -65,21 +65,10 @@ class EmpiricalCalibrationPolicy:
     risk_level: str
     verification_methods: tuple[str, ...]
     runs_per_case_per_route: int
-    require_all_routes: bool
-    stop_on_verifier_infrastructure_error: bool
-    resume_without_duplicate_calls: bool
-    require_provider_reported_usage: bool
-    require_duration_measurement: bool
-    require_offset_aware_timestamp: bool
-    require_single_collector_revision_per_evidence_set: bool
     default_observations_path: str
     verifier_routes: tuple[CalibrationVerifierRoute, ...]
     minimum_independent_reviewers_per_case: int
-    reviewers_blinded_from_model_observations: bool
-    adjudication_required_on_disagreement: bool
-    adjudicator_must_be_distinct_from_case_reviewers: bool
     default_labels_path: str
-    require_human_label_readiness_before_live_collection: bool
     require_independent_residual_risk_review_after_collection: bool
     require_explicit_human_acceptance_after_metrics: bool
 
@@ -96,7 +85,7 @@ class HumanCalibrationLabel:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "HumanCalibrationLabel":
-        allowed = {
+        fields = {
             "case_id",
             "reviewer_id",
             "reviewer_role",
@@ -105,16 +94,7 @@ class HumanCalibrationLabel:
             "observations_blinded",
             "decision",
         }
-        missing = sorted(allowed - set(data))
-        unknown = sorted(set(data) - allowed)
-        if missing:
-            raise CalibrationError(
-                "Human calibration label is missing fields: " + ", ".join(missing)
-            )
-        if unknown:
-            raise CalibrationError(
-                "Human calibration label contains unsupported fields: " + ", ".join(unknown)
-            )
+        _require_exact_fields(data, fields, "Human calibration label")
         role = data["reviewer_role"]
         if not isinstance(role, str) or role not in {"reviewer", "adjudicator"}:
             raise CalibrationError("Human calibration label reviewer_role is invalid")
@@ -123,8 +103,7 @@ class HumanCalibrationLabel:
             raise CalibrationError(
                 "Human calibration label reviewer_id must be an opaque identifier, not a name or email"
             )
-        blinded = data["observations_blinded"]
-        if blinded is not True:
+        if data["observations_blinded"] is not True:
             raise CalibrationError(
                 "Human calibration labels must attest that model observations were blinded"
             )
@@ -183,8 +162,10 @@ class EmpiricalCalibrationObservation:
 
     @property
     def verifier_route(self) -> str:
-        effort = self.verifier_reasoning or "unspecified"
-        return f"{self.verifier_provider_family}/{self.verifier_model}/{effort}"
+        return (
+            f"{self.verifier_provider_family}/{self.verifier_model}/"
+            f"{self.verifier_reasoning or 'unspecified'}"
+        )
 
     @property
     def identity(self) -> tuple[str, str, str]:
@@ -211,7 +192,7 @@ class EmpiricalCalibrationObservation:
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "EmpiricalCalibrationObservation":
-        required = {
+        fields = {
             "case_id",
             "verifier_provider_family",
             "verifier_model",
@@ -228,32 +209,21 @@ class EmpiricalCalibrationObservation:
             "output_tokens",
             "decision",
         }
-        missing = sorted(required - set(data))
-        unknown = sorted(set(data) - required)
-        if missing:
-            raise CalibrationError(
-                "Empirical calibration observation is missing fields: " + ", ".join(missing)
-            )
-        if unknown:
-            raise CalibrationError(
-                "Empirical calibration observation contains unsupported fields: "
-                + ", ".join(unknown)
-            )
+        _require_exact_fields(data, fields, "Empirical calibration observation")
         if data["collection_role"] != COLLECTION_ROLE:
             raise CalibrationError(
                 "Empirical calibration observations must use calibration_direct collection role"
             )
-        provider = _required_text(data["verifier_provider_family"], "verifier_provider_family")
+        provider = _required_text(
+            data["verifier_provider_family"], "verifier_provider_family"
+        )
         if provider not in SUPPORTED_PROVIDERS:
             raise CalibrationError("Empirical calibration observation provider is unsupported")
-        reasoning_raw = data["verifier_reasoning"]
-        if reasoning_raw is not None and (
-            not isinstance(reasoning_raw, str) or not reasoning_raw.strip()
+        reasoning = data["verifier_reasoning"]
+        if reasoning is not None and (
+            not isinstance(reasoning, str) or not reasoning.strip()
         ):
             raise CalibrationError("verifier_reasoning must be a non-empty string or null")
-        duration = _required_non_negative_float(data["duration_ms"], "duration_ms")
-        input_tokens = _required_non_negative_int(data["input_tokens"], "input_tokens")
-        output_tokens = _required_non_negative_int(data["output_tokens"], "output_tokens")
         decision_raw = data["decision"]
         if not isinstance(decision_raw, dict):
             raise CalibrationError("Empirical calibration observation decision must be an object")
@@ -265,7 +235,7 @@ class EmpiricalCalibrationObservation:
             case_id=_required_text(data["case_id"], "case_id"),
             verifier_provider_family=provider,
             verifier_model=_required_text(data["verifier_model"], "verifier_model"),
-            verifier_reasoning=(reasoning_raw.strip() if reasoning_raw is not None else None),
+            verifier_reasoning=reasoning.strip() if isinstance(reasoning, str) else None,
             run_id=_required_text(data["run_id"], "run_id"),
             observed_at=_required_offset_datetime(data["observed_at"], "observed_at"),
             rubric_version=_required_text(data["rubric_version"], "rubric_version"),
@@ -275,17 +245,18 @@ class EmpiricalCalibrationObservation:
             empirical_policy_version=_required_text(
                 data["empirical_policy_version"], "empirical_policy_version"
             ),
-            collector_revision=_required_text(data["collector_revision"], "collector_revision"),
-            duration_ms=duration,
-            input_tokens=input_tokens,
-            output_tokens=output_tokens,
+            collector_revision=_required_text(
+                data["collector_revision"], "collector_revision"
+            ),
+            duration_ms=_required_non_negative_float(data["duration_ms"], "duration_ms"),
+            input_tokens=_required_non_negative_int(data["input_tokens"], "input_tokens"),
+            output_tokens=_required_non_negative_int(data["output_tokens"], "output_tokens"),
             decision=decision,
         )
 
     def to_base_observation(self) -> CalibrationObservation:
-        # The base evaluator requires execution-path fields. These values exist only in
-        # memory and are relabeled to calibration_direct before empirical results leave
-        # this module. They are never persisted as primary execution evidence.
+        # Compatibility object only. Empirical output relabels this path to calibration_direct
+        # before it leaves this module, so no persisted record claims primary execution.
         return CalibrationObservation(
             case_id=self.case_id,
             verifier_provider_family=self.verifier_provider_family,
@@ -306,7 +277,7 @@ class EmpiricalCalibrationObservation:
 
 
 class _UsageCaptureConnection:
-    """Ephemeral wrapper that extracts normalized usage without persisting provider payloads."""
+    """Ephemeral usage extractor. Provider-native payloads are never persisted."""
 
     def __init__(self, delegate: ProviderConnection) -> None:
         self.provider_family = delegate.provider_family
@@ -316,13 +287,21 @@ class _UsageCaptureConnection:
 
     def invoke(self, request: ProviderConnectionRequest) -> ProviderConnectionResponse:
         response = self._delegate.invoke(request)
-        input_tokens, output_tokens = _extract_provider_usage(
-            self.provider_family,
-            response.body,
+        self.input_tokens, self.output_tokens = _extract_provider_usage(
+            self.provider_family, response.body
         )
-        self.input_tokens = input_tokens
-        self.output_tokens = output_tokens
         return response
+
+
+def _require_exact_fields(data: dict[str, Any], fields: set[str], label: str) -> None:
+    missing = sorted(fields - set(data))
+    unknown = sorted(set(data) - fields)
+    if missing:
+        raise CalibrationError(f"{label} is missing fields: " + ", ".join(missing))
+    if unknown:
+        raise CalibrationError(
+            f"{label} contains unsupported fields: " + ", ".join(unknown)
+        )
 
 
 def _required_text(value: object, name: str) -> str:
@@ -331,9 +310,11 @@ def _required_text(value: object, name: str) -> str:
     return value.strip()
 
 
-def _required_bool(value: object, name: str) -> bool:
+def _required_bool(value: object, name: str, *, expected: bool | None = None) -> bool:
     if not isinstance(value, bool):
         raise CalibrationError(f"{name} must be a boolean")
+    if expected is not None and value is not expected:
+        raise CalibrationError(f"{name} must be {str(expected).lower()}")
     return value
 
 
@@ -357,11 +338,7 @@ def _required_non_negative_float(value: object, name: str) -> float:
 
 def _required_offset_datetime(value: object, name: str) -> str:
     text = _required_text(value, name)
-    normalized = text[:-1] + "+00:00" if text.endswith("Z") else text
-    try:
-        parsed = datetime.fromisoformat(normalized)
-    except ValueError as exc:
-        raise CalibrationError(f"{name} must be an RFC 3339-compatible timestamp") from exc
+    parsed = _parsed_time(text)
     if parsed.tzinfo is None or parsed.utcoffset() is None:
         raise CalibrationError(f"{name} must include a UTC offset")
     return text
@@ -369,7 +346,10 @@ def _required_offset_datetime(value: object, name: str) -> str:
 
 def _parsed_time(value: str) -> datetime:
     normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
-    return datetime.fromisoformat(normalized)
+    try:
+        return datetime.fromisoformat(normalized)
+    except ValueError as exc:
+        raise CalibrationError("timestamp must be RFC 3339-compatible") from exc
 
 
 def _utc_now() -> str:
@@ -377,11 +357,12 @@ def _utc_now() -> str:
 
 
 def _opaque_reviewer_id(value: str) -> bool:
-    if "@" in value or " " in value or len(value) < 3 or len(value) > 64:
-        return False
-    return value[0].isalnum() and all(
-        character.isalnum() or character in {".", "_", "-"}
-        for character in value
+    return (
+        3 <= len(value) <= 64
+        and "@" not in value
+        and " " not in value
+        and value[0].isalnum()
+        and all(character.isalnum() or character in {".", "_", "-"} for character in value)
     )
 
 
@@ -399,16 +380,14 @@ def _decision_dict(decision: LiveVerificationDecision) -> dict[str, str]:
 def _route_from_dict(raw: object) -> CalibrationVerifierRoute:
     if not isinstance(raw, dict):
         raise CalibrationError("Empirical calibration verifier route must be an object")
-    allowed = {"provider_family", "model", "reasoning"}
-    if set(raw) != allowed:
-        raise CalibrationError(
-            "Empirical calibration verifier route must contain provider_family, model, and reasoning"
-        )
+    _require_exact_fields(raw, {"provider_family", "model", "reasoning"}, "Verifier route")
     provider = _required_text(raw["provider_family"], "route.provider_family")
     if provider not in SUPPORTED_PROVIDERS:
         raise CalibrationError(f"Unsupported empirical verifier provider: {provider}")
     reasoning = raw["reasoning"]
-    if reasoning is not None and (not isinstance(reasoning, str) or not reasoning.strip()):
+    if reasoning is not None and (
+        not isinstance(reasoning, str) or not reasoning.strip()
+    ):
         raise CalibrationError("route.reasoning must be a non-empty string or null")
     return CalibrationVerifierRoute(
         provider_family=provider,
@@ -418,8 +397,7 @@ def _route_from_dict(raw: object) -> CalibrationVerifierRoute:
 
 
 def load_empirical_policy(path: str | Path) -> EmpiricalCalibrationPolicy:
-    source = Path(path)
-    payload = yaml.safe_load(source.read_text(encoding="utf-8"))
+    payload = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
     if not isinstance(payload, dict) or payload.get("status") != "active":
         raise CalibrationError("Empirical calibration policy must be an active mapping")
     base = payload.get("base_calibration")
@@ -428,26 +406,20 @@ def load_empirical_policy(path: str | Path) -> EmpiricalCalibrationPolicy:
     acceptance = payload.get("acceptance")
     routes_raw = payload.get("verifier_routes")
     if not all(isinstance(item, dict) for item in (base, collection, human, acceptance)):
-        raise CalibrationError(
-            "Empirical calibration policy requires base_calibration, collection, human_labeling, and acceptance mappings"
-        )
+        raise CalibrationError("Empirical calibration policy is missing required mappings")
     if not isinstance(routes_raw, list) or not routes_raw:
         raise CalibrationError("Empirical calibration policy requires verifier_routes")
 
     routes = tuple(_route_from_dict(raw) for raw in routes_raw)
-    route_ids = [route.route_id for route in routes]
-    if len(route_ids) != len(set(route_ids)):
+    if len({route.route_id for route in routes}) != len(routes):
         raise CalibrationError("Empirical calibration verifier routes must be unique")
-    provider_families = {route.provider_family for route in routes}
-    if len(provider_families) != len(routes):
-        raise CalibrationError(
-            "Empirical calibration routes must use distinct provider families"
-        )
+    if len({route.provider_family for route in routes}) != len(routes):
+        raise CalibrationError("Empirical calibration routes must use distinct provider families")
 
     if collection.get("role") != COLLECTION_ROLE:
         raise CalibrationError("Empirical calibration collection role must be calibration_direct")
-    if collection.get("risk_level") not in {"low", "medium"}:
-        raise CalibrationError("Empirical calibration risk level must remain low or medium")
+    if collection.get("risk_level") != "low":
+        raise CalibrationError("Empirical calibration collection must remain low risk")
     methods = collection.get("verification_methods")
     if not isinstance(methods, list) or not methods or not all(
         isinstance(item, str) and item.strip() for item in methods
@@ -455,23 +427,43 @@ def load_empirical_policy(path: str | Path) -> EmpiricalCalibrationPolicy:
         raise CalibrationError("Empirical calibration verification_methods must be a non-empty list")
 
     for field in (
+        "require_all_routes",
+        "stop_on_verifier_infrastructure_error",
+        "resume_without_duplicate_calls",
+        "require_provider_reported_usage",
+        "require_duration_measurement",
+        "require_offset_aware_timestamp",
+        "require_single_collector_revision_per_evidence_set",
+    ):
+        _required_bool(collection.get(field), f"collection.{field}", expected=True)
+    for field in (
         "persist_prompt_or_candidate_content",
         "persist_provider_native_payload",
         "persist_credentials_or_authorization",
         "persist_connection_mechanism",
         "persist_provider_request_identifiers",
     ):
-        if _required_bool(collection.get(field), f"collection.{field}"):
-            raise CalibrationError(f"Empirical calibration policy must keep {field} disabled")
-
+        _required_bool(collection.get(field), f"collection.{field}", expected=False)
+    for field in (
+        "reviewers_blinded_from_model_observations",
+        "adjudication_required_on_disagreement",
+        "adjudicator_must_be_distinct_from_case_reviewers",
+        "require_offset_aware_timestamp",
+    ):
+        _required_bool(human.get(field), f"human_labeling.{field}", expected=True)
     for field in (
         "empirical_quality_claims_authorized",
         "live_scope_expansion_authorized",
         "routing_authority",
         "automatic_route_update",
     ):
-        if _required_bool(acceptance.get(field), f"acceptance.{field}"):
-            raise CalibrationError(f"Empirical calibration policy must keep {field} disabled")
+        _required_bool(acceptance.get(field), f"acceptance.{field}", expected=False)
+    for field in (
+        "require_human_label_readiness_before_live_collection",
+        "require_independent_residual_risk_review_after_collection",
+        "require_explicit_human_acceptance_after_metrics",
+    ):
+        _required_bool(acceptance.get(field), f"acceptance.{field}", expected=True)
 
     return EmpiricalCalibrationPolicy(
         version=_required_text(payload.get("version"), "version"),
@@ -484,75 +476,24 @@ def load_empirical_policy(path: str | Path) -> EmpiricalCalibrationPolicy:
             base.get("live_verification_policy_version"),
             "base_calibration.live_verification_policy_version",
         ),
-        risk_level=_required_text(collection.get("risk_level"), "collection.risk_level"),
+        risk_level="low",
         verification_methods=tuple(item.strip() for item in methods),
         runs_per_case_per_route=_required_positive_int(
-            collection.get("runs_per_case_per_route"),
-            "collection.runs_per_case_per_route",
-        ),
-        require_all_routes=_required_bool(
-            collection.get("require_all_routes"), "collection.require_all_routes"
-        ),
-        stop_on_verifier_infrastructure_error=_required_bool(
-            collection.get("stop_on_verifier_infrastructure_error"),
-            "collection.stop_on_verifier_infrastructure_error",
-        ),
-        resume_without_duplicate_calls=_required_bool(
-            collection.get("resume_without_duplicate_calls"),
-            "collection.resume_without_duplicate_calls",
-        ),
-        require_provider_reported_usage=_required_bool(
-            collection.get("require_provider_reported_usage"),
-            "collection.require_provider_reported_usage",
-        ),
-        require_duration_measurement=_required_bool(
-            collection.get("require_duration_measurement"),
-            "collection.require_duration_measurement",
-        ),
-        require_offset_aware_timestamp=_required_bool(
-            collection.get("require_offset_aware_timestamp"),
-            "collection.require_offset_aware_timestamp",
-        ),
-        require_single_collector_revision_per_evidence_set=_required_bool(
-            collection.get("require_single_collector_revision_per_evidence_set"),
-            "collection.require_single_collector_revision_per_evidence_set",
+            collection.get("runs_per_case_per_route"), "collection.runs_per_case_per_route"
         ),
         default_observations_path=_required_text(
-            collection.get("default_observations_path"),
-            "collection.default_observations_path",
+            collection.get("default_observations_path"), "collection.default_observations_path"
         ),
         verifier_routes=routes,
         minimum_independent_reviewers_per_case=_required_positive_int(
             human.get("minimum_independent_reviewers_per_case"),
             "human_labeling.minimum_independent_reviewers_per_case",
         ),
-        reviewers_blinded_from_model_observations=_required_bool(
-            human.get("reviewers_blinded_from_model_observations"),
-            "human_labeling.reviewers_blinded_from_model_observations",
-        ),
-        adjudication_required_on_disagreement=_required_bool(
-            human.get("adjudication_required_on_disagreement"),
-            "human_labeling.adjudication_required_on_disagreement",
-        ),
-        adjudicator_must_be_distinct_from_case_reviewers=_required_bool(
-            human.get("adjudicator_must_be_distinct_from_case_reviewers"),
-            "human_labeling.adjudicator_must_be_distinct_from_case_reviewers",
-        ),
         default_labels_path=_required_text(
             human.get("default_labels_path"), "human_labeling.default_labels_path"
         ),
-        require_human_label_readiness_before_live_collection=_required_bool(
-            acceptance.get("require_human_label_readiness_before_live_collection"),
-            "acceptance.require_human_label_readiness_before_live_collection",
-        ),
-        require_independent_residual_risk_review_after_collection=_required_bool(
-            acceptance.get("require_independent_residual_risk_review_after_collection"),
-            "acceptance.require_independent_residual_risk_review_after_collection",
-        ),
-        require_explicit_human_acceptance_after_metrics=_required_bool(
-            acceptance.get("require_explicit_human_acceptance_after_metrics"),
-            "acceptance.require_explicit_human_acceptance_after_metrics",
-        ),
+        require_independent_residual_risk_review_after_collection=True,
+        require_explicit_human_acceptance_after_metrics=True,
     )
 
 
@@ -573,18 +514,15 @@ def validate_empirical_policy_against_base(
     if len({route.provider_family for route in empirical.verifier_routes}) < (
         base.minimum_distinct_verifier_provider_families
     ):
-        raise CalibrationError(
-            "Empirical verifier provider-family count is below base calibration minimum"
-        )
+        raise CalibrationError("Empirical provider-family count is below base calibration minimum")
 
 
 def load_human_labels(path: str | Path) -> list[HumanCalibrationLabel]:
-    source = Path(path)
-    labels: list[HumanCalibrationLabel] = []
     try:
-        lines = source.read_text(encoding="utf-8").splitlines()
+        lines = Path(path).read_text(encoding="utf-8").splitlines()
     except OSError as exc:
-        raise CalibrationError(f"Human calibration labels could not be read: {source}") from exc
+        raise CalibrationError(f"Human calibration labels could not be read: {path}") from exc
+    labels: list[HumanCalibrationLabel] = []
     for index, line in enumerate(lines, start=1):
         if not line.strip():
             continue
@@ -600,25 +538,22 @@ def load_human_labels(path: str | Path) -> list[HumanCalibrationLabel]:
     return labels
 
 
-def _human_consensus(
+def _case_consensus(
     case: GoldCalibrationCase,
     labels: list[HumanCalibrationLabel],
     policy: EmpiricalCalibrationPolicy,
-) -> tuple[LiveVerificationDecision | None, bool, bool]:
+) -> tuple[LiveVerificationDecision | None, int, bool]:
     reviewers = [label for label in labels if label.reviewer_role == "reviewer"]
-    unique_reviewers = {label.reviewer_id for label in reviewers}
-    if len(unique_reviewers) < policy.minimum_independent_reviewers_per_case:
-        return None, False, False
-    decisions = {label.decision for label in reviewers}
-    if len(decisions) == 1:
-        return next(iter(decisions)), True, False
-
+    reviewer_ids = {label.reviewer_id for label in reviewers}
+    if len(reviewer_ids) < policy.minimum_independent_reviewers_per_case:
+        return None, len(reviewer_ids), False
+    reviewer_decisions = {label.decision for label in reviewers}
+    if len(reviewer_decisions) == 1:
+        return next(iter(reviewer_decisions)), len(reviewer_ids), False
     adjudicators = [label for label in labels if label.reviewer_role == "adjudicator"]
     if not adjudicators:
-        return None, True, True
-    if policy.adjudicator_must_be_distinct_from_case_reviewers and any(
-        label.reviewer_id in unique_reviewers for label in adjudicators
-    ):
+        return None, len(reviewer_ids), True
+    if any(label.reviewer_id in reviewer_ids for label in adjudicators):
         raise CalibrationError(
             f"Calibration case {case.case_id} adjudicator must be distinct from case reviewers"
         )
@@ -627,7 +562,7 @@ def _human_consensus(
         raise CalibrationError(
             f"Calibration case {case.case_id} adjudicators do not agree on one decision"
         )
-    return next(iter(adjudicated)), True, False
+    return next(iter(adjudicated)), len(reviewer_ids), False
 
 
 def assess_human_label_readiness(
@@ -635,54 +570,42 @@ def assess_human_label_readiness(
     labels: list[HumanCalibrationLabel],
     policy: EmpiricalCalibrationPolicy,
 ) -> HumanLabelReadiness:
-    by_case = {case.case_id: case for case in cases}
-    unknown = sorted({label.case_id for label in labels} - set(by_case))
+    known_cases = {case.case_id for case in cases}
+    unknown = sorted({label.case_id for label in labels} - known_cases)
     if unknown:
         raise CalibrationError("Human labels reference unknown cases: " + ", ".join(unknown))
     seen: set[tuple[str, str, str]] = set()
     for label in labels:
         identity = (label.case_id, label.reviewer_id, label.reviewer_role)
         if identity in seen:
-            raise CalibrationError(
-                "Duplicate human calibration label identity: " + "/".join(identity)
-            )
+            raise CalibrationError("Duplicate human calibration label identity: " + "/".join(identity))
         seen.add(identity)
         if label.rubric_version != policy.rubric_version:
-            raise CalibrationError(
-                f"Human label for {label.case_id} uses unsupported rubric version"
-            )
-        if policy.reviewers_blinded_from_model_observations and not label.observations_blinded:
-            raise CalibrationError("Human labels must remain blinded from model observations")
+            raise CalibrationError(f"Human label for {label.case_id} uses unsupported rubric version")
 
+    by_case: dict[str, list[HumanCalibrationLabel]] = defaultdict(list)
+    for label in labels:
+        by_case[label.case_id].append(label)
     undercovered: list[str] = []
     disagreements: list[str] = []
     adjudication_missing: list[str] = []
     for case in cases:
-        case_labels = [label for label in labels if label.case_id == case.case_id]
-        consensus, reviewer_floor_met, needs_adjudication = _human_consensus(
+        case_labels = by_case[case.case_id]
+        consensus, reviewer_count, needs_adjudication = _case_consensus(
             case, case_labels, policy
         )
-        if not reviewer_floor_met:
-            reviewer_count = len(
-                {
-                    label.reviewer_id
-                    for label in case_labels
-                    if label.reviewer_role == "reviewer"
-                }
-            )
+        if reviewer_count < policy.minimum_independent_reviewers_per_case:
             undercovered.append(
                 f"{case.case_id}:{reviewer_count}/{policy.minimum_independent_reviewers_per_case}"
             )
         reviewer_decisions = {
-            label.decision
-            for label in case_labels
-            if label.reviewer_role == "reviewer"
+            label.decision for label in case_labels if label.reviewer_role == "reviewer"
         }
         if len(reviewer_decisions) > 1:
             disagreements.append(case.case_id)
         if needs_adjudication:
             adjudication_missing.append(case.case_id)
-        if reviewer_floor_met and not needs_adjudication and consensus is None:
+        if reviewer_count >= policy.minimum_independent_reviewers_per_case and not needs_adjudication and consensus is None:
             raise CalibrationError(f"Human label consensus missing for {case.case_id}")
 
     times = sorted((_parsed_time(label.reviewed_at), label.reviewed_at) for label in labels)
@@ -707,37 +630,31 @@ def build_human_gold_cases(
     readiness = assess_human_label_readiness(cases, labels, empirical_policy)
     if not readiness.human_label_requirements_met:
         raise CalibrationError("Independent human labels are not ready for empirical calibration")
-    by_case_labels: dict[str, list[HumanCalibrationLabel]] = defaultdict(list)
+    by_case: dict[str, list[HumanCalibrationLabel]] = defaultdict(list)
     for label in labels:
-        by_case_labels[label.case_id].append(label)
-
+        by_case[label.case_id].append(label)
     human_gold: list[GoldCalibrationCase] = []
     for case in cases:
-        consensus, _, needs_adjudication = _human_consensus(
-            case,
-            by_case_labels[case.case_id],
-            empirical_policy,
+        consensus, _, needs_adjudication = _case_consensus(
+            case, by_case[case.case_id], empirical_policy
         )
         if needs_adjudication or consensus is None:
             raise CalibrationError(f"Human label consensus is incomplete for {case.case_id}")
         human_gold.append(replace(case, gold=consensus))
-
-    # Machine-checkable cases remain an invariant even when human labels are used.
+    # Independent human labels cannot override objective deterministic invariants.
     validate_gold_corpus(human_gold, policy=base_policy)
     return human_gold
 
 
-def load_empirical_observations(
-    path: str | Path,
-) -> list[EmpiricalCalibrationObservation]:
+def load_empirical_observations(path: str | Path) -> list[EmpiricalCalibrationObservation]:
     source = Path(path)
     if not source.exists():
         return []
-    observations: list[EmpiricalCalibrationObservation] = []
     try:
         lines = source.read_text(encoding="utf-8").splitlines()
     except OSError as exc:
         raise CalibrationError(f"Empirical observations could not be read: {source}") from exc
+    observations: list[EmpiricalCalibrationObservation] = []
     for index, line in enumerate(lines, start=1):
         if not line.strip():
             continue
@@ -758,8 +675,8 @@ def validate_empirical_observations(
     empirical_policy: EmpiricalCalibrationPolicy,
     base_policy: CalibrationPolicy,
 ) -> None:
-    human_readiness = assess_human_label_readiness(cases, labels, empirical_policy)
-    if not human_readiness.human_label_requirements_met:
+    readiness = assess_human_label_readiness(cases, labels, empirical_policy)
+    if not readiness.human_label_requirements_met:
         raise CalibrationError("Human labels must be complete before empirical observations")
     latest_label = max(_parsed_time(label.reviewed_at) for label in labels)
     known_cases = {case.case_id for case in cases}
@@ -793,11 +710,14 @@ def validate_empirical_observations(
             raise CalibrationError(
                 "Empirical observation predates completion of the independent human labels"
             )
-    if (
-        empirical_policy.require_single_collector_revision_per_evidence_set
-        and len(revisions) > 1
-    ):
+    if len(revisions) > 1:
         raise CalibrationError("Empirical evidence set mixes collector revisions")
+
+
+def _optional_usage_int(value: object) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    return None
 
 
 def _extract_provider_usage(provider: str, body: bytes) -> tuple[int | None, int | None]:
@@ -805,12 +725,9 @@ def _extract_provider_usage(provider: str, body: bytes) -> tuple[int | None, int
         payload = json.loads(body.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError):
         return None, None
-    if not isinstance(payload, dict):
+    if not isinstance(payload, dict) or not isinstance(payload.get("usage"), dict):
         return None, None
-    usage = payload.get("usage")
-    if not isinstance(usage, dict):
-        return None, None
-
+    usage = payload["usage"]
     if provider == "google":
         return (
             _optional_usage_int(usage.get("total_input_tokens")),
@@ -822,22 +739,26 @@ def _extract_provider_usage(provider: str, body: bytes) -> tuple[int | None, int
             _optional_usage_int(usage.get("output_tokens")),
         )
     if provider == "anthropic":
-        uncached = _optional_usage_int(usage.get("input_tokens"))
-        cache_create = _optional_usage_int(usage.get("cache_creation_input_tokens"))
-        cache_read = _optional_usage_int(usage.get("cache_read_input_tokens"))
-        components = [value for value in (uncached, cache_create, cache_read) if value is not None]
-        total_input = sum(components) if components else None
-        return total_input, _optional_usage_int(usage.get("output_tokens"))
+        parts = [
+            value
+            for value in (
+                _optional_usage_int(usage.get("input_tokens")),
+                _optional_usage_int(usage.get("cache_creation_input_tokens")),
+                _optional_usage_int(usage.get("cache_read_input_tokens")),
+            )
+            if value is not None
+        ]
+        return (
+            sum(parts) if parts else None,
+            _optional_usage_int(usage.get("output_tokens")),
+        )
     return None, None
 
 
-def _optional_usage_int(value: object) -> int | None:
-    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
-        return value
-    return None
-
-
-def _verifier_for_route(route: CalibrationVerifierRoute, connections: Mapping[str, ProviderConnection]):
+def _verifier_for_route(
+    route: CalibrationVerifierRoute,
+    connections: Mapping[str, ProviderConnection],
+):
     if route.provider_family == "google":
         return GoogleLiveVerifier(connections)
     if route.provider_family == "anthropic":
@@ -849,9 +770,11 @@ def _verifier_for_route(route: CalibrationVerifierRoute, connections: Mapping[st
 
 def _append_observation(path: Path, observation: EmpiricalCalibrationObservation) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    encoded = json.dumps(observation.to_dict(), sort_keys=True, separators=(",", ":")) + "\n"
     with path.open("a", encoding="utf-8") as handle:
-        handle.write(encoded)
+        handle.write(
+            json.dumps(observation.to_dict(), sort_keys=True, separators=(",", ":"))
+            + "\n"
+        )
         handle.flush()
         os.fsync(handle.fileno())
 
@@ -898,18 +821,21 @@ def collect_live_observations(
     if len(revision) < 7:
         raise CalibrationError("collector_revision must identify a concrete repository revision")
 
+    # Fail before any paid/provider call if label chronology is invalid.
+    collection_started_at = _required_offset_datetime(now(), "collection_started_at")
+    latest_label = max(_parsed_time(label.reviewed_at) for label in labels)
+    if _parsed_time(collection_started_at) < latest_label:
+        raise CalibrationError(
+            "Empirical collection cannot start before independent human labels are complete"
+        )
+
     target = Path(output_path)
     existing = load_empirical_observations(target)
     if existing:
         validate_empirical_observations(
-            cases,
-            existing,
-            labels,
-            empirical_policy,
-            base_policy,
+            cases, existing, labels, empirical_policy, base_policy
         )
-        existing_revisions = {observation.collector_revision for observation in existing}
-        if existing_revisions != {revision}:
+        if {observation.collector_revision for observation in existing} != {revision}:
             raise CalibrationError(
                 "Existing empirical evidence was collected at a different repository revision"
             )
@@ -944,7 +870,6 @@ def collect_live_observations(
                 identity = (case.case_id, route.route_id, run_id)
                 if identity in completed:
                     continue
-
                 capture = _UsageCaptureConnection(delegate)
                 request = LiveVerificationRequest(
                     dispatch_id=f"calibration-{case.case_id}-{route.provider_family}-{run_id}",
@@ -960,8 +885,7 @@ def collect_live_observations(
                 started = clock()
                 try:
                     response = _verifier_for_route(
-                        route,
-                        {route.provider_family: capture},
+                        route, {route.provider_family: capture}
                     ).verify(request)
                 except LiveVerificationError as exc:
                     raise CalibrationError(
@@ -975,6 +899,10 @@ def collect_live_observations(
                         f"Empirical verifier did not return required provider usage for {route.route_id}"
                     )
                 observed_at = _required_offset_datetime(now(), "observed_at")
+                if _parsed_time(observed_at) < latest_label:
+                    raise CalibrationError(
+                        "Empirical observation predates completion of the independent human labels"
+                    )
                 observation = EmpiricalCalibrationObservation(
                     case_id=case.case_id,
                     verifier_provider_family=route.provider_family,
@@ -994,12 +922,9 @@ def collect_live_observations(
                 _append_observation(target, observation)
                 collected.append(observation)
                 completed.add(observation.identity)
+
     validate_empirical_observations(
-        cases,
-        collected,
-        labels,
-        empirical_policy,
-        base_policy,
+        cases, collected, labels, empirical_policy, base_policy
     )
     return collected
 
@@ -1013,70 +938,49 @@ def evaluate_empirical_calibration(
 ) -> dict[str, Any]:
     human_gold = build_human_gold_cases(cases, labels, empirical_policy, base_policy)
     validate_empirical_observations(
-        cases,
-        observations,
-        labels,
-        empirical_policy,
-        base_policy,
+        cases, observations, labels, empirical_policy, base_policy
     )
     base_observations = [observation.to_base_observation() for observation in observations]
     metrics = evaluate_calibration(
-        human_gold,
-        base_observations,
-        policy=base_policy,
+        human_gold, base_observations, policy=base_policy
     ).to_dict()
     path_metrics = metrics.pop("by_execution_path")
-    unexpected = sorted(set(path_metrics) - {"primary_no_retry"})
-    if unexpected:
-        raise CalibrationError(
-            "Empirical calibration created unexpected execution-path metrics: "
-            + ", ".join(unexpected)
-        )
+    if set(path_metrics) - {"primary_no_retry"}:
+        raise CalibrationError("Empirical calibration produced an invalid execution-path metric")
     metrics["by_collection_path"] = {
         COLLECTION_ROLE: path_metrics.get(
-            "primary_no_retry",
-            {"observations": 0, "exact_status_accuracy": 0.0},
+            "primary_no_retry", {"observations": 0, "exact_status_accuracy": 0.0}
         )
     }
 
     readiness = assess_evidence_readiness(
-        human_gold,
-        base_observations,
-        base_policy,
+        human_gold, base_observations, base_policy
     ).to_dict()
     expected_routes = {route.route_id for route in empirical_policy.verifier_routes}
     observed_routes = {observation.verifier_route for observation in observations}
-    if empirical_policy.require_all_routes:
-        readiness["empirical_required_routes_present"] = observed_routes == expected_routes
-        readiness["data_requirements_met"] = bool(
-            readiness["data_requirements_met"] and observed_routes == expected_routes
-        )
-
-    control_by_case = {case.case_id: case.gold for case in cases}
-    human_by_case = {case.case_id: case.gold for case in human_gold}
-    control_disagreements = sorted(
-        case_id
-        for case_id in control_by_case
-        if control_by_case[case_id] != human_by_case[case_id]
+    readiness["empirical_required_routes_present"] = observed_routes == expected_routes
+    readiness["data_requirements_met"] = bool(
+        readiness["data_requirements_met"] and observed_routes == expected_routes
     )
+
+    original = {case.case_id: case.gold for case in cases}
+    human = {case.case_id: case.gold for case in human_gold}
     return {
         "metrics_against_independent_human_labels": metrics,
         "evidence_readiness": readiness,
         "human_label_readiness": assess_human_label_readiness(
             cases, labels, empirical_policy
         ).to_dict(),
-        "reference_control_vs_human_disagreement_cases": control_disagreements,
+        "reference_control_vs_human_disagreement_cases": sorted(
+            case_id for case_id in original if original[case_id] != human[case_id]
+        ),
         "authority": {
             "quality_claims_authorized": False,
             "scope_expansion_authorized": False,
             "routing_authority": False,
             "automatic_route_update": False,
-            "independent_residual_risk_review_required": (
-                empirical_policy.require_independent_residual_risk_review_after_collection
-            ),
-            "explicit_human_acceptance_required": (
-                empirical_policy.require_explicit_human_acceptance_after_metrics
-            ),
+            "independent_residual_risk_review_required": True,
+            "explicit_human_acceptance_required": True,
         },
     }
 
@@ -1086,27 +990,21 @@ def connections_from_environment(
 ) -> dict[str, ProviderConnection]:
     required = {route.provider_family for route in routes}
     connections: dict[str, ProviderConnection] = {}
-    if "google" in required:
-        key = os.environ.get("GEMINI_API_KEY")
-        if key:
-            connections["google"] = HeaderProviderConnection(
-                provider_family="google",
-                authorization_headers={"x-goog-api-key": key},
-            )
-    if "anthropic" in required:
-        key = os.environ.get("ANTHROPIC_API_KEY")
-        if key:
-            connections["anthropic"] = HeaderProviderConnection(
-                provider_family="anthropic",
-                authorization_headers={"x-api-key": key},
-            )
-    if "openai" in required:
-        key = os.environ.get("OPENAI_API_KEY")
-        if key:
-            connections["openai"] = HeaderProviderConnection(
-                provider_family="openai",
-                authorization_headers={"Authorization": f"Bearer {key}"},
-            )
+    if "google" in required and os.environ.get("GEMINI_API_KEY"):
+        connections["google"] = HeaderProviderConnection(
+            provider_family="google",
+            authorization_headers={"x-goog-api-key": os.environ["GEMINI_API_KEY"]},
+        )
+    if "anthropic" in required and os.environ.get("ANTHROPIC_API_KEY"):
+        connections["anthropic"] = HeaderProviderConnection(
+            provider_family="anthropic",
+            authorization_headers={"x-api-key": os.environ["ANTHROPIC_API_KEY"]},
+        )
+    if "openai" in required and os.environ.get("OPENAI_API_KEY"):
+        connections["openai"] = HeaderProviderConnection(
+            provider_family="openai",
+            authorization_headers={"Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}"},
+        )
     missing = sorted(required - set(connections))
     if missing:
         raise CalibrationError(
@@ -1118,9 +1016,8 @@ def connections_from_environment(
 def resolve_collector_revision(explicit: str | None = None) -> str:
     if explicit:
         return _required_text(explicit, "collector_revision")
-    github_sha = os.environ.get("GITHUB_SHA")
-    if github_sha:
-        return github_sha.strip()
+    if os.environ.get("GITHUB_SHA"):
+        return _required_text(os.environ["GITHUB_SHA"], "collector_revision")
     try:
         completed = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -1158,14 +1055,12 @@ def main(argv: list[str] | None = None) -> int:
     plan_parser.add_argument("--provider", action="append", choices=sorted(SUPPORTED_PROVIDERS))
 
     labels_parser = subparsers.add_parser(
-        "labels",
-        help="Validate independent human labels without provider calls",
+        "labels", help="Validate independent human labels without provider calls"
     )
     labels_parser.add_argument("--human-labels", required=True)
 
     collect_parser = subparsers.add_parser(
-        "collect",
-        help="Collect live verifier observations after human labels are ready",
+        "collect", help="Collect live verifier observations after human labels are ready"
     )
     collect_parser.add_argument("--human-labels", required=True)
     collect_parser.add_argument("--observations")
@@ -1178,8 +1073,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     evaluate_parser = subparsers.add_parser(
-        "evaluate",
-        help="Evaluate empirical observations against independent human labels",
+        "evaluate", help="Evaluate observations against independent human labels"
     )
     evaluate_parser.add_argument("--human-labels", required=True)
     evaluate_parser.add_argument("--observations", required=True)
@@ -1190,11 +1084,15 @@ def main(argv: list[str] | None = None) -> int:
     try:
         empirical, base, cases = _load_context(root, args.empirical_policy)
         if args.command == "plan":
-            providers = set(args.provider) if args.provider else None
-            result = planned_collection(cases, empirical, providers=providers)
+            result = planned_collection(
+                cases,
+                empirical,
+                providers=set(args.provider) if args.provider else None,
+            )
         elif args.command == "labels":
-            labels = load_human_labels(args.human_labels)
-            result = assess_human_label_readiness(cases, labels, empirical).to_dict()
+            result = assess_human_label_readiness(
+                cases, load_human_labels(args.human_labels), empirical
+            ).to_dict()
         elif args.command == "collect":
             if not args.execute_live:
                 raise CalibrationError(
@@ -1207,14 +1105,15 @@ def main(argv: list[str] | None = None) -> int:
                 for route in empirical.verifier_routes
                 if providers is None or route.provider_family in providers
             )
-            connections = connections_from_environment(selected_routes)
-            observations_path = args.observations or str(root / empirical.default_observations_path)
+            observations_path = args.observations or str(
+                root / empirical.default_observations_path
+            )
             observations = collect_live_observations(
                 cases,
                 labels,
                 empirical,
                 base,
-                connections,
+                connections_from_environment(selected_routes),
                 collector_revision=resolve_collector_revision(args.collector_revision),
                 output_path=observations_path,
                 providers=providers,
@@ -1227,21 +1126,20 @@ def main(argv: list[str] | None = None) -> int:
                 "scope_expansion_authorized": False,
             }
         else:
-            labels = load_human_labels(args.human_labels)
             observations = load_empirical_observations(args.observations)
             if not observations:
                 raise CalibrationError("Empirical observations are empty")
             result = evaluate_empirical_calibration(
                 cases,
-                labels,
+                load_human_labels(args.human_labels),
                 observations,
                 empirical,
                 base,
             )
             if args.output:
-                output_path = Path(args.output)
-                output_path.parent.mkdir(parents=True, exist_ok=True)
-                output_path.write_text(
+                output = Path(args.output)
+                output.parent.mkdir(parents=True, exist_ok=True)
+                output.write_text(
                     json.dumps(result, indent=2, sort_keys=True) + "\n",
                     encoding="utf-8",
                 )
