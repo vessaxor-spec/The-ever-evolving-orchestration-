@@ -1,0 +1,23 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+policy: >-
+  Runtime-specific worker authorization is additive and preserves the stable
+  documentation responsibility while allowing the explicitly governed
+  high_volume_simple implementations already selected by routing policy.
+
+workers: {}
+
+worker_overrides:
+  documentation:
+    preferred_implementations:
+      - claude-haiku-4-5
+      - gemini-3.6-flash
+      - gpt-5.6-luna
+      - claude-sonnet-5
+      - gpt-5.6-sol
+    fallbacks:
+      - gemini-3.6-flash
+      - gpt-5.6-luna
+      - claude-sonnet-5
+      - gpt-5.6-sol
