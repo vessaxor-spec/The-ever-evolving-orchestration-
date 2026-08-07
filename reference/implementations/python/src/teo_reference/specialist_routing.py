@@ -200,7 +200,7 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
                 continue
             if not choice.provider_family or choice.provider_family == primary.provider_family:
                 continue
-            choice.reasoning = self._reasoning_from_source(choice, task_type)
+            choice.reasoning = self._reasoning_from_source(choice, task_type) or "medium"
             return VerificationPlan(
                 team=plan.team,
                 method=list(plan.method),
