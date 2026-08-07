@@ -8,7 +8,9 @@ from .schemas import DispatchRecord, ExecutionResult, ExecutionStatus, RiskLevel
 
 CONTRACT_VERSION = "1"
 FailureScope = Literal["request", "transient", "model", "provider", "capability"]
+ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh", "max"]
 FAILURE_SCOPES = {"request", "transient", "model", "provider", "capability"}
+REASONING_EFFORTS = {"none", "minimal", "low", "medium", "high", "xhigh", "max"}
 _CREDENTIAL_FIELDS = {
     "api_key",
     "apikey",
@@ -87,6 +89,7 @@ class ProviderExecutionRequest:
     risk_level: RiskLevel
     required_capabilities: tuple[str, ...]
     input_payload: dict[str, Any]
+    reasoning_effort: ReasoningEffort | None = None
     contract_version: Literal["1"] = "1"
 
     def __post_init__(self) -> None:
@@ -100,6 +103,10 @@ class ProviderExecutionRequest:
         _require_text(self.model, "model")
         if self.risk_level not in {"low", "medium", "high", "critical"}:
             raise ProviderAdapterContractError(f"Unsupported risk level: {self.risk_level}")
+        if self.reasoning_effort is not None and self.reasoning_effort not in REASONING_EFFORTS:
+            raise ProviderAdapterContractError(
+                f"Unsupported reasoning effort: {self.reasoning_effort}"
+            )
         _assert_no_credential_fields(self.input_payload)
 
     @classmethod
@@ -114,6 +121,7 @@ class ProviderExecutionRequest:
                 "Selected implementation has no provider_family and cannot be executed by an adapter"
             )
         payload = deepcopy(input_payload) if input_payload is not None else {"task": dispatch.task}
+        reasoning = dispatch.selected_implementation.reasoning
         return cls(
             dispatch_id=dispatch.dispatch_id,
             task_id=dispatch.task_id,
@@ -122,6 +130,7 @@ class ProviderExecutionRequest:
             risk_level=dispatch.risk_level,
             required_capabilities=tuple(dispatch.required_capabilities),
             input_payload=payload,
+            reasoning_effort=str(reasoning) if reasoning else None,  # type: ignore[arg-type]
         )
 
     @classmethod
@@ -135,11 +144,13 @@ class ProviderExecutionRequest:
             "risk_level",
             "required_capabilities",
             "input_payload",
+            "reasoning_effort",
         }
         _reject_unknown(data, allowed, "provider execution request")
         payload = data.get("input_payload")
         if not isinstance(payload, dict):
             raise ProviderAdapterContractError("input_payload must be an object")
+        reasoning = data.get("reasoning_effort")
         return cls(
             contract_version=str(data.get("contract_version")),  # type: ignore[arg-type]
             dispatch_id=_require_text(data.get("dispatch_id"), "dispatch_id"),
@@ -149,6 +160,7 @@ class ProviderExecutionRequest:
             risk_level=str(data.get("risk_level")),  # type: ignore[arg-type]
             required_capabilities=tuple(str(item) for item in data.get("required_capabilities", [])),
             input_payload=deepcopy(payload),
+            reasoning_effort=str(reasoning) if reasoning is not None else None,  # type: ignore[arg-type]
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -161,6 +173,7 @@ class ProviderExecutionRequest:
             "risk_level": self.risk_level,
             "required_capabilities": list(self.required_capabilities),
             "input_payload": deepcopy(self.input_payload),
+            "reasoning_effort": self.reasoning_effort,
         }
 
 
