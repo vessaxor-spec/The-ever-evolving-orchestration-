@@ -60,7 +60,7 @@ The repository now contains:
 
 - ten active organizational teams: Mission Control, Planning, Engineering, Platform and Reliability, Systems Engineering, Physical Systems, Research, Assurance, Review, and Verification
 - a public roster of 78 preserved specialist role cards, each with a deterministic Team -> Worker -> Specialist spawn path
-- machine-readable team, worker, specialist, capability, model, fallback, verification, retry, provider-health, and runtime-telemetry policies
+- machine-readable team, worker, specialist, capability, model, fallback, verification, retry, provider-health, runtime-telemetry, calibration, and empirical-evidence policies
 - dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
 - dedicated Platform and Reliability workers for distributed systems, database reliability, networks, platforms, performance, FinOps, SRE, MLOps, DevOps, and DevSecOps
 - dedicated Systems Engineering responsibility for requirements, interfaces, baselines, integration, and lifecycle coherence
@@ -85,15 +85,19 @@ The repository now contains:
 - persistent content-free provider-attempt telemetry for latency, failure state, retry timing, verifier identity, and normalized token usage using opaque runtime correlation rather than caller-controlled task identifiers
 - guarded one-shot live execution of the dispatch-assigned provider-diverse verifier using structured pointwise criteria
 - authorized-root confinement for live verification artifacts and explicit treatment of candidate output as untrusted data
-- strict JSON Schema enforcement at external task, dispatch, execution, verification, and final-outcome boundaries
+- a fixed verifier-calibration control corpus with deterministic checks, strict observation contracts, repeatability and disagreement metrics, and mutation resistance
+- an empirical verifier-calibration protocol that requires blinded independent human labels before live observations, three provider-diverse verifier routes, three repeated runs per case per route, measured duration, provider-reported token usage, and route-specific quality reporting
+- blinded human-review packet generation using random review-item aliases, a separate private alias map, a two-reviewer minimum, and distinct adjudication when reviewers disagree
+- strict separation between calibration evidence and routing authority: complete or favorable measurements do not automatically change routes, authorize quality claims, or expand live execution scope
+- strict JSON Schema enforcement at external task, dispatch, execution, verification, final-outcome, human-review, human-label, and empirical-observation boundaries
 - clean linked-configuration validation, including all-78 specialist spawnability, routed-model registration, model-registry consistency, and explicit verifier-diversity checks
 - worker and routing conformance datasets, including 27 principal-engineering cases
 - a six-card regulated evidence/freshness pilot with CI validation and mutation testing
-- a runnable Python reference router with validation, planning, finalization, runtime execution controls, live verification, and audit output
+- a runnable Python reference router with validation, planning, finalization, runtime execution controls, live verification, calibration tooling, and audit output
 - reproducible reference CI with pinned runner, Python version, action commits, and validation dependencies
 - CI that compiles the implementation, runs the tests, validates regulated evidence, parses schemas, validates linked configuration, and executes the end-to-end example
 
-The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium effective risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, verifier calibration, route-outcome learning, and qualified-human approval integration remain later runtime work.
+The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium effective risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, calibration, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. The calibration instrument and empirical collection machinery are implemented, but TEO does not yet claim measured verifier quality. The immediate evidence gate is completion of blinded independent human labels followed by 72 repeated live verifier observations across Google, Anthropic, and OpenAI. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, route-outcome learning, and qualified-human approval integration remain later runtime work.
 
 ## Core architecture
 
@@ -403,6 +407,8 @@ The complete machine-readable policies are available in:
 - [`policy/runtime/provider-circuit-breaker.yaml`](policy/runtime/provider-circuit-breaker.yaml)
 - [`policy/runtime/runtime-telemetry.yaml`](policy/runtime/runtime-telemetry.yaml)
 - [`policy/runtime/live-verification.yaml`](policy/runtime/live-verification.yaml)
+- [`policy/verification/verifier-calibration.yaml`](policy/verification/verifier-calibration.yaml)
+- [`policy/verification/verifier-calibration-empirical.yaml`](policy/verification/verifier-calibration-empirical.yaml)
 - [`models.yaml`](models.yaml)
 
 ## Public specialist roster
@@ -445,7 +451,7 @@ Specialists do not replace core teams, bypass Mission Control, assign themselves
 
 ## Reference implementation
 
-The Python reference implementation is a runnable control plane. It reads TEO policy and registries, produces structured dispatches, assigns independent verifiers, records final evidence-bearing outcomes, and includes a guarded live execution and verification path.
+The Python reference implementation is a runnable control plane. It reads TEO policy and registries, produces structured dispatches, assigns independent verifiers, records final evidence-bearing outcomes, and includes guarded live execution, live verification, and verifier-calibration evidence tooling.
 
 The guarded live runtime currently provides:
 
@@ -460,7 +466,22 @@ The guarded live runtime currently provides:
 - one-shot live execution of the dispatch-assigned provider-diverse verifier
 - strict structured verification statuses: `passed`, `failed`, or `needs_human`
 
+The calibration and evidence tooling currently provides:
+
+- a fixed eight-case reference control corpus for correct, subtly wrong, incomplete, wrong-format, unsupported-claim, ambiguous, unverifiable, and adversarial-verifier-injection behavior
+- deterministic pre-verifier checks where the expected property is objectively machine-checkable
+- a content-free calibration observation contract with provider, model, reasoning, timestamp, retry/fallback state, duration, token usage, and structured decision evidence
+- blinded human-review packet generation with random review aliases and a separate private alias map
+- a minimum of two independent reviewers per case, with distinct blinded adjudication when their structured decisions disagree
+- chronology enforcement requiring human labels to be complete before any live empirical verifier observation
+- an operator-run empirical collector for three provider-diverse verifier routes and three runs per case per route
+- append, flush, fsync, and resume behavior without duplicate provider calls
+- aggregate and per-route metrics for false passes, false failures, missed or unnecessary human escalation, criterion accuracy, repeatability, disagreement, latency, and normalized usage
+- explicit authority controls that keep quality claims, routing changes, automatic route updates, and scope expansion disabled until independent residual-risk review and human acceptance
+
 Live provider execution and live model verification are currently restricted to explicit `high_volume_simple` tasks at low or medium effective risk. A successful provider call is not a completed TEO outcome. The active verifier must run and existing finalization still checks verifier identity, provider diversity, verification status, and any human-approval requirement. Model verification never satisfies qualified-human approval.
+
+Calibration infrastructure is now executable, but calibration evidence is not yet complete. The current next gate is independent blinded human review of the fixed corpus, followed by the planned 72 live verifier observations. Until that evidence is collected, analyzed, independently reviewed, and accepted, TEO does not claim empirical verifier quality and does not broaden live verification authority.
 
 ### Install
 
@@ -539,6 +560,10 @@ The repository contains fixtures and executable tests for:
 - persistent provider-family circuit state and half-open recovery, including separation of local connection failure from provider service health
 - persistent content-free provider-attempt telemetry, opaque runtime correlation, and normalized provider usage
 - provider-diverse live verifier routing, authorized artifact roots, untrusted candidate-output handling, strict structured decisions, and verification-policy mutation resistance
+- fixed-corpus verifier calibration, deterministic control checks, error-rate denominator correctness, repeatability, cross-verifier disagreement, provider-family evidence floors, and calibration mutation resistance
+- blinded human-review packet and private-alias separation, reviewer blinding attestations, disagreement/adjudication controls, canonical-label normalization, and prevention of reference-control leakage through semantic case IDs
+- empirical calibration collection across a synthetic 72-observation matrix in CI, including chronology, provider usage, measured duration, single collector revision, durable append/resume behavior, no duplicate calls, and content-free persistence
+- route-specific empirical reporting that prevents aggregate results from hiding a missing or weak configured verifier route
 - external JSON Schema boundary enforcement
 - regulated evidence/freshness validation and mutation resistance
 - refusal of ambiguous implicit principal-specialist routing
@@ -554,6 +579,8 @@ The CI workflow in [`.github/workflows/reference-ci.yml`](.github/workflows/refe
 5. JSON-schema parsing
 6. linked TEO configuration validation
 7. the end-to-end reference example, including model and provider verifier independence
+
+The Operational Evidence Phase 2 merge was accepted after the final pinned CI run passed 464 automated tests, regulated evidence validation, 16 JSON Schema parses, zero-issue linked configuration validation, and the provider-diverse end-to-end reference lifecycle. That result validates the evidence machinery as tested; it is not itself live empirical verifier-quality evidence.
 
 ## Registry status
 
@@ -575,7 +602,7 @@ The initial registry was reviewed on **2026-08-05**. Provider documentation esta
 - Benchmark evidence: [`registry/benchmarks/`](registry/benchmarks/)
 - Registry validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
 
-The live canary can now collect provider-attempt latency and normalized usage evidence, but TEO has not yet produced a controlled common-harness comparison of model quality, reliability, or monetary cost. Cost attribution requires dated pricing evidence, and verifier quality requires calibration against independent or human-rated outcomes.
+The live canary can collect provider-attempt latency and normalized usage evidence. TEO also now has an executable verifier-calibration instrument and controlled empirical collection protocol, but it has not yet completed the independent blinded human labels and repeated live observations required for a verifier-quality claim. A controlled common-harness comparison of model quality, reliability, or monetary cost also remains incomplete. Cost attribution requires dated pricing evidence, and routing-quality claims must remain tied to accepted empirical evidence rather than provider documentation alone.
 
 ## Example workflow
 
@@ -625,10 +652,11 @@ The implementations can change. The responsibility chain remains understandable.
 3. Review team dispatch in [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml).
 4. Review implementation and fallback policy under [`policy/routing/`](policy/routing/).
 5. Review runtime recovery policy under [`policy/runtime/`](policy/runtime/).
-6. Review stable workers under [`community/workers/`](community/workers/).
-7. Review the public specialist roster in [`community/specialists/`](community/specialists/).
-8. Review model aliases and provider metadata in [`models.yaml`](models.yaml) and [`registry/`](registry/).
-9. Run the reference router validation and tests.
+6. Review verification and calibration policy under [`policy/verification/`](policy/verification/).
+7. Review stable workers under [`community/workers/`](community/workers/).
+8. Review the public specialist roster in [`community/specialists/`](community/specialists/).
+9. Review model aliases and provider metadata in [`models.yaml`](models.yaml) and [`registry/`](registry/).
+10. Run the reference router validation and tests.
 
 ### For AI agents
 
@@ -643,9 +671,10 @@ Read in this order:
 5. [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml)
 6. [`policy/routing/`](policy/routing/)
 7. [`policy/runtime/`](policy/runtime/)
-8. [`models.yaml`](models.yaml)
-9. [`registry/`](registry/)
-10. [`reference/datasets/`](reference/datasets/)
+8. [`policy/verification/`](policy/verification/)
+9. [`models.yaml`](models.yaml)
+10. [`registry/`](registry/)
+11. [`reference/datasets/`](reference/datasets/)
 
 Then resolve:
 
@@ -809,11 +838,11 @@ All examples, policies, registries, specialists, and discussions should be safe 
 - audit logging
 - conformance datasets, tests, and reproducible CI
 
-### Runtime execution: active
+### Runtime execution and operational evidence: active
 
 The principal-engineering architecture expansion is closed. Current work is focused on operational evidence and runtime execution rather than immediate roster growth.
 
-Completed runtime additions include:
+Completed runtime and evidence additions include:
 
 - provider-neutral execution contract
 - connection-neutral access boundary
@@ -829,8 +858,22 @@ Completed runtime additions include:
 - provider-health separation from authentication, billing, permission, quota/rate-limit, and local connection failures
 - persistent content-free provider-attempt telemetry with opaque correlation and normalized usage evidence
 - provider-diverse one-shot live verifier execution with strict structured decisions and authorized artifact roots
+- verifier-calibration control corpus and deterministic pre-verifier checks
+- calibration observation schema, evidence-readiness metrics, repeatability and cross-provider disagreement analysis, and mutation controls
+- blinded independent-human review workflow with random aliases, a private alias map, two-reviewer coverage, and adjudication on disagreement
+- empirical calibration collector for three provider-diverse verifier routes with three runs per case per route, provider-reported usage, measured duration, durable resume behavior, and route-specific reporting
+- authority controls preventing calibration evidence from automatically changing routes, authorizing quality claims, or broadening live execution scope
 
-The next operational horizon includes distributed circuit-state coordination, distributed telemetry export and retention controls, source-backed cost attribution, verifier calibration against independent or human-rated outcomes, route outcome evaluation, qualified-human approval integration, streaming/runtime latency expansion, and continued observation of the six-card regulated evidence pilot.
+The immediate next operational gate is empirical evidence collection, not additional architectural expansion:
+
+1. complete two blinded independent human reviews of all eight fixed calibration cases
+2. adjudicate any reviewer disagreements with a third distinct blinded reviewer
+3. normalize and validate the resulting canonical human labels
+4. collect the planned 72 live verifier observations across Google, Anthropic, and OpenAI
+5. measure aggregate and route-specific false passes, false failures, human-escalation errors, criterion accuracy, repeatability, disagreement, latency, and usage
+6. perform independent residual-risk review before accepting any verifier-quality claim or routing change
+
+After that gate, remaining production-hardening work includes distributed circuit-state coordination, distributed telemetry export and retention controls, source-backed cost attribution, route-outcome evaluation, qualified-human approval integration, streaming/runtime latency expansion, and continued observation of the six-card regulated evidence pilot.
 
 The directional scope is tracked in [`ROADMAP.md`](ROADMAP.md).
 
