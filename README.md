@@ -60,7 +60,7 @@ The repository now contains:
 
 - ten active organizational teams: Mission Control, Planning, Engineering, Platform and Reliability, Systems Engineering, Physical Systems, Research, Assurance, Review, and Verification
 - a public roster of 78 preserved specialist role cards
-- machine-readable team, worker, specialist, capability, model, fallback, verification, retry, and provider-health policies
+- machine-readable team, worker, specialist, capability, model, fallback, verification, retry, provider-health, and runtime-telemetry policies
 - dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
 - dedicated Platform and Reliability workers for distributed systems, database reliability, networks, platforms, performance, FinOps, SRE, MLOps, DevOps, and DevSecOps
 - dedicated Systems Engineering responsibility for requirements, interfaces, baselines, integration, and lifecycle coherence
@@ -76,15 +76,18 @@ The repository now contains:
 - a connection-neutral provider boundary that keeps API keys, OAuth, delegated identity, service accounts, connector sessions, and other access mechanisms outside routing semantics
 - guarded live provider adapters for Anthropic Claude Haiku 4.5, OpenAI GPT-5.6 Luna, and Google Gemini 3.6 Flash
 - bounded same-dispatch retry for transient failures
+- provider-directed minimum retry timing without transferring retry authority to providers
 - guarded model/provider fallback through a new canonical redispatch and fresh independent verifier
 - persistent provider-family circuit state with Closed, Open, and Half-Open recovery
+- persistent content-free provider-attempt telemetry for latency, failure state, retry timing, verifier identity, and normalized token usage
+- guarded one-shot live execution of the dispatch-assigned provider-diverse verifier using structured pointwise criteria
 - exact configuration-warning baselines
 - worker and routing conformance datasets, including 27 principal-engineering cases
 - a six-card regulated evidence/freshness pilot with CI validation and mutation testing
-- a runnable Python reference router with validation, planning, finalization, runtime execution controls, and audit output
+- a runnable Python reference router with validation, planning, finalization, runtime execution controls, live verification, and audit output
 - CI that compiles the implementation, runs the tests, validates regulated evidence, parses schemas, validates linked configuration, and executes the end-to-end example
 
-The control plane remains intentionally inspectable. Guarded live execution is currently limited to explicit `high_volume_simple` work at low or medium risk. Provider adapters are single-attempt and stateless; retry, fallback, provider-health state, verification, and approval remain separate control layers. Streaming, provider-directed retry timing, distributed circuit-state coordination, persistent cost/latency/quality telemetry, live verifier execution, and qualified-human approval integration remain later runtime work.
+The control plane remains intentionally inspectable. Guarded live execution and live model verification are currently limited to explicit `high_volume_simple` work at low or medium risk. Provider adapters remain single-attempt and stateless; retry, fallback, provider-health state, telemetry, verification, and approval remain separate control layers. Telemetry does not persist prompts or model outputs by default and does not calculate cost or quality. Distributed circuit-state coordination, distributed telemetry export, streaming, source-backed cost attribution, verifier calibration, route-outcome learning, and qualified-human approval integration remain later runtime work.
 
 ## Core architecture
 
@@ -347,10 +350,12 @@ The current policy therefore uses the following rules:
 6. **Do not use high-cost escalation capacity as an ordinary availability fallback.**
 7. **Re-dispatch fallback execution with a newly selected independent verifier.**
 8. **Retry only bounded transient failures under the same dispatch.** Provider adapters remain single-attempt.
-9. **Persist provider-family health separately from task-level failure.** Authentication, billing, permission, quota/rate-limit, and local connection failures do not by themselves open a global provider circuit.
-10. **Route around open provider circuits through canonical blocked-provider constraints.** The circuit layer does not directly choose the replacement model.
+9. **Honor provider retry timing only as an advisory minimum wait.** Provider hints do not create another attempt or override TEO's retry budget.
+10. **Persist provider-family health separately from task-level failure.** Authentication, billing, permission, quota/rate-limit, and local connection failures do not by themselves open a global provider circuit.
+11. **Route around open provider circuits through canonical blocked-provider constraints.** The circuit layer does not directly choose the replacement model.
+12. **Execute only the verifier assigned by the active dispatch.** The guarded live verifier is provider-diverse, pointwise, blinded from executor identity, and cannot satisfy qualified-human approval.
 
-The complete fallback methodology is documented in [`docs/methodology/provider-aware-fallbacks.md`](docs/methodology/provider-aware-fallbacks.md). Runtime recovery contracts are documented under [`docs/specification/`](docs/specification/).
+The complete fallback methodology is documented in [`docs/methodology/provider-aware-fallbacks.md`](docs/methodology/provider-aware-fallbacks.md). Runtime recovery and verification contracts are documented under [`docs/specification/`](docs/specification/).
 
 Provider-aware behavior is enforced by the routing and runtime conformance suites under [`tests/`](tests/).
 
@@ -386,6 +391,8 @@ The complete machine-readable policies are available in:
 - [`policy/routing/specialist-model-routing.yaml`](policy/routing/specialist-model-routing.yaml)
 - [`policy/runtime/canary-retry.yaml`](policy/runtime/canary-retry.yaml)
 - [`policy/runtime/provider-circuit-breaker.yaml`](policy/runtime/provider-circuit-breaker.yaml)
+- [`policy/runtime/runtime-telemetry.yaml`](policy/runtime/runtime-telemetry.yaml)
+- [`policy/runtime/live-verification.yaml`](policy/runtime/live-verification.yaml)
 - [`models.yaml`](models.yaml)
 
 ## Public specialist roster
@@ -427,18 +434,22 @@ Specialists do not replace core teams, bypass Mission Control, assign themselves
 
 ## Reference implementation
 
-The Python reference implementation is a runnable control plane. It reads TEO policy and registries, produces structured dispatches, assigns independent verifiers, records final evidence-bearing outcomes, and now includes a guarded live execution path.
+The Python reference implementation is a runnable control plane. It reads TEO policy and registries, produces structured dispatches, assigns independent verifiers, records final evidence-bearing outcomes, and includes a guarded live execution and verification path.
 
 The guarded live runtime currently provides:
 
 - connection-neutral provider execution across Anthropic, OpenAI, and Google canaries
 - selected reasoning-effort propagation into supported provider controls
 - one bounded transient retry under the same dispatch
+- provider-directed minimum retry timing within the guarded wait budget
 - one model/provider fallback redispatch with a fresh independent verifier
 - persistent provider-family circuit state across separate executions
 - Closed, Open, and Half-Open provider recovery
+- append-only content-free provider-attempt telemetry with latency and normalized usage evidence
+- one-shot live execution of the dispatch-assigned provider-diverse verifier
+- strict structured verification statuses: `passed`, `failed`, or `needs_human`
 
-Provider execution is currently restricted to explicit `high_volume_simple` tasks at low or medium risk. A successful provider call is still not a completed TEO outcome; independent verification and any required human approval remain separate gates.
+Live provider execution and live model verification are currently restricted to explicit `high_volume_simple` tasks at low or medium risk. A successful provider call is not a completed TEO outcome. The active verifier must run and existing finalization still checks verifier identity, verification status, and any human-approval requirement. Model verification never satisfies qualified-human approval.
 
 ### Install
 
@@ -511,9 +522,11 @@ The repository contains fixtures and executable tests for:
 - cross-provider routine fallback and independent verifier diversity
 - exact configuration-warning baselines
 - provider adapter contract and three live provider canaries
-- bounded transient retry
+- bounded transient retry and provider-directed retry timing
 - guarded fallback redispatch with a fresh verifier
 - persistent provider-family circuit state and half-open recovery
+- persistent content-free provider-attempt telemetry and normalized provider usage
+- provider-diverse live verifier routing, strict structured decisions, and verification-policy mutation resistance
 - regulated evidence/freshness validation and mutation resistance
 - refusal of ambiguous implicit principal-specialist routing
 
@@ -548,7 +561,7 @@ The initial registry was reviewed on **2026-08-05**. Provider documentation esta
 - Benchmark evidence: [`registry/benchmarks/`](registry/benchmarks/)
 - Registry validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
 
-A controlled common harness has not yet produced live cross-model quality, cost, and latency results. Those measurements belong to future operational evidence cycles.
+The live canary can now collect provider-attempt latency and normalized usage evidence, but TEO has not yet produced a controlled common-harness comparison of model quality, reliability, or monetary cost. Cost attribution requires dated pricing evidence, and verifier quality requires calibration against independent or human-rated outcomes.
 
 ## Example workflow
 
@@ -788,13 +801,16 @@ Completed runtime additions include:
 - executable reasoning-effort propagation
 - all-78-specialist effort-aware model routing
 - bounded transient retry under the same dispatch
+- provider-directed minimum retry timing within a bounded wait budget
 - guarded model/provider fallback through canonical redispatch
 - fresh independent verifier assignment after fallback
 - persistent provider-family circuit state
 - Closed, Open, and Half-Open recovery behavior
 - provider-health separation from authentication, billing, permission, quota/rate-limit, and local connection failures
+- persistent content-free provider-attempt telemetry with normalized usage evidence
+- provider-diverse one-shot live verifier execution with strict structured decisions
 
-The next operational horizon includes provider-directed retry timing, persistent cost/latency/reliability/quality telemetry, distributed circuit-state coordination, live verifier execution, qualified-human approval integration, route outcome evaluation, and continued observation of the six-card regulated evidence pilot.
+The next operational horizon includes distributed circuit-state coordination, distributed telemetry export and retention controls, source-backed cost attribution, verifier calibration against independent or human-rated outcomes, route outcome evaluation, qualified-human approval integration, streaming/runtime latency expansion, and continued observation of the six-card regulated evidence pilot.
 
 The directional scope is tracked in [`ROADMAP.md`](ROADMAP.md).
 
