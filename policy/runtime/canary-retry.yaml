@@ -1,0 +1,29 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+
+scope:
+  task_types:
+    - high_volume_simple
+  risk_levels:
+    - low
+    - medium
+
+retry:
+  eligible_failure_scopes:
+    - transient
+  max_attempts_per_dispatch: 2
+  initial_delay_seconds: 0.5
+  backoff_multiplier: 2.0
+  max_delay_seconds: 2.0
+  jitter_ratio: 0.2
+  retry_same_dispatch: true
+  redispatch_during_retry: false
+  fallback_after_transient_exhaustion: false
+
+policy: >-
+  A transient failure may be retried only within the same authorized dispatch,
+  provider family, model, reasoning effort, and verifier assignment. Retry does
+  not authorize fallback or redispatch. At most two provider attempts are allowed
+  per dispatch in the guarded canary. Exhausted transient retries return control
+  to orchestration without being relabeled as a provider or model failure.
