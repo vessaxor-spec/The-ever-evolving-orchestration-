@@ -111,14 +111,6 @@ class ProviderUsage:
             "total_tokens",
         ):
             _optional_non_negative_int(getattr(self, name), f"usage.{name}")
-        if (
-            self.reasoning_output_tokens is not None
-            and self.output_tokens is not None
-            and self.reasoning_output_tokens > self.output_tokens
-        ):
-            raise ProviderAdapterContractError(
-                "usage.reasoning_output_tokens cannot exceed usage.output_tokens"
-            )
         if self.cached_input_tokens is not None and self.input_tokens is not None:
             if self.cached_input_tokens > self.input_tokens:
                 raise ProviderAdapterContractError(
