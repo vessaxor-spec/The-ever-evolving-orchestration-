@@ -123,8 +123,37 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             reasoning=str(reasoning) if reasoning else None,
         )
 
+    def _reasoning_from_source(self, choice: ImplementationChoice, task_type: str) -> str | None:
+        if choice.reasoning:
+            return choice.reasoning
+        prefix = f"routing.{task_type}."
+        if choice.source.startswith(prefix):
+            key = choice.source[len(prefix):]
+            candidate = self.config.implementation_routes.get(task_type, {}).get(key)
+            if isinstance(candidate, dict) and candidate.get("model") == choice.model and candidate.get("reasoning"):
+                return str(candidate["reasoning"])
+        if choice.source.startswith("fallback_order."):
+            family = choice.source.split(".", 1)[1]
+            for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
+                if isinstance(candidate, dict) and candidate.get("model") == choice.model and candidate.get("reasoning"):
+                    return str(candidate["reasoning"])
+        return None
+
+    def _attach_base_reasoning(self, dispatch: DispatchRecord) -> None:
+        dispatch.selected_implementation.reasoning = self._reasoning_from_source(
+            dispatch.selected_implementation, dispatch.task_type
+        )
+        if dispatch.fallback_implementation:
+            dispatch.fallback_implementation.reasoning = self._reasoning_from_source(
+                dispatch.fallback_implementation, dispatch.task_type
+            )
+        dispatch.verification.implementation.reasoning = self._reasoning_from_source(
+            dispatch.verification.implementation, dispatch.task_type
+        )
+
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
         dispatch = super().dispatch(task)
+        self._attach_base_reasoning(dispatch)
         specialist = dispatch.selected_specialist
         if not specialist:
             return dispatch
