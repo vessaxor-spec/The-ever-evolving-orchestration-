@@ -14,6 +14,7 @@ LIVE_VERIFICATION_POLICY_PATH = "policy/runtime/live-verification.yaml"
 class LiveVerificationPolicy:
     task_types: frozenset[str]
     risk_levels: frozenset[str]
+    max_output_bytes: int
     assigned_verifier_only: bool
     require_independent_model: bool
     require_provider_diversity: bool
@@ -46,6 +47,7 @@ class LiveVerificationPolicy:
         policy = cls(
             task_types=frozenset(str(item) for item in scope.get("task_types", [])),
             risk_levels=frozenset(str(item) for item in scope.get("risk_levels", [])),
+            max_output_bytes=int(scope.get("max_output_bytes", 0)),
             assigned_verifier_only=bool(verification.get("assigned_verifier_only", False)),
             require_independent_model=bool(verification.get("require_independent_model", False)),
             require_provider_diversity=bool(verification.get("require_provider_diversity", False)),
@@ -77,6 +79,8 @@ class LiveVerificationPolicy:
             raise LiveVerificationError("Guarded live verification must remain scoped to high_volume_simple")
         if self.risk_levels != {"low", "medium"}:
             raise LiveVerificationError("Guarded live verification must remain low/medium risk only")
+        if self.max_output_bytes != 65536:
+            raise LiveVerificationError("Guarded live verification output bound must remain 65536 bytes")
         if not self.assigned_verifier_only:
             raise LiveVerificationError("Live verification must use only the dispatch-assigned verifier")
         if not self.require_independent_model or not self.require_provider_diversity:
