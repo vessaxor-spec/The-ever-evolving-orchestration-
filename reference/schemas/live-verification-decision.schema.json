@@ -42,9 +42,31 @@
       }
     },
     {
+      "if": {"properties": {"status": {"const": "failed"}}},
+      "then": {
+        "properties": {
+          "output_present": {"not": {"const": "uncertain"}},
+          "task_adherence": {"not": {"const": "uncertain"}},
+          "format_consistency": {"not": {"const": "uncertain"}},
+          "unsupported_claims_absent": {"not": {"const": "uncertain"}},
+          "human_reason": {"const": "none"}
+        },
+        "anyOf": [
+          {"properties": {"output_present": {"const": "fail"}}},
+          {"properties": {"task_adherence": {"const": "fail"}}},
+          {"properties": {"format_consistency": {"const": "fail"}}},
+          {"properties": {"unsupported_claims_absent": {"const": "fail"}}}
+        ]
+      }
+    },
+    {
       "if": {"properties": {"status": {"const": "needs_human"}}},
       "then": {
         "properties": {
+          "output_present": {"not": {"const": "fail"}},
+          "task_adherence": {"not": {"const": "fail"}},
+          "format_consistency": {"not": {"const": "fail"}},
+          "unsupported_claims_absent": {"not": {"const": "fail"}},
           "human_reason": {
             "enum": [
               "insufficient_evidence",
@@ -53,7 +75,13 @@
               "conflicting_evidence"
             ]
           }
-        }
+        },
+        "anyOf": [
+          {"properties": {"output_present": {"const": "uncertain"}}},
+          {"properties": {"task_adherence": {"const": "uncertain"}}},
+          {"properties": {"format_consistency": {"const": "uncertain"}}},
+          {"properties": {"unsupported_claims_absent": {"const": "uncertain"}}}
+        ]
       }
     }
   ]
