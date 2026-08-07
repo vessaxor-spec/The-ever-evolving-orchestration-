@@ -14,9 +14,11 @@ Each adapter performs one provider attempt only. Adapters do not own retry, fall
 
 The runtime coordinator may retry a `transient` failure once under the same dispatch. The retry preserves provider, model, reasoning effort, verifier, specialist, worker, and risk authority. The current policy uses bounded backoff with jitter and permits at most two provider attempts per dispatch.
 
+Provider adapters may normalize a provider-requested minimum wait into `retry_after_seconds`. The retry controller treats that value only as a timing hint for an already-authorized transient retry. It uses the greater of TEO's local backoff and an in-budget provider hint. A provider request above the guarded 60-second wait budget stops the retry sequence rather than causing TEO to retry early. Provider timing never creates another attempt or changes failure scope.
+
 The runtime coordinator can also perform one guarded automatic fallback after a `model` or `provider` failure. It returns the failure to TEO, applies the failed model or provider block, creates a new dispatch ID, assigns a fresh independent verifier, and then executes the newly selected provider. Request, capability, and exhausted transient failures do not directly trigger fallback, and a failed fallback never chains automatically to a third provider.
 
-Provider-family circuit state now persists across separate canary executions. Repeated declared service-health failures can open a provider circuit. An open provider is added to copied blocked-provider constraints before canonical routing, so TEO itself selects the alternate implementation and verifier. Authentication, billing, permission, quota/rate-limit, model-not-found, bad-request, and local connection failures never open a provider-family circuit by themselves.
+Provider-family circuit state persists across separate canary executions. Repeated declared service-health failures can open a provider circuit. An open provider is added to copied blocked-provider constraints before canonical routing, so TEO itself selects the alternate implementation and verifier. Authentication, billing, permission, quota/rate-limit, model-not-found, bad-request, and local connection failures never open a provider-family circuit by themselves.
 
 After cooldown an open circuit becomes half-open. The reference runtime allows one recovery probe at a time and requires two successful probes before restoring normal routing. Repeated trips progressively increase cooldown within a bounded policy limit.
 
@@ -50,21 +52,24 @@ Provider execution is split into independent concerns:
 
 1. TEO routing authorizes a provider family, model, and reasoning effort through `ProviderExecutionRequest`.
 2. Runtime supplies a provider-specific `ProviderConnection` without exposing credential material to the dispatch or audit record.
-3. Provider circuit state may block a known-unhealthy provider before a new canonical dispatch.
-4. The retry controller may repeat only a transient failure under the same dispatch.
-5. The fallback coordinator may redispatch only after eligible model or provider failure.
+3. Provider adapters may normalize provider-native retry timing without retrying themselves.
+4. Provider circuit state may block a known-unhealthy provider before a new canonical dispatch.
+5. The retry controller may repeat only a transient failure under the same dispatch and remains bound by the attempt budget.
+6. The fallback coordinator may redispatch only after eligible model or provider failure.
 
 The general contracts are documented in:
 
 - `docs/specification/provider-adapter-contract.md`
 - `docs/specification/provider-connection-boundary.md`
+- `docs/specification/provider-directed-retry-timing.md`
 - `docs/specification/bounded-transient-retry.md`
 - `docs/specification/guarded-canary-fallback.md`
 - `docs/specification/provider-circuit-breaker.md`
 
-The research basis for circuit-state semantics is:
+The runtime research records include:
 
 - `research/runtime/2026-08-07-provider-circuit-breaker.md`
+- `research/runtime/2026-08-07-provider-directed-retry-timing.md`
 
 Current guarded implementations are:
 
@@ -89,6 +94,8 @@ Runtime coordination is exposed through:
 - `execute_guarded_canary`
 
 OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to Interactions API `generation_config.thinking_level`. Claude Haiku 4.5 does not support Anthropic's newer `output_config.effort` parameter, so the adapter does not invent one.
+
+Anthropic's documented numeric `retry-after`, generic numeric `Retry-After` headers when present, and standard Google `RetryInfo` when present are normalized to seconds. Raw provider headers and provider-specific retry structures do not cross the adapter boundary.
 
 All canaries refuse high or critical risk before provider execution.
 
