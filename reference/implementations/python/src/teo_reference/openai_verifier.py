@@ -14,7 +14,7 @@ from .verification_adapter import (
 )
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
-SUPPORTED_MODELS = {"gpt-5.6-sol"}
+SUPPORTED_MODELS = {"gpt-5.6-sol", "gpt-5.6-luna"}
 SUPPORTED_EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 
 
@@ -62,14 +62,16 @@ class OpenAILiveVerifier:
             raise LiveVerificationError("OpenAI verifier received a non-OpenAI assignment")
         if request.verifier_model not in SUPPORTED_MODELS:
             raise LiveVerificationError(
-                "Guarded OpenAI live verification is restricted to GPT-5.6 Sol"
+                "Guarded OpenAI live verification supports GPT-5.6 Sol and GPT-5.6 Luna"
             )
         if request.risk_level not in {"low", "medium"}:
             raise LiveVerificationError("Guarded live verification refuses high and critical risk")
-        effort = request.verifier_reasoning_effort or "medium"
+        effort = request.verifier_reasoning_effort or (
+            "low" if request.verifier_model == "gpt-5.6-luna" else "medium"
+        )
         if effort not in SUPPORTED_EFFORTS:
             raise LiveVerificationError(
-                f"GPT-5.6 Sol cannot represent assigned verifier effort {effort}"
+                f"{request.verifier_model} cannot represent assigned verifier effort {effort}"
             )
         connection = validate_verifier_connection(request, self._connections)
         payload = {
