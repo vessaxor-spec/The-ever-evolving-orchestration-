@@ -6,6 +6,7 @@ purpose: >-
   high_volume_simple verifier rubric before any live-scope expansion.
 
 rubric:
+  version: "1.0"
   checks:
     - output_present
     - task_adherence
