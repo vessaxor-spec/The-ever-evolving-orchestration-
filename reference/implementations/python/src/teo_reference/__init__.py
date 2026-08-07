@@ -21,6 +21,7 @@ from .provider_connection import (
     ProviderConnectionResponse,
 )
 from .runtime_canary import CanaryRuntimeOutcome, execute_guarded_canary
+from .runtime_retry import RetryExecution, RetryPolicy, execute_with_transient_retry
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 from .specialist_routing import SpecialistRoutingEngine
 
@@ -46,6 +47,8 @@ __all__ = [
     "ProviderExecutionResponse",
     "ProviderFailure",
     "ReasoningEffort",
+    "RetryExecution",
+    "RetryPolicy",
     "SpecialistRoutingEngine",
     "TaskRequest",
     "VerificationResult",
@@ -54,4 +57,5 @@ __all__ = [
     "execute_guarded_canary",
     "execute_openai_canary_once",
     "execute_provider_once",
+    "execute_with_transient_retry",
 ]
