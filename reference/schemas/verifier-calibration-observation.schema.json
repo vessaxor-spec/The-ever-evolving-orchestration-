@@ -8,14 +8,25 @@
     "case_id",
     "verifier_provider_family",
     "verifier_model",
+    "verifier_reasoning",
     "run_id",
+    "rubric_version",
+    "verification_policy_version",
     "decision"
   ],
   "properties": {
     "case_id": {"type": "string", "minLength": 1},
     "verifier_provider_family": {"type": "string", "minLength": 1},
     "verifier_model": {"type": "string", "minLength": 1},
+    "verifier_reasoning": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {"type": "null"}
+      ]
+    },
     "run_id": {"type": "string", "minLength": 1},
+    "rubric_version": {"type": "string", "minLength": 1},
+    "verification_policy_version": {"type": "string", "minLength": 1},
     "execution_role": {"enum": ["primary", "fallback"], "default": "primary"},
     "retry_count": {"type": "integer", "minimum": 0, "default": 0},
     "fallback_used": {"type": "boolean", "default": false},
@@ -50,5 +61,36 @@
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"execution_role": {"const": "fallback"}},
+        "required": ["execution_role"]
+      },
+      "then": {
+        "properties": {"fallback_used": {"const": true}},
+        "required": ["fallback_used"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"execution_role": {"const": "primary"}},
+        "required": ["execution_role"]
+      },
+      "then": {
+        "properties": {"fallback_used": {"const": false}}
+      }
+    },
+    {
+      "if": {
+        "properties": {"fallback_used": {"const": true}},
+        "required": ["fallback_used"]
+      },
+      "then": {
+        "properties": {"execution_role": {"const": "fallback"}},
+        "required": ["execution_role"]
+      }
+    }
+  ]
 }
