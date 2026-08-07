@@ -10,7 +10,13 @@ from .provider_adapter import (
     ProviderFailure,
     execute_provider_once,
 )
-from .provider_connection import HeaderProviderConnection, ProviderConnection
+from .provider_connection import (
+    HeaderProviderConnection,
+    ProviderConnection,
+    ProviderConnectionError,
+    ProviderConnectionRequest,
+    ProviderConnectionResponse,
+)
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 
 __all__ = [
@@ -22,6 +28,9 @@ __all__ = [
     "ProviderAdapter",
     "ProviderAdapterContractError",
     "ProviderConnection",
+    "ProviderConnectionError",
+    "ProviderConnectionRequest",
+    "ProviderConnectionResponse",
     "ProviderExecutionRequest",
     "ProviderExecutionResponse",
     "ProviderFailure",
