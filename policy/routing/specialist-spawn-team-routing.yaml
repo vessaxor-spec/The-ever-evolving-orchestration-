@@ -1,0 +1,147 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+policy: >-
+  These explicit routes make every preserved specialist spawnable without broad
+  keyword activation. Team selection remains explicit. Worker selection is then
+  resolved from the declared domain/context before the requested specialist is
+  matched, preserving the Team -> Worker -> Specialist authority order.
+
+team_routes:
+  specialist_mission_control:
+    primary_team: mission_control
+    primary_worker: orchestration
+    worker_override_by_context:
+      orchestration: orchestration
+      incident_response: incident_response
+      operations: operations
+      project_delivery: project_delivery
+    verification_team: verification
+
+  specialist_planning:
+    primary_team: planning
+    primary_worker: architecture
+    worker_override_by_context:
+      architecture: architecture
+      brand_design: brand_design
+      cloud_architecture: cloud_architecture
+      customer_success: customer_success
+      ecommerce_strategy: ecommerce_strategy
+      generative_media: generative_media
+      learning_design: learning_design
+      paid_search: paid_search
+      paid_social: paid_social
+      product_strategy: product_strategy
+      programmatic_media: programmatic_media
+      regional_marketing: regional_marketing
+      sales_enablement: sales_enablement
+      sales_strategy: sales_strategy
+      social_strategy: social_strategy
+      solution_engineering: solution_engineering
+      supply_chain: supply_chain
+    verification_team: verification
+
+  specialist_engineering:
+    primary_team: engineering
+    primary_worker: backend
+    worker_override_by_context:
+      ai_engineering: ai_engineering
+      automation: automation
+      backend: backend
+      blockchain: blockchain
+      compiler_toolchain: compiler_toolchain
+      data_engineering: data_engineering
+      frontend: frontend
+      game_engineering: game_engineering
+      mobile: mobile
+      rust_systems_programming: rust_systems_programming
+      terminal_ui: terminal_ui
+      xr_engineering: xr_engineering
+    verification_team: verification
+
+  specialist_platform_reliability:
+    primary_team: platform_reliability
+    primary_worker: distributed_systems
+    worker_override_by_context:
+      database_reliability: database_reliability
+      devops: devops
+      devsecops: devsecops
+      distributed_systems: distributed_systems
+      finops_engineering: finops_engineering
+      mlops: mlops
+      network_engineering: network_engineering
+      performance_engineering: performance_engineering
+      platform_engineering: platform_engineering
+      site_reliability: site_reliability
+    verification_team: verification
+
+  specialist_systems_engineering:
+    primary_team: systems_engineering
+    primary_worker: systems_requirements
+    worker_override_by_context:
+      systems_requirements: systems_requirements
+    verification_team: verification
+
+  specialist_physical_systems:
+    primary_team: physical_systems
+    primary_worker: embedded
+    worker_override_by_context:
+      aerospace_systems: aerospace_systems
+      civil_engineering: civil_engineering
+      embedded: embedded
+      hardware_engineering: hardware_engineering
+      manufacturing_engineering: manufacturing_engineering
+      robotics_autonomy: robotics_autonomy
+      silicon_engineering: silicon_engineering
+    verification_team: verification
+
+  specialist_research:
+    primary_team: research
+    primary_worker: research
+    worker_override_by_context:
+      analytics: analytics
+      applied_science: applied_science
+      content: content
+      financial_analysis: financial_analysis
+      knowledge_management: knowledge_management
+      market_research: market_research
+      osint: osint
+      real_estate: real_estate
+      research: research
+      revenue_analytics: revenue_analytics
+      user_research: user_research
+    verification_team: verification
+
+  specialist_assurance:
+    primary_team: assurance
+    primary_worker: privacy_engineering
+    worker_override_by_context:
+      application_security: application_security
+      formal_methods: formal_methods
+      functional_safety: functional_safety
+      privacy_engineering: privacy_engineering
+    verification_team: verification
+
+  specialist_review:
+    primary_team: review
+    primary_worker: code_review
+    worker_override_by_context:
+      code_review: code_review
+      compliance: compliance
+      legal: legal
+      lending_compliance: lending_compliance
+      malware_analysis: malware_analysis
+      security: security
+      security_advisory: security_advisory
+      seo_review: seo_review
+      tax_review: tax_review
+      ux_review: ux_review
+    verification_team: verification
+
+  specialist_verification:
+    primary_team: verification
+    primary_worker: qa
+    worker_override_by_context:
+      documentation_verification: documentation_verification
+      qa: qa
+    verification_team: verification
