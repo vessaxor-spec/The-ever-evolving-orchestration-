@@ -1,6 +1,6 @@
-version: 0.1
+version: 0.2
 status: public
-reviewed_at: 2026-08-05
+reviewed_at: 2026-08-07
 
 registry_rules:
   - provider_claims_are_not_teo_benchmark_results
@@ -8,6 +8,8 @@ registry_rules:
   - preview_and_limited_availability_status_must_be_visible
   - routing_defaults_require_capability_and_verification_fit
   - context_and_output_limits_are_provider_reported_until_observed
+  - reasoning_effort_must_be_selected_intentionally_and_preserved_in_dispatch
+  - connection_method_must_not_change_model_or_effort_selection
 
 models:
   gpt-5.6-sol:
@@ -17,13 +19,16 @@ models:
     teo_routing_role: complex reasoning, coding, planning, and escalation
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: reasoning.effort
     reasoning_levels: [none, low, medium, high, xhigh, max]
+    reasoning_default: medium
+    additional_execution_modes: [standard, pro]
     context_window_tokens: 1050000
     max_output_tokens: 128000
     knowledge_cutoff: 2026-02-16
     documented_tools: [functions, web_search, file_search, computer_use]
     evidence_type: provider_claim
-    source: https://developers.openai.com/api/docs/models
+    source: https://developers.openai.com/api/docs/models/gpt-5.6-sol
 
   gpt-5.6-terra:
     provider: openai
@@ -32,13 +37,15 @@ models:
     teo_routing_role: engineering execution, debugging, testing, and repository work
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: reasoning.effort
     reasoning_levels: [none, low, medium, high, xhigh, max]
+    reasoning_default: medium
     context_window_tokens: 1050000
     max_output_tokens: 128000
     knowledge_cutoff: 2026-02-16
     documented_tools: [functions, web_search, file_search, computer_use]
     evidence_type: provider_claim
-    source: https://developers.openai.com/api/docs/models
+    source: https://developers.openai.com/api/docs/models/gpt-5.6-terra
 
   gpt-5.6-luna:
     provider: openai
@@ -47,13 +54,15 @@ models:
     teo_routing_role: classification, extraction, transformation, and high-volume work
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: reasoning.effort
     reasoning_levels: [none, low, medium, high, xhigh, max]
+    reasoning_default: medium
     context_window_tokens: 1050000
     max_output_tokens: 128000
     knowledge_cutoff: 2026-02-16
     documented_tools: [functions, web_search, file_search, computer_use]
     evidence_type: provider_claim
-    source: https://developers.openai.com/api/docs/models
+    source: https://developers.openai.com/api/docs/models/gpt-5.6-luna
 
   claude-fable-5:
     provider: anthropic
@@ -62,6 +71,10 @@ models:
     teo_routing_role: candidate critical escalation implementation
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: output_config.effort
+    reasoning_levels: [low, medium, high, xhigh, max]
+    reasoning_default: high
+    adaptive_thinking: always_on
     context_window_tokens: 1000000
     max_output_tokens: 128000
     comparative_latency: slower
@@ -75,11 +88,15 @@ models:
     teo_routing_role: high-consequence reasoning and unresolved disagreement
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: output_config.effort
+    reasoning_levels: [low, medium, high, xhigh, max]
+    reasoning_default: high
+    adaptive_thinking: default_on
     context_window_tokens: 1000000
     max_output_tokens: 128000
     comparative_latency: moderate
     evidence_type: provider_claim
-    source: https://platform.claude.com/docs/en/about-claude/models/overview
+    source: https://platform.claude.com/docs/en/about-claude/models/choosing-a-model
 
   claude-sonnet-5:
     provider: anthropic
@@ -88,11 +105,15 @@ models:
     teo_routing_role: planning, architecture, semantic review, and adversarial challenge
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: output_config.effort
+    reasoning_levels: [low, medium, high, xhigh, max]
+    reasoning_default: high
+    adaptive_thinking: default_on
     context_window_tokens: 1000000
     max_output_tokens: 128000
     comparative_latency: fast
     evidence_type: provider_claim
-    source: https://platform.claude.com/docs/en/about-claude/models/overview
+    source: https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5
 
   claude-haiku-4-5:
     provider: anthropic
@@ -102,6 +123,8 @@ models:
     teo_routing_role: fast language work and economical throughput
     input_modalities: [text, image]
     output_modalities: [text]
+    reasoning_control: extended_thinking
+    adaptive_thinking: false
     context_window_tokens: 200000
     max_output_tokens: 64000
     comparative_latency: fastest
@@ -113,8 +136,15 @@ models:
     availability: preview
     provider_description: advanced intelligence, complex problem solving, agentic work, and coding
     teo_routing_role: deep research, long-context synthesis, and engineering fallback
+    input_modalities: [text, image, video, audio, pdf]
+    output_modalities: [text]
+    reasoning_control: thinking_level
+    reasoning_levels: [low, medium, high]
+    reasoning_default: high
+    context_window_tokens: 1048576
+    max_output_tokens: 65536
     evidence_type: provider_claim
-    source: https://ai.google.dev/gemini-api/docs/models
+    source: https://ai.google.dev/gemini-api/docs/models/gemini-3.1-pro-preview
     limitations:
       - preview availability and deprecation timing can change
       - production use requires explicit preview acceptance
@@ -123,9 +153,16 @@ models:
     provider: google
     availability: stable
     provider_description: balances speed and intelligence for agentic and multimodal tasks
-    teo_routing_role: repository mapping, multimodal triage, extraction, and high-volume processing
+    teo_routing_role: repository mapping, multimodal triage, extraction, bounded coding, and high-volume processing
+    input_modalities: [text, image, video, audio, pdf]
+    output_modalities: [text]
+    reasoning_control: thinking_level
+    reasoning_levels: [minimal, low, medium, high]
+    reasoning_default: medium
+    context_window_tokens: 1048576
+    max_output_tokens: 65536
     evidence_type: provider_claim
-    source: https://ai.google.dev/gemini-api/docs/models
+    source: https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash
 
   gemini-3.5-flash:
     provider: google

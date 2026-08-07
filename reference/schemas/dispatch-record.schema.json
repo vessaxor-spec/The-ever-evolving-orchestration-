@@ -48,7 +48,8 @@
         "profile": {"type": ["string", "null"]},
         "provider_family": {"type": ["string", "null"]},
         "availability": {"type": ["string", "null"]},
-        "source": {"type": "string"}
+        "source": {"type": "string"},
+        "reasoning": {"type": ["string", "null"]}
       }
     }
   }
