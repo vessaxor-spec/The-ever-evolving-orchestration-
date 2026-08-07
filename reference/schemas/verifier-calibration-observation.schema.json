@@ -10,8 +10,12 @@
     "verifier_model",
     "verifier_reasoning",
     "run_id",
+    "observed_at",
     "rubric_version",
     "verification_policy_version",
+    "execution_role",
+    "retry_count",
+    "fallback_used",
     "decision"
   ],
   "properties": {
@@ -25,11 +29,12 @@
       ]
     },
     "run_id": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time", "minLength": 1},
     "rubric_version": {"type": "string", "minLength": 1},
     "verification_policy_version": {"type": "string", "minLength": 1},
-    "execution_role": {"enum": ["primary", "fallback"], "default": "primary"},
-    "retry_count": {"type": "integer", "minimum": 0, "default": 0},
-    "fallback_used": {"type": "boolean", "default": false},
+    "execution_role": {"enum": ["primary", "fallback"]},
+    "retry_count": {"type": "integer", "minimum": 0},
+    "fallback_used": {"type": "boolean"},
     "duration_ms": {"type": ["number", "null"], "minimum": 0},
     "input_tokens": {"type": ["integer", "null"], "minimum": 0},
     "output_tokens": {"type": ["integer", "null"], "minimum": 0},
@@ -79,7 +84,8 @@
         "required": ["execution_role"]
       },
       "then": {
-        "properties": {"fallback_used": {"const": false}}
+        "properties": {"fallback_used": {"const": false}},
+        "required": ["fallback_used"]
       }
     },
     {
