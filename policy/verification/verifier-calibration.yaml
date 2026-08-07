@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 status: active
 reviewed_at: 2026-08-07
 
@@ -26,21 +26,33 @@ gold_corpus:
 observation_requirements:
   minimum_runs_per_case_per_verifier: 3
   minimum_distinct_verifier_routes: 3
+  rubric_version: "1.0"
+  verification_policy_version: "1.1"
   preserve_provider_and_model_identity: true
+  preserve_reasoning_effort_identity: true
   preserve_retry_and_fallback_relationship: true
   preserve_latency_and_usage_evidence: true
   prompt_or_candidate_content_in_observation_record: false
 
 required_metrics:
   - exact_status_accuracy
+  - false_pass_count
+  - false_pass_opportunities
   - false_pass_rate
+  - false_fail_count
+  - false_fail_opportunities
   - false_fail_rate
+  - missed_human_count
+  - human_required_opportunities
   - missed_human_rate
+  - unnecessary_human_count
+  - non_human_opportunities
   - unnecessary_human_rate
   - needs_human_prediction_rate
   - criterion_accuracy
   - repeatability_agreement_rate
   - cross_verifier_disagreement_cases
+  - verifier_routes
   - average_duration_ms
   - p95_duration_ms
   - total_input_tokens
@@ -60,7 +72,8 @@ policy: >-
   The calibration harness measures verifier behavior but has no routing authority.
   A valid gold corpus and a successful harness run do not establish verifier quality
   by themselves. Live observations must be collected across the active provider-diverse
-  verifier routes with repeated runs. Expansion beyond the guarded canary requires
-  independent human review of measured false-pass, false-fail, uncertainty, repeatability,
-  disagreement, latency, usage, retry/fallback effects, adversarial behavior, and residual
-  risk. No automatic threshold in this policy authorizes live-scope expansion.
+  verifier routes with repeated runs under the pinned rubric and live-verification policy.
+  Expansion beyond the guarded canary requires independent human review of measured
+  false-pass, false-fail, uncertainty, repeatability, disagreement, latency, usage,
+  retry/fallback effects, adversarial behavior, and residual risk. No automatic threshold
+  in this policy authorizes live-scope expansion.
