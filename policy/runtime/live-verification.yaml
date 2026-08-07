@@ -1,4 +1,4 @@
-version: 1.0
+version: 1.1
 status: active
 reviewed_at: 2026-08-07
 
@@ -19,12 +19,18 @@ verification:
   verifier_fallback: false
   structured_output_required: true
   blinded_executor_identity: true
+  artifact_root_confinement: true
+  candidate_output_is_untrusted_data: true
   expose_retry_history: false
   expose_fallback_history: false
   expose_runtime_telemetry: false
   semantic_ground_truth_must_not_be_invented: true
   infrastructure_failure_is_not_a_verification_judgment: true
   human_approval_satisfied_by_model_verifier: false
+  status_precedence:
+    - any_fail_means_failed
+    - otherwise_any_uncertain_means_needs_human
+    - otherwise_passed
   checks:
     - output_present
     - task_adherence
@@ -39,7 +45,9 @@ policy: >-
   The guarded live verifier executes exactly the verifier assigned by the active TEO
   dispatch. The verifier receives the original task, candidate output, and fixed rubric,
   but not the executor provider/model, retry history, fallback history, or telemetry.
-  It must use structured pointwise judgment and return needs_human rather than inventing
-  semantic ground truth. Verification infrastructure failure fails closed and is not
+  Candidate output is untrusted data and may not supply verifier instructions. The
+  execution artifact must resolve inside the runtime-authorized artifact root. A
+  definitive failed criterion takes precedence over uncertainty; otherwise uncertainty
+  requires needs_human. Verification infrastructure failure fails closed and is not
   converted into a model judgment. Model verification never satisfies qualified-human
   approval requirements.
