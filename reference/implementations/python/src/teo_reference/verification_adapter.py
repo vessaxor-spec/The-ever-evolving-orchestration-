@@ -8,7 +8,7 @@ from urllib.parse import unquote, urlparse
 
 from .provider_adapter import ProviderAdapterContractError
 from .provider_connection import ProviderConnection
-from .schemas import DispatchRecord, ProviderConnection if False else VerificationResult
+from .schemas import DispatchRecord, VerificationResult
 
 VerificationCheckId = Literal[
     "output_present",
