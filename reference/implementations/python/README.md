@@ -2,9 +2,15 @@
 
 This is the runnable reference control plane for The Ever-Evolving Orchestration. It reads TEO's YAML policy and registries, creates a structured dispatch, assigns an independent verifier, and records a final evidence-bearing outcome.
 
-The router itself remains provider-neutral. Live provider execution is optional and occurs only through the provider-adapter boundary after routing has already selected the authorized provider family and model.
+The router itself remains provider-neutral. Live provider execution is optional and occurs only through the provider-adapter boundary after routing has already selected the authorized provider family, model, and reasoning effort.
 
-The first guarded live canary supports Anthropic Claude Haiku 4.5 for `high_volume_simple` tasks at low or medium risk. It performs one attempt only. It does not own fallback, retry, verification, escalation, or human approval.
+The guarded live canary supports three provider families for `high_volume_simple` tasks at low or medium risk:
+
+- Anthropic Claude Haiku 4.5
+- OpenAI GPT-5.6 Luna
+- Google Gemini 3.6 Flash
+
+Each adapter performs one attempt only. Adapters do not own fallback, retry, verification, escalation, or human approval.
 
 Connection method is deliberately separate from routing. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
 
@@ -34,7 +40,7 @@ teo --repo-root . plan reference/examples/phase5-task.yaml \
 
 Provider execution is split into two independent concerns:
 
-1. TEO routing authorizes a provider family and model through `ProviderExecutionRequest`.
+1. TEO routing authorizes a provider family, model, and reasoning effort through `ProviderExecutionRequest`.
 2. Runtime supplies a provider-specific `ProviderConnection` without exposing credential material to the dispatch or audit record.
 
 The general contract is documented in:
@@ -42,12 +48,21 @@ The general contract is documented in:
 - `docs/specification/provider-adapter-contract.md`
 - `docs/specification/provider-connection-boundary.md`
 
-The current guarded Anthropic implementation is:
+Current guarded implementations are:
 
 - `teo_reference.anthropic_adapter.AnthropicMessagesAdapter`
-- `teo_reference.anthropic_adapter.execute_anthropic_canary_once`
+- `teo_reference.openai_adapter.OpenAIResponsesAdapter`
+- `teo_reference.google_adapter.GeminiInteractionsAdapter`
 
-The canary accepts only a dispatch already routed to Anthropic Claude Haiku 4.5 for `high_volume_simple`, and refuses high or critical risk before network execution.
+Convenience helpers are:
+
+- `execute_anthropic_canary_once`
+- `execute_openai_canary_once`
+- `execute_gemini_canary_once`
+
+OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to Interactions API `generation_config.thinking_level`. Claude Haiku 4.5 does not support Anthropic's newer `output_config.effort` parameter, so the adapter does not invent one.
+
+All canaries refuse high or critical risk before provider execution and never invoke a fallback internally.
 
 ## Finalize an executed result
 

@@ -2,12 +2,15 @@
 
 from .anthropic_adapter import AnthropicMessagesAdapter, execute_anthropic_canary_once
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
+from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
+from .openai_adapter import OpenAIResponsesAdapter, execute_openai_canary_once
 from .provider_adapter import (
     ProviderAdapter,
     ProviderAdapterContractError,
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    ReasoningEffort,
     execute_provider_once,
 )
 from .provider_connection import (
@@ -27,7 +30,9 @@ __all__ = [
     "BaseOrchestrationEngine",
     "DispatchRecord",
     "FinalOutcome",
+    "GeminiInteractionsAdapter",
     "HeaderProviderConnection",
+    "OpenAIResponsesAdapter",
     "OrchestrationEngine",
     "ProviderAdapter",
     "ProviderAdapterContractError",
@@ -38,9 +43,12 @@ __all__ = [
     "ProviderExecutionRequest",
     "ProviderExecutionResponse",
     "ProviderFailure",
+    "ReasoningEffort",
     "SpecialistRoutingEngine",
     "TaskRequest",
     "VerificationResult",
     "execute_anthropic_canary_once",
+    "execute_gemini_canary_once",
+    "execute_openai_canary_once",
     "execute_provider_once",
 ]

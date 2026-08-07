@@ -12,7 +12,8 @@
     "model",
     "risk_level",
     "required_capabilities",
-    "input_payload"
+    "input_payload",
+    "reasoning_effort"
   ],
   "properties": {
     "contract_version": {"const": "1"},
@@ -26,6 +27,12 @@
       "items": {"type": "string"},
       "uniqueItems": true
     },
-    "input_payload": {"type": "object"}
+    "input_payload": {"type": "object"},
+    "reasoning_effort": {
+      "oneOf": [
+        {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]},
+        {"type": "null"}
+      ]
+    }
   }
 }

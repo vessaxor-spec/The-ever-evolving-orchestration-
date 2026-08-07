@@ -2,9 +2,9 @@
 
 ## Status
 
-This document defines the first runtime-execution boundary for the TEO reference implementation.
+This document defines the runtime-execution boundary for the TEO reference implementation.
 
-The contract is intentionally narrower than a live provider integration. It establishes how an already-authorized dispatch may cross into a provider adapter without allowing that adapter to acquire routing, fallback, verification, or approval authority.
+The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, fallback, verification, or approval authority.
 
 Contract version: `1`
 
@@ -17,6 +17,7 @@ Mission Control and the routing control plane remain responsible for:
 - team, worker, and specialist selection
 - capability resolution
 - provider-family and model selection
+- reasoning-effort selection
 - routine fallback selection
 - independent verifier selection
 - escalation policy
@@ -24,12 +25,13 @@ Mission Control and the routing control plane remain responsible for:
 
 A provider adapter is responsible for exactly one thing:
 
-> Execute one authorized attempt against the provider family and model already selected by the dispatch, then return a normalized result.
+> Execute one authorized attempt against the provider family, model, and reasoning effort already selected by the dispatch, then return a normalized result.
 
 An adapter must not:
 
 - select another model
 - switch provider family
+- silently increase or decrease the selected reasoning effort
 - invoke the preselected fallback
 - perform an automatic orchestration-level retry
 - select or perform independent verification
@@ -38,7 +40,7 @@ An adapter must not:
 - return a provider-native payload as the runtime contract
 - serialize credentials, authorization headers, secrets, passwords, or access tokens into the request or normalized result
 
-Provider SDK initialization and credential acquisition remain provider-specific implementation concerns outside the serialized contract.
+Provider SDK initialization, connection establishment, and credential acquisition remain runtime concerns outside the serialized contract.
 
 ## Request envelope
 
@@ -49,9 +51,22 @@ Provider SDK initialization and credential acquisition remain provider-specific 
 - `task_id`
 - `provider_family`
 - `model`
+- `reasoning_effort`
 - `risk_level`
 - `required_capabilities`
 - `input_payload`
+
+`reasoning_effort` is provider-neutral execution metadata selected by routing. Version 1 recognizes the union of current provider effort labels:
+
+- `none`
+- `minimal`
+- `low`
+- `medium`
+- `high`
+- `xhigh`
+- `max`
+
+A provider adapter must map only values supported by its selected model. Unsupported values fail closed before provider invocation rather than being silently translated to a different effort.
 
 The request intentionally excludes:
 
@@ -61,11 +76,11 @@ The request intentionally excludes:
 - human-approval state
 - escalation candidates
 
-Those fields are control-plane authority and are not required to perform the authorized provider attempt.
+Those fields remain control-plane authority and are not required to perform the authorized provider attempt.
 
-The reference helper derives the provider family and model directly from `dispatch.selected_implementation`. An implementation without a declared provider family fails closed.
+The reference helper derives provider family, model, and reasoning effort directly from `dispatch.selected_implementation`. An implementation without a declared provider family fails closed.
 
-`input_payload` is provider-neutral execution input. Version 1 defaults to the dispatched task text when no richer runtime payload is supplied. Future prompt assembly, tool binding, and context packaging may populate this object without changing provider or model authority.
+`input_payload` is provider-neutral execution input. Version 1 defaults to the dispatched task text when no richer runtime payload is supplied. Prompt assembly, tool binding, and context packaging may populate this object without changing provider, model, or effort authority.
 
 ## Response envelope
 
@@ -85,6 +100,18 @@ A successful response must include an accepted `output_ref` and must not include
 A failed response must not publish an accepted `output_ref` and must include normalized failure details.
 
 The response must echo the active dispatch, provider family, and model. Any change to those values is a contract violation rather than an implicit fallback.
+
+## Current provider implementations
+
+The guarded reference runtime currently includes single-attempt adapters for the bounded `high_volume_simple` canary path:
+
+- Anthropic Claude Haiku 4.5 through the Messages API
+- OpenAI GPT-5.6 Luna through the Responses API
+- Google Gemini 3.6 Flash through the Interactions API
+
+All three remain connection-neutral through `ProviderConnection` and are restricted to low or medium risk.
+
+OpenAI and Gemini map the TEO reasoning-effort field directly to their current provider controls. Claude Haiku 4.5 predates Anthropic's newer `output_config.effort` control, so its canary preserves the TEO effort in the request contract without inventing an unsupported provider parameter.
 
 ## Failure taxonomy
 
@@ -117,6 +144,7 @@ The reference implementation fails closed when:
 - response model differs from the selected model
 - response dispatch ID differs from the active dispatch
 - request and response contract versions differ
+- provider reasoning controls cannot represent the selected TEO effort
 - a provider-native payload is returned instead of the normalized response type
 - success has no output reference
 - success includes failure details
@@ -131,38 +159,36 @@ The matching JSON Schemas are:
 - `reference/schemas/provider-execution-request.schema.json`
 - `reference/schemas/provider-execution-response.schema.json`
 
-The reference conformance suite is:
+The reference conformance suites include:
 
 - `tests/test_provider_adapter_contract.py`
+- `tests/test_anthropic_live_canary.py`
+- `tests/test_multi_provider_live_canary.py`
 
 ## Non-goals for version 1
 
-This change does not implement:
+The current provider layer does not implement:
 
-- OpenAI, Anthropic, Google, local-model, or other live provider clients
-- credential storage or secret management
-- prompt assembly
-- tool execution protocols
-- streaming
-- retry budgets
+- automatic live fallback execution
+- orchestration-level retry budgets
 - backoff or jitter
 - circuit breakers
-- live fallback execution
+- streaming
 - cost, latency, or quality telemetry
 - verifier execution
 - qualified-human approval integration
+- broad high-risk provider execution
 
-Those runtime layers should be added only after this boundary proves stable under conformance testing.
+Those layers should be added only after provider parity remains stable under conformance testing.
 
-## Acceptance gate before the first live provider
+## Acceptance gate before automatic fallback
 
-The first live provider adapter should not be added until the contract demonstrates that:
+Automatic fallback execution should not be added until the provider layer demonstrates that:
 
-1. dispatch-selected provider and model authority cannot be silently changed by an adapter
+1. dispatch-selected provider, model, and supported reasoning effort cannot be silently changed by an adapter
 2. failed execution returns to orchestration without hidden fallback
-3. failure scope is normalized into the five declared categories
+3. failure scope is normalized into the five declared categories across all active provider adapters
 4. provider-native responses cannot leak across the adapter boundary
 5. credentials are not part of serialized execution records
-6. existing routing, verification, finalization, evidence-pilot, and specialist-preservation tests remain green
-
-The first live provider should then implement this contract rather than changing it to fit one provider SDK.
+6. provider connection method does not alter routing semantics
+7. existing routing, verification, finalization, evidence-pilot, specialist-preservation, and provider conformance tests remain green
