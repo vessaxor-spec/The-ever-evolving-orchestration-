@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Literal, Protocol
+from math import isfinite
+from typing import Any, Literal, Mapping, Protocol
 
 from .schemas import DispatchRecord, ExecutionResult, ExecutionStatus, RiskLevel
 
@@ -53,6 +54,24 @@ def _assert_no_credential_fields(value: Any, path: str = "input_payload") -> Non
     elif isinstance(value, (list, tuple)):
         for index, nested in enumerate(value):
             _assert_no_credential_fields(nested, f"{path}[{index}]")
+
+
+def retry_after_seconds_from_headers(headers: Mapping[str, str]) -> float | None:
+    """Normalize a numeric Retry-After response header without exposing provider-native headers."""
+    value: str | None = None
+    for key, item in headers.items():
+        if str(key).strip().lower() == "retry-after":
+            value = str(item).strip()
+            break
+    if not value:
+        return None
+    try:
+        seconds = float(value)
+    except ValueError:
+        return None
+    if not isfinite(seconds) or seconds < 0:
+        return None
+    return seconds
 
 
 @dataclass(frozen=True, slots=True)
@@ -186,6 +205,7 @@ class ProviderExecutionResponse:
     output_ref: str | None = None
     evidence: tuple[str, ...] = ()
     failure: ProviderFailure | None = None
+    retry_after_seconds: float | None = None
     contract_version: Literal["1"] = "1"
 
     def __post_init__(self) -> None:
@@ -198,10 +218,16 @@ class ProviderExecutionResponse:
         _require_text(self.model, "model")
         if self.status not in {"succeeded", "failed"}:
             raise ProviderAdapterContractError(f"Unsupported execution status: {self.status}")
+        if self.retry_after_seconds is not None:
+            retry_after = float(self.retry_after_seconds)
+            if not isfinite(retry_after) or retry_after < 0:
+                raise ProviderAdapterContractError("retry_after_seconds must be finite and non-negative")
         if self.status == "succeeded":
             _require_text(self.output_ref, "output_ref")
             if self.failure is not None:
                 raise ProviderAdapterContractError("Successful execution cannot include failure details")
+            if self.retry_after_seconds is not None:
+                raise ProviderAdapterContractError("Successful execution cannot include retry timing")
         elif self.failure is None:
             raise ProviderAdapterContractError("Failed execution must include normalized failure details")
         elif self.output_ref is not None:
@@ -218,11 +244,13 @@ class ProviderExecutionResponse:
             "output_ref",
             "evidence",
             "failure",
+            "retry_after_seconds",
         }
         _reject_unknown(data, allowed, "provider execution response")
         failure_data = data.get("failure")
         if failure_data is not None and not isinstance(failure_data, dict):
             raise ProviderAdapterContractError("failure must be an object or null")
+        retry_after = data.get("retry_after_seconds")
         return cls(
             contract_version=str(data.get("contract_version")),  # type: ignore[arg-type]
             dispatch_id=_require_text(data.get("dispatch_id"), "dispatch_id"),
@@ -232,6 +260,7 @@ class ProviderExecutionResponse:
             output_ref=str(data["output_ref"]) if data.get("output_ref") else None,
             evidence=tuple(str(item) for item in data.get("evidence", [])),
             failure=ProviderFailure.from_dict(failure_data) if failure_data is not None else None,
+            retry_after_seconds=float(retry_after) if retry_after is not None else None,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -244,6 +273,7 @@ class ProviderExecutionResponse:
             "output_ref": self.output_ref,
             "evidence": list(self.evidence),
             "failure": self.failure.to_dict() if self.failure else None,
+            "retry_after_seconds": self.retry_after_seconds,
         }
 
     def to_execution_result(self) -> ExecutionResult:

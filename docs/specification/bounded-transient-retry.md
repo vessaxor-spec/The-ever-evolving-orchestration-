@@ -16,10 +16,13 @@ The active retry policy is:
 - risk: low or medium
 - eligible failure scope: `transient` only
 - maximum provider attempts per dispatch: 2
-- initial delay: 0.5 seconds
-- backoff multiplier: 2.0
-- maximum delay: 2.0 seconds
-- jitter: plus or minus 20 percent
+- initial local delay: 0.5 seconds
+- local backoff multiplier: 2.0
+- maximum local backoff delay: 2.0 seconds
+- local jitter: plus or minus 20 percent
+- honor normalized provider retry timing: true
+- maximum provider-directed wait budget: 60 seconds
+- provider hint above wait budget: stop rather than retry early
 - fallback after transient exhaustion: false
 
 The machine-readable policy is:
@@ -50,28 +53,43 @@ The canary permits at most two provider attempts for one dispatch.
 
 The first attempt consumes one attempt. A transient failure may schedule exactly one additional attempt. A success or any non-transient failure terminates the retry sequence immediately.
 
+Provider-directed timing cannot create another attempt. It can only change the wait before an attempt that TEO has already authorized.
+
 This limit applies independently to the primary dispatch and to the single fallback dispatch. The existence of a retry budget does not authorize another fallback dispatch or a third provider chain.
 
-## Delay and jitter
+## Delay, jitter, and provider minimums
 
-The retry controller applies bounded exponential backoff with jitter.
+The retry controller applies bounded exponential backoff with jitter and can also honor normalized provider-directed retry timing.
 
-For the current two-attempt canary, only the first retry delay is normally exercised. The formula and maximum delay remain explicit so later retry-budget changes cannot silently introduce unbounded waits.
+For an eligible retry:
+
+1. calculate TEO's local jittered backoff
+2. read `ProviderExecutionResponse.retry_after_seconds`, if present
+3. if the provider value is at or below the 60-second guarded wait budget, use the greater of the local delay and provider delay
+4. if the provider value is above 60 seconds, stop rather than retry before the requested minimum has elapsed
+
+The local 2-second backoff cap applies only to TEO-generated backoff. It does not authorize TEO to shorten a provider-requested minimum wait.
 
 Jitter exists to reduce synchronized retries against a recovering provider. Tests inject deterministic randomness and a no-op sleeper so conformance does not depend on wall-clock timing.
+
+The provider timing contract is documented in:
+
+- `docs/specification/provider-directed-retry-timing.md`
 
 ## Failure transitions
 
 A retry sequence can end in four ways:
 
 1. success, which keeps the original dispatch active
-2. exhausted transient failure, which returns execution failure without direct fallback
+2. exhausted or timing-budget-stopped transient failure, which returns execution failure without direct fallback
 3. model failure, which leaves retry and may enter guarded model fallback
 4. provider failure, which leaves retry and may enter guarded provider fallback
 
 Request and capability failures terminate immediately and do not consume another retry attempt.
 
 An exhausted transient failure is not relabeled as a provider failure.
+
+A retry timing hint never changes failure scope. A provider-scoped rate-limit failure can carry retry timing while remaining non-retryable under the current guarded taxonomy.
 
 ## Circuit-breaker interaction
 
@@ -89,7 +107,7 @@ The circuit specification is:
 
 Provider adapters remain single-attempt implementations.
 
-Retry is owned by the runtime coordinator above the adapters. This prevents provider SDK behavior from creating hidden attempts and keeps the attempt budget observable across OpenAI, Anthropic, Google, local runtimes, and future providers.
+Adapters may normalize provider-native timing metadata into `retry_after_seconds`, but they do not sleep or retry. Retry is owned by the runtime coordinator above the adapters. This prevents provider SDK behavior from creating hidden attempts and keeps the attempt budget observable across OpenAI, Anthropic, Google, local runtimes, and future providers.
 
 ## Verification boundary
 
@@ -107,6 +125,9 @@ The reference tests prove that:
 - transient exhaustion stops after two attempts
 - request, model, and provider failures are not retried
 - jitter remains inside the configured bound
+- provider timing is honored as a minimum wait
+- provider timing cannot create an extra attempt
+- an over-budget provider wait stops rather than causes an early retry
 - retry does not mutate routing authority
 - a transient retry that later returns provider failure can enter guarded redispatch
 - fallback dispatches receive their own independent retry budget
@@ -118,6 +139,7 @@ The reference tests prove that:
 The conformance suites are:
 
 - `tests/test_bounded_transient_retry.py`
+- `tests/test_provider_retry_timing.py`
 - `tests/test_guarded_canary_fallback.py`
 - `tests/test_provider_circuit_breaker.py`
 
@@ -128,7 +150,7 @@ This retry layer does not implement:
 - circuit-state persistence itself
 - provider health classification itself
 - adaptive retry budgets
-- Retry-After header interpretation
+- HTTP-date Retry-After parsing
 - cost-aware retry decisions
 - telemetry persistence
 - high or critical risk retries

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from math import isfinite
 from pathlib import Path
 from typing import Any
 
@@ -10,6 +11,7 @@ from .provider_adapter import (
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    retry_after_seconds_from_headers,
     validate_provider_response,
 )
 from .provider_connection import (
@@ -74,6 +76,40 @@ def _error_details(payload: dict[str, Any] | None) -> tuple[str, str]:
         message = error.get("message") or "Google returned an error"
         return str(status), str(message)
     return "unknown_provider_error", "Google returned an error"
+
+
+def _retry_info_seconds(payload: dict[str, Any] | None) -> float | None:
+    """Read standard google.rpc.RetryInfo when a Google error response includes it."""
+    if not payload:
+        return None
+    error = payload.get("error")
+    if not isinstance(error, dict):
+        return None
+    details = error.get("details")
+    if not isinstance(details, list):
+        return None
+    for detail in details:
+        if not isinstance(detail, dict):
+            continue
+        type_name = str(detail.get("@type") or detail.get("type") or "")
+        if not type_name.endswith("google.rpc.RetryInfo"):
+            continue
+        value = detail.get("retryDelay") or detail.get("retry_delay")
+        if isinstance(value, str) and value.endswith("s"):
+            try:
+                seconds = float(value[:-1])
+            except ValueError:
+                return None
+            if isfinite(seconds) and seconds >= 0:
+                return seconds
+    return None
+
+
+def _retry_after_seconds(headers: dict[str, str] | Any, payload: dict[str, Any] | None) -> float | None:
+    header_value = retry_after_seconds_from_headers(headers)
+    if header_value is not None:
+        return header_value
+    return _retry_info_seconds(payload)
 
 
 def _failure_scope(status_code: int, code: str) -> str:
@@ -282,6 +318,7 @@ class GeminiInteractionsAdapter:
                 code=code,
                 message=message,
             ),
+            retry_after_seconds=_retry_after_seconds(connection_response.headers, response_payload),
         )
 
 

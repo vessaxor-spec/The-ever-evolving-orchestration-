@@ -29,6 +29,9 @@ class RetryPolicy:
     backoff_multiplier: float
     max_delay_seconds: float
     jitter_ratio: float
+    honor_provider_retry_after: bool
+    max_provider_retry_after_seconds: float
+    provider_retry_after_exceeds_budget: str
     fallback_after_transient_exhaustion: bool
 
     @classmethod
@@ -54,6 +57,13 @@ class RetryPolicy:
             backoff_multiplier=float(retry.get("backoff_multiplier", 0)),
             max_delay_seconds=float(retry.get("max_delay_seconds", -1)),
             jitter_ratio=float(retry.get("jitter_ratio", -1)),
+            honor_provider_retry_after=bool(retry.get("honor_provider_retry_after", False)),
+            max_provider_retry_after_seconds=float(
+                retry.get("max_provider_retry_after_seconds", -1)
+            ),
+            provider_retry_after_exceeds_budget=str(
+                retry.get("provider_retry_after_exceeds_budget", "")
+            ),
             fallback_after_transient_exhaustion=bool(
                 retry.get("fallback_after_transient_exhaustion", False)
             ),
@@ -76,6 +86,18 @@ class RetryPolicy:
             raise ProviderAdapterContractError("Retry backoff multiplier must be at least 1")
         if not 0 <= self.jitter_ratio <= 0.5:
             raise ProviderAdapterContractError("Retry jitter_ratio must be between 0 and 0.5")
+        if not self.honor_provider_retry_after:
+            raise ProviderAdapterContractError(
+                "Guarded canary retry must honor normalized provider retry timing when present"
+            )
+        if self.max_provider_retry_after_seconds <= 0:
+            raise ProviderAdapterContractError(
+                "Provider retry timing budget must be positive"
+            )
+        if self.provider_retry_after_exceeds_budget != "stop":
+            raise ProviderAdapterContractError(
+                "Provider retry timing above the guarded wait budget must stop rather than retry early"
+            )
         if self.fallback_after_transient_exhaustion:
             raise ProviderAdapterContractError(
                 "Transient retry exhaustion cannot silently authorize fallback in this runtime slice"
@@ -101,6 +123,21 @@ def _delay_for_retry(policy: RetryPolicy, retry_number: int, random_source: Rand
     return max(0.0, min(base * multiplier, policy.max_delay_seconds))
 
 
+def _effective_retry_delay(
+    policy: RetryPolicy,
+    response: ProviderExecutionResponse,
+    retry_number: int,
+    random_source: RandomSource,
+) -> float | None:
+    local_delay = _delay_for_retry(policy, retry_number, random_source)
+    provider_delay = response.retry_after_seconds
+    if provider_delay is None:
+        return local_delay
+    if provider_delay > policy.max_provider_retry_after_seconds:
+        return None
+    return max(local_delay, provider_delay)
+
+
 def execute_with_transient_retry(
     dispatch: DispatchRecord,
     connections: Mapping[str, ProviderConnection],
@@ -111,7 +148,12 @@ def execute_with_transient_retry(
     sleeper: Sleeper = sleep,
     random_source: RandomSource = random,
 ) -> RetryExecution:
-    """Retry only transient failures while preserving the active dispatch."""
+    """Retry only transient failures while preserving the active dispatch.
+
+    A normalized provider retry hint is a minimum wait, not authority for another attempt.
+    The policy still owns the attempt budget and may stop rather than retry before an
+    excessive provider-requested delay has elapsed.
+    """
     attempts = 0
     delays: list[float] = []
 
@@ -127,7 +169,9 @@ def execute_with_transient_retry(
         if attempts >= policy.max_attempts_per_dispatch:
             return RetryExecution(response=response, attempts=attempts, delays_seconds=tuple(delays))
 
-        delay = _delay_for_retry(policy, attempts, random_source)
+        delay = _effective_retry_delay(policy, response, attempts, random_source)
+        if delay is None:
+            return RetryExecution(response=response, attempts=attempts, delays_seconds=tuple(delays))
         delays.append(delay)
         sleeper(delay)
 
