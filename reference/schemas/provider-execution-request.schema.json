@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/provider-execution-request.schema.json",
+  "title": "TEO Provider Execution Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "dispatch_id",
+    "task_id",
+    "provider_family",
+    "model",
+    "risk_level",
+    "required_capabilities",
+    "input_payload"
+  ],
+  "properties": {
+    "contract_version": {"const": "1"},
+    "dispatch_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "provider_family": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "required_capabilities": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "input_payload": {"type": "object"}
+  }
+}
