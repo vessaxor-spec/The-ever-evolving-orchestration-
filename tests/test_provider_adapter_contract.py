@@ -209,12 +209,38 @@ def test_failure_scope_is_bounded_to_routing_taxonomy() -> None:
         )
 
 
-def test_credentials_cannot_enter_serialized_execution_payload() -> None:
+@pytest.mark.parametrize(
+    "credential_key",
+    [
+        "api_key",
+        "access_token",
+        "refresh_token",
+        "client_secret",
+        "private_key",
+        "service_account_key",
+        "session_token",
+        "authorization_code",
+        "vendor-access-token",
+        "nested_private_key",
+    ],
+)
+def test_credentials_cannot_enter_serialized_execution_payload(credential_key: str) -> None:
     with pytest.raises(ProviderAdapterContractError, match="Credential material"):
         ProviderExecutionRequest.from_dispatch(
             dispatch(),
-            {"messages": [{"role": "user", "content": "run"}], "api_key": "secret"},
+            {
+                "messages": [{"role": "user", "content": "run"}],
+                "nested": {credential_key: "secret"},
+            },
         )
+
+
+def test_noncredential_token_word_is_not_rejected_by_substring_only() -> None:
+    request = ProviderExecutionRequest.from_dispatch(
+        dispatch(),
+        {"token_count": 12, "task": "run"},
+    )
+    assert request.input_payload["token_count"] == 12
 
 
 def test_contract_rejects_unknown_fields() -> None:
