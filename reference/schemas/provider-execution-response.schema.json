@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/provider-execution-response.schema.json",
+  "title": "TEO Provider Execution Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "dispatch_id",
+    "status",
+    "provider_family",
+    "model",
+    "output_ref",
+    "evidence",
+    "failure"
+  ],
+  "properties": {
+    "contract_version": {"const": "1"},
+    "dispatch_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["succeeded", "failed"]},
+    "provider_family": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "output_ref": {"type": ["string", "null"]},
+    "evidence": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "failure": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["scope", "code", "message"],
+          "properties": {
+            "scope": {"enum": ["request", "transient", "model", "provider", "capability"]},
+            "code": {"type": "string", "minLength": 1},
+            "message": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "succeeded"}}},
+      "then": {
+        "properties": {
+          "output_ref": {"type": "string", "minLength": 1},
+          "failure": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "failed"}}},
+      "then": {
+        "properties": {
+          "output_ref": {"type": "null"},
+          "failure": {"type": "object"}
+        }
+      }
+    }
+  ]
+}
