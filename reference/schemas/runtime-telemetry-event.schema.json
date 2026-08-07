@@ -1,50 +1,61 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://teo.example/schemas/provider-execution-response.schema.json",
-  "title": "TEO Provider Execution Response",
+  "$id": "https://teo.example/schemas/runtime-telemetry-event.schema.json",
+  "title": "TEO Runtime Telemetry Provider Attempt",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "contract_version",
+    "telemetry_version",
+    "event_type",
+    "recorded_at",
+    "task_id",
     "dispatch_id",
-    "status",
+    "task_type",
+    "risk_level",
+    "role",
+    "attempt_number",
     "provider_family",
     "model",
-    "output_ref",
-    "evidence",
-    "failure",
-    "retry_after_seconds"
+    "reasoning_effort",
+    "verifier_provider_family",
+    "verifier_model",
+    "status",
+    "failure_scope",
+    "failure_code",
+    "duration_ms",
+    "retry_after_seconds",
+    "usage"
   ],
   "properties": {
-    "contract_version": {"const": "1"},
+    "telemetry_version": {"const": "1"},
+    "event_type": {"const": "provider_attempt"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "task_id": {"type": "string", "minLength": 1},
     "dispatch_id": {"type": "string", "minLength": 1},
-    "status": {"enum": ["succeeded", "failed"]},
+    "task_type": {"type": "string", "minLength": 1},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "role": {"enum": ["primary", "fallback"]},
+    "attempt_number": {"type": "integer", "minimum": 1},
     "provider_family": {"type": "string", "minLength": 1},
     "model": {"type": "string", "minLength": 1},
-    "output_ref": {"type": ["string", "null"]},
-    "evidence": {
-      "type": "array",
-      "items": {"type": "string"}
-    },
-    "failure": {
+    "reasoning_effort": {
       "oneOf": [
         {"type": "null"},
-        {
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["scope", "code", "message"],
-          "properties": {
-            "scope": {"enum": ["request", "transient", "model", "provider", "capability"]},
-            "code": {"type": "string", "minLength": 1},
-            "message": {"type": "string", "minLength": 1}
-          }
-        }
+        {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]}
       ]
     },
-    "retry_after_seconds": {
-      "type": ["number", "null"],
-      "minimum": 0
+    "verifier_provider_family": {"type": ["string", "null"]},
+    "verifier_model": {"type": "string", "minLength": 1},
+    "status": {"enum": ["succeeded", "failed"]},
+    "failure_scope": {
+      "oneOf": [
+        {"type": "null"},
+        {"enum": ["request", "transient", "model", "provider", "capability"]}
+      ]
     },
+    "failure_code": {"type": ["string", "null"]},
+    "duration_ms": {"type": "number", "minimum": 0},
+    "retry_after_seconds": {"type": ["number", "null"], "minimum": 0},
     "usage": {
       "oneOf": [
         {"type": "null"},
@@ -78,9 +89,8 @@
       "if": {"properties": {"status": {"const": "succeeded"}}},
       "then": {
         "properties": {
-          "output_ref": {"type": "string", "minLength": 1},
-          "failure": {"type": "null"},
-          "retry_after_seconds": {"type": "null"}
+          "failure_scope": {"type": "null"},
+          "failure_code": {"type": "null"}
         }
       }
     },
@@ -88,8 +98,8 @@
       "if": {"properties": {"status": {"const": "failed"}}},
       "then": {
         "properties": {
-          "output_ref": {"type": "null"},
-          "failure": {"type": "object"}
+          "failure_scope": {"type": "string"},
+          "failure_code": {"type": "string", "minLength": 1}
         }
       }
     }

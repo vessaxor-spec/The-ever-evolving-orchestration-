@@ -10,6 +10,7 @@ from .provider_adapter import (
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    ProviderUsage,
     retry_after_seconds_from_headers,
     validate_provider_response,
 )
@@ -101,6 +102,51 @@ def _failure_scope(status_code: int, code: str) -> str:
     return "provider"
 
 
+def _non_negative_int(value: Any) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    return None
+
+
+def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
+    raw = payload.get("usage")
+    if not isinstance(raw, dict):
+        return None
+    input_tokens = _non_negative_int(raw.get("input_tokens"))
+    output_tokens = _non_negative_int(raw.get("output_tokens"))
+    total_tokens = _non_negative_int(raw.get("total_tokens"))
+    input_details = raw.get("input_tokens_details")
+    output_details = raw.get("output_tokens_details")
+    cached = (
+        _non_negative_int(input_details.get("cached_tokens"))
+        if isinstance(input_details, dict)
+        else None
+    )
+    cache_write = (
+        _non_negative_int(input_details.get("cache_write_tokens"))
+        if isinstance(input_details, dict)
+        else None
+    )
+    reasoning = (
+        _non_negative_int(output_details.get("reasoning_tokens"))
+        if isinstance(output_details, dict)
+        else None
+    )
+    if all(
+        item is None
+        for item in (input_tokens, output_tokens, cached, cache_write, reasoning, total_tokens)
+    ):
+        return None
+    return ProviderUsage(
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        cached_input_tokens=cached,
+        cache_creation_input_tokens=cache_write,
+        reasoning_output_tokens=reasoning,
+        total_tokens=total_tokens,
+    )
+
+
 class OpenAIResponsesAdapter:
     """Single-attempt OpenAI Responses adapter for the guarded TEO canary."""
 
@@ -187,6 +233,7 @@ class OpenAIResponsesAdapter:
             connection_response.headers.get("x-request-id")
             or connection_response.headers.get("request-id")
         )
+        usage = _extract_usage(response_payload) if response_payload else None
 
         if 200 <= status_code < 300:
             if response_payload is None:
@@ -218,6 +265,7 @@ class OpenAIResponsesAdapter:
                         code=f"response_{response_status}",
                         message=f"OpenAI response ended with status {response_status}",
                     ),
+                    usage=usage,
                 )
             if response_status == "incomplete":
                 return ProviderExecutionResponse(
@@ -230,6 +278,7 @@ class OpenAIResponsesAdapter:
                         code="incomplete_response",
                         message="OpenAI response was incomplete within the authorized canary limits",
                     ),
+                    usage=usage,
                 )
             text = _extract_text(response_payload)
             if not text:
@@ -243,6 +292,7 @@ class OpenAIResponsesAdapter:
                         code="no_text_output",
                         message="OpenAI returned no text content for the canary task",
                     ),
+                    usage=usage,
                 )
             self._artifact_dir.mkdir(parents=True, exist_ok=True)
             artifact_path = self._artifact_dir / f"{_safe_artifact_name(request.dispatch_id)}.txt"
@@ -264,6 +314,7 @@ class OpenAIResponsesAdapter:
                 model=request.model,
                 output_ref=artifact_path.resolve().as_uri(),
                 evidence=tuple(evidence),
+                usage=usage,
             )
 
         code, message = _error_details(response_payload)
@@ -279,6 +330,7 @@ class OpenAIResponsesAdapter:
                 message=message,
             ),
             retry_after_seconds=retry_after_seconds_from_headers(connection_response.headers),
+            usage=usage,
         )
 
 

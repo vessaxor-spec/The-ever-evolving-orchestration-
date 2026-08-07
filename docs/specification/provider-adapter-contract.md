@@ -4,7 +4,7 @@
 
 This document defines the runtime-execution boundary for the TEO reference implementation.
 
-The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, retry, fallback, circuit-state, verification, or approval authority.
+The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, retry, fallback, circuit-state, telemetry, verification, or approval authority.
 
 Contract version: `1`
 
@@ -27,7 +27,7 @@ A provider adapter is responsible for exactly one thing:
 
 > Execute one authorized attempt against the provider family, model, and reasoning effort already selected by the dispatch, then return a normalized result.
 
-An adapter may also normalize provider response metadata needed by an outer runtime controller, such as a provider-requested minimum retry delay. Normalizing that metadata does not grant retry authority to the adapter.
+An adapter may also normalize provider response metadata needed by outer runtime controls, including provider-requested retry timing and provider-reported token usage. Normalizing that evidence does not grant retry, telemetry, routing, or verification authority to the adapter.
 
 An adapter must not:
 
@@ -37,13 +37,15 @@ An adapter must not:
 - retry itself
 - invoke the preselected fallback
 - persist or mutate provider circuit state
+- persist runtime telemetry itself
+- calculate route quality
 - select or perform independent verification
 - waive or satisfy human approval
 - modify the dispatch
 - return a provider-native payload as the runtime contract
 - serialize credentials, authorization headers, secrets, passwords, or access tokens into the request or normalized result
 
-Provider SDK initialization, connection establishment, credential acquisition, retry control, circuit state, and fallback coordination remain runtime concerns outside the adapter.
+Provider SDK initialization, connection establishment, credential acquisition, retry control, circuit state, telemetry persistence, and fallback coordination remain runtime concerns outside the adapter.
 
 ## Request envelope
 
@@ -79,6 +81,7 @@ The request intentionally excludes:
 - human-approval state
 - escalation candidates
 - circuit state
+- telemetry state
 
 Those fields remain control-plane or runtime-coordination authority and are not required to perform the authorized provider attempt.
 
@@ -99,10 +102,13 @@ The reference helper derives provider family, model, and reasoning effort direct
 - `evidence`
 - normalized `failure` details when execution fails
 - optional normalized `retry_after_seconds` when a failed provider response supplies a retry timing hint
+- optional normalized `usage` when the provider reports token usage
 
 A successful response must include an accepted `output_ref`, must not include failure details, and must not include retry timing.
 
 A failed response must not publish an accepted `output_ref` and must include normalized failure details. `retry_after_seconds`, when present, must be finite and non-negative.
+
+`usage` may be present on successful or failed responses when the provider reports meaningful usage for that attempt.
 
 The response must echo the active dispatch, provider family, and model. Any change to those values is a contract violation rather than an implicit fallback.
 
@@ -119,6 +125,30 @@ Current normalization behavior is deliberately evidence-sensitive:
 A retry hint answers only how long a client should wait if another attempt is already authorized. It does not change failure scope, add an attempt, trigger fallback, modify circuit state, or create a new dispatch.
 
 The bounded retry controller owns whether a second attempt is permitted and how provider timing interacts with TEO's local backoff policy.
+
+### Usage normalization
+
+`ProviderUsage` is provider-neutral execution evidence. It may include:
+
+- `input_tokens`
+- `output_tokens`
+- `cached_input_tokens`
+- `cache_creation_input_tokens`
+- `reasoning_output_tokens`
+- `tool_tokens`
+- `total_tokens`
+
+All usage values are optional non-negative integers. Unknown normalized usage fields fail closed when parsed.
+
+Current provider mappings are:
+
+- Anthropic total input is normalized from ordinary input, cache-creation input, and cache-read input. Cache read and cache creation remain separately visible. Thinking-token details are recorded when provided.
+- OpenAI Responses usage is normalized from input, cached input, output, reasoning output, and total token fields when present.
+- Google Gemini Interactions usage is normalized from total input, output, cached, thought, tool-use, and total token fields when present.
+
+The adapter does not calculate monetary cost from usage. Pricing changes independently and belongs to a separate dated pricing/calculation layer.
+
+The adapter also does not infer output quality from token usage.
 
 ## Current provider implementations
 
@@ -144,7 +174,7 @@ Version 1 uses the bounded failure scopes established by TEO routing policy:
 | `provider` | The provider family is unavailable or unusable for the request | Guarded canary may redispatch with the provider blocked |
 | `capability` | The selected execution path cannot satisfy a required capability | Return to capability and routing resolution |
 
-The adapter reports the failure scope. It does not decide retry, circuit, fallback, or verification action.
+The adapter reports the failure scope. It does not decide retry, circuit, fallback, telemetry, or verification action.
 
 Provider-family circuit classification is intentionally stricter than the broad `provider` failure scope. Authentication, billing, permission, quota/rate-limit, and connection failures may be provider-scoped for the active task without being evidence that the provider service itself is unhealthy.
 
@@ -154,19 +184,21 @@ A retry timing hint does not override this taxonomy. For example, a rate-limit r
 
 `execute_provider_once` and each provider adapter perform one provider invocation.
 
-Retry, circuit breaking, and fallback are implemented above this boundary:
+Retry, circuit breaking, telemetry, and fallback are implemented above this boundary:
 
 - bounded transient retry may invoke the same adapter again under the same dispatch
 - provider circuit state may block a known-unhealthy provider before a new canonical dispatch
+- runtime telemetry records each actual provider attempt after it returns
 - model or provider fallback returns to TEO and creates a new dispatch before another provider execution
 
-This separation keeps provider attempts, routing changes, health state, independent verification, retry timing, and failure transitions observable.
+This separation keeps provider attempts, routing changes, health state, telemetry, independent verification, retry timing, and failure transitions observable.
 
 The active runtime specifications are:
 
 - `docs/specification/bounded-transient-retry.md`
 - `docs/specification/provider-directed-retry-timing.md`
 - `docs/specification/provider-circuit-breaker.md`
+- `docs/specification/runtime-telemetry.md`
 - `docs/specification/guarded-canary-fallback.md`
 
 ## Contract validation
@@ -186,6 +218,7 @@ The reference implementation fails closed when:
 - failure has no normalized failure details
 - failure publishes an accepted output reference
 - normalized retry timing is negative or non-finite
+- normalized usage contains negative or unsupported fields
 - a failure scope falls outside the declared taxonomy
 - unknown top-level contract fields are supplied through the reference parsers
 - credential-bearing field names appear in serialized execution input
@@ -194,6 +227,7 @@ The matching JSON Schemas are:
 
 - `reference/schemas/provider-execution-request.schema.json`
 - `reference/schemas/provider-execution-response.schema.json`
+- `reference/schemas/runtime-telemetry-event.schema.json`
 
 The reference conformance suites include:
 
@@ -204,6 +238,7 @@ The reference conformance suites include:
 - `tests/test_guarded_canary_fallback.py`
 - `tests/test_bounded_transient_retry.py`
 - `tests/test_provider_circuit_breaker.py`
+- `tests/test_runtime_telemetry.py`
 
 ## Current runtime boundaries
 
@@ -212,6 +247,8 @@ The guarded runtime now supports:
 - three live provider canaries
 - selected reasoning-effort propagation
 - normalized provider-directed retry timing
+- normalized provider-reported token usage
+- persistent content-free provider-attempt telemetry
 - at most two attempts for transient failure within one dispatch
 - persistent provider-family circuit state with closed/open/half-open recovery
 - one model/provider fallback redispatch with a fresh independent verifier
@@ -223,7 +260,9 @@ It does not yet implement:
 - adaptive or provider-specific retry budgets
 - HTTP-date Retry-After parsing
 - streaming
-- cost, latency, reliability, or quality telemetry persistence
+- monetary cost attribution
+- independent quality/outcome scoring
+- distributed telemetry export
 - verifier execution
 - qualified-human approval integration
 - broad high-risk provider execution

@@ -1,0 +1,32 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+
+scope:
+  task_types:
+    - high_volume_simple
+  risk_levels:
+    - low
+    - medium
+
+telemetry:
+  event_type: provider_attempt
+  record_every_provider_attempt: true
+  default_sink: jsonl
+  default_filename: runtime-telemetry.jsonl
+  include_task_or_prompt_content: false
+  include_model_output_content: false
+  include_provider_native_payloads: false
+  include_provider_headers: false
+  include_credentials_or_authorization: false
+  include_connection_mechanism: false
+  calculate_cost: false
+  calculate_quality: false
+
+policy: >-
+  Runtime telemetry records content-free provider-attempt evidence after every actual
+  provider invocation. Telemetry may record routing identity, latency, normalized
+  failure state, retry timing, verifier identity, and normalized provider usage.
+  It must not persist prompts, task text, model output, provider-native payloads,
+  headers, credentials, authorization material, or connection mechanism by default.
+  Monetary cost and quality remain separate evidence layers.

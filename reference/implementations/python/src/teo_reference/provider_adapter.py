@@ -74,6 +74,94 @@ def retry_after_seconds_from_headers(headers: Mapping[str, str]) -> float | None
     return seconds
 
 
+def _optional_non_negative_int(value: Any, name: str) -> int | None:
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ProviderAdapterContractError(f"{name} must be an integer or null")
+    if value < 0:
+        raise ProviderAdapterContractError(f"{name} cannot be negative")
+    return value
+
+
+@dataclass(frozen=True, slots=True)
+class ProviderUsage:
+    """Provider-neutral usage evidence for one provider attempt.
+
+    Input and output totals follow OpenTelemetry GenAI semantics where practical.
+    Provider-specific usage is normalized only when a stable equivalent exists.
+    """
+
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    cached_input_tokens: int | None = None
+    cache_creation_input_tokens: int | None = None
+    reasoning_output_tokens: int | None = None
+    tool_tokens: int | None = None
+    total_tokens: int | None = None
+
+    def __post_init__(self) -> None:
+        for name in (
+            "input_tokens",
+            "output_tokens",
+            "cached_input_tokens",
+            "cache_creation_input_tokens",
+            "reasoning_output_tokens",
+            "tool_tokens",
+            "total_tokens",
+        ):
+            _optional_non_negative_int(getattr(self, name), f"usage.{name}")
+        if self.cached_input_tokens is not None and self.input_tokens is not None:
+            if self.cached_input_tokens > self.input_tokens:
+                raise ProviderAdapterContractError(
+                    "usage.cached_input_tokens cannot exceed usage.input_tokens"
+                )
+        if self.cache_creation_input_tokens is not None and self.input_tokens is not None:
+            if self.cache_creation_input_tokens > self.input_tokens:
+                raise ProviderAdapterContractError(
+                    "usage.cache_creation_input_tokens cannot exceed usage.input_tokens"
+                )
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "ProviderUsage":
+        allowed = {
+            "input_tokens",
+            "output_tokens",
+            "cached_input_tokens",
+            "cache_creation_input_tokens",
+            "reasoning_output_tokens",
+            "tool_tokens",
+            "total_tokens",
+        }
+        _reject_unknown(data, allowed, "usage")
+        return cls(
+            input_tokens=_optional_non_negative_int(data.get("input_tokens"), "usage.input_tokens"),
+            output_tokens=_optional_non_negative_int(data.get("output_tokens"), "usage.output_tokens"),
+            cached_input_tokens=_optional_non_negative_int(
+                data.get("cached_input_tokens"), "usage.cached_input_tokens"
+            ),
+            cache_creation_input_tokens=_optional_non_negative_int(
+                data.get("cache_creation_input_tokens"), "usage.cache_creation_input_tokens"
+            ),
+            reasoning_output_tokens=_optional_non_negative_int(
+                data.get("reasoning_output_tokens"), "usage.reasoning_output_tokens"
+            ),
+            tool_tokens=_optional_non_negative_int(data.get("tool_tokens"), "usage.tool_tokens"),
+            total_tokens=_optional_non_negative_int(data.get("total_tokens"), "usage.total_tokens"),
+        )
+
+    def to_dict(self) -> dict[str, int | None]:
+        return {
+            "input_tokens": self.input_tokens,
+            "output_tokens": self.output_tokens,
+            "cached_input_tokens": self.cached_input_tokens,
+            "cache_creation_input_tokens": self.cache_creation_input_tokens,
+            "reasoning_output_tokens": self.reasoning_output_tokens,
+            "tool_tokens": self.tool_tokens,
+            "total_tokens": self.total_tokens,
+        }
+
+
 @dataclass(frozen=True, slots=True)
 class ProviderFailure:
     scope: FailureScope
@@ -206,6 +294,7 @@ class ProviderExecutionResponse:
     evidence: tuple[str, ...] = ()
     failure: ProviderFailure | None = None
     retry_after_seconds: float | None = None
+    usage: ProviderUsage | None = None
     contract_version: Literal["1"] = "1"
 
     def __post_init__(self) -> None:
@@ -222,6 +311,8 @@ class ProviderExecutionResponse:
             retry_after = float(self.retry_after_seconds)
             if not isfinite(retry_after) or retry_after < 0:
                 raise ProviderAdapterContractError("retry_after_seconds must be finite and non-negative")
+        if self.usage is not None and not isinstance(self.usage, ProviderUsage):
+            raise ProviderAdapterContractError("usage must be ProviderUsage or null")
         if self.status == "succeeded":
             _require_text(self.output_ref, "output_ref")
             if self.failure is not None:
@@ -245,11 +336,15 @@ class ProviderExecutionResponse:
             "evidence",
             "failure",
             "retry_after_seconds",
+            "usage",
         }
         _reject_unknown(data, allowed, "provider execution response")
         failure_data = data.get("failure")
         if failure_data is not None and not isinstance(failure_data, dict):
             raise ProviderAdapterContractError("failure must be an object or null")
+        usage_data = data.get("usage")
+        if usage_data is not None and not isinstance(usage_data, dict):
+            raise ProviderAdapterContractError("usage must be an object or null")
         retry_after = data.get("retry_after_seconds")
         return cls(
             contract_version=str(data.get("contract_version")),  # type: ignore[arg-type]
@@ -261,6 +356,7 @@ class ProviderExecutionResponse:
             evidence=tuple(str(item) for item in data.get("evidence", [])),
             failure=ProviderFailure.from_dict(failure_data) if failure_data is not None else None,
             retry_after_seconds=float(retry_after) if retry_after is not None else None,
+            usage=ProviderUsage.from_dict(usage_data) if usage_data is not None else None,
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -274,6 +370,7 @@ class ProviderExecutionResponse:
             "evidence": list(self.evidence),
             "failure": self.failure.to_dict() if self.failure else None,
             "retry_after_seconds": self.retry_after_seconds,
+            "usage": self.usage.to_dict() if self.usage else None,
         }
 
     def to_execution_result(self) -> ExecutionResult:

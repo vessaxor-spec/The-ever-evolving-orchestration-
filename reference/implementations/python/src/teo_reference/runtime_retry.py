@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from random import random
-from time import sleep
+from time import monotonic, sleep
 from typing import Callable, Mapping
 
 import yaml
@@ -15,6 +15,8 @@ from .schemas import DispatchRecord
 CANARY_RETRY_POLICY = "policy/runtime/canary-retry.yaml"
 Sleeper = Callable[[float], None]
 RandomSource = Callable[[], float]
+AttemptClock = Callable[[], float]
+AttemptObserver = Callable[[DispatchRecord, int, ProviderExecutionResponse, float], None]
 Executor = Callable[
     [DispatchRecord, Mapping[str, ProviderConnection], str | Path],
     ProviderExecutionResponse,
@@ -147,19 +149,27 @@ def execute_with_transient_retry(
     *,
     sleeper: Sleeper = sleep,
     random_source: RandomSource = random,
+    attempt_observer: AttemptObserver | None = None,
+    attempt_clock: AttemptClock = monotonic,
 ) -> RetryExecution:
     """Retry only transient failures while preserving the active dispatch.
 
     A normalized provider retry hint is a minimum wait, not authority for another attempt.
-    The policy still owns the attempt budget and may stop rather than retry before an
-    excessive provider-requested delay has elapsed.
+    The policy still owns the attempt budget. An optional observer receives each completed
+    provider attempt immediately, before any sleep or later recovery action.
     """
     attempts = 0
     delays: list[float] = []
 
     while attempts < policy.max_attempts_per_dispatch:
         attempts += 1
+        started_at = float(attempt_clock())
         response = executor(dispatch, connections, artifact_root)
+        finished_at = float(attempt_clock())
+        duration_seconds = max(0.0, finished_at - started_at)
+        if attempt_observer is not None:
+            attempt_observer(dispatch, attempts, response, duration_seconds)
+
         if response.status == "succeeded":
             return RetryExecution(response=response, attempts=attempts, delays_seconds=tuple(delays))
 
