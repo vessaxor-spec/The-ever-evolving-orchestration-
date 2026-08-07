@@ -8,6 +8,7 @@ scope:
   risk_levels:
     - low
     - medium
+  max_output_bytes: 65536
 
 verification:
   assigned_verifier_only: true
