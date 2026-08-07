@@ -19,6 +19,7 @@ from teo_reference.runtime_telemetry import (
     InMemoryRuntimeTelemetrySink,
     JsonlRuntimeTelemetrySink,
     RuntimeTelemetryEvent,
+    RuntimeTelemetryPolicy,
 )
 from teo_reference.schemas import DispatchRecord, ImplementationChoice, TaskRequest, VerificationPlan
 from teo_reference.specialist_routing import SpecialistRoutingEngine
@@ -39,16 +40,16 @@ def choice(model: str, provider: str, reasoning: str | None = None) -> Implement
     )
 
 
-def dispatch() -> DispatchRecord:
+def dispatch(task_id: str = "customer@example.test") -> DispatchRecord:
     return DispatchRecord(
-        task_id="task-telemetry",
+        task_id=task_id,
         dispatch_id="dispatch-telemetry",
         created_at="2026-08-07T10:00:00+00:00",
         task="Sensitive text that must never enter telemetry.",
         task_type="high_volume_simple",
         risk_level="low",
-        selected_team="engineering",
-        selected_worker="backend",
+        selected_team="research",
+        selected_worker="documentation",
         selected_specialist=None,
         specialist_source=None,
         specialist_risk_profile=None,
@@ -153,7 +154,7 @@ def clock_from(values: list[float]):
     return lambda: next(iterator)
 
 
-def test_telemetry_event_is_content_free_and_round_trips() -> None:
+def test_telemetry_event_is_content_free_identifier_free_and_round_trips() -> None:
     response = ProviderExecutionResponse(
         dispatch_id="dispatch-telemetry",
         status="succeeded",
@@ -177,16 +178,28 @@ def test_telemetry_event_is_content_free_and_round_trips() -> None:
     assert serialized["provider_family"] == "openai"
     assert serialized["verifier_provider_family"] == "anthropic"
     assert serialized["usage"]["cached_input_tokens"] == 2
-    forbidden = {"task", "prompt", "input", "output", "output_ref", "evidence", "authorization", "connection"}
+    forbidden = {
+        "task_id",
+        "task",
+        "prompt",
+        "input",
+        "output",
+        "output_ref",
+        "evidence",
+        "authorization",
+        "connection",
+        "user_id",
+    }
     assert forbidden.isdisjoint(serialized)
     encoded = json.dumps(serialized)
     assert "Sensitive text" not in encoded
+    assert "customer@example.test" not in encoded
     assert "secret-output" not in encoded
     assert "req_1" not in encoded
     assert RuntimeTelemetryEvent.from_dict(serialized).to_dict() == serialized
 
 
-def test_telemetry_rejects_unknown_content_fields() -> None:
+def test_telemetry_rejects_unknown_content_or_identifier_fields() -> None:
     event = RuntimeTelemetryEvent.from_attempt(
         dispatch(),
         ProviderExecutionResponse(
@@ -201,9 +214,17 @@ def test_telemetry_rejects_unknown_content_fields() -> None:
         duration_seconds=0.1,
         recorded_at="2026-08-07T10:01:00+00:00",
     ).to_dict()
-    event["prompt"] = "should not be stored"
-    with pytest.raises(ProviderAdapterContractError, match="unsupported fields"):
-        RuntimeTelemetryEvent.from_dict(event)
+    for field in ("prompt", "task_id", "user_id"):
+        mutated = dict(event)
+        mutated[field] = "should not be stored"
+        with pytest.raises(ProviderAdapterContractError, match="unsupported fields"):
+            RuntimeTelemetryEvent.from_dict(mutated)
+
+
+def test_telemetry_policy_requires_fail_closed_persistence_and_no_identifiers() -> None:
+    policy = RuntimeTelemetryPolicy.load(REPO_ROOT)
+    assert policy.sink_failure_behavior == "fail_closed"
+    assert policy.include_user_identifiers is False
 
 
 def test_usage_rejects_negative_or_unknown_values() -> None:
@@ -235,6 +256,24 @@ def test_jsonl_sink_persists_across_instances(tmp_path: Path) -> None:
     events = JsonlRuntimeTelemetrySink(path).read_all()
     assert [event.attempt_number for event in events] == [1, 2]
     assert [event.duration_ms for event in events] == [200.0, 300.0]
+
+
+def test_jsonl_sink_failure_fails_closed(tmp_path: Path) -> None:
+    blocking_file = tmp_path / "not-a-directory"
+    blocking_file.write_text("blocked", encoding="utf-8")
+    sink = JsonlRuntimeTelemetrySink(blocking_file / "telemetry.jsonl")
+    response = ProviderExecutionResponse(
+        dispatch_id="dispatch-telemetry",
+        status="failed",
+        provider_family="openai",
+        model="gpt-5.6-luna",
+        failure=ProviderFailure(scope="transient", code="timeout", message="temporary"),
+    )
+    event = RuntimeTelemetryEvent.from_attempt(
+        dispatch(), response, role="primary", attempt_number=1, duration_seconds=0.1
+    )
+    with pytest.raises((ProviderAdapterContractError, FileExistsError, NotADirectoryError, OSError)):
+        sink.append(event)
 
 
 def test_retry_attempts_are_logged_immediately_under_same_dispatch(tmp_path: Path) -> None:
@@ -315,11 +354,12 @@ def test_fallback_attempt_has_new_dispatch_and_fallback_role(tmp_path: Path) -> 
     assert fallback.usage.reasoning_output_tokens == 3
 
 
-def test_default_runtime_sink_persists_jsonl_without_content(tmp_path: Path) -> None:
+def test_default_runtime_sink_persists_jsonl_without_content_or_caller_id(tmp_path: Path) -> None:
     calls: list[dict] = []
+    caller_id = "customer-123@example.test"
     execute_guarded_canary(
         engine(),
-        task("task-default-telemetry"),
+        task(caller_id),
         {
             "anthropic": sequence_connection(
                 "anthropic",
@@ -336,6 +376,7 @@ def test_default_runtime_sink_persists_jsonl_without_content(tmp_path: Path) -> 
     raw = path.read_text(encoding="utf-8")
     assert "Classify these bounded records" not in raw
     assert "label_a" not in raw
+    assert caller_id not in raw
     events = JsonlRuntimeTelemetrySink(path).read_all()
     assert len(events) == 1
     assert events[0].role == "primary"
