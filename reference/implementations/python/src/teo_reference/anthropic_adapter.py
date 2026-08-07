@@ -3,9 +3,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import Any, Callable, Mapping
-from urllib.error import HTTPError, URLError
-from urllib.request import Request, urlopen
+from typing import Any
 
 from .provider_adapter import (
     ProviderAdapterContractError,
@@ -14,7 +12,11 @@ from .provider_adapter import (
     ProviderFailure,
     validate_provider_response,
 )
-from .provider_connection import ProviderConnection
+from .provider_connection import (
+    ProviderConnection,
+    ProviderConnectionError,
+    ProviderConnectionRequest,
+)
 from .schemas import DispatchRecord
 
 ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages"
@@ -23,23 +25,6 @@ CANARY_TASK_TYPES = {"high_volume_simple"}
 CANARY_RISK_LEVELS = {"low", "medium"}
 CANARY_MODELS = {"claude-haiku-4-5", "claude-haiku-4-5-20251001"}
 MAX_CANARY_OUTPUT_TOKENS = 1024
-
-Transport = Callable[[str, bytes, Mapping[str, str], float], tuple[int, Mapping[str, str], bytes]]
-
-
-def _default_transport(
-    url: str,
-    body: bytes,
-    headers: Mapping[str, str],
-    timeout_seconds: float,
-) -> tuple[int, Mapping[str, str], bytes]:
-    request = Request(url, data=body, headers=dict(headers), method="POST")
-    try:
-        with urlopen(request, timeout=timeout_seconds) as response:
-            return int(response.status), dict(response.headers.items()), response.read()
-    except HTTPError as exc:
-        response_headers = dict(exc.headers.items()) if exc.headers else {}
-        return int(exc.code), response_headers, exc.read()
 
 
 def _safe_artifact_name(dispatch_id: str) -> str:
@@ -111,8 +96,8 @@ def _provider_model_matches(requested_model: str, provider_model: str | None) ->
 class AnthropicMessagesAdapter:
     """Single-attempt Anthropic Messages adapter for the guarded TEO canary.
 
-    The adapter is intentionally connection-neutral. Routing selects Anthropic and a model.
-    A runtime-supplied ProviderConnection decides how authorized request headers are obtained.
+    Routing selects Anthropic and Claude Haiku 4.5. The injected ProviderConnection owns
+    how that provider is reached and authorized. The adapter never branches on connection type.
     """
 
     provider_family = "anthropic"
@@ -122,7 +107,6 @@ class AnthropicMessagesAdapter:
         connection: ProviderConnection,
         artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic",
         timeout_seconds: float = 30.0,
-        transport: Transport | None = None,
     ) -> None:
         if connection.provider_family != self.provider_family:
             raise ProviderAdapterContractError(
@@ -131,7 +115,6 @@ class AnthropicMessagesAdapter:
         self._connection = connection
         self._artifact_dir = Path(artifact_dir)
         self._timeout_seconds = float(timeout_seconds)
-        self._transport = transport or _default_transport
 
     def execute(self, request: ProviderExecutionRequest) -> ProviderExecutionResponse:
         if request.provider_family != self.provider_family:
@@ -164,28 +147,22 @@ class AnthropicMessagesAdapter:
                 "messages": [{"role": "user", "content": task}],
             }
         ).encode("utf-8")
-        base_headers = {
-            "content-type": "application/json",
-            "anthropic-version": ANTHROPIC_VERSION,
-        }
-        headers = dict(self._connection.authorize_headers(base_headers))
-        if headers.get("content-type") != "application/json":
-            raise ProviderAdapterContractError(
-                "Provider connection must preserve the Anthropic JSON content type"
-            )
-        if headers.get("anthropic-version") != ANTHROPIC_VERSION:
-            raise ProviderAdapterContractError(
-                "Provider connection must preserve the required Anthropic API version"
-            )
 
         try:
-            status_code, response_headers, response_body = self._transport(
-                ANTHROPIC_MESSAGES_URL,
-                body,
-                headers,
-                self._timeout_seconds,
+            connection_response = self._connection.invoke(
+                ProviderConnectionRequest(
+                    operation="messages.create",
+                    url=ANTHROPIC_MESSAGES_URL,
+                    method="POST",
+                    headers={
+                        "content-type": "application/json",
+                        "anthropic-version": ANTHROPIC_VERSION,
+                    },
+                    body=body,
+                    timeout_seconds=self._timeout_seconds,
+                )
             )
-        except (URLError, TimeoutError, OSError) as exc:
+        except ProviderConnectionError as exc:
             return ProviderExecutionResponse(
                 dispatch_id=request.dispatch_id,
                 status="failed",
@@ -193,11 +170,14 @@ class AnthropicMessagesAdapter:
                 model=request.model,
                 failure=ProviderFailure(
                     scope="transient",
-                    code="transport_error",
-                    message=f"Anthropic transport failed before a normalized response: {type(exc).__name__}",
+                    code="connection_error",
+                    message=str(exc),
                 ),
             )
 
+        status_code = connection_response.status_code
+        response_headers = connection_response.headers
+        response_body = connection_response.body
         payload = _decode_json(response_body)
         request_id = response_headers.get("request-id") or response_headers.get("request_id")
         if not request_id and payload:
@@ -273,7 +253,6 @@ def execute_anthropic_canary_once(
     *,
     artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic",
     timeout_seconds: float = 30.0,
-    transport: Transport | None = None,
 ) -> ProviderExecutionResponse:
     """Execute one live Anthropic canary attempt while preserving TEO routing authority."""
     if dispatch.task_type not in CANARY_TASK_TYPES:
@@ -297,7 +276,6 @@ def execute_anthropic_canary_once(
         connection,
         artifact_dir=artifact_dir,
         timeout_seconds=timeout_seconds,
-        transport=transport,
     )
     request = ProviderExecutionRequest.from_dispatch(dispatch, input_payload)
     response = adapter.execute(request)
