@@ -80,6 +80,7 @@ class ImplementationChoice:
     provider_family: str | None
     availability: str | None
     source: str
+    reasoning: str | None = None
 
 
 @dataclass(slots=True)
