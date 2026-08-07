@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/verifier-calibration-human-label.schema.json",
+  "title": "TEO Verifier Calibration Human Label",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "reviewer_id",
+    "reviewer_role",
+    "reviewed_at",
+    "rubric_version",
+    "observations_blinded",
+    "decision"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "reviewer_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]+$"
+    },
+    "reviewer_role": {"enum": ["reviewer", "adjudicator"]},
+    "reviewed_at": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d+)?)?(?:Z|[+-]\\d{2}:\\d{2})$"
+    },
+    "rubric_version": {"type": "string", "minLength": 1},
+    "observations_blinded": {"const": true},
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "output_present",
+        "task_adherence",
+        "format_consistency",
+        "unsupported_claims_absent",
+        "human_reason"
+      ],
+      "properties": {
+        "status": {"enum": ["passed", "failed", "needs_human"]},
+        "output_present": {"enum": ["pass", "fail", "uncertain"]},
+        "task_adherence": {"enum": ["pass", "fail", "uncertain"]},
+        "format_consistency": {"enum": ["pass", "fail", "uncertain"]},
+        "unsupported_claims_absent": {"enum": ["pass", "fail", "uncertain"]},
+        "human_reason": {
+          "enum": [
+            "none",
+            "insufficient_evidence",
+            "ambiguous_task",
+            "unverifiable_output",
+            "conflicting_evidence"
+          ]
+        }
+      }
+    }
+  }
+}
