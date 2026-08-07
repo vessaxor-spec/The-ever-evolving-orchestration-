@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/verifier-calibration-human-review-packet.schema.json",
+  "title": "TEO Verifier Calibration Human Review Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packet_id", "rubric_version", "checks", "status_precedence", "items"],
+  "properties": {
+    "packet_id": {"type": "string", "minLength": 8},
+    "rubric_version": {"type": "string", "minLength": 1},
+    "checks": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": {"enum": ["output_present", "task_adherence", "format_consistency", "unsupported_claims_absent"]},
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "status_precedence": {
+      "type": "array",
+      "prefixItems": [
+        {"const": "any_fail_means_failed"},
+        {"const": "otherwise_any_uncertain_means_needs_human"},
+        {"const": "otherwise_passed"}
+      ],
+      "items": false,
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["review_item_id", "task", "candidate_output"],
+        "properties": {
+          "review_item_id": {"type": "string", "minLength": 8},
+          "task": {"type": "string", "minLength": 1},
+          "candidate_output": {"type": "string"}
+        }
+      }
+    }
+  }
+}
