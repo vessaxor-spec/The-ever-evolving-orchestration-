@@ -69,7 +69,6 @@ class CanaryRuntimeOutcome:
         return False
 
 
-
 def _copy_task_for_redispatch(
     task: TaskRequest,
     dispatch: DispatchRecord,
@@ -80,6 +79,7 @@ def _copy_task_for_redispatch(
         required_capabilities=list(task.constraints.required_capabilities),
         blocked_implementations=list(task.constraints.blocked_implementations),
         blocked_providers=list(task.constraints.blocked_providers),
+        accepted_preview_models=list(task.constraints.accepted_preview_models),
         require_human_approval=task.constraints.require_human_approval,
     )
     if failure_scope == "model":
