@@ -236,7 +236,8 @@ def test_machine_panel_collects_24_blinded_content_free_labels_and_resumes(tmp_p
         assert "case_id" not in item
         assert "task" not in item
         assert "candidate_output" not in item
-        assert not (canonical_ids & set(item.values()))
+        serialized = json.dumps(item, sort_keys=True)
+        assert not any(case_id in serialized for case_id in canonical_ids)
 
     resumed = collect_machine_panel_labels(
         packet,
