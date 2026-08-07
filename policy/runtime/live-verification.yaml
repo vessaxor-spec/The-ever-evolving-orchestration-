@@ -1,0 +1,45 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+
+scope:
+  task_types:
+    - high_volume_simple
+  risk_levels:
+    - low
+    - medium
+  max_output_bytes: 65536
+
+verification:
+  assigned_verifier_only: true
+  require_independent_model: true
+  require_provider_diversity: true
+  verifier_attempts: 1
+  verifier_retry: false
+  verifier_fallback: false
+  structured_output_required: true
+  blinded_executor_identity: true
+  expose_retry_history: false
+  expose_fallback_history: false
+  expose_runtime_telemetry: false
+  semantic_ground_truth_must_not_be_invented: true
+  infrastructure_failure_is_not_a_verification_judgment: true
+  human_approval_satisfied_by_model_verifier: false
+  checks:
+    - output_present
+    - task_adherence
+    - format_consistency
+    - unsupported_claims_absent
+  statuses:
+    - passed
+    - failed
+    - needs_human
+
+policy: >-
+  The guarded live verifier executes exactly the verifier assigned by the active TEO
+  dispatch. The verifier receives the original task, candidate output, and fixed rubric,
+  but not the executor provider/model, retry history, fallback history, or telemetry.
+  It must use structured pointwise judgment and return needs_human rather than inventing
+  semantic ground truth. Verification infrastructure failure fails closed and is not
+  converted into a model judgment. Model verification never satisfies qualified-human
+  approval requirements.

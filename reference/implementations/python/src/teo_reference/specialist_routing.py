@@ -6,7 +6,7 @@ from typing import Any
 import yaml
 
 from .engine import OrchestrationEngine as BaseOrchestrationEngine, RoutingError
-from .schemas import DispatchRecord, ImplementationChoice, TaskRequest
+from .schemas import DispatchRecord, ImplementationChoice, TaskRequest, VerificationPlan
 
 SPECIALIST_MODEL_POLICY = "policy/routing/specialist-model-routing.yaml"
 
@@ -149,6 +149,68 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             )
         dispatch.verification.implementation.reasoning = self._reasoning_from_source(
             dispatch.verification.implementation, dispatch.task_type
+        )
+
+    def _verification_plan(
+        self,
+        task_type: str,
+        risk: str,
+        task: TaskRequest,
+        primary: ImplementationChoice,
+        worker: str,
+        specialist_entry: dict[str, Any] | None,
+    ) -> VerificationPlan:
+        plan = super()._verification_plan(
+            task_type,
+            risk,
+            task,
+            primary,
+            worker,
+            specialist_entry,
+        )
+        if task_type != "high_volume_simple":
+            return plan
+        if (
+            plan.implementation.model != primary.model
+            and plan.implementation.provider_family
+            and plan.implementation.provider_family != primary.provider_family
+        ):
+            return plan
+
+        candidates: list[ImplementationChoice] = []
+        worker_entry = self.config.worker_registry[worker]
+        for source_key in ("preferred_implementations", "fallbacks"):
+            for model in worker_entry.get(source_key, []):
+                candidates.append(
+                    self._choice(
+                        {"agent": "registry", "model": model},
+                        f"workers.{worker}.{source_key}",
+                    )
+                )
+        for candidate in self.config.routing.get("fallback_order", {}).get("general_reasoning", []):
+            if isinstance(candidate, dict) and candidate.get("model"):
+                candidates.append(self._choice(candidate, "fallback_order.general_reasoning"))
+
+        seen: set[str] = set()
+        for choice in candidates:
+            if choice.model in seen:
+                continue
+            seen.add(choice.model)
+            if choice.model == primary.model or not self._eligible(choice, task):
+                continue
+            if not choice.provider_family or choice.provider_family == primary.provider_family:
+                continue
+            choice.reasoning = self._reasoning_from_source(choice, task_type) or "medium"
+            return VerificationPlan(
+                team=plan.team,
+                method=list(plan.method),
+                implementation=choice,
+                independent=True,
+                human_approval_required=plan.human_approval_required,
+            )
+
+        raise SpecialistRoutingError(
+            "No provider-diverse verifier is available for guarded high_volume_simple execution"
         )
 
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
