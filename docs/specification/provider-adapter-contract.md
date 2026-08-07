@@ -27,6 +27,8 @@ A provider adapter is responsible for exactly one thing:
 
 > Execute one authorized attempt against the provider family, model, and reasoning effort already selected by the dispatch, then return a normalized result.
 
+An adapter may also normalize provider response metadata needed by an outer runtime controller, such as a provider-requested minimum retry delay. Normalizing that metadata does not grant retry authority to the adapter.
+
 An adapter must not:
 
 - select another model
@@ -96,12 +98,27 @@ The reference helper derives provider family, model, and reasoning effort direct
 - `output_ref`
 - `evidence`
 - normalized `failure` details when execution fails
+- optional normalized `retry_after_seconds` when a failed provider response supplies a retry timing hint
 
-A successful response must include an accepted `output_ref` and must not include failure details.
+A successful response must include an accepted `output_ref`, must not include failure details, and must not include retry timing.
 
-A failed response must not publish an accepted `output_ref` and must include normalized failure details.
+A failed response must not publish an accepted `output_ref` and must include normalized failure details. `retry_after_seconds`, when present, must be finite and non-negative.
 
 The response must echo the active dispatch, provider family, and model. Any change to those values is a contract violation rather than an implicit fallback.
+
+### Retry timing normalization
+
+`retry_after_seconds` is a provider-neutral duration. Raw headers or provider-native error objects do not cross the adapter boundary.
+
+Current normalization behavior is deliberately evidence-sensitive:
+
+- Anthropic: numeric `retry-after` response header when present
+- OpenAI: numeric standards-compatible `Retry-After` response header when actually returned; no header is assumed or required
+- Google: numeric `Retry-After` response header when present, otherwise standard `google.rpc.RetryInfo.retryDelay` when present
+
+A retry hint answers only how long a client should wait if another attempt is already authorized. It does not change failure scope, add an attempt, trigger fallback, modify circuit state, or create a new dispatch.
+
+The bounded retry controller owns whether a second attempt is permitted and how provider timing interacts with TEO's local backoff policy.
 
 ## Current provider implementations
 
@@ -131,6 +148,8 @@ The adapter reports the failure scope. It does not decide retry, circuit, fallba
 
 Provider-family circuit classification is intentionally stricter than the broad `provider` failure scope. Authentication, billing, permission, quota/rate-limit, and connection failures may be provider-scoped for the active task without being evidence that the provider service itself is unhealthy.
 
+A retry timing hint does not override this taxonomy. For example, a rate-limit response may include `retry-after` while remaining a non-transient provider-scoped failure under the current guarded policy.
+
 ## Single-attempt adapter rule
 
 `execute_provider_once` and each provider adapter perform one provider invocation.
@@ -141,11 +160,12 @@ Retry, circuit breaking, and fallback are implemented above this boundary:
 - provider circuit state may block a known-unhealthy provider before a new canonical dispatch
 - model or provider fallback returns to TEO and creates a new dispatch before another provider execution
 
-This separation keeps provider attempts, routing changes, health state, independent verification, and failure transitions observable.
+This separation keeps provider attempts, routing changes, health state, independent verification, retry timing, and failure transitions observable.
 
 The active runtime specifications are:
 
 - `docs/specification/bounded-transient-retry.md`
+- `docs/specification/provider-directed-retry-timing.md`
 - `docs/specification/provider-circuit-breaker.md`
 - `docs/specification/guarded-canary-fallback.md`
 
@@ -162,8 +182,10 @@ The reference implementation fails closed when:
 - a provider-native payload is returned instead of the normalized response type
 - success has no output reference
 - success includes failure details
+- success includes retry timing
 - failure has no normalized failure details
 - failure publishes an accepted output reference
+- normalized retry timing is negative or non-finite
 - a failure scope falls outside the declared taxonomy
 - unknown top-level contract fields are supplied through the reference parsers
 - credential-bearing field names appear in serialized execution input
@@ -178,6 +200,7 @@ The reference conformance suites include:
 - `tests/test_provider_adapter_contract.py`
 - `tests/test_anthropic_live_canary.py`
 - `tests/test_multi_provider_live_canary.py`
+- `tests/test_provider_retry_timing.py`
 - `tests/test_guarded_canary_fallback.py`
 - `tests/test_bounded_transient_retry.py`
 - `tests/test_provider_circuit_breaker.py`
@@ -188,6 +211,7 @@ The guarded runtime now supports:
 
 - three live provider canaries
 - selected reasoning-effort propagation
+- normalized provider-directed retry timing
 - at most two attempts for transient failure within one dispatch
 - persistent provider-family circuit state with closed/open/half-open recovery
 - one model/provider fallback redispatch with a fresh independent verifier
@@ -197,7 +221,7 @@ It does not yet implement:
 - connection-scoped circuits
 - distributed circuit-state coordination
 - adaptive or provider-specific retry budgets
-- Retry-After header interpretation
+- HTTP-date Retry-After parsing
 - streaming
 - cost, latency, reliability, or quality telemetry persistence
 - verifier execution
