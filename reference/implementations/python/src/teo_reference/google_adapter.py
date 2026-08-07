@@ -11,6 +11,7 @@ from .provider_adapter import (
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    ProviderUsage,
     retry_after_seconds_from_headers,
     validate_provider_response,
 )
@@ -140,6 +141,37 @@ def _failure_scope(status_code: int, code: str) -> str:
     return "provider"
 
 
+def _non_negative_int(value: Any) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    return None
+
+
+def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
+    raw = payload.get("usage")
+    if not isinstance(raw, dict):
+        return None
+    input_tokens = _non_negative_int(raw.get("total_input_tokens"))
+    output_tokens = _non_negative_int(raw.get("total_output_tokens"))
+    cached = _non_negative_int(raw.get("total_cached_tokens"))
+    reasoning = _non_negative_int(raw.get("total_thought_tokens"))
+    tool_tokens = _non_negative_int(raw.get("total_tool_use_tokens"))
+    total_tokens = _non_negative_int(raw.get("total_tokens"))
+    if all(
+        item is None
+        for item in (input_tokens, output_tokens, cached, reasoning, tool_tokens, total_tokens)
+    ):
+        return None
+    return ProviderUsage(
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        cached_input_tokens=cached,
+        reasoning_output_tokens=reasoning,
+        tool_tokens=tool_tokens,
+        total_tokens=total_tokens,
+    )
+
+
 class GeminiInteractionsAdapter:
     """Single-attempt Gemini Interactions adapter for the guarded TEO canary."""
 
@@ -227,6 +259,7 @@ class GeminiInteractionsAdapter:
             connection_response.headers.get("x-request-id")
             or connection_response.headers.get("request-id")
         )
+        usage = _extract_usage(response_payload) if response_payload else None
 
         if 200 <= status_code < 300:
             if response_payload is None:
@@ -258,6 +291,7 @@ class GeminiInteractionsAdapter:
                         code=f"interaction_{interaction_status}",
                         message=f"Gemini interaction ended with status {interaction_status}",
                     ),
+                    usage=usage,
                 )
             if interaction_status in {"incomplete", "budget_exceeded", "requires_action"}:
                 return ProviderExecutionResponse(
@@ -270,6 +304,7 @@ class GeminiInteractionsAdapter:
                         code=f"interaction_{interaction_status}",
                         message=f"Gemini interaction could not complete as a bounded text canary: {interaction_status}",
                     ),
+                    usage=usage,
                 )
             text = _extract_text(response_payload)
             if not text:
@@ -283,6 +318,7 @@ class GeminiInteractionsAdapter:
                         code="no_text_output",
                         message="Gemini returned no text content for the canary task",
                     ),
+                    usage=usage,
                 )
             self._artifact_dir.mkdir(parents=True, exist_ok=True)
             artifact_path = self._artifact_dir / f"{_safe_artifact_name(request.dispatch_id)}.txt"
@@ -304,6 +340,7 @@ class GeminiInteractionsAdapter:
                 model=request.model,
                 output_ref=artifact_path.resolve().as_uri(),
                 evidence=tuple(evidence),
+                usage=usage,
             )
 
         code, message = _error_details(response_payload)
@@ -319,6 +356,7 @@ class GeminiInteractionsAdapter:
                 message=message,
             ),
             retry_after_seconds=_retry_after_seconds(connection_response.headers, response_payload),
+            usage=usage,
         )
 
 
