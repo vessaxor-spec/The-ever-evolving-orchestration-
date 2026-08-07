@@ -50,7 +50,7 @@ TEO provides a structured way to:
 - record the dispatch, evidence, outcome, and escalation path
 - improve routing through conformance tests and observed results
 
-TEO combines human-readable architecture with machine-readable routing policies, specialist bindings, worker registries, model metadata, conformance fixtures, and a minimal runnable Python router.
+TEO combines human-readable architecture with machine-readable routing policies, specialist bindings, worker registries, model metadata, conformance fixtures, and a runnable Python control plane.
 
 It is intended for engineers, AI agents, researchers, and organizations building multi-model or multi-agent systems that must remain understandable as implementations change.
 
@@ -60,7 +60,7 @@ The repository now contains:
 
 - ten active organizational teams: Mission Control, Planning, Engineering, Platform and Reliability, Systems Engineering, Physical Systems, Research, Assurance, Review, and Verification
 - a public roster of 78 preserved specialist role cards
-- machine-readable team, worker, specialist, capability, model, fallback, and verification policies
+- machine-readable team, worker, specialist, capability, model, fallback, verification, retry, and provider-health policies
 - dedicated Mission Control workers for orchestration, operations, project delivery, and incident response
 - dedicated Platform and Reliability workers for distributed systems, database reliability, networks, platforms, performance, FinOps, SRE, MLOps, DevOps, and DevSecOps
 - dedicated Systems Engineering responsibility for requirements, interfaces, baselines, integration, and lifecycle coherence
@@ -70,14 +70,21 @@ The repository now contains:
 - dedicated Review Team workers for code review and compliance review
 - deterministic task classification for established routes and explicit task types for principal-engineering routes
 - specialist-driven risk elevation and qualified human approval for critical effective risk
+- effort-aware specialist model refinement across all 78 active specialists
 - provider-aware routine fallbacks and independent provider-diverse verification
 - conditional escalation separated from ordinary availability fallback
+- a connection-neutral provider boundary that keeps API keys, OAuth, delegated identity, service accounts, connector sessions, and other access mechanisms outside routing semantics
+- guarded live provider adapters for Anthropic Claude Haiku 4.5, OpenAI GPT-5.6 Luna, and Google Gemini 3.6 Flash
+- bounded same-dispatch retry for transient failures
+- guarded model/provider fallback through a new canonical redispatch and fresh independent verifier
+- persistent provider-family circuit state with Closed, Open, and Half-Open recovery
 - exact configuration-warning baselines
 - worker and routing conformance datasets, including 27 principal-engineering cases
-- a runnable Python reference router with validation, planning, finalization, and audit output
+- a six-card regulated evidence/freshness pilot with CI validation and mutation testing
+- a runnable Python reference router with validation, planning, finalization, runtime execution controls, and audit output
 - CI that compiles the implementation, runs the tests, validates regulated evidence, parses schemas, validates linked configuration, and executes the end-to-end example
 
-The current control plane is intentionally inspectable. It does not call provider APIs yet. Provider adapters, credentials, retry execution, streaming, circuit breakers, and cost telemetry are later runtime layers built on top of the validated routing contract.
+The control plane remains intentionally inspectable. Guarded live execution is currently limited to explicit `high_volume_simple` work at low or medium risk. Provider adapters are single-attempt and stateless; retry, fallback, provider-health state, verification, and approval remain separate control layers. Streaming, provider-directed retry timing, distributed circuit-state coordination, persistent cost/latency/quality telemetry, live verifier execution, and qualified-human approval integration remain later runtime work.
 
 ## Core architecture
 
@@ -334,36 +341,37 @@ The current policy therefore uses the following rules:
 
 1. **Prefer a routine fallback from another provider family.**
 2. **Block only the failed implementation for a model-specific failure.**
-3. **Block the whole provider family for provider-scoped failures.**
+3. **Block the whole provider family for provider-scoped task recovery.**
 4. **Allow same-provider recovery only when the failure is demonstrably model-specific or no capable cross-provider candidate exists.**
 5. **Do not use local models as automatic fallbacks.** They may remain registered for future explicit, private, or offline use.
 6. **Do not use high-cost escalation capacity as an ordinary availability fallback.**
 7. **Re-dispatch fallback execution with a newly selected independent verifier.**
-8. **Use bounded retries, backoff, jitter, retry budgets, and circuit breaking in future live adapters.**
+8. **Retry only bounded transient failures under the same dispatch.** Provider adapters remain single-attempt.
+9. **Persist provider-family health separately from task-level failure.** Authentication, billing, permission, quota/rate-limit, and local connection failures do not by themselves open a global provider circuit.
+10. **Route around open provider circuits through canonical blocked-provider constraints.** The circuit layer does not directly choose the replacement model.
 
-The complete methodology is documented in [`docs/methodology/provider-aware-fallbacks.md`](docs/methodology/provider-aware-fallbacks.md).
+The complete fallback methodology is documented in [`docs/methodology/provider-aware-fallbacks.md`](docs/methodology/provider-aware-fallbacks.md). Runtime recovery contracts are documented under [`docs/specification/`](docs/specification/).
 
-Provider-aware behavior is enforced by [`tests/test_provider_fallback_policy.py`](tests/test_provider_fallback_policy.py).
+Provider-aware behavior is enforced by the routing and runtime conformance suites under [`tests/`](tests/).
 
 ## Current implementation bindings
 
-TEO defines responsibilities independently from providers. The table below records the current bindings used by the reference policy; it is not a permanent ranking of models.
+TEO defines responsibilities independently from providers. The table below summarizes current implementation directions; specialist-aware policy may refine the model and reasoning effort after team, worker, and specialist authority has already been resolved.
 
 | Capability direction | Current primary use | Cross-provider support |
 |---|---|---|
-| Engineering execution | Codex Terra | Gemini Pro and Claude review paths |
-| Engineering reasoning | Codex Sol | Gemini Pro and Claude Sonnet |
-| General planning and semantic review | Claude Sonnet | Gemini Pro and Codex Sol |
-| Broad and market research | Gemini Pro | Claude Sonnet and Codex Sol |
-| Qualitative user research | Claude Sonnet | Gemini Pro with Codex Sol verification |
-| Quantitative analytics | Codex Sol | Gemini Pro with Claude Sonnet verification |
-| Compliance and AI governance | Claude Sonnet | Codex Sol fallback with Gemini Pro verification and qualified human approval |
-| Multimodal and rapid collection | Gemini Flash | Claude Sonnet and technical follow-up when needed |
-| High-volume simple processing | Claude Haiku or Gemini Flash | Luna-class processing where eligible |
-| Critical security reasoning | Claude Opus | Codex engineering analysis and Gemini research support |
-| Executable verification | Codex Terra or Codex Sol | independent semantic, research, or human verification |
+| Engineering execution | GPT-5.6 Terra | Gemini 3.6 Flash fallback with Claude Sonnet 5 verification where mapped |
+| Difficult engineering reasoning | GPT-5.6 Sol | Claude Sonnet 5 fallback with Gemini 3.1 Pro verification |
+| High-consequence specialist reasoning | Claude Opus 5 | GPT-5.6 Sol fallback with Gemini 3.1 Pro verification |
+| General planning and semantic work | Claude Sonnet 5 | GPT-5.6 Sol fallback with Gemini 3.1 Pro verification |
+| Broad research and grounded synthesis | Gemini 3.1 Pro Preview | Claude Sonnet 5 fallback with GPT-5.6 Sol verification |
+| Fast bounded and multimodal execution | Gemini 3.6 Flash | GPT-5.6 Terra fallback with Claude Sonnet 5 verification |
+| Economical high-volume work | GPT-5.6 Luna or Claude Haiku 4.5 where routed | cross-provider Flash/Haiku/Luna paths under explicit policy |
+| Executable verification | GPT-5.6 Terra or GPT-5.6 Sol | independent semantic, research, or qualified human verification |
 
-Opus is reserved for the intentional `security_review` primary and evidence-based conditional escalation. It is not part of routine worker or global fallback pools.
+Claude Opus 5 is deliberately used as a primary for selected high-consequence specialists whose work is dominated by complex reasoning, safety, regulation, formal reasoning, systems requirements, difficult physical systems, or critical decision framing. It is not a generic routine fallback.
+
+Reasoning effort is part of the executable dispatch contract. Current provider controls are mapped only when the selected model supports them; unsupported effort values fail closed rather than being silently changed.
 
 The complete machine-readable policies are available in:
 
@@ -375,6 +383,9 @@ The complete machine-readable policies are available in:
 - [`policy/routing/principal-engineering-team-routing.yaml`](policy/routing/principal-engineering-team-routing.yaml)
 - [`policy/routing/principal-engineering-routing.yaml`](policy/routing/principal-engineering-routing.yaml)
 - [`policy/routing/principal-engineering-activation.yaml`](policy/routing/principal-engineering-activation.yaml)
+- [`policy/routing/specialist-model-routing.yaml`](policy/routing/specialist-model-routing.yaml)
+- [`policy/runtime/canary-retry.yaml`](policy/runtime/canary-retry.yaml)
+- [`policy/runtime/provider-circuit-breaker.yaml`](policy/runtime/provider-circuit-breaker.yaml)
 - [`models.yaml`](models.yaml)
 
 ## Public specialist roster
@@ -416,9 +427,18 @@ Specialists do not replace core teams, bypass Mission Control, assign themselves
 
 ## Reference implementation
 
-The Python reference router is a minimal runnable control plane. It reads the existing YAML policies and registries, produces a structured dispatch, assigns an independent verifier, and records a final evidence-bearing outcome.
+The Python reference implementation is a runnable control plane. It reads TEO policy and registries, produces structured dispatches, assigns independent verifiers, records final evidence-bearing outcomes, and now includes a guarded live execution path.
 
-It currently supports four commands and workflows:
+The guarded live runtime currently provides:
+
+- connection-neutral provider execution across Anthropic, OpenAI, and Google canaries
+- selected reasoning-effort propagation into supported provider controls
+- one bounded transient retry under the same dispatch
+- one model/provider fallback redispatch with a fresh independent verifier
+- persistent provider-family circuit state across separate executions
+- Closed, Open, and Half-Open provider recovery
+
+Provider execution is currently restricted to explicit `high_volume_simple` tasks at low or medium risk. A successful provider call is still not a completed TEO outcome; independent verification and any required human approval remain separate gates.
 
 ### Install
 
@@ -444,7 +464,7 @@ teo --repo-root ../../.. plan \
   --audit-log /tmp/teo-audit.jsonl
 ```
 
-### Finalize an externally executed result
+### Finalize an executed result
 
 ```bash
 teo --repo-root ../../.. finalize \
@@ -481,30 +501,32 @@ More detail is available in [`reference/implementations/python/README.md`](refer
 
 TEO treats silent routing drift as a defect.
 
-The repository contains fixtures for:
+The repository contains fixtures and executable tests for:
 
 - general routing behavior
-- Mission Control worker bindings
-- Mission Control route behavior
-- broad research worker boundaries
-- user-research worker boundaries
-- market-research worker boundaries
-- analytics worker boundaries
-- compliance worker boundaries and critical-risk human approval
+- Mission Control worker bindings and route behavior
+- research, user-research, market-research, analytics, compliance, and review boundaries
 - 27 principal-engineering team, worker, specialist, risk, fallback, verifier, and human-approval cases
+- all 78 specialist model-routing assignments and reasoning-effort behavior
+- cross-provider routine fallback and independent verifier diversity
 - exact configuration-warning baselines
-- provider-aware fallback behavior
+- provider adapter contract and three live provider canaries
+- bounded transient retry
+- guarded fallback redispatch with a fresh verifier
+- persistent provider-family circuit state and half-open recovery
+- regulated evidence/freshness validation and mutation resistance
 - refusal of ambiguous implicit principal-specialist routing
 
-Intentional routing changes must update the relevant fixture and explain why the new behavior is correct.
+Intentional routing or runtime-control changes must update the relevant fixture and explain why the new behavior is correct.
 
 The CI workflow in [`.github/workflows/reference-ci.yml`](.github/workflows/reference-ci.yml) performs:
 
 1. Python source compilation
 2. the complete automated test suite
-3. JSON-schema parsing
-4. linked TEO configuration validation
-5. the end-to-end reference example
+3. regulated specialist evidence validation
+4. JSON-schema parsing
+5. linked TEO configuration validation
+6. the end-to-end reference example
 
 ## Registry status
 
@@ -526,7 +548,7 @@ The initial registry was reviewed on **2026-08-05**. Provider documentation esta
 - Benchmark evidence: [`registry/benchmarks/`](registry/benchmarks/)
 - Registry validation: [`docs/examples/registry-validation-2026-08-05.md`](docs/examples/registry-validation-2026-08-05.md)
 
-A controlled common harness has not yet produced live cross-model quality, cost, and latency results. Those measurements belong to future provider-adapter and evidence cycles.
+A controlled common harness has not yet produced live cross-model quality, cost, and latency results. Those measurements belong to future operational evidence cycles.
 
 ## Example workflow
 
@@ -575,10 +597,11 @@ The implementations can change. The responsibility chain remains understandable.
 2. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).
 3. Review team dispatch in [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml).
 4. Review implementation and fallback policy under [`policy/routing/`](policy/routing/).
-5. Review stable workers under [`community/workers/`](community/workers/).
-6. Review the public specialist roster in [`community/specialists/`](community/specialists/).
-7. Review model aliases and provider metadata in [`models.yaml`](models.yaml) and [`registry/`](registry/).
-8. Run the reference router validation and tests.
+5. Review runtime recovery policy under [`policy/runtime/`](policy/runtime/).
+6. Review stable workers under [`community/workers/`](community/workers/).
+7. Review the public specialist roster in [`community/specialists/`](community/specialists/).
+8. Review model aliases and provider metadata in [`models.yaml`](models.yaml) and [`registry/`](registry/).
+9. Run the reference router validation and tests.
 
 ### For AI agents
 
@@ -592,9 +615,10 @@ Read in this order:
 4. [`community/workers/`](community/workers/)
 5. [`community/specialists/specialists.yaml`](community/specialists/specialists.yaml)
 6. [`policy/routing/`](policy/routing/)
-7. [`models.yaml`](models.yaml)
-8. [`registry/`](registry/)
-9. [`reference/datasets/`](reference/datasets/)
+7. [`policy/runtime/`](policy/runtime/)
+8. [`models.yaml`](models.yaml)
+9. [`registry/`](registry/)
+10. [`reference/datasets/`](reference/datasets/)
 
 Then resolve:
 
@@ -606,6 +630,7 @@ Task
   -> Optional Specialist
   -> Capability
   -> Primary implementation
+  -> Reasoning effort
   -> Routine fallback
   -> Conditional escalation
   -> Independent verification
@@ -637,6 +662,9 @@ For consequential work, do not allow one implementation to become the sole plann
 │   ├── examples/
 │   └── history/
 │
+├── research/
+│   └── runtime/
+│
 ├── registry/
 │   ├── providers/
 │   ├── models/
@@ -645,6 +673,7 @@ For consequential work, do not allow one implementation to become the sole plann
 │
 ├── policy/
 │   ├── routing/
+│   ├── runtime/
 │   ├── escalation/
 │   ├── verification/
 │   └── governance/
@@ -687,6 +716,8 @@ Normative guidance belongs under `docs/specification/` and `policy/`.
 
 Provider, model, capability, and benchmark information belongs under `registry/`.
 
+Runtime research records belong under `research/runtime/`.
+
 Stable workers and specialist bindings belong under `community/workers/` and `community/specialists/`.
 
 Reference schemas, examples, datasets, and implementations belong under `reference/`.
@@ -709,7 +740,7 @@ All examples, policies, registries, specialists, and discussions should be safe 
 
 ## Roadmap status
 
-### Phase 1: Repository credibility — complete
+### Phase 1: Repository credibility - complete
 
 - flagship README and public project identity
 - visible architecture and repository structure
@@ -722,44 +753,48 @@ All examples, policies, registries, specialists, and discussions should be safe 
 - four principal-engineering extensions: Platform and Reliability, Systems Engineering, Physical Systems, and Assurance
 - standardized team inputs, outputs, escalation, independence, and success criteria
 
-### Phase 3: Routing validation — complete
+### Phase 3: Routing validation - complete
 
 - representative task classes
 - recorded routing disagreements and verification outcomes
 - deterministic classification and explicit ambiguity handling
 
-### Phase 4: Registry population — complete
+### Phase 4: Registry population - complete
 
 - provider and model records
 - stable capability definitions
 - governance and verification controls
 - benchmark evidence structure
 
-### Phase 5: Reference control plane — complete
+### Phase 5: Reference control plane - complete
 
 - linked YAML configuration loading
 - task and risk classification
 - team, worker, specialist, implementation, fallback, and verifier resolution
+- effort-aware specialist-model routing
 - structured dispatch and final outcomes
 - audit logging
 - schemas, conformance datasets, tests, and CI
 
-### Current expansion
+### Runtime execution: active
 
-The principal-engineering expansion is active.
+The principal-engineering architecture expansion is closed. Current work is focused on operational evidence and runtime execution rather than immediate roster growth.
 
-Completed additions include:
+Completed runtime additions include:
 
-- 10 accountable teams
-- 78 preserved specialist role cards
-- 22 newly added principal-grade specialists
-- 27 explicit principal-engineering routes
-- corrected DevOps, DevSecOps, Embedded, Civil, and Rust allocations
-- provider-diverse routine fallback and independent verification
-- specialist-driven risk elevation and qualified human approval for critical work
-- exact conformance and warning-baseline controls
+- provider-neutral execution contract
+- connection-neutral access boundary
+- guarded Anthropic, OpenAI, and Google live canaries
+- executable reasoning-effort propagation
+- all-78-specialist effort-aware model routing
+- bounded transient retry under the same dispatch
+- guarded model/provider fallback through canonical redispatch
+- fresh independent verifier assignment after fallback
+- persistent provider-family circuit state
+- Closed, Open, and Half-Open recovery behavior
+- provider-health separation from authentication, billing, permission, quota/rate-limit, and local connection failures
 
-The next horizon is operational evidence rather than immediate roster growth: provider adapters, live retry execution, circuit breakers, telemetry, cost and latency measurement, qualified-human approval integration, route outcome evaluation, and continued observation of the six-card regulated evidence pilot.
+The next operational horizon includes provider-directed retry timing, persistent cost/latency/reliability/quality telemetry, distributed circuit-state coordination, live verifier execution, qualified-human approval integration, route outcome evaluation, and continued observation of the six-card regulated evidence pilot.
 
 The directional scope is tracked in [`ROADMAP.md`](ROADMAP.md).
 
