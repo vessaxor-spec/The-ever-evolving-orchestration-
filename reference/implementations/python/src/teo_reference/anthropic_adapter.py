@@ -10,6 +10,7 @@ from .provider_adapter import (
     ProviderExecutionRequest,
     ProviderExecutionResponse,
     ProviderFailure,
+    ProviderUsage,
     retry_after_seconds_from_headers,
     validate_provider_response,
 )
@@ -92,6 +93,44 @@ def _provider_model_matches(requested_model: str, provider_model: str | None) ->
         return True
     haiku_aliases = {"claude-haiku-4-5", "claude-haiku-4-5-20251001"}
     return requested_model in haiku_aliases and provider_model in haiku_aliases
+
+
+def _non_negative_int(value: Any) -> int | None:
+    if isinstance(value, int) and not isinstance(value, bool) and value >= 0:
+        return value
+    return None
+
+
+def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
+    raw = payload.get("usage")
+    if not isinstance(raw, dict):
+        return None
+    uncached = _non_negative_int(raw.get("input_tokens"))
+    cache_create = _non_negative_int(raw.get("cache_creation_input_tokens"))
+    cache_read = _non_negative_int(raw.get("cache_read_input_tokens"))
+    output = _non_negative_int(raw.get("output_tokens"))
+    output_details = raw.get("output_tokens_details")
+    reasoning = (
+        _non_negative_int(output_details.get("thinking_tokens"))
+        if isinstance(output_details, dict)
+        else None
+    )
+    input_components = [item for item in (uncached, cache_create, cache_read) if item is not None]
+    total_input = sum(input_components) if input_components else None
+    total = total_input + output if total_input is not None and output is not None else None
+    if all(
+        item is None
+        for item in (total_input, output, cache_read, cache_create, reasoning, total)
+    ):
+        return None
+    return ProviderUsage(
+        input_tokens=total_input,
+        output_tokens=output,
+        cached_input_tokens=cache_read,
+        cache_creation_input_tokens=cache_create,
+        reasoning_output_tokens=reasoning,
+        total_tokens=total,
+    )
 
 
 class AnthropicMessagesAdapter:
@@ -183,6 +222,7 @@ class AnthropicMessagesAdapter:
         request_id = response_headers.get("request-id") or response_headers.get("request_id")
         if not request_id and payload:
             request_id = payload.get("request_id") if isinstance(payload.get("request_id"), str) else None
+        usage = _extract_usage(payload) if payload else None
 
         if 200 <= status_code < 300:
             if payload is None:
@@ -214,6 +254,7 @@ class AnthropicMessagesAdapter:
                         code="no_text_output",
                         message="Anthropic returned no text content for the canary task",
                     ),
+                    usage=usage,
                 )
             self._artifact_dir.mkdir(parents=True, exist_ok=True)
             artifact_path = self._artifact_dir / f"{_safe_artifact_name(request.dispatch_id)}.txt"
@@ -230,6 +271,7 @@ class AnthropicMessagesAdapter:
                 model=request.model,
                 output_ref=artifact_path.resolve().as_uri(),
                 evidence=tuple(evidence),
+                usage=usage,
             )
 
         error_type, message = _error_details(payload)
@@ -245,6 +287,7 @@ class AnthropicMessagesAdapter:
                 message=message,
             ),
             retry_after_seconds=retry_after_seconds_from_headers(response_headers),
+            usage=usage,
         )
 
 
