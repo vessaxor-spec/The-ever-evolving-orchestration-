@@ -10,7 +10,7 @@ The guarded live canary supports three provider families for `high_volume_simple
 - OpenAI GPT-5.6 Luna
 - Google Gemini 3.6 Flash
 
-Each adapter performs one provider attempt only. Adapters do not own retry, fallback, circuit state, verification, escalation, or human approval.
+Each adapter performs one provider attempt only. Adapters do not own retry, fallback, circuit state, telemetry persistence, verification, escalation, or human approval.
 
 The runtime coordinator may retry a `transient` failure once under the same dispatch. The retry preserves provider, model, reasoning effort, verifier, specialist, worker, and risk authority. The current policy uses bounded backoff with jitter and permits at most two provider attempts per dispatch.
 
@@ -22,7 +22,9 @@ Provider-family circuit state persists across separate canary executions. Repeat
 
 After cooldown an open circuit becomes half-open. The reference runtime allows one recovery probe at a time and requires two successful probes before restoring normal routing. Repeated trips progressively increase cooldown within a bounded policy limit.
 
-Connection method is deliberately separate from routing and provider-health classification. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
+Every actual provider attempt is now recorded as persistent content-free runtime telemetry. The default JSONL record captures dispatch/provider/model/effort identity, primary or fallback role, attempt number, latency, normalized failure state, retry timing, assigned verifier, and provider-reported token usage. It does not persist prompts, task text, model output, provider-native payloads, credentials, authorization headers, or connection mechanism.
+
+Connection method is deliberately separate from routing, telemetry, and provider-health classification. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
 
 ## Install
 
@@ -52,10 +54,11 @@ Provider execution is split into independent concerns:
 
 1. TEO routing authorizes a provider family, model, and reasoning effort through `ProviderExecutionRequest`.
 2. Runtime supplies a provider-specific `ProviderConnection` without exposing credential material to the dispatch or audit record.
-3. Provider adapters may normalize provider-native retry timing without retrying themselves.
+3. Provider adapters may normalize provider-native retry timing and usage without retrying or persisting telemetry themselves.
 4. Provider circuit state may block a known-unhealthy provider before a new canonical dispatch.
 5. The retry controller may repeat only a transient failure under the same dispatch and remains bound by the attempt budget.
-6. The fallback coordinator may redispatch only after eligible model or provider failure.
+6. The telemetry layer records each completed provider attempt before later retry or fallback action.
+7. The fallback coordinator may redispatch only after eligible model or provider failure.
 
 The general contracts are documented in:
 
@@ -65,11 +68,13 @@ The general contracts are documented in:
 - `docs/specification/bounded-transient-retry.md`
 - `docs/specification/guarded-canary-fallback.md`
 - `docs/specification/provider-circuit-breaker.md`
+- `docs/specification/runtime-telemetry.md`
 
 The runtime research records include:
 
 - `research/runtime/2026-08-07-provider-circuit-breaker.md`
 - `research/runtime/2026-08-07-provider-directed-retry-timing.md`
+- `research/runtime/2026-08-07-persistent-runtime-telemetry.md`
 
 Current guarded implementations are:
 
@@ -91,17 +96,26 @@ Runtime coordination is exposed through:
 - `ProviderCircuitBreaker`
 - `InMemoryCircuitStateStore`
 - `JsonFileCircuitStateStore`
+- `RuntimeTelemetryEvent`
+- `InMemoryRuntimeTelemetrySink`
+- `JsonlRuntimeTelemetrySink`
 - `execute_guarded_canary`
 
 OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to Interactions API `generation_config.thinking_level`. Claude Haiku 4.5 does not support Anthropic's newer `output_config.effort` parameter, so the adapter does not invent one.
 
 Anthropic's documented numeric `retry-after`, generic numeric `Retry-After` headers when present, and standard Google `RetryInfo` when present are normalized to seconds. Raw provider headers and provider-specific retry structures do not cross the adapter boundary.
 
+Provider-reported usage is normalized into input, output, cached input, cache creation, reasoning/thought, tool-use, and total token fields where available. TEO does not calculate monetary cost in telemetry v1 because pricing is a separate time-sensitive evidence source. It also does not assign quality scores without independent verification evidence.
+
+The default guarded runtime writes attempt telemetry to:
+
+- `.teo/runtime/artifacts/runtime-telemetry.jsonl`
+
+The JSONL telemetry and JSON circuit-state stores are single-process reference implementations. Multi-process or distributed runtimes require shared persistence with appropriate concurrency, access control, retention, and export behavior.
+
 All canaries refuse high or critical risk before provider execution.
 
 A successful provider execution is not a completed TEO outcome. Independent verification, and qualified human approval when required, remain separate gates.
-
-The JSON circuit-state store is a single-process reference implementation. Multi-process or distributed runtimes require a shared transactional health-state store before this mechanism can be treated as production-distributed coordination.
 
 ## Finalize an executed result
 
