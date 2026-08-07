@@ -9,11 +9,13 @@ from .provider_adapter import ProviderExecutionResponse
 from .provider_connection import ProviderConnection
 from .runtime_canary import CanaryRuntimeOutcome
 from .schemas import DispatchRecord, VerificationResult
+from .specialist_routing import SpecialistRoutingEngine
 from .verification_adapter import (
     LiveVerificationError,
     LiveVerificationRequest,
     read_execution_output,
 )
+from .verification_policy import LiveVerificationPolicy
 
 
 def active_execution_from_outcome(
@@ -32,16 +34,20 @@ def active_execution_from_outcome(
 
 
 def execute_live_verification(
+    engine: SpecialistRoutingEngine,
     dispatch: DispatchRecord,
     execution: ProviderExecutionResponse,
     connections: Mapping[str, ProviderConnection],
+    *,
+    verification_policy: LiveVerificationPolicy | None = None,
 ) -> VerificationResult:
     """Execute the verifier already assigned by the active TEO dispatch exactly once."""
-    if dispatch.task_type != "high_volume_simple":
-        raise LiveVerificationError(
-            "Guarded live verification is authorized only for high_volume_simple"
-        )
-    if dispatch.risk_level not in {"low", "medium"}:
+    policy = verification_policy or LiveVerificationPolicy.load(engine.config.root)
+    policy.validate()
+
+    if dispatch.task_type not in policy.task_types:
+        raise LiveVerificationError("Dispatch is outside the active live verification task scope")
+    if dispatch.risk_level not in policy.risk_levels:
         raise LiveVerificationError("Guarded live verification refuses high and critical risk")
     if execution.status != "succeeded" or not execution.output_ref:
         raise LiveVerificationError("Live verification requires a successful execution artifact")
@@ -51,10 +57,12 @@ def execute_live_verification(
         raise LiveVerificationError("Execution provider does not match the active dispatch")
     if execution.model != dispatch.selected_implementation.model:
         raise LiveVerificationError("Execution model does not match the active dispatch")
+    if dispatch.verification.human_approval_required and policy.human_approval_satisfied_by_model_verifier:
+        raise LiveVerificationError("Model verification cannot satisfy qualified-human approval")
 
     output_text = read_execution_output(execution.output_ref)
     request = LiveVerificationRequest.from_execution(dispatch, output_text)
-    if request.verifier_provider_family == execution.provider_family:
+    if policy.require_provider_diversity and request.verifier_provider_family == execution.provider_family:
         raise LiveVerificationError(
             "Guarded live verification requires provider-diverse execution and verification"
         )
@@ -81,9 +89,18 @@ def execute_live_verification(
 
 
 def verify_guarded_canary_outcome(
+    engine: SpecialistRoutingEngine,
     outcome: CanaryRuntimeOutcome,
     connections: Mapping[str, ProviderConnection],
+    *,
+    verification_policy: LiveVerificationPolicy | None = None,
 ) -> VerificationResult:
     """Run the active dispatch's assigned independent verifier after guarded execution."""
     dispatch, execution = active_execution_from_outcome(outcome)
-    return execute_live_verification(dispatch, execution, connections)
+    return execute_live_verification(
+        engine,
+        dispatch,
+        execution,
+        connections,
+        verification_policy=verification_policy,
+    )
