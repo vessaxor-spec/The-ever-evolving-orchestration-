@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from random import random
+from time import sleep
 from typing import Literal, Mapping
 
 from .anthropic_adapter import execute_anthropic_canary_once
@@ -12,6 +14,13 @@ from .provider_adapter import (
     ProviderExecutionResponse,
 )
 from .provider_connection import ProviderConnection
+from .runtime_retry import (
+    RandomSource,
+    RetryExecution,
+    RetryPolicy,
+    Sleeper,
+    execute_with_transient_retry,
+)
 from .schemas import DispatchRecord, TaskConstraints, TaskRequest
 from .specialist_routing import SpecialistRoutingEngine
 
@@ -26,8 +35,12 @@ class CanaryRuntimeOutcome:
     status: CanaryRuntimeStatus
     primary_dispatch: DispatchRecord
     primary_response: ProviderExecutionResponse
+    primary_attempts: int = 1
+    primary_retry_delays_seconds: tuple[float, ...] = ()
     fallback_dispatch: DispatchRecord | None = None
     fallback_response: ProviderExecutionResponse | None = None
+    fallback_attempts: int = 0
+    fallback_retry_delays_seconds: tuple[float, ...] = ()
     fallback_trigger_scope: str | None = None
 
     @property
@@ -115,23 +128,48 @@ def _execute_dispatch(
     )
 
 
+def _execute_with_retry(
+    dispatch: DispatchRecord,
+    connections: Mapping[str, ProviderConnection],
+    artifact_root: str | Path,
+    retry_policy: RetryPolicy,
+    sleeper: Sleeper,
+    random_source: RandomSource,
+) -> RetryExecution:
+    return execute_with_transient_retry(
+        dispatch,
+        connections,
+        artifact_root,
+        _execute_dispatch,
+        retry_policy,
+        sleeper=sleeper,
+        random_source=random_source,
+    )
+
+
 def execute_guarded_canary(
     engine: SpecialistRoutingEngine,
     task: TaskRequest,
     connections: Mapping[str, ProviderConnection],
     *,
     artifact_root: str | Path = ".teo/runtime/artifacts",
+    retry_policy: RetryPolicy | None = None,
+    sleeper: Sleeper = sleep,
+    random_source: RandomSource = random,
 ) -> CanaryRuntimeOutcome:
-    """Execute one primary canary attempt and at most one policy-driven redispatch fallback.
+    """Execute one primary dispatch and at most one policy-driven redispatch fallback.
 
-    This function does not retry transient failures and does not perform verification or
-    human approval. A successful execution remains pending the verifier assigned by its
-    active dispatch.
+    Each dispatch may use the bounded transient retry policy. Retries preserve the same
+    dispatch, provider, model, reasoning effort and verifier. Fallback remains a separate
+    redispatch and is limited to model or provider failures.
     """
     if task.task_type != "high_volume_simple":
         raise ProviderAdapterContractError(
             "Guarded automatic fallback is authorized only for explicit high_volume_simple tasks"
         )
+
+    policy = retry_policy or RetryPolicy.load(engine.config.root)
+    policy.validate()
 
     primary_dispatch = engine.dispatch(task)
     if primary_dispatch.risk_level not in {"low", "medium"}:
@@ -139,12 +177,22 @@ def execute_guarded_canary(
             "Guarded automatic fallback refuses high and critical risk dispatches"
         )
 
-    primary_response = _execute_dispatch(primary_dispatch, connections, artifact_root)
+    primary_execution = _execute_with_retry(
+        primary_dispatch,
+        connections,
+        artifact_root,
+        policy,
+        sleeper,
+        random_source,
+    )
+    primary_response = primary_execution.response
     if primary_response.status == "succeeded":
         return CanaryRuntimeOutcome(
             status="primary_executed",
             primary_dispatch=primary_dispatch,
             primary_response=primary_response,
+            primary_attempts=primary_execution.attempts,
+            primary_retry_delays_seconds=primary_execution.delays_seconds,
         )
 
     failure = primary_response.failure
@@ -153,6 +201,8 @@ def execute_guarded_canary(
             status="execution_failed",
             primary_dispatch=primary_dispatch,
             primary_response=primary_response,
+            primary_attempts=primary_execution.attempts,
+            primary_retry_delays_seconds=primary_execution.delays_seconds,
         )
 
     redispatch_task = _copy_task_for_redispatch(task, primary_dispatch, failure.scope)
@@ -187,12 +237,24 @@ def execute_guarded_canary(
             "Fallback redispatch must assign a fresh verifier implementation"
         )
 
-    fallback_response = _execute_dispatch(fallback_dispatch, connections, artifact_root)
+    fallback_execution = _execute_with_retry(
+        fallback_dispatch,
+        connections,
+        artifact_root,
+        policy,
+        sleeper,
+        random_source,
+    )
+    fallback_response = fallback_execution.response
     return CanaryRuntimeOutcome(
         status=("fallback_executed" if fallback_response.status == "succeeded" else "execution_failed"),
         primary_dispatch=primary_dispatch,
         primary_response=primary_response,
+        primary_attempts=primary_execution.attempts,
+        primary_retry_delays_seconds=primary_execution.delays_seconds,
         fallback_dispatch=fallback_dispatch,
         fallback_response=fallback_response,
+        fallback_attempts=fallback_execution.attempts,
+        fallback_retry_delays_seconds=fallback_execution.delays_seconds,
         fallback_trigger_scope=failure.scope,
     )
