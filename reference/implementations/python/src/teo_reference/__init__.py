@@ -21,6 +21,14 @@ from .provider_connection import (
     ProviderConnectionResponse,
 )
 from .runtime_canary import CanaryRuntimeOutcome, execute_guarded_canary
+from .runtime_circuit_breaker import (
+    CircuitStateStore,
+    InMemoryCircuitStateStore,
+    JsonFileCircuitStateStore,
+    ProviderCircuitBreaker,
+    ProviderCircuitPolicy,
+    ProviderCircuitRecord,
+)
 from .runtime_retry import RetryExecution, RetryPolicy, execute_with_transient_retry
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 from .specialist_routing import SpecialistRoutingEngine
@@ -31,14 +39,20 @@ __all__ = [
     "AnthropicMessagesAdapter",
     "BaseOrchestrationEngine",
     "CanaryRuntimeOutcome",
+    "CircuitStateStore",
     "DispatchRecord",
     "FinalOutcome",
     "GeminiInteractionsAdapter",
     "HeaderProviderConnection",
+    "InMemoryCircuitStateStore",
+    "JsonFileCircuitStateStore",
     "OpenAIResponsesAdapter",
     "OrchestrationEngine",
     "ProviderAdapter",
     "ProviderAdapterContractError",
+    "ProviderCircuitBreaker",
+    "ProviderCircuitPolicy",
+    "ProviderCircuitRecord",
     "ProviderConnection",
     "ProviderConnectionError",
     "ProviderConnectionRequest",

@@ -14,6 +14,11 @@ from .provider_adapter import (
     ProviderExecutionResponse,
 )
 from .provider_connection import ProviderConnection
+from .runtime_circuit_breaker import (
+    JsonFileCircuitStateStore,
+    ProviderCircuitBreaker,
+    ProviderCircuitPolicy,
+)
 from .runtime_retry import (
     RandomSource,
     RetryExecution,
@@ -42,6 +47,9 @@ class CanaryRuntimeOutcome:
     fallback_attempts: int = 0
     fallback_retry_delays_seconds: tuple[float, ...] = ()
     fallback_trigger_scope: str | None = None
+    circuit_blocked_providers: tuple[str, ...] = ()
+    primary_provider_circuit_state: str = "closed"
+    fallback_provider_circuit_state: str | None = None
 
     @property
     def execution_succeeded(self) -> bool:
@@ -147,6 +155,15 @@ def _execute_with_retry(
     )
 
 
+def _circuit_block_delta(original: TaskRequest, prepared: TaskRequest) -> tuple[str, ...]:
+    original_blocks = set(original.constraints.blocked_providers)
+    return tuple(
+        provider
+        for provider in prepared.constraints.blocked_providers
+        if provider not in original_blocks
+    )
+
+
 def execute_guarded_canary(
     engine: SpecialistRoutingEngine,
     task: TaskRequest,
@@ -154,14 +171,15 @@ def execute_guarded_canary(
     *,
     artifact_root: str | Path = ".teo/runtime/artifacts",
     retry_policy: RetryPolicy | None = None,
+    circuit_breaker: ProviderCircuitBreaker | None = None,
     sleeper: Sleeper = sleep,
     random_source: RandomSource = random,
 ) -> CanaryRuntimeOutcome:
     """Execute one primary dispatch and at most one policy-driven redispatch fallback.
 
-    Each dispatch may use the bounded transient retry policy. Retries preserve the same
-    dispatch, provider, model, reasoning effort and verifier. Fallback remains a separate
-    redispatch and is limited to model or provider failures.
+    Each dispatch may use bounded transient retry. Provider-family circuit state is applied
+    before routing and observed only after the dispatch's retry sequence finishes. Adapters
+    remain stateless and never own retry, fallback, or circuit-breaker authority.
     """
     if task.task_type != "high_volume_simple":
         raise ProviderAdapterContractError(
@@ -170,12 +188,20 @@ def execute_guarded_canary(
 
     policy = retry_policy or RetryPolicy.load(engine.config.root)
     policy.validate()
+    root = Path(artifact_root)
+    circuit = circuit_breaker or ProviderCircuitBreaker(
+        ProviderCircuitPolicy.load(engine.config.root),
+        JsonFileCircuitStateStore(root.parent / "provider-circuits.json"),
+    )
 
-    primary_dispatch = engine.dispatch(task)
+    prepared_task = circuit.prepare_task(task)
+    circuit_blocks = _circuit_block_delta(task, prepared_task)
+    primary_dispatch = engine.dispatch(prepared_task)
     if primary_dispatch.risk_level not in {"low", "medium"}:
         raise ProviderAdapterContractError(
             "Guarded automatic fallback refuses high and critical risk dispatches"
         )
+    circuit.claim_dispatch(primary_dispatch)
 
     primary_execution = _execute_with_retry(
         primary_dispatch,
@@ -186,6 +212,7 @@ def execute_guarded_canary(
         random_source,
     )
     primary_response = primary_execution.response
+    primary_circuit = circuit.observe(primary_dispatch, primary_response)
     if primary_response.status == "succeeded":
         return CanaryRuntimeOutcome(
             status="primary_executed",
@@ -193,6 +220,8 @@ def execute_guarded_canary(
             primary_response=primary_response,
             primary_attempts=primary_execution.attempts,
             primary_retry_delays_seconds=primary_execution.delays_seconds,
+            circuit_blocked_providers=circuit_blocks,
+            primary_provider_circuit_state=primary_circuit.state,
         )
 
     failure = primary_response.failure
@@ -203,10 +232,13 @@ def execute_guarded_canary(
             primary_response=primary_response,
             primary_attempts=primary_execution.attempts,
             primary_retry_delays_seconds=primary_execution.delays_seconds,
+            circuit_blocked_providers=circuit_blocks,
+            primary_provider_circuit_state=primary_circuit.state,
         )
 
-    redispatch_task = _copy_task_for_redispatch(task, primary_dispatch, failure.scope)
-    fallback_dispatch = engine.dispatch(redispatch_task)
+    redispatch_task = _copy_task_for_redispatch(prepared_task, primary_dispatch, failure.scope)
+    prepared_redispatch = circuit.prepare_task(redispatch_task)
+    fallback_dispatch = engine.dispatch(prepared_redispatch)
 
     if fallback_dispatch.dispatch_id == primary_dispatch.dispatch_id:
         raise ProviderAdapterContractError("Fallback redispatch must create a new dispatch ID")
@@ -236,6 +268,7 @@ def execute_guarded_canary(
         raise ProviderAdapterContractError(
             "Fallback redispatch must assign a fresh verifier implementation"
         )
+    circuit.claim_dispatch(fallback_dispatch)
 
     fallback_execution = _execute_with_retry(
         fallback_dispatch,
@@ -246,6 +279,7 @@ def execute_guarded_canary(
         random_source,
     )
     fallback_response = fallback_execution.response
+    fallback_circuit = circuit.observe(fallback_dispatch, fallback_response)
     return CanaryRuntimeOutcome(
         status=("fallback_executed" if fallback_response.status == "succeeded" else "execution_failed"),
         primary_dispatch=primary_dispatch,
@@ -257,4 +291,7 @@ def execute_guarded_canary(
         fallback_attempts=fallback_execution.attempts,
         fallback_retry_delays_seconds=fallback_execution.delays_seconds,
         fallback_trigger_scope=failure.scope,
+        circuit_blocked_providers=circuit_blocks,
+        primary_provider_circuit_state=primary_circuit.state,
+        fallback_provider_circuit_state=fallback_circuit.state,
     )

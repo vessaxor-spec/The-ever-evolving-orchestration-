@@ -4,7 +4,7 @@
 
 This document defines the runtime-execution boundary for the TEO reference implementation.
 
-The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, retry, fallback, verification, or approval authority.
+The contract establishes how an already-authorized dispatch crosses into a provider adapter without allowing that adapter to acquire routing, retry, fallback, circuit-state, verification, or approval authority.
 
 Contract version: `1`
 
@@ -34,13 +34,14 @@ An adapter must not:
 - silently increase or decrease the selected reasoning effort
 - retry itself
 - invoke the preselected fallback
+- persist or mutate provider circuit state
 - select or perform independent verification
 - waive or satisfy human approval
 - modify the dispatch
 - return a provider-native payload as the runtime contract
 - serialize credentials, authorization headers, secrets, passwords, or access tokens into the request or normalized result
 
-Provider SDK initialization, connection establishment, credential acquisition, retry control, and fallback coordination remain runtime concerns outside the adapter.
+Provider SDK initialization, connection establishment, credential acquisition, retry control, circuit state, and fallback coordination remain runtime concerns outside the adapter.
 
 ## Request envelope
 
@@ -75,8 +76,9 @@ The request intentionally excludes:
 - verification methods
 - human-approval state
 - escalation candidates
+- circuit state
 
-Those fields remain control-plane authority and are not required to perform the authorized provider attempt.
+Those fields remain control-plane or runtime-coordination authority and are not required to perform the authorized provider attempt.
 
 The reference helper derives provider family, model, and reasoning effort directly from `dispatch.selected_implementation`. An implementation without a declared provider family fails closed.
 
@@ -125,22 +127,26 @@ Version 1 uses the bounded failure scopes established by TEO routing policy:
 | `provider` | The provider family is unavailable or unusable for the request | Guarded canary may redispatch with the provider blocked |
 | `capability` | The selected execution path cannot satisfy a required capability | Return to capability and routing resolution |
 
-The adapter reports the failure scope. It does not decide the recovery action.
+The adapter reports the failure scope. It does not decide retry, circuit, fallback, or verification action.
+
+Provider-family circuit classification is intentionally stricter than the broad `provider` failure scope. Authentication, billing, permission, quota/rate-limit, and connection failures may be provider-scoped for the active task without being evidence that the provider service itself is unhealthy.
 
 ## Single-attempt adapter rule
 
 `execute_provider_once` and each provider adapter perform one provider invocation.
 
-Retry and fallback are implemented above this boundary:
+Retry, circuit breaking, and fallback are implemented above this boundary:
 
 - bounded transient retry may invoke the same adapter again under the same dispatch
+- provider circuit state may block a known-unhealthy provider before a new canonical dispatch
 - model or provider fallback returns to TEO and creates a new dispatch before another provider execution
 
-This separation keeps provider attempts, routing changes, independent verification, and failure transitions observable.
+This separation keeps provider attempts, routing changes, health state, independent verification, and failure transitions observable.
 
 The active runtime specifications are:
 
 - `docs/specification/bounded-transient-retry.md`
+- `docs/specification/provider-circuit-breaker.md`
 - `docs/specification/guarded-canary-fallback.md`
 
 ## Contract validation
@@ -174,6 +180,7 @@ The reference conformance suites include:
 - `tests/test_multi_provider_live_canary.py`
 - `tests/test_guarded_canary_fallback.py`
 - `tests/test_bounded_transient_retry.py`
+- `tests/test_provider_circuit_breaker.py`
 
 ## Current runtime boundaries
 
@@ -182,11 +189,13 @@ The guarded runtime now supports:
 - three live provider canaries
 - selected reasoning-effort propagation
 - at most two attempts for transient failure within one dispatch
+- persistent provider-family circuit state with closed/open/half-open recovery
 - one model/provider fallback redispatch with a fresh independent verifier
 
 It does not yet implement:
 
-- circuit breakers
+- connection-scoped circuits
+- distributed circuit-state coordination
 - adaptive or provider-specific retry budgets
 - Retry-After header interpretation
 - streaming

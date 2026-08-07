@@ -10,13 +10,17 @@ The guarded live canary supports three provider families for `high_volume_simple
 - OpenAI GPT-5.6 Luna
 - Google Gemini 3.6 Flash
 
-Each adapter performs one provider attempt only. Adapters do not own retry, fallback, verification, escalation, or human approval.
+Each adapter performs one provider attempt only. Adapters do not own retry, fallback, circuit state, verification, escalation, or human approval.
 
 The runtime coordinator may retry a `transient` failure once under the same dispatch. The retry preserves provider, model, reasoning effort, verifier, specialist, worker, and risk authority. The current policy uses bounded backoff with jitter and permits at most two provider attempts per dispatch.
 
 The runtime coordinator can also perform one guarded automatic fallback after a `model` or `provider` failure. It returns the failure to TEO, applies the failed model or provider block, creates a new dispatch ID, assigns a fresh independent verifier, and then executes the newly selected provider. Request, capability, and exhausted transient failures do not directly trigger fallback, and a failed fallback never chains automatically to a third provider.
 
-Connection method is deliberately separate from routing. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
+Provider-family circuit state now persists across separate canary executions. Repeated declared service-health failures can open a provider circuit. An open provider is added to copied blocked-provider constraints before canonical routing, so TEO itself selects the alternate implementation and verifier. Authentication, billing, permission, quota/rate-limit, model-not-found, bad-request, and local connection failures never open a provider-family circuit by themselves.
+
+After cooldown an open circuit becomes half-open. The reference runtime allows one recovery probe at a time and requires two successful probes before restoring normal routing. Repeated trips progressively increase cooldown within a bounded policy limit.
+
+Connection method is deliberately separate from routing and provider-health classification. API keys, OAuth, delegated identity, service accounts, connector sessions, local credentials, and future connection mechanisms belong behind `ProviderConnection`; they do not change the selected model route.
 
 ## Install
 
@@ -46,8 +50,9 @@ Provider execution is split into independent concerns:
 
 1. TEO routing authorizes a provider family, model, and reasoning effort through `ProviderExecutionRequest`.
 2. Runtime supplies a provider-specific `ProviderConnection` without exposing credential material to the dispatch or audit record.
-3. The retry controller may repeat only a transient failure under the same dispatch.
-4. The fallback coordinator may redispatch only after eligible model or provider failure.
+3. Provider circuit state may block a known-unhealthy provider before a new canonical dispatch.
+4. The retry controller may repeat only a transient failure under the same dispatch.
+5. The fallback coordinator may redispatch only after eligible model or provider failure.
 
 The general contracts are documented in:
 
@@ -55,6 +60,11 @@ The general contracts are documented in:
 - `docs/specification/provider-connection-boundary.md`
 - `docs/specification/bounded-transient-retry.md`
 - `docs/specification/guarded-canary-fallback.md`
+- `docs/specification/provider-circuit-breaker.md`
+
+The research basis for circuit-state semantics is:
+
+- `research/runtime/2026-08-07-provider-circuit-breaker.md`
 
 Current guarded implementations are:
 
@@ -72,6 +82,10 @@ Runtime coordination is exposed through:
 
 - `RetryPolicy`
 - `execute_with_transient_retry`
+- `ProviderCircuitPolicy`
+- `ProviderCircuitBreaker`
+- `InMemoryCircuitStateStore`
+- `JsonFileCircuitStateStore`
 - `execute_guarded_canary`
 
 OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to Interactions API `generation_config.thinking_level`. Claude Haiku 4.5 does not support Anthropic's newer `output_config.effort` parameter, so the adapter does not invent one.
@@ -79,6 +93,8 @@ OpenAI maps TEO effort to Responses API `reasoning.effort`. Gemini maps it to In
 All canaries refuse high or critical risk before provider execution.
 
 A successful provider execution is not a completed TEO outcome. Independent verification, and qualified human approval when required, remain separate gates.
+
+The JSON circuit-state store is a single-process reference implementation. Multi-process or distributed runtimes require a shared transactional health-state store before this mechanism can be treated as production-distributed coordination.
 
 ## Finalize an executed result
 
