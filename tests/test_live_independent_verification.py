@@ -163,8 +163,9 @@ def test_primary_canary_uses_provider_diverse_gemini_verifier() -> None:
 
 
 def test_model_scoped_fallback_gets_fresh_anthropic_verifier() -> None:
-    primary = engine().dispatch(task())
-    fallback = engine().dispatch(task(blocked_models=["claude-haiku-4-5"]))
+    runtime = engine()
+    primary = runtime.dispatch(task())
+    fallback = runtime.dispatch(task(blocked_models=["claude-haiku-4-5"]))
     assert fallback.selected_implementation.model == "gemini-3.6-flash"
     assert fallback.verification.implementation.model == "claude-sonnet-5"
     assert fallback.verification.implementation.provider_family == "anthropic"
@@ -172,8 +173,9 @@ def test_model_scoped_fallback_gets_fresh_anthropic_verifier() -> None:
 
 
 def test_provider_scoped_fallback_gets_fresh_openai_verifier() -> None:
-    primary = engine().dispatch(task())
-    fallback = engine().dispatch(task(blocked_providers=["anthropic"]))
+    runtime = engine()
+    primary = runtime.dispatch(task())
+    fallback = runtime.dispatch(task(blocked_providers=["anthropic"]))
     assert fallback.selected_implementation.model == "gemini-3.6-flash"
     assert fallback.verification.implementation.model == "gpt-5.6-sol"
     assert fallback.verification.implementation.provider_family == "openai"
@@ -181,9 +183,11 @@ def test_provider_scoped_fallback_gets_fresh_openai_verifier() -> None:
 
 
 def test_primary_live_verifier_is_blinded_and_uses_google_structured_output(tmp_path: Path) -> None:
-    dispatch = engine().dispatch(task())
+    runtime = engine()
+    dispatch = runtime.dispatch(task())
     calls: list[dict] = []
     result = execute_live_verification(
+        runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
         {"google": connection("google", calls, google_payload(decision()))},
@@ -204,9 +208,11 @@ def test_primary_live_verifier_is_blinded_and_uses_google_structured_output(tmp_
 
 
 def test_model_fallback_uses_assigned_sonnet_verifier_and_effort(tmp_path: Path) -> None:
-    dispatch = engine().dispatch(task(blocked_models=["claude-haiku-4-5"]))
+    runtime = engine()
+    dispatch = runtime.dispatch(task(blocked_models=["claude-haiku-4-5"]))
     calls: list[dict] = []
     result = execute_live_verification(
+        runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
         {"anthropic": connection("anthropic", calls, anthropic_payload(decision()))},
@@ -224,9 +230,11 @@ def test_model_fallback_uses_assigned_sonnet_verifier_and_effort(tmp_path: Path)
 
 
 def test_provider_fallback_uses_assigned_sol_verifier_and_structured_output(tmp_path: Path) -> None:
-    dispatch = engine().dispatch(task(blocked_providers=["anthropic"]))
+    runtime = engine()
+    dispatch = runtime.dispatch(task(blocked_providers=["anthropic"]))
     calls: list[dict] = []
     result = execute_live_verification(
+        runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
         {"openai": connection("openai", calls, openai_payload(decision()))},
@@ -253,21 +261,25 @@ def test_structured_verifier_status_maps_to_existing_verification_contract(
     verdict: dict,
     expected: str,
 ) -> None:
-    dispatch = engine().dispatch(task())
+    runtime = engine()
+    dispatch = runtime.dispatch(task())
     result = execute_live_verification(
+        runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
         {"google": connection("google", [], google_payload(verdict))},
     )
     assert result.status == expected
     if expected == "needs_human":
-        assert result.notes == ["live_verifier_human_reason:insufficient_evidence"]
+        assert result.notes == "live_verifier_human_reason:insufficient_evidence"
 
 
 def test_live_verifier_missing_assigned_connection_fails_closed(tmp_path: Path) -> None:
-    dispatch = engine().dispatch(task())
+    runtime = engine()
+    dispatch = runtime.dispatch(task())
     with pytest.raises(LiveVerificationError, match="No runtime connection"):
         execute_live_verification(
+            runtime,
             dispatch,
             success_response(dispatch, write_output(tmp_path)),
             {},
@@ -275,11 +287,13 @@ def test_live_verifier_missing_assigned_connection_fails_closed(tmp_path: Path) 
 
 
 def test_malformed_verifier_json_fails_closed(tmp_path: Path) -> None:
-    dispatch = engine().dispatch(task())
+    runtime = engine()
+    dispatch = runtime.dispatch(task())
     malformed = google_payload(decision())
     malformed["steps"][0]["content"][0]["text"] = "not-json"
     with pytest.raises(LiveVerificationError, match="malformed structured JSON"):
         execute_live_verification(
+            runtime,
             dispatch,
             success_response(dispatch, write_output(tmp_path)),
             {"google": connection("google", [], malformed)},
@@ -287,7 +301,8 @@ def test_malformed_verifier_json_fails_closed(tmp_path: Path) -> None:
 
 
 def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
-    base = engine().dispatch(task())
+    runtime = engine()
+    base = runtime.dispatch(task())
     same_provider = DispatchRecord(
         task_id=base.task_id,
         dispatch_id=base.dispatch_id,
@@ -323,6 +338,7 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
     )
     with pytest.raises(LiveVerificationError, match="provider-diverse"):
         execute_live_verification(
+            runtime,
             same_provider,
             success_response(same_provider, write_output(tmp_path)),
             {"anthropic": connection("anthropic", [], anthropic_payload(decision()))},
@@ -330,7 +346,8 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
 
 
 def test_high_risk_live_verification_is_refused(tmp_path: Path) -> None:
-    base = engine().dispatch(task())
+    runtime = engine()
+    base = runtime.dispatch(task())
     high = DispatchRecord(
         task_id=base.task_id,
         dispatch_id=base.dispatch_id,
@@ -352,6 +369,7 @@ def test_high_risk_live_verification_is_refused(tmp_path: Path) -> None:
     )
     with pytest.raises(LiveVerificationError, match="refuses high and critical"):
         execute_live_verification(
+            runtime,
             high,
             success_response(high, write_output(tmp_path)),
             {},
@@ -363,6 +381,7 @@ def test_live_verification_integrates_with_existing_finalize_without_bypass(tmp_
     dispatch = runtime.dispatch(task())
     execution = success_response(dispatch, write_output(tmp_path))
     verification = execute_live_verification(
+        runtime,
         dispatch,
         execution,
         {"google": connection("google", [], google_payload(decision()))},
@@ -377,8 +396,9 @@ def test_live_verification_integrates_with_existing_finalize_without_bypass(tmp_
 
 
 def test_guarded_outcome_uses_fallback_dispatch_fresh_verifier(tmp_path: Path) -> None:
-    primary = engine().dispatch(task())
-    fallback = engine().dispatch(task(blocked_providers=["anthropic"]))
+    runtime = engine()
+    primary = runtime.dispatch(task())
+    fallback = runtime.dispatch(task(blocked_providers=["anthropic"]))
     primary_failure = ProviderExecutionResponse(
         dispatch_id=primary.dispatch_id,
         status="failed",
@@ -401,6 +421,7 @@ def test_guarded_outcome_uses_fallback_dispatch_fresh_verifier(tmp_path: Path) -
         fallback_trigger_scope="provider",
     )
     result = verify_guarded_canary_outcome(
+        runtime,
         outcome,
         {"openai": connection("openai", [], openai_payload(decision()))},
     )
