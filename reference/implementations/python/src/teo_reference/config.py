@@ -197,6 +197,52 @@ def _known_models(models: dict[str, Any]) -> set[str]:
     return known
 
 
+def _model_entry(models: dict[str, Any], model: str) -> dict[str, Any]:
+    registry = models.get("models", {})
+    if not isinstance(registry, dict):
+        return {}
+    direct = registry.get(model)
+    if isinstance(direct, dict):
+        return direct
+    for entry in registry.values():
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("concrete_model") == model or model in entry.get("candidate_implementations", []):
+            return entry
+    return {}
+
+
+def _provider_for_model(models: dict[str, Any], model: str) -> str | None:
+    provider = _model_entry(models, model).get("provider_family")
+    return str(provider) if provider else None
+
+
+def _iter_model_candidates(value: Any, path: str = "routing"):
+    if isinstance(value, dict):
+        if value.get("model"):
+            yield path, value
+        for key, nested in value.items():
+            if key == "model":
+                continue
+            yield from _iter_model_candidates(nested, f"{path}.{key}")
+    elif isinstance(value, list):
+        for index, nested in enumerate(value):
+            yield from _iter_model_candidates(nested, f"{path}[{index}]")
+
+
+_EXECUTION_KEYS = ("primary", "executor", "executable_review")
+_VERIFIER_KEYS = (
+    "verifier",
+    "executable_verifier",
+    "semantic_reviewer",
+    "technical_verifier",
+    "hypothesis_reviewer",
+    "engineering_reasoning_review",
+    "semantic_review",
+    "synthesis",
+)
+
+
 @dataclass(slots=True)
 class ConfigBundle:
     root: Path
@@ -206,6 +252,7 @@ class ConfigBundle:
     specialists: dict[str, Any]
     models: dict[str, Any]
     capabilities: dict[str, Any]
+    model_evidence: dict[str, Any]
 
     @classmethod
     def load(cls, root: str | Path) -> "ConfigBundle":
@@ -254,6 +301,7 @@ class ConfigBundle:
             ),
             models=_load_yaml(root_path / "models.yaml"),
             capabilities=_load_yaml(root_path / "registry/capabilities/capabilities.yaml"),
+            model_evidence=_load_yaml(root_path / "registry/models/models.yaml"),
         )
         errors = [issue for issue in bundle.validate() if issue.startswith("ERROR:")]
         if errors:
@@ -268,6 +316,7 @@ class ConfigBundle:
         specialists = self.specialists.get("specialists")
         models = self.models.get("models")
         capabilities = self.capabilities.get("capabilities")
+        model_evidence = self.model_evidence.get("models")
 
         for name, value in {
             "team_routes": routes,
@@ -276,6 +325,7 @@ class ConfigBundle:
             "specialists": specialists,
             "models": models,
             "capabilities": capabilities,
+            "model_evidence": model_evidence,
         }.items():
             if not isinstance(value, dict) or not value:
                 issues.append(f"ERROR: missing or empty {name}")
@@ -288,6 +338,7 @@ class ConfigBundle:
         assert isinstance(workers, dict)
         assert isinstance(specialists, dict)
         assert isinstance(models, dict)
+        assert isinstance(model_evidence, dict)
 
         known_models = _known_models(self.models)
         reachable_pairs: set[tuple[str, str]] = set()
@@ -373,6 +424,74 @@ class ConfigBundle:
             if not team:
                 issues.append(f"ERROR: worker {worker_name} requires owning_team")
 
+        for alias, model in models.items():
+            if not isinstance(model, dict):
+                issues.append(f"ERROR: model registry entry {alias} must be a mapping")
+                continue
+            concrete = model.get("concrete_model")
+            if not concrete:
+                continue
+            evidence = model_evidence.get(str(concrete))
+            if not isinstance(evidence, dict):
+                issues.append(
+                    f"ERROR: concrete model {concrete} has no canonical registry evidence entry"
+                )
+                continue
+            configured_provider = str(model.get("provider_family") or "")
+            evidence_provider = str(evidence.get("provider") or "")
+            if configured_provider != evidence_provider:
+                issues.append(
+                    f"ERROR: model {concrete} provider mismatch: models.yaml={configured_provider}, registry={evidence_provider}"
+                )
+
+        for path, candidate in _iter_model_candidates(self.routing):
+            model = str(candidate.get("model") or "")
+            if model not in known_models:
+                issues.append(f"ERROR: {path} references unregistered model {model}")
+                continue
+            reasoning = candidate.get("reasoning")
+            if reasoning is None:
+                continue
+            entry = self.model_evidence_registry.get(model)
+            levels = entry.get("reasoning_levels") if isinstance(entry, dict) else None
+            if isinstance(levels, list) and levels and str(reasoning) not in {str(level) for level in levels}:
+                issues.append(
+                    f"ERROR: {path} requests unsupported reasoning effort {reasoning} for {model}"
+                )
+
+        for route_name, route in routing.items():
+            if not isinstance(route, dict):
+                issues.append(f"ERROR: implementation route {route_name} must be a mapping")
+                continue
+            execution: dict[str, Any] | None = None
+            for key in _EXECUTION_KEYS:
+                candidate = route.get(key)
+                if isinstance(candidate, dict) and candidate.get("model"):
+                    execution = candidate
+                    break
+            if execution is None:
+                continue
+            execution_model = str(execution["model"])
+            execution_provider = _provider_for_model(self.models, execution_model)
+            explicit_verifiers = [
+                candidate
+                for key in _VERIFIER_KEYS
+                if isinstance((candidate := route.get(key)), dict) and candidate.get("model")
+            ]
+            if not explicit_verifiers:
+                continue
+            provider_diverse = False
+            for candidate in explicit_verifiers:
+                verifier_model = str(candidate["model"])
+                verifier_provider = _provider_for_model(self.models, verifier_model)
+                if verifier_model != execution_model and verifier_provider and verifier_provider != execution_provider:
+                    provider_diverse = True
+                    break
+            if not provider_diverse:
+                issues.append(
+                    f"ERROR: route {route_name} has no explicit model- and provider-diverse verifier candidate"
+                )
+
         return issues
 
     @property
@@ -394,6 +513,10 @@ class ConfigBundle:
     @property
     def model_registry(self) -> dict[str, Any]:
         return self.models["models"]
+
+    @property
+    def model_evidence_registry(self) -> dict[str, Any]:
+        return self.model_evidence["models"]
 
     @property
     def capability_registry(self) -> dict[str, Any]:
