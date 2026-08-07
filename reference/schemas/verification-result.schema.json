@@ -3,11 +3,12 @@
   "$id": "https://teo.example/schemas/verification-result.schema.json",
   "title": "TEO Verification Result",
   "type": "object",
+  "additionalProperties": false,
   "required": ["dispatch_id", "status", "verifier_model"],
   "properties": {
-    "dispatch_id": {"type": "string"},
+    "dispatch_id": {"type": "string", "minLength": 1},
     "status": {"enum": ["passed", "failed", "needs_human"]},
-    "verifier_model": {"type": "string"},
+    "verifier_model": {"type": "string", "minLength": 1},
     "checks": {"type": "array", "items": {"type": "string"}},
     "evidence": {"type": "array", "items": {"type": "string"}},
     "notes": {"type": ["string", "null"]}
