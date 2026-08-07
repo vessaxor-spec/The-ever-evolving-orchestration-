@@ -66,9 +66,11 @@ def test_review_packet_hides_control_labels_categories_rules_and_case_ids() -> N
     serialized = json.dumps(packet)
     for case in cases:
         assert case.case_id not in serialized
-        assert case.category not in serialized
+    assert '"category"' not in serialized
     assert '"gold"' not in serialized
     assert '"deterministic"' not in serialized
+    for item in packet["items"]:
+        assert set(item) == {"review_item_id", "task", "candidate_output"}
     assert len(packet["items"]) == len(cases) == 8
     assert {item["review_item_id"] for item in packet["items"]} == {
         item["review_item_id"] for item in private_map["items"]
