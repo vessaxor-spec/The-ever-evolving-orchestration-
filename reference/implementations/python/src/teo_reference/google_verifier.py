@@ -14,8 +14,10 @@ from .verification_adapter import (
 )
 
 GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1/interactions"
-SUPPORTED_MODELS = {"gemini-3.6-flash"}
-SUPPORTED_EFFORTS = {"minimal", "low", "medium", "high"}
+SUPPORTED_MODEL_EFFORTS = {
+    "gemini-3.6-flash": {"minimal", "low", "medium", "high"},
+    "gemini-3.1-pro-preview": {"low", "medium", "high"},
+}
 
 
 def _decode_json(body: bytes) -> dict[str, Any] | None:
@@ -56,16 +58,17 @@ class GoogleLiveVerifier:
     def verify(self, request: LiveVerificationRequest) -> LiveVerificationResponse:
         if request.verifier_provider_family != self.provider_family:
             raise LiveVerificationError("Google verifier received a non-Google assignment")
-        if request.verifier_model not in SUPPORTED_MODELS:
+        supported_efforts = SUPPORTED_MODEL_EFFORTS.get(request.verifier_model)
+        if supported_efforts is None:
             raise LiveVerificationError(
-                "Guarded Google live verification is restricted to Gemini 3.6 Flash"
+                "Guarded Google live verification supports Gemini 3.6 Flash and Gemini 3.1 Pro Preview"
             )
         if request.risk_level not in {"low", "medium"}:
             raise LiveVerificationError("Guarded live verification refuses high and critical risk")
         effort = request.verifier_reasoning_effort or "medium"
-        if effort not in SUPPORTED_EFFORTS:
+        if effort not in supported_efforts:
             raise LiveVerificationError(
-                f"Gemini 3.6 Flash cannot represent assigned verifier effort {effort}"
+                f"{request.verifier_model} cannot represent assigned verifier effort {effort}"
             )
         connection = validate_verifier_connection(request, self._connections)
         payload = {
