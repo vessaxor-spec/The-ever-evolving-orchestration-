@@ -13,8 +13,7 @@
     "output_ref",
     "evidence",
     "failure",
-    "retry_after_seconds",
-    "usage"
+    "retry_after_seconds"
   ],
   "properties": {
     "contract_version": {"const": "1"},
