@@ -1,0 +1,71 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+
+base_calibration:
+  policy: policy/verification/verifier-calibration.yaml
+  control_corpus: reference/datasets/verifier-calibration-gold.yaml
+  live_verification_policy_version: "1.1"
+  rubric_version: "1.0"
+
+collection:
+  role: calibration_direct
+  risk_level: low
+  verification_methods:
+    - output_validation
+    - targeted_review
+  runs_per_case_per_route: 3
+  require_all_routes: true
+  stop_on_verifier_infrastructure_error: true
+  resume_without_duplicate_calls: true
+  require_provider_reported_usage: true
+  require_duration_measurement: true
+  require_offset_aware_timestamp: true
+  require_single_collector_revision_per_evidence_set: true
+  default_observations_path: .teo/runtime/verifier-calibration/empirical-observations.jsonl
+  persist_prompt_or_candidate_content: false
+  persist_provider_native_payload: false
+  persist_credentials_or_authorization: false
+  persist_connection_mechanism: false
+  persist_provider_request_identifiers: false
+
+verifier_routes:
+  - provider_family: google
+    model: gemini-3.6-flash
+    reasoning: medium
+  - provider_family: anthropic
+    model: claude-sonnet-5
+    reasoning: medium
+  - provider_family: openai
+    model: gpt-5.6-sol
+    reasoning: medium
+
+human_labeling:
+  minimum_independent_reviewers_per_case: 2
+  reviewer_identity: opaque_identifier_only
+  reviewers_blinded_from_model_observations: true
+  adjudication_required_on_disagreement: true
+  adjudicator_must_be_distinct_from_case_reviewers: true
+  require_offset_aware_timestamp: true
+  default_labels_path: .teo/runtime/verifier-calibration/human-labels.jsonl
+  persist_reviewer_name_or_email: false
+  persist_task_or_candidate_content: false
+
+acceptance:
+  empirical_quality_claims_authorized: false
+  live_scope_expansion_authorized: false
+  routing_authority: false
+  automatic_route_update: false
+  require_human_label_readiness_before_live_collection: true
+  require_independent_residual_risk_review_after_collection: true
+  require_explicit_human_acceptance_after_metrics: true
+
+policy: >-
+  Empirical verifier calibration is a controlled measurement activity, not a routing
+  mechanism. Independent human labels are finalized before live verifier observations
+  are collected. The same fixed cases are then evaluated three times on each of three
+  provider-diverse verifier routes. Observations preserve route identity, time, duration,
+  and normalized provider-reported input/output usage without persisting prompts,
+  candidate output, provider-native payloads, request identifiers, credentials, or
+  connection mechanism. Complete data and favorable metrics do not self-authorize a
+  quality claim, route change, or broader live execution.
