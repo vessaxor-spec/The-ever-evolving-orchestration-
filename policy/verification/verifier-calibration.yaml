@@ -1,0 +1,66 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-07
+
+scope:
+  task_types: [high_volume_simple]
+  risk_levels: [low, medium]
+  live_scope_expansion_authorized: false
+  routing_authority: false
+  quality_claims_authorized: false
+
+gold_corpus:
+  path: reference/datasets/verifier-calibration-gold.yaml
+  minimum_cases: 8
+  required_categories:
+    - correct
+    - subtly_wrong
+    - incomplete
+    - wrong_format
+    - unsupported_claim
+    - ambiguous
+    - unverifiable
+    - adversarial
+  deterministic_validation_first: true
+
+observation_requirements:
+  minimum_runs_per_case_per_verifier: 3
+  minimum_distinct_verifier_routes: 3
+  preserve_provider_and_model_identity: true
+  preserve_retry_and_fallback_relationship: true
+  preserve_latency_and_usage_evidence: true
+  prompt_or_candidate_content_in_observation_record: false
+
+required_metrics:
+  - exact_status_accuracy
+  - false_pass_rate
+  - false_fail_rate
+  - missed_human_rate
+  - unnecessary_human_rate
+  - needs_human_prediction_rate
+  - criterion_accuracy
+  - repeatability_agreement_rate
+  - cross_verifier_disagreement_cases
+  - average_duration_ms
+  - p95_duration_ms
+  - total_input_tokens
+  - total_output_tokens
+  - by_execution_path
+
+expansion_gate:
+  automatic_expansion: false
+  require_independent_human_review: true
+  require_false_pass_rate_to_be_measured: true
+  require_repeatability_to_be_measured: true
+  require_adversarial_cases: true
+  require_route_specific_evidence: true
+  require_residual_risk_record: true
+
+policy: >-
+  The calibration harness measures verifier behavior but has no routing authority.
+  A valid gold corpus and a successful harness run do not establish verifier quality
+  by themselves. Live observations must be collected across the active provider-diverse
+  verifier routes with repeated runs. Expansion beyond the guarded canary requires
+  independent human review of measured false-pass, false-fail, uncertainty, repeatability,
+  disagreement, latency, usage, retry/fallback effects, adversarial behavior, and residual
+  risk. No automatic threshold in this policy authorizes live-scope expansion.
