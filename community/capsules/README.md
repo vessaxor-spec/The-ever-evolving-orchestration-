@@ -35,3 +35,4 @@ Each capsule should record:
 | [TEO-CAPSULE-0002](0002-2026-08-05-specialist-freshness-architecture.md) | Specialist depth is preserved through freshness, source-authority, applicability, and regression controls | `21a4b5281eab025fa5f3b76c84e823a4d202a1ea` |
 | [TEO-CAPSULE-0003](0003-2026-08-06-user-research-route.md) | Qualitative user evidence receives a dedicated worker, route, provider-diverse fallback, and independent verification | `ac15871037df63e1e69bfce80a0e9e549c43a292` |
 | [TEO-CAPSULE-0004](0004-2026-08-06-compliance-review-route.md) | Critical compliance becomes a dedicated, provider-diverse, human-gated Review Team responsibility | `09e46863d481b673790f646099087133e06d1e9d` |
+| [TEO-CAPSULE-0005](0005-2026-08-06-principal-engineering-control-plane.md) | Principal engineering becomes an active 10-team, 78-specialist, provider-diverse, independently verified control plane | `003f71ac1bf27e96a1be5b0f66c58ba33fc5b75f` |
