@@ -20,6 +20,7 @@ from .provider_connection import (
     ProviderConnectionRequest,
     ProviderConnectionResponse,
 )
+from .runtime_canary import CanaryRuntimeOutcome, execute_guarded_canary
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 from .specialist_routing import SpecialistRoutingEngine
 
@@ -28,6 +29,7 @@ OrchestrationEngine = SpecialistRoutingEngine
 __all__ = [
     "AnthropicMessagesAdapter",
     "BaseOrchestrationEngine",
+    "CanaryRuntimeOutcome",
     "DispatchRecord",
     "FinalOutcome",
     "GeminiInteractionsAdapter",
@@ -49,6 +51,7 @@ __all__ = [
     "VerificationResult",
     "execute_anthropic_canary_once",
     "execute_gemini_canary_once",
+    "execute_guarded_canary",
     "execute_openai_canary_once",
     "execute_provider_once",
 ]
