@@ -12,8 +12,18 @@ from typing import Any, Callable, Mapping
 
 import yaml
 
-from .provider_connection import ProviderConnection
-from .verification_adapter import LiveVerificationDecision, LiveVerificationError, LiveVerificationRequest
+from .provider_connection import (
+    ProviderConnection,
+    ProviderConnectionError,
+    ProviderConnectionRequest,
+)
+from .verification_adapter import (
+    VERIFICATION_OUTPUT_SCHEMA,
+    LiveVerificationDecision,
+    LiveVerificationError,
+    LiveVerificationRequest,
+    decode_structured_decision,
+)
 from .verifier_calibration import (
     CalibrationError,
     CalibrationObservation,
@@ -35,12 +45,18 @@ from .verifier_calibration_empirical import (
     resolve_collector_revision,
     validate_empirical_policy_against_base,
 )
-from .verifier_calibration_human_review import build_review_materials, validate_review_packet_is_blinded
+from .verifier_calibration_human_review import (
+    build_review_materials,
+    validate_review_packet_is_blinded,
+)
 
 
 EVIDENCE_TIER = "provisional_machine_panel"
 PANEL_COLLECTION_ROLE = "calibration_panel_direct"
 SUPPORTED_PROVIDERS = {"google", "anthropic", "openai"}
+GOOGLE_URL = "https://generativelanguage.googleapis.com/v1/interactions"
+ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
+OPENAI_URL = "https://api.openai.com/v1/responses"
 
 
 @dataclass(frozen=True, slots=True)
@@ -150,7 +166,7 @@ class MachinePanelLabel:
             raise CalibrationError("Machine-panel judge must be blinded from reference-control labels")
         if raw["model_observations_blinded"] is not True:
             raise CalibrationError("Machine-panel judge must be blinded from verifier observations")
-        provider = _required_text(raw["judge_provider_family"], "judge_provider_family")
+        provider = _text(raw["judge_provider_family"], "judge_provider_family")
         if provider not in SUPPORTED_PROVIDERS:
             raise CalibrationError("Machine-panel judge provider is unsupported")
         reasoning = raw["judge_reasoning"]
@@ -164,15 +180,15 @@ class MachinePanelLabel:
         except LiveVerificationError as exc:
             raise CalibrationError(str(exc)) from exc
         return cls(
-            review_item_id=_required_text(raw["review_item_id"], "review_item_id"),
+            review_item_id=_text(raw["review_item_id"], "review_item_id"),
             judge_provider_family=provider,
-            judge_model=_required_text(raw["judge_model"], "judge_model"),
+            judge_model=_text(raw["judge_model"], "judge_model"),
             judge_reasoning=reasoning.strip() if isinstance(reasoning, str) else None,
-            observed_at=_required_offset_datetime(raw["observed_at"], "observed_at"),
-            rubric_version=_required_text(raw["rubric_version"], "rubric_version"),
-            duration_ms=_required_non_negative_float(raw["duration_ms"], "duration_ms"),
-            input_tokens=_required_non_negative_int(raw["input_tokens"], "input_tokens"),
-            output_tokens=_required_non_negative_int(raw["output_tokens"], "output_tokens"),
+            observed_at=_offset_time(raw["observed_at"], "observed_at"),
+            rubric_version=_text(raw["rubric_version"], "rubric_version"),
+            duration_ms=_non_negative_float(raw["duration_ms"], "duration_ms"),
+            input_tokens=_non_negative_int(raw["input_tokens"], "input_tokens"),
+            output_tokens=_non_negative_int(raw["output_tokens"], "output_tokens"),
             decision=decision,
         )
 
@@ -269,7 +285,7 @@ class ProvisionalCalibrationObservation:
             raise CalibrationError("Provisional observation evidence_tier is invalid")
         if raw["collection_role"] != COLLECTION_ROLE:
             raise CalibrationError("Provisional observation collection_role is invalid")
-        provider = _required_text(raw["verifier_provider_family"], "verifier_provider_family")
+        provider = _text(raw["verifier_provider_family"], "verifier_provider_family")
         if provider not in SUPPORTED_PROVIDERS:
             raise CalibrationError("Provisional observation provider is unsupported")
         reasoning = raw["verifier_reasoning"]
@@ -283,23 +299,23 @@ class ProvisionalCalibrationObservation:
         except LiveVerificationError as exc:
             raise CalibrationError(str(exc)) from exc
         return cls(
-            case_id=_required_text(raw["case_id"], "case_id"),
+            case_id=_text(raw["case_id"], "case_id"),
             verifier_provider_family=provider,
-            verifier_model=_required_text(raw["verifier_model"], "verifier_model"),
+            verifier_model=_text(raw["verifier_model"], "verifier_model"),
             verifier_reasoning=reasoning.strip() if isinstance(reasoning, str) else None,
-            run_id=_required_text(raw["run_id"], "run_id"),
-            observed_at=_required_offset_datetime(raw["observed_at"], "observed_at"),
-            rubric_version=_required_text(raw["rubric_version"], "rubric_version"),
-            verification_policy_version=_required_text(
+            run_id=_text(raw["run_id"], "run_id"),
+            observed_at=_offset_time(raw["observed_at"], "observed_at"),
+            rubric_version=_text(raw["rubric_version"], "rubric_version"),
+            verification_policy_version=_text(
                 raw["verification_policy_version"], "verification_policy_version"
             ),
-            machine_panel_policy_version=_required_text(
+            machine_panel_policy_version=_text(
                 raw["machine_panel_policy_version"], "machine_panel_policy_version"
             ),
-            collector_revision=_required_text(raw["collector_revision"], "collector_revision"),
-            duration_ms=_required_non_negative_float(raw["duration_ms"], "duration_ms"),
-            input_tokens=_required_non_negative_int(raw["input_tokens"], "input_tokens"),
-            output_tokens=_required_non_negative_int(raw["output_tokens"], "output_tokens"),
+            collector_revision=_text(raw["collector_revision"], "collector_revision"),
+            duration_ms=_non_negative_float(raw["duration_ms"], "duration_ms"),
+            input_tokens=_non_negative_int(raw["input_tokens"], "input_tokens"),
+            output_tokens=_non_negative_int(raw["output_tokens"], "output_tokens"),
             decision=decision,
         )
 
@@ -332,36 +348,28 @@ def _require_exact_fields(raw: dict[str, Any], expected: set[str], label: str) -
         raise CalibrationError(f"{label} contains unsupported fields: " + ", ".join(unknown))
 
 
-def _required_text(value: object, name: str) -> str:
+def _text(value: object, name: str) -> str:
     if not isinstance(value, str) or not value.strip():
         raise CalibrationError(f"{name} must be a non-empty string")
     return value.strip()
 
 
-def _required_positive_int(value: object, name: str) -> int:
+def _positive_int(value: object, name: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         raise CalibrationError(f"{name} must be a positive integer")
     return value
 
 
-def _required_non_negative_int(value: object, name: str) -> int:
+def _non_negative_int(value: object, name: str) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise CalibrationError(f"{name} must be a non-negative integer")
     return value
 
 
-def _required_non_negative_float(value: object, name: str) -> float:
+def _non_negative_float(value: object, name: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)) or float(value) < 0:
         raise CalibrationError(f"{name} must be a non-negative number")
     return float(value)
-
-
-def _required_offset_datetime(value: object, name: str) -> str:
-    text = _required_text(value, name)
-    parsed = _parsed_time(text)
-    if parsed.tzinfo is None or parsed.utcoffset() is None:
-        raise CalibrationError(f"{name} must include a UTC offset")
-    return text
 
 
 def _parsed_time(value: str) -> datetime:
@@ -370,6 +378,14 @@ def _parsed_time(value: str) -> datetime:
         return datetime.fromisoformat(normalized)
     except ValueError as exc:
         raise CalibrationError("timestamp must be RFC 3339-compatible") from exc
+
+
+def _offset_time(value: object, name: str) -> str:
+    text = _text(value, name)
+    parsed = _parsed_time(text)
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise CalibrationError(f"{name} must include a UTC offset")
+    return text
 
 
 def _utc_now() -> str:
@@ -387,10 +403,16 @@ def _decision_dict(decision: LiveVerificationDecision) -> dict[str, str]:
     }
 
 
-def _panel_route_from_dict(raw: object) -> MachinePanelRoute:
+def _route_from_dict(raw: object) -> MachinePanelRoute:
     if not isinstance(raw, dict):
         raise CalibrationError("Machine-panel route must be an object")
-    allowed = {"provider_family", "model", "reasoning", "rationale", "preview_acknowledged"}
+    allowed = {
+        "provider_family",
+        "model",
+        "reasoning",
+        "rationale",
+        "preview_acknowledged",
+    }
     unknown = sorted(set(raw) - allowed)
     if unknown:
         raise CalibrationError("Machine-panel route contains unsupported fields: " + ", ".join(unknown))
@@ -398,10 +420,10 @@ def _panel_route_from_dict(raw: object) -> MachinePanelRoute:
     missing = sorted(required - set(raw))
     if missing:
         raise CalibrationError("Machine-panel route is missing fields: " + ", ".join(missing))
-    provider = _required_text(raw["provider_family"], "panel_route.provider_family")
+    provider = _text(raw["provider_family"], "panel_route.provider_family")
     if provider not in SUPPORTED_PROVIDERS:
         raise CalibrationError(f"Unsupported machine-panel provider: {provider}")
-    model = _required_text(raw["model"], "panel_route.model")
+    model = _text(raw["model"], "panel_route.model")
     reasoning = raw["reasoning"]
     if reasoning is not None and (not isinstance(reasoning, str) or not reasoning.strip()):
         raise CalibrationError("panel_route.reasoning must be a non-empty string or null")
@@ -414,7 +436,7 @@ def _panel_route_from_dict(raw: object) -> MachinePanelRoute:
         provider_family=provider,
         model=model,
         reasoning=reasoning.strip() if isinstance(reasoning, str) else None,
-        rationale=_required_text(raw["rationale"], "panel_route.rationale"),
+        rationale=_text(raw["rationale"], "panel_route.rationale"),
         preview_acknowledged=preview_acknowledged,
     )
 
@@ -434,14 +456,14 @@ def load_machine_panel_policy(path: str | Path) -> MachinePanelPolicy:
         raise CalibrationError("Machine-panel policy is missing required mappings")
     if not isinstance(routes_raw, list) or not routes_raw:
         raise CalibrationError("Machine-panel policy requires panel_routes")
-    routes = tuple(_panel_route_from_dict(raw) for raw in routes_raw)
+    routes = tuple(_route_from_dict(raw) for raw in routes_raw)
     if len({route.route_id for route in routes}) != len(routes):
         raise CalibrationError("Machine-panel routes must be unique")
     if len({route.provider_family for route in routes}) != len(routes):
         raise CalibrationError("Machine-panel routes must use distinct provider families")
     if panel.get("collection_role") != PANEL_COLLECTION_ROLE:
         raise CalibrationError("Machine-panel collection role must be calibration_panel_direct")
-    true_panel_fields = (
+    for field in (
         "require_all_routes",
         "require_blinded_packet",
         "require_reference_control_labels_blinded_during_judging",
@@ -451,8 +473,7 @@ def load_machine_panel_policy(path: str | Path) -> MachinePanelPolicy:
         "require_duration_measurement",
         "require_offset_aware_timestamp",
         "unresolved_if_no_majority",
-    )
-    for field in true_panel_fields:
+    ):
         if panel.get(field) is not True:
             raise CalibrationError(f"panel.{field} must remain true")
     for field in (
@@ -474,15 +495,14 @@ def load_machine_panel_policy(path: str | Path) -> MachinePanelPolicy:
             raise CalibrationError(f"provisional_collection.{field} must remain true")
     if provisional.get("evaluated_routes_source") != "empirical_policy":
         raise CalibrationError("Provisional evaluated routes must come from empirical policy")
-    false_acceptance_fields = (
+    for field in (
         "human_ground_truth_claim_authorized",
         "empirical_quality_claims_authorized",
         "live_scope_expansion_authorized",
         "routing_authority",
         "automatic_route_update",
         "human_review_tier_replaced",
-    )
-    for field in false_acceptance_fields:
+    ):
         if acceptance.get(field) is not False:
             raise CalibrationError(f"acceptance.{field} must remain false")
     for field in (
@@ -493,31 +513,31 @@ def load_machine_panel_policy(path: str | Path) -> MachinePanelPolicy:
         if acceptance.get(field) is not True:
             raise CalibrationError(f"acceptance.{field} must remain true")
     return MachinePanelPolicy(
-        version=_required_text(payload.get("version"), "version"),
-        empirical_policy_path=_required_text(
+        version=_text(payload.get("version"), "version"),
+        empirical_policy_path=_text(
             base.get("empirical_policy"), "base_calibration.empirical_policy"
         ),
-        control_corpus_path=_required_text(
+        control_corpus_path=_text(
             base.get("control_corpus"), "base_calibration.control_corpus"
         ),
-        rubric_version=_required_text(base.get("rubric_version"), "base_calibration.rubric_version"),
-        verification_policy_version=_required_text(
+        rubric_version=_text(base.get("rubric_version"), "base_calibration.rubric_version"),
+        verification_policy_version=_text(
             base.get("live_verification_policy_version"),
             "base_calibration.live_verification_policy_version",
         ),
-        minimum_distinct_provider_families=_required_positive_int(
+        minimum_distinct_provider_families=_positive_int(
             panel.get("minimum_distinct_provider_families"),
             "panel.minimum_distinct_provider_families",
         ),
         panel_routes=routes,
-        default_panel_labels_path=_required_text(
+        default_panel_labels_path=_text(
             panel.get("default_panel_labels_path"), "panel.default_panel_labels_path"
         ),
-        default_provisional_observations_path=_required_text(
+        default_provisional_observations_path=_text(
             panel.get("default_provisional_observations_path"),
             "panel.default_provisional_observations_path",
         ),
-        runs_per_case_per_route=_required_positive_int(
+        runs_per_case_per_route=_positive_int(
             provisional.get("runs_per_case_per_route"),
             "provisional_collection.runs_per_case_per_route",
         ),
@@ -643,7 +663,7 @@ def assess_machine_panel_readiness(
     if not isinstance(items, list) or not items:
         raise CalibrationError("Blinded review packet requires items")
     known_items = {
-        _required_text(item.get("review_item_id"), "review_item_id")
+        _text(item.get("review_item_id"), "review_item_id")
         for item in items
         if isinstance(item, dict)
     }
@@ -671,12 +691,10 @@ def assess_machine_panel_readiness(
         routes = {label.route_id for label in by_item[item_id]}
         if routes != expected_routes:
             undercovered.append(f"{item_id}:{len(routes)}/{len(expected_routes)}")
-        if routes == expected_routes:
-            majority = _majority_decision(by_item[item_id])
-            if majority is None:
-                unresolved.append(item_id)
-            else:
-                majority_items += 1
+        elif _majority_decision(by_item[item_id]) is None:
+            unresolved.append(item_id)
+        else:
+            majority_items += 1
     observed_routes = sorted({label.route_id for label in labels})
     return MachinePanelReadiness(
         panel_coverage_requirements_met=not undercovered and set(observed_routes) == expected_routes,
@@ -687,6 +705,176 @@ def assess_machine_panel_readiness(
         majority_items=majority_items,
         item_count=len(known_items),
     )
+
+
+def _decode_json(body: bytes) -> dict[str, Any]:
+    try:
+        payload = json.loads(body.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise CalibrationError("Machine-panel provider returned invalid JSON") from exc
+    if not isinstance(payload, dict):
+        raise CalibrationError("Machine-panel provider payload must be an object")
+    return payload
+
+
+def _extract_google_text(payload: dict[str, Any]) -> str:
+    if isinstance(payload.get("output_text"), str) and payload["output_text"].strip():
+        return payload["output_text"].strip()
+    parts: list[str] = []
+    for step in payload.get("steps", []):
+        if not isinstance(step, dict) or step.get("type") != "model_output":
+            continue
+        for block in step.get("content", []):
+            if isinstance(block, dict) and block.get("type") == "text" and isinstance(block.get("text"), str):
+                parts.append(block["text"])
+    return "\n".join(parts).strip()
+
+
+def _extract_anthropic_text(payload: dict[str, Any]) -> str:
+    parts = [
+        block["text"]
+        for block in payload.get("content", [])
+        if isinstance(block, dict)
+        and block.get("type") == "text"
+        and isinstance(block.get("text"), str)
+    ]
+    return "\n".join(parts).strip()
+
+
+def _extract_openai_text(payload: dict[str, Any]) -> str:
+    if isinstance(payload.get("output_text"), str) and payload["output_text"].strip():
+        return payload["output_text"].strip()
+    parts: list[str] = []
+    for item in payload.get("output", []):
+        if not isinstance(item, dict) or item.get("type") != "message":
+            continue
+        for block in item.get("content", []):
+            if isinstance(block, dict) and block.get("type") == "output_text" and isinstance(block.get("text"), str):
+                parts.append(block["text"])
+    return "\n".join(parts).strip()
+
+
+def _panel_provider_call(
+    route: MachinePanelRoute,
+    request: LiveVerificationRequest,
+    delegate: ProviderConnection,
+) -> tuple[LiveVerificationDecision, int, int]:
+    capture = _UsageCaptureConnection(delegate)
+    prompt = request.blinded_prompt()
+    if route.provider_family == "google":
+        payload = {
+            "model": route.model,
+            "system_instruction": (
+                "You are a blinded calibration-panel judge. Evaluate only the supplied task and candidate output. "
+                "Do not infer canonical case identity, reference labels, or other model judgments. Use uncertain rather than guessing."
+            ),
+            "input": prompt,
+            "store": False,
+            "generation_config": {
+                "max_output_tokens": 1024,
+                "thinking_level": route.reasoning or "medium",
+            },
+            "response_format": {
+                "type": "text",
+                "mime_type": "application/json",
+                "schema": VERIFICATION_OUTPUT_SCHEMA,
+            },
+        }
+        provider_request = ProviderConnectionRequest(
+            operation="interactions.create.calibration_panel",
+            url=GOOGLE_URL,
+            method="POST",
+            headers={"content-type": "application/json"},
+            body=json.dumps(payload).encode("utf-8"),
+            timeout_seconds=30.0,
+        )
+        extractor = _extract_google_text
+    elif route.provider_family == "anthropic":
+        payload = {
+            "model": route.model,
+            "max_tokens": 1024,
+            "system": (
+                "You are a blinded calibration-panel judge. Evaluate only the supplied task and candidate output. "
+                "Do not infer canonical case identity, reference labels, or other model judgments. Use uncertain rather than guessing."
+            ),
+            "messages": [{"role": "user", "content": prompt}],
+            "output_config": {
+                "effort": route.reasoning or "medium",
+                "format": {"type": "json_schema", "schema": VERIFICATION_OUTPUT_SCHEMA},
+            },
+        }
+        provider_request = ProviderConnectionRequest(
+            operation="messages.create.calibration_panel",
+            url=ANTHROPIC_URL,
+            method="POST",
+            headers={
+                "content-type": "application/json",
+                "anthropic-version": "2023-06-01",
+            },
+            body=json.dumps(payload).encode("utf-8"),
+            timeout_seconds=30.0,
+        )
+        extractor = _extract_anthropic_text
+    elif route.provider_family == "openai":
+        payload = {
+            "model": route.model,
+            "input": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a blinded calibration-panel judge. Evaluate only the supplied task and candidate output. "
+                        "Do not infer canonical case identity, reference labels, or other model judgments. Use uncertain rather than guessing."
+                    ),
+                },
+                {"role": "user", "content": prompt},
+            ],
+            "max_output_tokens": 1024,
+            "store": False,
+            "reasoning": {"effort": route.reasoning or "medium"},
+            "text": {
+                "format": {
+                    "type": "json_schema",
+                    "name": "teo_calibration_panel",
+                    "strict": True,
+                    "schema": VERIFICATION_OUTPUT_SCHEMA,
+                }
+            },
+        }
+        provider_request = ProviderConnectionRequest(
+            operation="responses.create.calibration_panel",
+            url=OPENAI_URL,
+            method="POST",
+            headers={"content-type": "application/json"},
+            body=json.dumps(payload).encode("utf-8"),
+            timeout_seconds=30.0,
+        )
+        extractor = _extract_openai_text
+    else:
+        raise CalibrationError(f"Unsupported machine-panel provider: {route.provider_family}")
+    try:
+        response = capture.invoke(provider_request)
+    except ProviderConnectionError as exc:
+        raise CalibrationError("Machine-panel provider connection failed") from exc
+    if not 200 <= response.status_code < 300:
+        raise CalibrationError(
+            f"Machine-panel provider failed with HTTP {response.status_code}"
+        )
+    response_payload = _decode_json(response.body)
+    provider_model = response_payload.get("model")
+    if provider_model != route.model:
+        raise CalibrationError("Machine-panel provider changed the authorized model")
+    text = extractor(response_payload)
+    if not text:
+        raise CalibrationError("Machine-panel provider returned no structured decision")
+    try:
+        decision = decode_structured_decision(text)
+    except LiveVerificationError as exc:
+        raise CalibrationError(str(exc)) from exc
+    if capture.input_tokens is None or capture.output_tokens is None:
+        raise CalibrationError(
+            f"Machine-panel judge did not return required provider usage for {route.route_id}"
+        )
+    return decision, capture.input_tokens, capture.output_tokens
 
 
 def collect_machine_panel_labels(
@@ -701,13 +889,12 @@ def collect_machine_panel_labels(
 ) -> list[MachinePanelLabel]:
     target = Path(output_path)
     existing = load_machine_panel_labels(target)
-    assess_machine_panel_readiness(packet, existing, policy) if existing else None
+    if existing:
+        assess_machine_panel_readiness(packet, existing, policy)
     completed = {label.identity for label in existing}
     missing_connections = sorted({route.provider_family for route in policy.panel_routes} - set(connections))
     if missing_connections:
-        raise CalibrationError(
-            "Missing provider connections for machine panel: " + ", ".join(missing_connections)
-        )
+        raise CalibrationError("Missing provider connections for machine panel: " + ", ".join(missing_connections))
     items = packet.get("items")
     if not isinstance(items, list):
         raise CalibrationError("Blinded review packet requires items")
@@ -716,17 +903,15 @@ def collect_machine_panel_labels(
         delegate = connections[route.provider_family]
         if delegate.provider_family != route.provider_family:
             raise CalibrationError("Machine-panel connection provider mismatch")
-        calibration_route = route.as_calibration_route()
         for item in items:
             if not isinstance(item, dict):
                 raise CalibrationError("Blinded review packet item must be an object")
-            review_item_id = _required_text(item.get("review_item_id"), "review_item_id")
+            review_item_id = _text(item.get("review_item_id"), "review_item_id")
             identity = (review_item_id, route.route_id)
             if identity in completed:
                 continue
-            task = _required_text(item.get("task"), "task")
-            candidate = _required_text(item.get("candidate_output"), "candidate_output")
-            capture = _UsageCaptureConnection(delegate)
+            task = _text(item.get("task"), "task")
+            candidate = _text(item.get("candidate_output"), "candidate_output")
             request = LiveVerificationRequest(
                 dispatch_id=f"machine-panel-{review_item_id}-{route.provider_family}",
                 task_id=f"machine-panel-{review_item_id}",
@@ -739,32 +924,21 @@ def collect_machine_panel_labels(
                 output_text=candidate,
             )
             started = clock()
-            try:
-                response = _verifier_for_route(
-                    calibration_route, {route.provider_family: capture}
-                ).verify(request)
-            except LiveVerificationError as exc:
-                raise CalibrationError(
-                    f"Machine-panel judge infrastructure failed for {review_item_id}@{route.route_id}"
-                ) from exc
+            decision, input_tokens, output_tokens = _panel_provider_call(
+                route, request, delegate
+            )
             duration_ms = max(0.0, (clock() - started) * 1000.0)
-            if response.provider_family != route.provider_family or response.model != route.model:
-                raise CalibrationError("Machine-panel judge changed the authorized route")
-            if capture.input_tokens is None or capture.output_tokens is None:
-                raise CalibrationError(
-                    f"Machine-panel judge did not return required provider usage for {route.route_id}"
-                )
             label = MachinePanelLabel(
                 review_item_id=review_item_id,
                 judge_provider_family=route.provider_family,
                 judge_model=route.model,
                 judge_reasoning=route.reasoning,
-                observed_at=_required_offset_datetime(now(), "observed_at"),
+                observed_at=_offset_time(now(), "observed_at"),
                 rubric_version=policy.rubric_version,
                 duration_ms=duration_ms,
-                input_tokens=capture.input_tokens,
-                output_tokens=capture.output_tokens,
-                decision=response.decision,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                decision=decision,
             )
             _append_jsonl(target, label.to_dict())
             collected.append(label)
@@ -804,6 +978,8 @@ def validate_provisional_observations(
     panel_policy: MachinePanelPolicy,
     empirical: EmpiricalCalibrationPolicy,
 ) -> None:
+    if not panel_labels:
+        raise CalibrationError("Machine-panel labels are required before provisional observations")
     known_cases = {case.case_id for case in cases}
     allowed_routes = {route.route_id for route in empirical.verifier_routes}
     panel_completed_at = max(_parsed_time(label.observed_at) for label in panel_labels)
@@ -847,19 +1023,16 @@ def collect_provisional_observations(
     readiness = assess_machine_panel_readiness(packet, panel_labels, panel_policy)
     if not readiness.panel_coverage_requirements_met:
         raise CalibrationError("Machine-panel coverage must be complete before provisional live collection")
-    revision = _required_text(collector_revision, "collector_revision")
+    revision = _text(collector_revision, "collector_revision")
     if len(revision) < 7:
         raise CalibrationError("collector_revision must identify a concrete repository revision")
     panel_completed_at = max(_parsed_time(label.observed_at) for label in panel_labels)
-    collection_started_at = _parsed_time(_required_offset_datetime(now(), "collection_started_at"))
-    if collection_started_at < panel_completed_at:
+    if _parsed_time(_offset_time(now(), "collection_started_at")) < panel_completed_at:
         raise CalibrationError("Provisional collection cannot start before machine-panel coverage is complete")
     target = Path(output_path)
     existing = load_provisional_observations(target)
     if existing:
-        validate_provisional_observations(
-            cases, existing, panel_labels, panel_policy, empirical
-        )
+        validate_provisional_observations(cases, existing, panel_labels, panel_policy, empirical)
         if {observation.collector_revision for observation in existing} != {revision}:
             raise CalibrationError("Existing provisional evidence uses a different collector revision")
     completed = {observation.identity for observation in existing}
@@ -872,9 +1045,7 @@ def collect_provisional_observations(
         raise CalibrationError("No provisional verifier routes were selected")
     missing_connections = sorted({route.provider_family for route in routes} - set(connections))
     if missing_connections:
-        raise CalibrationError(
-            "Missing provider connections for provisional collection: " + ", ".join(missing_connections)
-        )
+        raise CalibrationError("Missing provider connections for provisional collection: " + ", ".join(missing_connections))
     collected = list(existing)
     for route in routes:
         delegate = connections[route.provider_family]
@@ -914,7 +1085,7 @@ def collect_provisional_observations(
                     raise CalibrationError(
                         f"Provisional verifier did not return required provider usage for {route.route_id}"
                     )
-                observed_at = _required_offset_datetime(now(), "observed_at")
+                observed_at = _offset_time(now(), "observed_at")
                 if _parsed_time(observed_at) < panel_completed_at:
                     raise CalibrationError("Provisional observation predates machine-panel completion")
                 observation = ProvisionalCalibrationObservation(
@@ -936,9 +1107,7 @@ def collect_provisional_observations(
                 _append_jsonl(target, observation.to_dict())
                 collected.append(observation)
                 completed.add(observation.identity)
-    validate_provisional_observations(
-        cases, collected, panel_labels, panel_policy, empirical
-    )
+    validate_provisional_observations(cases, collected, panel_labels, panel_policy, empirical)
     return collected
 
 
@@ -950,10 +1119,10 @@ def _mapping_aliases(private_map: dict[str, Any]) -> dict[str, str]:
     for item in items:
         if not isinstance(item, dict) or set(item) != {"review_item_id", "case_id"}:
             raise CalibrationError("Private review map item is invalid")
-        review_item_id = _required_text(item["review_item_id"], "review_item_id")
+        review_item_id = _text(item["review_item_id"], "review_item_id")
         if review_item_id in aliases:
             raise CalibrationError("Private review map contains duplicate review item")
-        aliases[review_item_id] = _required_text(item["case_id"], "case_id")
+        aliases[review_item_id] = _text(item["case_id"], "case_id")
     return aliases
 
 
@@ -1007,9 +1176,7 @@ def evaluate_provisional_calibration(
     panel_readiness = assess_machine_panel_readiness(packet, panel_labels, panel_policy)
     if not panel_readiness.panel_coverage_requirements_met:
         raise CalibrationError("Machine-panel coverage is incomplete")
-    validate_provisional_observations(
-        cases, observations, panel_labels, panel_policy, empirical
-    )
+    validate_provisional_observations(cases, observations, panel_labels, panel_policy, empirical)
     base_observations = [observation.to_base_observation() for observation in observations]
     metrics = evaluate_calibration(cases, base_observations, policy=base).to_dict()
     path_metrics = metrics.pop("by_execution_path")
@@ -1064,9 +1231,7 @@ def planned_machine_panel_study(
     empirical: EmpiricalCalibrationPolicy,
 ) -> dict[str, Any]:
     panel_calls = len(cases) * len(panel_policy.panel_routes)
-    provisional_calls = (
-        len(cases) * len(empirical.verifier_routes) * panel_policy.runs_per_case_per_route
-    )
+    provisional_calls = len(cases) * len(empirical.verifier_routes) * panel_policy.runs_per_case_per_route
     return {
         "evidence_tier": EVIDENCE_TIER,
         "case_count": len(cases),
@@ -1100,7 +1265,6 @@ def main(argv: list[str] | None = None) -> int:
         default="policy/verification/verifier-calibration-machine-panel.yaml",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
-
     subparsers.add_parser("plan", help="Show the provisional study plan without provider calls")
 
     panel_parser = subparsers.add_parser(
@@ -1142,9 +1306,7 @@ def main(argv: list[str] | None = None) -> int:
             packet_path = Path(args.packet or root / ".teo/runtime/verifier-calibration/machine-panel-packet.json")
             mapping_path = Path(args.mapping or root / ".teo/runtime/verifier-calibration/machine-panel-map.json")
             labels_path = Path(args.labels or root / panel_policy.default_panel_labels_path)
-            packet, _ = ensure_blinded_materials(
-                cases, panel_policy.rubric_version, packet_path, mapping_path
-            )
+            packet, _ = ensure_blinded_materials(cases, panel_policy.rubric_version, packet_path, mapping_path)
             routes = tuple(route.as_calibration_route() for route in panel_policy.panel_routes)
             labels = collect_machine_panel_labels(
                 packet,
