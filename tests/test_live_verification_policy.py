@@ -16,6 +16,7 @@ def test_live_verification_policy_loads_guarded_independent_defaults() -> None:
     policy = LiveVerificationPolicy.load(REPO_ROOT)
     assert policy.task_types == {"high_volume_simple"}
     assert policy.risk_levels == {"low", "medium"}
+    assert policy.max_output_bytes == 65536
     assert policy.assigned_verifier_only is True
     assert policy.require_independent_model is True
     assert policy.require_provider_diversity is True
@@ -37,6 +38,7 @@ def test_live_verification_policy_loads_guarded_independent_defaults() -> None:
 @pytest.mark.parametrize(
     "mutation",
     [
+        {"max_output_bytes": 131072},
         {"require_provider_diversity": False},
         {"require_independent_model": False},
         {"assigned_verifier_only": False},
