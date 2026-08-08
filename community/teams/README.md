@@ -1,6 +1,6 @@
 # TEO Team Architecture
 
-TEO routes work to responsibilities before selecting workers, capabilities, and implementations.
+TEO routes work to responsibilities before selecting workers, specialists, capabilities, and implementations.
 
 ```text
 Task
@@ -15,31 +15,62 @@ Team
 Worker
   |
   v
+Optional Specialist
+  |
+  v
 Capability
   |
   v
 Implementation
   |
   v
-Verification
+Independent Verification
 ```
 
-Models and providers are replaceable implementations. Teams and workers define stable responsibilities and decision boundaries.
+Models and providers are replaceable implementations. Teams and workers define stable responsibilities and decision boundaries. Specialists narrow domain expertise without replacing the owning team or worker.
 
-## Core teams
+## Current control-plane roster
+
+The active executable registries currently resolve to:
+
+- **10 teams**
+- **84 workers**
+- **78 specialists**
+- **4 Mission Control workers**
+
+These counts are derived from the same `ConfigBundle` composition used by the reference router rather than from a manually maintained subset.
+
+## Active teams
 
 | Team | Primary ownership | Typical handoff |
 |---|---|---|
-| [Mission Control](mission-control.md) | intake, classification, dispatch, coordination, verification assignment, final assembly | selects and coordinates all other teams |
+| [Mission Control](mission-control.md) | intake, classification, dispatch, coordination, authority boundaries, verification assignment, final assembly | selects and coordinates all other teams |
 | [Planning Team](planning-team.md) | decomposition, architecture, sequencing, tradeoffs, acceptance criteria | hands executable plans to Engineering and review requests to Review |
 | [Engineering Team](engineering-team.md) | implementation, debugging, testing, runtime validation, technical handoff | hands evidence and changes to Review and Verification |
-| [Research Team](research-team.md) | source collection, comparison, synthesis, uncertainty, traceability | hands evidence to Planning, Review, or Verification |
-| [Review Team](review-team.md) | challenge, risk review, requirements alignment, finding classification | returns required changes or requests verification |
+| Platform and Reliability | shared platforms, distributed systems, database reliability, networking, performance, FinOps, SRE, MLOps, DevOps, DevSecOps | supports Engineering, Mission Control, Review, and Verification |
+| Systems Engineering | requirements, interfaces, baselines, integration strategy, lifecycle coherence, verification and validation planning | coordinates cross-system technical boundaries |
+| Physical Systems | hardware, embedded, civil, robotics, silicon, aerospace, manufacturing, physical integration | coordinates with Systems Engineering, Assurance, Review, and Verification |
+| [Research Team](research-team.md) | source collection, comparison, synthesis, uncertainty, analytics, user and market research | hands evidence to Planning, Review, or Verification |
+| Assurance | privacy engineering, functional safety, formal methods, application security | provides technical assurance evidence for independent review and verification |
+| [Review Team](review-team.md) | challenge, risk review, code review, compliance review, requirements alignment, finding classification | returns required changes or requests verification |
 | [Verification Team](verification-team.md) | independent checks, acceptance status, residual risk, release recommendation | returns accept, revise, reject, or escalate |
+
+## Mission Control
+
+Mission Control owns orchestration and coordination. It does not absorb specialist execution or bypass the accountable team.
+
+Its active workers are:
+
+| Worker | Responsibility |
+|---|---|
+| `orchestration` | governed multi-agent pipelines, handoffs, checkpoints, recovery, and termination |
+| `operations` | operational controls, vendors, processes, approvals, dependencies, and accountable execution |
+| `project_delivery` | scope, capacity, critical path, risk, change control, and delivery commitments |
+| `incident_response` | severity, response roles, cadence, timeline, communications coordination, resolution readiness, and blameless learning |
 
 ## Standard team contract
 
-Every core team definition contains the same operating sections:
+Every team definition follows the same operating structure where applicable:
 
 1. **Mission**: the durable responsibility owned by the team
 2. **Inputs**: the information, evidence, access, and constraints required to begin
@@ -56,54 +87,33 @@ Every core team definition contains the same operating sections:
 - Mission Control preserves the original intent and owns the dispatch record.
 - Planning defines acceptance criteria before consequential execution.
 - Engineering reports actual results, including failed and unavailable checks.
-- Research separates facts, source interpretations, and inference.
+- Platform and Reliability owns shared operational foundations without absorbing application ownership.
+- Systems Engineering maintains cross-system requirements, interfaces, integration, and lifecycle coherence.
+- Physical Systems owns engineering whose correctness depends on physical behavior and real-world integration.
+- Research separates facts, source interpretations, quantitative evidence, and inference.
+- Assurance produces technical assurance evidence but does not self-approve consequential claims.
 - Review classifies findings and does not approve unresolved blockers silently.
 - Verification follows evidence and records every material criterion as passed, failed, skipped, unavailable, or inconclusive.
 - Consequential work must not use the same implementation as the sole planner, executor, reviewer, and verifier.
 
 ## Specialist roster
 
-TEO includes a public roster of 56 specialist role cards created by **Sylvester Roxas**.
+TEO currently contains **78 active preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
-| Primary team | Specialists |
-|---|---:|
-| Mission Control | 4 |
-| Planning Team | 17 |
-| Engineering Team | 13 |
-| Research Team | 10 |
-| Review Team | 10 |
-| Verification Team | 2 |
+The authoritative registry is [`community/specialists/specialists.yaml`](../specialists/specialists.yaml), with active principal-engineering additions and controlled allocation corrections in [`community/specialists/principal-engineering-active.yaml`](../specialists/principal-engineering-active.yaml).
 
-The complete roster, creator attribution, worker bindings, supporting teams, risk profiles, and individual role cards are available in [`community/specialists/`](../specialists/).
+Specialists narrow domain expertise. They do not replace the owning team, bypass Mission Control, select their own authority, reduce worker responsibility, or approve their own consequential work.
 
-Specialists narrow domain expertise. They do not replace the core team, bypass Mission Control, select their own authority, or approve their own consequential work.
+## Worker registry
 
-## Specialist workers
+The executable worker registry currently resolves to **84 workers** after composing the canonical worker registry with the active additive worker extensions and controlled overrides loaded by the reference implementation.
 
-Core teams dispatch specialist workers according to task context. The original stable worker set includes:
+The canonical base registry is [`community/workers/workers.yaml`](../workers/workers.yaml). Active worker extensions include Mission Control, Research, Review, Systems Engineering, Platform and Reliability, Physical Systems, Assurance, principal-engineering, and specialist-completion worker definitions.
 
-- Architecture
-- Backend
-- Frontend
-- Mobile
-- DevOps
-- Infrastructure
-- Performance
-- Security
-- Database
-- Data Engineering
-- AI Engineering
-- Documentation
-- QA
-- Accessibility
-- Release
-
-Worker responsibilities and capability mappings are defined in [`community/workers/workers.yaml`](../workers/workers.yaml).
-
-The extended domain-specialist bindings are defined in [`community/specialists/specialists.yaml`](../specialists/specialists.yaml).
+Worker definitions establish stable routing responsibilities. The corresponding specialist role cards remain authoritative for domain methodology, boundaries, responsibilities, and output requirements.
 
 ## Routing authority
 
-Team dispatch order, task routes, required dispatch fields, and implementation resolution are defined in [`policy/routing/team-routing.yaml`](../../policy/routing/team-routing.yaml).
+Team dispatch order, task routes, worker bindings, specialist spawn routes, required dispatch fields, and implementation resolution are defined by the active policies under [`policy/routing/`](../../policy/routing/).
 
-Implementation selection remains governed by capability fit, task risk, context, cost, latency, tool access, availability, and verification requirements.
+Implementation selection remains governed by responsibility, capability fit, effective risk, current model evidence, tool access, availability, fallback requirements, and independent verification.
