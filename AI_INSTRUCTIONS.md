@@ -14,6 +14,7 @@ Use this repository as the source of truth for TEO orchestration.
 8. Read `models.yaml` and current provider/model evidence before changing time-sensitive implementation defaults.
 9. For live execution, read the applicable policies under `policy/runtime/`.
 10. For consequential specialist facts, apply `policy/specialists/freshness.yaml` and the regulated evidence pilot where in scope.
+11. For any model-bearing decision, apply `policy/governance/model-freshness.yaml` before relying on a model identifier, lifecycle state, capability, or routing assumption.
 
 ## Core routing rule
 
@@ -132,6 +133,22 @@ Required telemetry persistence failure fails closed.
 Volatile consequential facts require current authoritative evidence. A reachable URL alone is not sufficient evidence of correct provenance.
 
 For the regulated pilot, validate source authority, date basis, applicability, expiry, independent verification, and refusal/escalation behavior. Do not expand the six-card pilot until its maintainability gate is explicitly approved.
+
+## Model freshness rule
+
+Pretrained, cached, remembered, or previously documented model information is not authoritative for current model state.
+
+Before recommending, adding, replacing, removing, validating, or materially comparing any model, check current authoritative provider documentation. At minimum verify the current canonical identifier, lifecycle state, reasoning or thinking controls, relevant tool and structured-output support, and any material runtime constraints or migration guidance that affect the route.
+
+Official provider product pages, API documentation, release notes, and migration notices determine current existence, identifiers, availability, lifecycle, and provider-supported controls. Practitioner reports, forums, benchmarks, and third-party evaluations may inform performance judgments but must not override provider documentation on those facts.
+
+If current authoritative information cannot be obtained, mark model freshness as unverified. Never silently substitute remembered or training-time knowledge.
+
+A newer model does not automatically replace an existing route. A discovered release change triggers compatibility and routing review. Evaluate route purpose, capability requirements, reasoning controls, fallback and verifier independence, preview authorization, evidence quality, and regression risk before proposing a change.
+
+This rule applies to every model-bearing surface, including primaries, routine fallbacks, independent verifiers, calibration judges, machine panels, guarded canaries, provider adapters, registries, examples, fixtures, tests, and documentation.
+
+When a model-bearing change is accepted, preserve a verification date and authoritative evidence in the appropriate registry, research record, policy metadata, or change record so future agents can distinguish current evidence from inherited assumptions.
 
 ## Required dispatch record
 
