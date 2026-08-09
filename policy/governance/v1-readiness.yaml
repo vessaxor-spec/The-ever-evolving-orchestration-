@@ -1,0 +1,67 @@
+version: "1.0"
+status: active
+reviewed_at: 2026-08-09
+
+v1_definition:
+  target: credible_vendor_neutral_orchestration_specification_with_runnable_reference_control_plane
+  production_distributed_platform_required: false
+  functional_reference_release_may_precede_human_calibration: true
+
+required_for_v1:
+  architecture_and_governance_complete: true
+  deterministic_routing_and_risk_controls: true
+  provider_diverse_fallback_and_verification: true
+  guarded_live_provider_execution_available: true
+  retry_fallback_circuit_telemetry_controls_available: true
+  calibration_instrumentation_available: true
+  provisional_machine_panel_path_available: true
+  reproducible_ci_green: true
+  model_freshness_governance_active: true
+
+not_required_to_tag_v1:
+  independent_human_calibration_complete: false
+  human_ground_truth_quality_claim: false
+  distributed_circuit_state_coordination: false
+  distributed_telemetry_export: false
+  streaming_runtime: false
+  source_backed_cost_attribution: false
+  route_outcome_learning: false
+  qualified_human_approval_integration: false
+
+provisional_operational_evidence:
+  policy: policy/verification/verifier-calibration-machine-panel.yaml
+  allowed_for_v1_readiness_evidence: true
+  human_ground_truth_equivalent: false
+  may_authorize_quality_claims: false
+  may_expand_live_scope: false
+  may_change_routes_automatically: false
+  may_remove_human_review_tier: false
+
+human_stewardship:
+  blocking_for_functional_v1_release: false
+  blocking_for_human_ground_truth_claims: true
+  blocking_for_evidence_based_scope_expansion: true
+  blocking_for_future_route_changes_when_policy_requires_human_acceptance: true
+  preferred_execution_model: github_community_stewardship
+  issue_tracker: 75
+
+authority_boundary:
+  critical_effective_risk_still_requires_qualified_human_approval: true
+  machine_panel_must_never_be_labeled_human_review: true
+  absence_of_human_calibration_must_be_disclosed: true
+  provisional_evidence_must_remain_provisional: true
+
+release_states:
+  - id: reference_operational
+    description: Architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational.
+  - id: human_calibrated
+    description: Independent blinded human calibration and residual-risk acceptance have been completed.
+
+policy: >-
+  TEO v1 is a functional reference-system milestone, not a claim that every future
+  production hardening feature or human calibration study is complete. Independent
+  human calibration remains the stronger evidence tier and is required before human
+  ground-truth claims, policy-governed scope expansion, or route changes that require
+  explicit human acceptance. It does not block tagging a functionally complete v1
+  reference release. Until human stewardship completes that tier, machine-panel evidence
+  remains explicitly provisional and cannot broaden authority.
