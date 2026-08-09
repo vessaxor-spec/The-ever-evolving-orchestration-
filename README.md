@@ -13,6 +13,9 @@ A vendor-neutral orchestration specification and runnable reference control plan
 **Navigate by principles. Adapt by evidence.**
 
 [![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)
+[![Release](https://img.shields.io/github/v/release/vessaxor-spec/The-ever-evolving-orchestration-?label=release)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0)
+
+**Latest stable release:** [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0) · **State:** `reference_operational` · **Reference package:** `teo-reference-router==1.0.0`
 
 </div>
 
@@ -73,7 +76,11 @@ The normative boundary is defined in [`policy/governance/provider-access-separat
 
 ## Current state
 
-TEO is at the **reference-operational functional-v1 boundary**.
+**TEO v1.0.0 is released.** The project has crossed the functional-v1 boundary and is now in post-v1 stewardship and evolution.
+
+The `v1.0.0` tag is governed as an immutable historical reference to the exact repository state accepted as the first functional release. The GitHub Release is published in the `reference_operational` state and aligns with `teo-reference-router==1.0.0`.
+
+The normative release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md), with the canonical readiness boundary in [`V1_READINESS.md`](V1_READINESS.md) and [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
 
 The current control plane has **ten active organizational teams**, **84 workers**, and **78 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
@@ -106,7 +113,7 @@ The repository currently implements:
 
 ### Functional v1 means
 
-TEO v1 targets a **credible vendor-neutral orchestration specification with a runnable reference control plane**.
+TEO v1.0.0 establishes a **credible vendor-neutral orchestration specification with a runnable reference control plane**.
 
 It does not require TEO to become a production distributed orchestration platform before v1 can exist.
 
@@ -129,7 +136,7 @@ The authoritative release boundary is defined in [`policy/governance/v1-readines
 
 ### What is intentionally not a functional-v1 blocker
 
-The following remain valuable but are not required to call the reference system functionally complete:
+The following remain valuable post-v1 work and were explicitly not required for the `v1.0.0` `reference_operational` release:
 
 - independent blinded human calibration
 - a human-ground-truth verifier-quality claim
@@ -496,16 +503,17 @@ CI validates the control plane. It does not convert provisional evidence into hu
 ### For humans
 
 1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).
-2. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
-3. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
-4. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
-5. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
-6. Review canonical routing under [`policy/routing/`](policy/routing/).
-7. Review runtime controls under [`policy/runtime/`](policy/runtime/).
-8. Review verification policy under [`policy/verification/`](policy/verification/).
-9. Review specialists under [`community/specialists/`](community/specialists/).
-10. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
-11. Run validation and tests.
+2. Read [`V1_READINESS.md`](V1_READINESS.md) and the [`v1.0.0 release contract`](docs/releases/v1.0.0.md).
+3. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
+4. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
+5. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
+6. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
+7. Review canonical routing under [`policy/routing/`](policy/routing/).
+8. Review runtime controls under [`policy/runtime/`](policy/runtime/).
+9. Review verification policy under [`policy/verification/`](policy/verification/).
+10. Review specialists under [`community/specialists/`](community/specialists/).
+11. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
+12. Run validation and tests.
 
 ### For AI agents
 
@@ -662,9 +670,11 @@ The final outcome contract supports:
 
 ### Functional v1: reference operational
 
-**Current state.**
+**Released as `v1.0.0` on 2026-08-09.**
 
 The architecture, governance, deterministic routing, risk controls, specialist bindings, model refinement, Mission Control routing assignments, provider-diverse fallback, fresh-verifier rotation, guarded live execution, recovery controls, telemetry, calibration instrumentation, model freshness, provider-access separation, and reproducible CI are operational as a reference system.
+
+The release is governed by [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md). Future compatible fixes and extensions advance through semantic release versions rather than moving or rewriting the `v1.0.0` tag.
 
 ### Post-v1 stewardship and hardening
 
