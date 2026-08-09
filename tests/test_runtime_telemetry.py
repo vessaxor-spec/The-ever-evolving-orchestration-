@@ -110,32 +110,18 @@ def sequence_connection(
     )
 
 
-def anthropic_transient() -> dict:
-    return {"type": "error", "error": {"type": "api_error", "message": "temporary"}}
+def gemini_transient() -> dict:
+    return {"error": {"status": "INTERNAL", "message": "temporary"}}
 
 
-def anthropic_provider_failure() -> dict:
-    return {"type": "error", "error": {"type": "rate_limit_error", "message": "limited"}}
-
-
-def anthropic_success() -> dict:
-    return {
-        "id": "msg_telemetry",
-        "model": "claude-haiku-4-5",
-        "content": [{"type": "text", "text": "label_a"}],
-        "usage": {
-            "input_tokens": 10,
-            "cache_read_input_tokens": 2,
-            "cache_creation_input_tokens": 1,
-            "output_tokens": 4,
-        },
-    }
+def gemini_provider_failure() -> dict:
+    return {"error": {"status": "RESOURCE_EXHAUSTED", "message": "limited"}}
 
 
 def gemini_success() -> dict:
     return {
         "id": "int_telemetry",
-        "model": "gemini-3.6-flash",
+        "model": "gemini-3.5-flash-lite",
         "status": "completed",
         "steps": [{"type": "model_output", "content": [{"type": "text", "text": "label_b"}]}],
         "usage": {
@@ -145,6 +131,20 @@ def gemini_success() -> dict:
             "total_thought_tokens": 3,
             "total_tool_use_tokens": 1,
             "total_tokens": 17,
+        },
+    }
+
+
+def anthropic_success() -> dict:
+    return {
+        "id": "msg_telemetry_fallback",
+        "model": "claude-haiku-4-5",
+        "content": [{"type": "text", "text": "label_a"}],
+        "usage": {
+            "input_tokens": 10,
+            "cache_read_input_tokens": 2,
+            "cache_creation_input_tokens": 1,
+            "output_tokens": 4,
         },
     }
 
@@ -283,12 +283,12 @@ def test_retry_attempts_are_logged_immediately_under_same_dispatch(tmp_path: Pat
         engine(),
         task("task-telemetry-retry"),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
+            "google": sequence_connection(
+                "google",
                 calls,
                 [
-                    (500, anthropic_transient(), {"request-id": "req_a1"}),
-                    (200, anthropic_success(), {"request-id": "req_a2"}),
+                    (500, gemini_transient(), {"x-request-id": "req_g1"}),
+                    (200, gemini_success(), {"x-request-id": "req_g2"}),
                 ],
             )
         },
@@ -300,6 +300,7 @@ def test_retry_attempts_are_logged_immediately_under_same_dispatch(tmp_path: Pat
     )
 
     assert outcome.status == "primary_executed"
+    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
     assert outcome.primary_attempts == 2
     assert len(sink.events) == 2
     assert [event.role for event in sink.events] == ["primary", "primary"]
@@ -309,28 +310,29 @@ def test_retry_attempts_are_logged_immediately_under_same_dispatch(tmp_path: Pat
     assert sink.events[0].failure_scope == "transient"
     assert sink.events[1].status == "succeeded"
     assert sink.events[1].usage is not None
-    assert sink.events[1].usage.input_tokens == 13
+    assert sink.events[1].usage.input_tokens == 8
     assert sink.events[1].usage.cached_input_tokens == 2
+    assert sink.events[1].usage.reasoning_output_tokens == 3
     assert sink.events[1].duration_ms == 250.0
 
 
 def test_fallback_attempt_has_new_dispatch_and_fallback_role(tmp_path: Path) -> None:
-    anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
+    anthropic_calls: list[dict] = []
     sink = InMemoryRuntimeTelemetrySink()
     outcome = execute_guarded_canary(
         engine(),
         task("task-telemetry-fallback"),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
-                anthropic_calls,
-                [(429, anthropic_provider_failure(), {"request-id": "req_a", "retry-after": "2"})],
-            ),
             "google": sequence_connection(
                 "google",
                 google_calls,
-                [(200, gemini_success(), {"x-request-id": "req_g"})],
+                [(429, gemini_provider_failure(), {"x-request-id": "req_g", "retry-after": "2"})],
+            ),
+            "anthropic": sequence_connection(
+                "anthropic",
+                anthropic_calls,
+                [(200, anthropic_success(), {"request-id": "req_a"})],
             ),
         },
         artifact_root=tmp_path,
@@ -348,10 +350,11 @@ def test_fallback_attempt_has_new_dispatch_and_fallback_role(tmp_path: Path) -> 
     assert outcome.fallback_dispatch is not None
     assert fallback.dispatch_id == outcome.fallback_dispatch.dispatch_id
     assert fallback.dispatch_id != primary.dispatch_id
-    assert fallback.provider_family == "google"
+    assert fallback.provider_family == "anthropic"
+    assert fallback.model == "claude-haiku-4-5"
     assert fallback.usage is not None
-    assert fallback.usage.tool_tokens == 1
-    assert fallback.usage.reasoning_output_tokens == 3
+    assert fallback.usage.input_tokens == 13
+    assert fallback.usage.cached_input_tokens == 2
 
 
 def test_default_runtime_sink_persists_jsonl_without_content_or_caller_id(tmp_path: Path) -> None:
@@ -361,10 +364,10 @@ def test_default_runtime_sink_persists_jsonl_without_content_or_caller_id(tmp_pa
         engine(),
         task(caller_id),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
+            "google": sequence_connection(
+                "google",
                 calls,
-                [(200, anthropic_success(), {"request-id": "req_default"})],
+                [(200, gemini_success(), {"x-request-id": "req_default"})],
             )
         },
         artifact_root=tmp_path,
@@ -375,7 +378,7 @@ def test_default_runtime_sink_persists_jsonl_without_content_or_caller_id(tmp_pa
     assert path.is_file()
     raw = path.read_text(encoding="utf-8")
     assert "Classify these bounded records" not in raw
-    assert "label_a" not in raw
+    assert "label_b" not in raw
     assert caller_id not in raw
     events = JsonlRuntimeTelemetrySink(path).read_all()
     assert len(events) == 1
