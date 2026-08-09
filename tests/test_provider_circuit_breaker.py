@@ -138,12 +138,12 @@ def test_three_provider_overloads_persist_open_circuit_and_route_next_task_away(
         "google": sequence_connection(
             "google",
             google_calls,
-            [(503, gemini_error("UNAVAILABLE"))] * 3,
+            [(503, gemini_error("UNAVAILABLE"))] * 6,
         ),
         "anthropic": sequence_connection(
             "anthropic",
             anthropic_calls,
-            [(200, anthropic_success())] * 4,
+            [(200, anthropic_success())],
         ),
     }
 
@@ -155,7 +155,8 @@ def test_three_provider_overloads_persist_open_circuit_and_route_next_task_away(
             artifact_root=tmp_path / "artifacts",
             sleeper=lambda _: None,
         )
-        assert outcome.status == "fallback_executed"
+        assert outcome.status == "execution_failed"
+        assert outcome.primary_attempts == 2
         assert outcome.primary_dispatch.selected_implementation.provider_family == "google"
 
     state_path = tmp_path / "provider-circuits.json"
@@ -172,8 +173,8 @@ def test_three_provider_overloads_persist_open_circuit_and_route_next_task_away(
     )
     assert fourth.primary_dispatch.selected_implementation.provider_family == "anthropic"
     assert "google" in fourth.circuit_blocked_providers
-    assert len(google_calls) == 3
-    assert len(anthropic_calls) == 4
+    assert len(google_calls) == 6
+    assert len(anthropic_calls) == 1
 
 
 def test_repeated_rate_limits_do_not_open_global_provider_circuit(tmp_path: Path) -> None:
