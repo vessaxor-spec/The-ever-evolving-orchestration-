@@ -34,7 +34,7 @@ The circuit layer may not:
 - alter provider connection or credential mechanics
 - execute verification
 - satisfy human approval
-- convert quota, authentication, billing, or permission failures into global outages
+- convert quota, authentication, billing, permission, or local connection failures into global outages
 
 ## States
 
@@ -58,7 +58,9 @@ After the open cooldown expires, the provider becomes eligible for a bounded rec
 
 The reference implementation permits one half-open probe dispatch at a time. Two successful probes are required before the circuit returns to Closed.
 
-A service-health failure during half-open immediately reopens the circuit. A local connection error is inconclusive but also returns the circuit to Open because recovery has not been demonstrated.
+A service-health failure during half-open immediately reopens the circuit. A non-service-health failure, including a local connection error, is inconclusive: it clears the active probe claim but leaves the provider in Half-open because the failure does not establish provider-family unhealthiness and recovery has not been demonstrated.
+
+Half-open probe claims are leased rather than permanent. The guarded reference lease is 30 seconds. If a process crashes or otherwise fails before recording the probe result, the abandoned claim expires and a later task may perform another bounded recovery probe. This lease is a single-process reference safeguard, not distributed coordination.
 
 ## Global service-health signals
 
@@ -120,6 +122,8 @@ Current defaults:
 - 300-second maximum cooldown
 - 1 half-open probe dispatch at a time
 - 2 successful half-open probes required to close
+- 30-second half-open probe lease
+- non-service-health half-open failures remain inconclusive rather than reopening provider health
 
 These are canary defaults rather than universal production constants.
 
@@ -162,6 +166,8 @@ or the equivalent parent directory of a custom artifact root.
 
 Malformed persisted state fails closed rather than being silently reset.
 
+A persisted in-flight half-open probe includes the time at which the probe was claimed. An in-flight claim without a claim timestamp is invalid state and fails closed. Claims older than the active probe lease are released during circuit refresh so an interrupted process cannot strand provider recovery indefinitely.
+
 ## Concurrency boundary
 
 The JSON state store is a single-process reference mechanism. Atomic file replacement prevents partial writes, but it is not a distributed coordination system.
@@ -171,7 +177,7 @@ Multi-process and multi-host runtimes require a shared transactional store that 
 - state transitions
 - failure counters
 - open deadlines
-- half-open probe claims
+- half-open probe claims and leases
 
 That production store is outside this runtime slice.
 
@@ -205,7 +211,7 @@ Persistent state also records:
 - open and reopen timestamps
 - trip count
 - half-open success count
-- probe-in-flight state
+- probe-in-flight state and claim timestamp
 - last service-health failure code
 - last state transition time
 
