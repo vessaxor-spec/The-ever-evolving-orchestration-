@@ -501,10 +501,10 @@ routing:
         profile: luna
     verifier:
       agent: claude
-      model: claude-haiku-4-5
-      profile: luna
-      reasoning: default
-      purpose: provider-diverse pointwise validation of the primary Flash-Lite route
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: medium
+      purpose: provider-diverse semantic verification of the primary Flash-Lite route
     semantic_reviewer:
       agent: agy
       model: gemini-3.6-flash
