@@ -1,4 +1,4 @@
-version: "1.0"
+version: "1.1"
 status: active
 reviewed_at: 2026-08-09
 
@@ -6,6 +6,8 @@ v1_definition:
   target: credible_vendor_neutral_orchestration_specification_with_runnable_reference_control_plane
   production_distributed_platform_required: false
   functional_reference_release_may_precede_human_calibration: true
+  provider_access_provisioning_owned_by_teo: false
+  caller_or_integrator_owns_valid_model_access: true
 
 required_for_v1:
   architecture_and_governance_complete: true
@@ -17,16 +19,30 @@ required_for_v1:
   provisional_machine_panel_path_available: true
   reproducible_ci_green: true
   model_freshness_governance_active: true
+  provider_access_separation_governance_active: true
 
 not_required_to_tag_v1:
   independent_human_calibration_complete: false
   human_ground_truth_quality_claim: false
+  teo_managed_api_key_provisioning: false
+  teo_managed_oauth_login: false
+  teo_managed_subscription_entitlement: false
+  teo_managed_credential_broker: false
   distributed_circuit_state_coordination: false
   distributed_telemetry_export: false
   streaming_runtime: false
   source_backed_cost_attribution: false
   route_outcome_learning: false
   qualified_human_approval_integration: false
+
+provider_access_boundary:
+  policy: policy/governance/provider-access-separation.yaml
+  routing_must_be_authentication_method_neutral: true
+  api_key_access_supported_by_reference_helpers: true
+  oauth_or_subscription_access_may_be_supplied_by_integrating_runtime: true
+  alternative_provider_supported_access_may_be_supplied_by_integrating_runtime: true
+  reference_api_key_evidence_workflow_is_convenience_harness: true
+  reference_api_key_evidence_workflow_defines_teo_access_requirement: false
 
 provisional_operational_evidence:
   policy: policy/verification/verifier-calibration-machine-panel.yaml
@@ -50,18 +66,21 @@ authority_boundary:
   machine_panel_must_never_be_labeled_human_review: true
   absence_of_human_calibration_must_be_disclosed: true
   provisional_evidence_must_remain_provisional: true
+  access_mechanism_must_not_become_routing_authority: true
 
 release_states:
   - id: reference_operational
-    description: Architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational.
+    description: Architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational; access to selected models is supplied by the caller or integrating runtime.
   - id: human_calibrated
     description: Independent blinded human calibration and residual-risk acceptance have been completed.
 
 policy: >-
-  TEO v1 is a functional reference-system milestone, not a claim that every future
-  production hardening feature or human calibration study is complete. Independent
-  human calibration remains the stronger evidence tier and is required before human
-  ground-truth claims, policy-governed scope expansion, or route changes that require
-  explicit human acceptance. It does not block tagging a functionally complete v1
-  reference release. Until human stewardship completes that tier, machine-panel evidence
-  remains explicitly provisional and cannot broaden authority.
+  TEO v1 is a functional reference-system milestone, not a provider-account provisioning
+  product and not a claim that every future production hardening feature or human
+  calibration study is complete. TEO owns model-routing correctness; callers and integrating
+  runtimes own valid access to the selected implementation through API keys, OAuth or
+  subscription-backed sessions, delegated identity, connectors, or other provider-supported
+  mechanisms. Access method must not alter model-routing semantics. Independent human
+  calibration remains the stronger evidence tier and is required before human ground-truth
+  claims, policy-governed scope expansion, or route changes that require explicit human
+  acceptance. It does not block tagging a functionally complete v1 reference release.

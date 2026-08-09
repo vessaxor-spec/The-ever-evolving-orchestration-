@@ -1,10 +1,17 @@
-name: Provisional Operational Evidence
+name: Provisional Operational Evidence - API-key convenience harness
+
+# This workflow is an optional repository-hosted harness for the existing provisional
+# evidence collectors. GitHub Actions cannot inherit a user's interactive OAuth or
+# subscription session, so this harness uses repository API-key secrets. That is a
+# workflow-environment choice, not a TEO routing or provider-access requirement.
+# Alternative runtimes may inject any provider-supported ProviderConnection after TEO
+# has selected the model.
 
 on:
   workflow_dispatch:
     inputs:
       execute_live:
-        description: Execute the full 96-call provisional evidence study
+        description: Execute the full 96-call study through this API-key convenience harness
         required: true
         type: boolean
         default: false
@@ -18,7 +25,7 @@ concurrency:
 
 jobs:
   evidence:
-    name: Plan or collect provisional evidence
+    name: Plan or collect provisional evidence through optional API-key harness
     runs-on: ubuntu-24.04
     timeout-minutes: 45
 
@@ -47,7 +54,7 @@ jobs:
           python -m teo_reference.verifier_calibration_machine_panel plan \
             | tee .teo/runtime/verifier-calibration/provisional-plan.json
 
-      - name: Validate live provider credentials
+      - name: Validate API-key harness credentials
         if: ${{ inputs.execute_live }}
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -57,11 +64,12 @@ jobs:
           missing=0
           for name in GEMINI_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY; do
             if [ -z "${!name}" ]; then
-              echo "Missing required repository secret: ${name}" >&2
+              echo "Missing secret required by this API-key harness: ${name}" >&2
               missing=1
             fi
           done
           if [ "$missing" -ne 0 ]; then
+            echo "TEO itself does not require API-key authentication; provide another runtime ProviderConnection to use OAuth, subscription-backed, delegated, connector, or other provider-supported access." >&2
             exit 2
           fi
 

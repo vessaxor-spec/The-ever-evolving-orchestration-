@@ -1,4 +1,4 @@
-version: "1.0"
+version: "1.1"
 status: active
 reviewed_at: 2026-08-09
 
@@ -28,12 +28,19 @@ freshness:
 required_checks:
   - canonical_model_identifier
   - lifecycle_status
-  - availability_status
+  - provider_level_availability_status
   - reasoning_or_thinking_controls
   - relevant_tool_support
   - structured_output_support
-  - material_runtime_constraints
+  - material_model_runtime_constraints
   - migration_or_replacement_guidance_when_applicable
+
+access_separation:
+  policy: policy/governance/provider-access-separation.yaml
+  user_authentication_method_is_model_freshness: false
+  user_subscription_or_entitlement_is_model_freshness: false
+  credential_availability_is_model_freshness: false
+  provider_level_model_availability_remains_model_freshness: true
 
 source_authority:
   authoritative:
@@ -57,7 +64,8 @@ release_behavior:
     - reasoning_controls
     - fallback_independence
     - verifier_independence
-    - preview_or_access_constraints
+    - preview_authorization
+    - provider_level_runtime_constraints
     - evidence_quality
     - regression_risk
 
@@ -70,10 +78,13 @@ acceptance:
 policy: >-
   Model state is time-sensitive. AI agents and maintainers must not rely on pretrained,
   cached, remembered, or inherited repository assumptions as authority for the current
-  existence, identifier, lifecycle, availability, or supported controls of a model.
-  Current authoritative provider documentation must be checked before a model-bearing
-  recommendation, validation, comparison, addition, removal, or replacement. If current
-  authority cannot be established, freshness is unverified and the change must not be
-  accepted on remembered knowledge alone. A newer release triggers compatibility and
-  routing review but does not automatically replace an existing TEO route. Accepted
-  model-bearing changes preserve their verification date and authoritative evidence.
+  existence, identifier, lifecycle, provider-level availability, or supported controls of
+  a model. Current authoritative provider documentation must be checked before a
+  model-bearing recommendation, validation, comparison, addition, removal, or replacement.
+  User authentication method, subscription entitlement, credential availability, billing,
+  and connection mechanism are not model-freshness or model-fitness signals and are governed
+  separately by provider-access separation. If current provider-level authority cannot be
+  established, freshness is unverified and the model-bearing change must not be accepted on
+  remembered knowledge alone. A newer release triggers compatibility and routing review but
+  does not automatically replace an existing TEO route. Accepted model-bearing changes
+  preserve their verification date and authoritative evidence.

@@ -15,6 +15,7 @@ Use this repository as the source of truth for TEO orchestration.
 9. For live execution, read the applicable policies under `policy/runtime/`.
 10. For consequential specialist facts, apply `policy/specialists/freshness.yaml` and the regulated evidence pilot where in scope.
 11. For any model-bearing decision, apply `policy/governance/model-freshness.yaml` before relying on a model identifier, lifecycle state, capability, or routing assumption.
+12. Keep provider access separate from routing by applying `policy/governance/provider-access-separation.yaml` whenever authentication, subscription, credentials, connectors, or account entitlement appear in implementation work.
 
 ## Core routing rule
 
@@ -95,11 +96,19 @@ Preview implementations are never silently accepted.
 
 A task must explicitly list a concrete preview model in `constraints.accepted_preview_models` before the reference router may select it. Preview acceptance does not prove task fitness and does not override risk, capability, fallback, or verification controls.
 
+Provider-level model lifecycle and availability are routing-relevant model facts. User-specific login state, subscription entitlement, credential presence, billing configuration, or access mechanism are not model-fitness signals.
+
 ## Connection neutrality
 
 Connection mechanism is separate from routing semantics.
 
-API keys, OAuth, delegated identity, service accounts, connector sessions, SDK-managed identity, credential brokers, local runtimes, and future access methods must not change the selected Team, Worker, Specialist, model role, fallback, verifier, or reasoning effort merely because the connection method differs.
+TEO decides which implementation should perform the work. The user or integrating runtime is responsible for having a valid way to access that selected implementation.
+
+API keys, OAuth or subscription-backed sessions, delegated identity, service accounts, connector sessions, SDK-managed identity, credential brokers, local runtimes, and future provider-supported access methods must not change the selected Team, Worker, Specialist, model role, fallback, verifier, or reasoning effort merely because the connection method differs.
+
+Do not add authentication type, subscription tier, API-key presence, login state, billing method, or connector type to model-fitness scoring or routing policy. Do not downgrade or replace an otherwise correct model route merely because one access mechanism is not configured.
+
+Reference API-key helpers and GitHub Actions secrets are convenience harnesses only. They do not define TEO architecture. Alternative runtimes may inject any provider-supported connection after routing has already selected the model.
 
 Credential material must remain outside provider execution payloads and persisted orchestration records.
 
@@ -109,6 +118,7 @@ Credential material must remain outside provider execution payloads and persiste
 - Model/provider fallback requires a fresh canonical redispatch and dispatch ID.
 - Provider-family circuits represent service health, not tenant entitlement or local connection health.
 - Authentication, billing, permission, quota/rate-limit, model-not-found, malformed request, and local connection failures must not poison global provider health unless policy explicitly changes.
+- A missing credential or entitlement is an access-boundary failure, not proof that a different model was the intrinsically correct route.
 - Provider retry timing may constrain wait duration but never grants retry authority.
 
 ## Verification rules
@@ -138,13 +148,15 @@ For the regulated pilot, validate source authority, date basis, applicability, e
 
 Pretrained, cached, remembered, or previously documented model information is not authoritative for current model state.
 
-Before recommending, adding, replacing, removing, validating, or materially comparing any model, check current authoritative provider documentation. At minimum verify the current canonical identifier, lifecycle state, reasoning or thinking controls, relevant tool and structured-output support, and any material runtime constraints or migration guidance that affect the route.
+Before recommending, adding, replacing, removing, validating, or materially comparing any model, check current authoritative provider documentation. At minimum verify the current canonical identifier, lifecycle state, provider-level availability, reasoning or thinking controls, relevant tool and structured-output support, and any material model-runtime constraints or migration guidance that affect the route.
 
-Official provider product pages, API documentation, release notes, and migration notices determine current existence, identifiers, availability, lifecycle, and provider-supported controls. Practitioner reports, forums, benchmarks, and third-party evaluations may inform performance judgments but must not override provider documentation on those facts.
+Official provider product pages, API documentation, release notes, and migration notices determine current existence, identifiers, provider-level availability, lifecycle, and provider-supported controls. Practitioner reports, forums, benchmarks, and third-party evaluations may inform performance judgments but must not override provider documentation on those facts.
+
+User-specific authentication, subscription entitlement, credential availability, billing, and connection mechanism are governed by `policy/governance/provider-access-separation.yaml`; they are not evidence that a model is fresher, more capable, or a better routing choice.
 
 If current authoritative information cannot be obtained, mark model freshness as unverified. Never silently substitute remembered or training-time knowledge.
 
-A newer model does not automatically replace an existing route. A discovered release change triggers compatibility and routing review. Evaluate route purpose, capability requirements, reasoning controls, fallback and verifier independence, preview authorization, evidence quality, and regression risk before proposing a change.
+A newer model does not automatically replace an existing route. A discovered release change triggers compatibility and routing review. Evaluate route purpose, capability requirements, reasoning controls, fallback and verifier independence, preview authorization, provider-level runtime constraints, evidence quality, and regression risk before proposing a change.
 
 This rule applies to every model-bearing surface, including primaries, routine fallbacks, independent verifiers, calibration judges, machine panels, guarded canaries, provider adapters, registries, examples, fixtures, tests, and documentation.
 
@@ -166,8 +178,12 @@ Record at least:
 - routing explanation
 - warnings
 
+Authentication method, subscription plan, credential type, billing state, and connection mechanism are deliberately not part of the routing dispatch record.
+
 ## Update rule
 
-Model names, capabilities, access conditions, prices, quotas, and provider behavior are time-sensitive. Compare proposed implementation changes against worker requirements and current primary-source evidence. Newer does not automatically mean better.
+Model names, capabilities, provider-level lifecycle/availability, prices, quotas, and provider behavior are time-sensitive. Compare proposed implementation changes against worker requirements and current primary-source evidence. Newer does not automatically mean better.
+
+Provider access mechanics are a separate integration concern. Do not convert changes in OAuth, API-key provisioning, subscription packaging, account entitlement, credential brokers, or connector behavior into routing-policy changes unless they reveal a genuine provider-level model fact or a separate runtime integration defect.
 
 Material control-plane changes should add or update executable conformance tests. Major accepted milestones should be preserved through a new Capsule rather than rewriting an accepted historical Capsule.
