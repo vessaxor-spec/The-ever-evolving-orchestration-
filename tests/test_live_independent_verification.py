@@ -153,65 +153,38 @@ def openai_payload(verdict: dict) -> dict:
     }
 
 
-def test_primary_canary_uses_provider_diverse_gemini_verifier() -> None:
+def test_primary_canary_uses_provider_diverse_sonnet_verifier() -> None:
     dispatch = engine().dispatch(task())
-    assert dispatch.selected_implementation.model == "claude-haiku-4-5"
-    assert dispatch.selected_implementation.provider_family == "anthropic"
-    assert dispatch.verification.implementation.model == "gemini-3.6-flash"
-    assert dispatch.verification.implementation.provider_family == "google"
+    assert dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert dispatch.selected_implementation.provider_family == "google"
+    assert dispatch.verification.implementation.model == "claude-sonnet-5"
+    assert dispatch.verification.implementation.provider_family == "anthropic"
     assert dispatch.verification.implementation.reasoning == "medium"
 
 
-def test_model_scoped_fallback_gets_fresh_anthropic_verifier() -> None:
+def test_model_scoped_fallback_gets_fresh_gemini_verifier() -> None:
     runtime = engine()
     primary = runtime.dispatch(task())
-    fallback = runtime.dispatch(task(blocked_models=["claude-haiku-4-5"]))
-    assert fallback.selected_implementation.model == "gemini-3.6-flash"
-    assert fallback.verification.implementation.model == "claude-sonnet-5"
-    assert fallback.verification.implementation.provider_family == "anthropic"
+    fallback = runtime.dispatch(task(blocked_models=["gemini-3.5-flash-lite"]))
+    assert fallback.selected_implementation.model == "claude-haiku-4-5"
+    assert fallback.verification.implementation.model == "gemini-3.6-flash"
+    assert fallback.verification.implementation.provider_family == "google"
     assert fallback.verification.implementation.model != primary.verification.implementation.model
 
 
 def test_provider_scoped_fallback_gets_fresh_openai_verifier() -> None:
     runtime = engine()
     primary = runtime.dispatch(task())
-    fallback = runtime.dispatch(task(blocked_providers=["anthropic"]))
-    assert fallback.selected_implementation.model == "gemini-3.6-flash"
+    fallback = runtime.dispatch(task(blocked_providers=["google"]))
+    assert fallback.selected_implementation.model == "claude-haiku-4-5"
     assert fallback.verification.implementation.model == "gpt-5.6-sol"
     assert fallback.verification.implementation.provider_family == "openai"
     assert fallback.verification.implementation.model != primary.verification.implementation.model
 
 
-def test_primary_live_verifier_is_blinded_and_uses_google_structured_output(tmp_path: Path) -> None:
+def test_primary_live_verifier_is_blinded_and_uses_sonnet_structured_output(tmp_path: Path) -> None:
     runtime = engine()
     dispatch = runtime.dispatch(task())
-    calls: list[dict] = []
-    result = execute_live_verification(
-        runtime,
-        dispatch,
-        success_response(dispatch, write_output(tmp_path)),
-        {"google": connection("google", calls, google_payload(decision()))},
-        artifact_root=tmp_path,
-    )
-
-    assert result.status == "passed"
-    assert result.verifier_model == "gemini-3.6-flash"
-    body = calls[0]["body"]
-    assert body["model"] == "gemini-3.6-flash"
-    assert body["generation_config"]["thinking_level"] == "medium"
-    assert body["response_format"]["type"] == "text"
-    assert body["response_format"]["mime_type"] == "application/json"
-    serialized = json.dumps(body)
-    assert "claude-haiku-4-5" not in serialized
-    assert "anthropic" not in serialized.lower()
-    assert "fallback" not in serialized.lower()
-    assert "runtime-telemetry" not in serialized.lower()
-    assert "untrusted data" in serialized.lower()
-
-
-def test_model_fallback_uses_assigned_sonnet_verifier_and_effort(tmp_path: Path) -> None:
-    runtime = engine()
-    dispatch = runtime.dispatch(task(blocked_models=["claude-haiku-4-5"]))
     calls: list[dict] = []
     result = execute_live_verification(
         runtime,
@@ -228,13 +201,39 @@ def test_model_fallback_uses_assigned_sonnet_verifier_and_effort(tmp_path: Path)
     assert body["output_config"]["effort"] == "medium"
     assert body["output_config"]["format"]["type"] == "json_schema"
     serialized = json.dumps(body)
-    assert "gemini-3.6-flash" not in serialized
+    assert "gemini-3.5-flash-lite" not in serialized
     assert "google" not in serialized.lower()
+    assert "fallback" not in serialized.lower()
+    assert "runtime-telemetry" not in serialized.lower()
+    assert "untrusted data" in serialized.lower()
+
+
+def test_model_fallback_uses_assigned_gemini_verifier_and_effort(tmp_path: Path) -> None:
+    runtime = engine()
+    dispatch = runtime.dispatch(task(blocked_models=["gemini-3.5-flash-lite"]))
+    calls: list[dict] = []
+    result = execute_live_verification(
+        runtime,
+        dispatch,
+        success_response(dispatch, write_output(tmp_path)),
+        {"google": connection("google", calls, google_payload(decision()))},
+        artifact_root=tmp_path,
+    )
+
+    assert result.status == "passed"
+    assert result.verifier_model == "gemini-3.6-flash"
+    body = calls[0]["body"]
+    assert body["model"] == "gemini-3.6-flash"
+    assert body["generation_config"]["thinking_level"] == "medium"
+    assert body["response_format"]["type"] == "text"
+    serialized = json.dumps(body)
+    assert "claude-haiku-4-5" not in serialized
+    assert "anthropic" not in serialized.lower()
 
 
 def test_provider_fallback_uses_assigned_sol_verifier_and_structured_output(tmp_path: Path) -> None:
     runtime = engine()
-    dispatch = runtime.dispatch(task(blocked_providers=["anthropic"]))
+    dispatch = runtime.dispatch(task(blocked_providers=["google"]))
     calls: list[dict] = []
     result = execute_live_verification(
         runtime,
@@ -271,7 +270,7 @@ def test_structured_verifier_status_maps_to_existing_verification_contract(
         runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
-        {"google": connection("google", [], google_payload(verdict))},
+        {"anthropic": connection("anthropic", [], anthropic_payload(verdict))},
         artifact_root=tmp_path,
     )
     assert result.status == expected
@@ -295,14 +294,14 @@ def test_live_verifier_missing_assigned_connection_fails_closed(tmp_path: Path) 
 def test_malformed_verifier_json_fails_closed(tmp_path: Path) -> None:
     runtime = engine()
     dispatch = runtime.dispatch(task())
-    malformed = google_payload(decision())
-    malformed["steps"][0]["content"][0]["text"] = "not-json"
+    malformed = anthropic_payload(decision())
+    malformed["content"][0]["text"] = "not-json"
     with pytest.raises(LiveVerificationError, match="malformed structured JSON"):
         execute_live_verification(
             runtime,
             dispatch,
             success_response(dispatch, write_output(tmp_path)),
-            {"google": connection("google", [], malformed)},
+            {"anthropic": connection("anthropic", [], malformed)},
             artifact_root=tmp_path,
         )
 
@@ -319,7 +318,7 @@ def test_execution_artifact_outside_authorized_root_is_refused(tmp_path: Path) -
             runtime,
             dispatch,
             success_response(dispatch, outside.resolve().as_uri()),
-            {"google": connection("google", [], google_payload(decision()))},
+            {"anthropic": connection("anthropic", [], anthropic_payload(decision()))},
             artifact_root=allowed,
         )
 
@@ -333,7 +332,7 @@ def test_candidate_output_prompt_injection_remains_untrusted_data(tmp_path: Path
         runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path, malicious)),
-        {"google": connection("google", calls, google_payload(decision("failed")))},
+        {"anthropic": connection("anthropic", calls, anthropic_payload(decision("failed")))},
         artifact_root=tmp_path,
     )
     prompt = json.dumps(calls[0]["body"])
@@ -363,10 +362,10 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
             team="verification",
             method=["output_validation"],
             implementation=ImplementationChoice(
-                agent="claude",
-                model="claude-sonnet-5",
-                profile="sol",
-                provider_family="anthropic",
+                agent="agy",
+                model="gemini-3.6-flash",
+                profile="luna",
+                provider_family="google",
                 availability="current",
                 source="test",
                 reasoning="medium",
@@ -382,7 +381,7 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
             runtime,
             same_provider,
             success_response(same_provider, write_output(tmp_path)),
-            {"anthropic": connection("anthropic", [], anthropic_payload(decision()))},
+            {"google": connection("google", [], google_payload(decision()))},
             artifact_root=tmp_path,
         )
 
@@ -427,7 +426,7 @@ def test_live_verification_integrates_with_existing_finalize_without_bypass(tmp_
         runtime,
         dispatch,
         execution,
-        {"google": connection("google", [], google_payload(decision()))},
+        {"anthropic": connection("anthropic", [], anthropic_payload(decision()))},
         artifact_root=tmp_path,
     )
     outcome = runtime.finalize(
@@ -436,21 +435,21 @@ def test_live_verification_integrates_with_existing_finalize_without_bypass(tmp_
         verification,
     )
     assert outcome.status == "completed"
-    assert outcome.verifier_model == "gemini-3.6-flash"
+    assert outcome.verifier_model == "claude-sonnet-5"
 
 
 def test_guarded_outcome_uses_fallback_dispatch_fresh_verifier(tmp_path: Path) -> None:
     runtime = engine()
     primary = runtime.dispatch(task())
-    fallback = runtime.dispatch(task(blocked_providers=["anthropic"]))
+    fallback = runtime.dispatch(task(blocked_providers=["google"]))
     primary_failure = ProviderExecutionResponse(
         dispatch_id=primary.dispatch_id,
         status="failed",
-        provider_family="anthropic",
-        model="claude-haiku-4-5",
+        provider_family="google",
+        model="gemini-3.5-flash-lite",
         failure=ProviderFailure(
             scope="provider",
-            code="rate_limit_error",
+            code="RESOURCE_EXHAUSTED",
             message="provider unavailable",
         ),
     )

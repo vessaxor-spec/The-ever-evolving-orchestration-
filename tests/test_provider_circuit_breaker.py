@@ -42,14 +42,14 @@ def canary_task(task_id: str = "task-circuit") -> TaskRequest:
     )
 
 
-def anthropic_error(error_type: str, message: str = "provider error") -> dict:
-    return {"type": "error", "error": {"type": error_type, "message": message}}
+def gemini_error(status: str, message: str = "provider error") -> dict:
+    return {"error": {"status": status, "message": message}}
 
 
 def gemini_success() -> dict:
     return {
         "id": "int_circuit",
-        "model": "gemini-3.6-flash",
+        "model": "gemini-3.5-flash-lite",
         "status": "completed",
         "steps": [
             {
@@ -57,6 +57,14 @@ def gemini_success() -> dict:
                 "content": [{"type": "text", "text": "label_a\nlabel_b"}],
             }
         ],
+    }
+
+
+def anthropic_success() -> dict:
+    return {
+        "id": "msg_circuit_fallback",
+        "model": "claude-haiku-4-5",
+        "content": [{"type": "text", "text": "label_a\nlabel_b"}],
     }
 
 
@@ -104,7 +112,7 @@ def failed_response(provider: str, scope: str, code: str) -> ProviderExecutionRe
         dispatch_id="dispatch-health",
         status="failed",
         provider_family=provider,
-        model={"anthropic": "claude-haiku-4-5", "openai": "gpt-5.6-luna", "google": "gemini-3.6-flash"}[provider],
+        model={"anthropic": "claude-haiku-4-5", "openai": "gpt-5.6-luna", "google": "gemini-3.5-flash-lite"}[provider],
         failure=ProviderFailure(scope=scope, code=code, message="test failure"),  # type: ignore[arg-type]
     )
 
@@ -124,18 +132,18 @@ def test_policy_distinguishes_service_health_from_tenant_and_connection_failures
 
 
 def test_three_provider_overloads_persist_open_circuit_and_route_next_task_away(tmp_path: Path) -> None:
-    anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
+    anthropic_calls: list[dict] = []
     connections = {
-        "anthropic": sequence_connection(
-            "anthropic",
-            anthropic_calls,
-            [(529, anthropic_error("overloaded_error"))] * 3,
-        ),
         "google": sequence_connection(
             "google",
             google_calls,
-            [(200, gemini_success())] * 4,
+            [(503, gemini_error("UNAVAILABLE"))] * 6,
+        ),
+        "anthropic": sequence_connection(
+            "anthropic",
+            anthropic_calls,
+            [(200, anthropic_success())],
         ),
     }
 
@@ -147,11 +155,12 @@ def test_three_provider_overloads_persist_open_circuit_and_route_next_task_away(
             artifact_root=tmp_path / "artifacts",
             sleeper=lambda _: None,
         )
-        assert outcome.status == "fallback_executed"
-        assert outcome.primary_dispatch.selected_implementation.provider_family == "anthropic"
+        assert outcome.status == "execution_failed"
+        assert outcome.primary_attempts == 2
+        assert outcome.primary_dispatch.selected_implementation.provider_family == "google"
 
     state_path = tmp_path / "provider-circuits.json"
-    persisted = JsonFileCircuitStateStore(state_path).load_all()["anthropic"]
+    persisted = JsonFileCircuitStateStore(state_path).load_all()["google"]
     assert persisted.state == "open"
     assert persisted.trip_count == 1
 
@@ -162,25 +171,25 @@ def test_three_provider_overloads_persist_open_circuit_and_route_next_task_away(
         artifact_root=tmp_path / "artifacts",
         sleeper=lambda _: None,
     )
-    assert fourth.primary_dispatch.selected_implementation.provider_family == "google"
-    assert "anthropic" in fourth.circuit_blocked_providers
-    assert len(anthropic_calls) == 3
-    assert len(google_calls) == 4
+    assert fourth.primary_dispatch.selected_implementation.provider_family == "anthropic"
+    assert "google" in fourth.circuit_blocked_providers
+    assert len(google_calls) == 6
+    assert len(anthropic_calls) == 1
 
 
 def test_repeated_rate_limits_do_not_open_global_provider_circuit(tmp_path: Path) -> None:
-    anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
+    anthropic_calls: list[dict] = []
     connections = {
-        "anthropic": sequence_connection(
-            "anthropic",
-            anthropic_calls,
-            [(429, anthropic_error("rate_limit_error", "organization rate limit"))] * 4,
-        ),
         "google": sequence_connection(
             "google",
             google_calls,
-            [(200, gemini_success())] * 4,
+            [(429, gemini_error("RESOURCE_EXHAUSTED", "organization rate limit"))] * 4,
+        ),
+        "anthropic": sequence_connection(
+            "anthropic",
+            anthropic_calls,
+            [(200, anthropic_success())] * 4,
         ),
     }
 
@@ -192,28 +201,28 @@ def test_repeated_rate_limits_do_not_open_global_provider_circuit(tmp_path: Path
             artifact_root=tmp_path / "artifacts",
             sleeper=lambda _: None,
         )
-        assert outcome.primary_dispatch.selected_implementation.provider_family == "anthropic"
-        assert "anthropic" not in outcome.circuit_blocked_providers
+        assert outcome.primary_dispatch.selected_implementation.provider_family == "google"
+        assert "google" not in outcome.circuit_blocked_providers
 
-    record = JsonFileCircuitStateStore(tmp_path / "provider-circuits.json").load_all()["anthropic"]
+    record = JsonFileCircuitStateStore(tmp_path / "provider-circuits.json").load_all()["google"]
     assert record.state == "closed"
     assert record.failure_count == 0
-    assert len(anthropic_calls) == 4
+    assert len(google_calls) == 4
 
 
 def test_retry_exhausted_server_failures_trip_circuit_across_executions(tmp_path: Path) -> None:
-    anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
+    anthropic_calls: list[dict] = []
     connections = {
-        "anthropic": sequence_connection(
-            "anthropic",
-            anthropic_calls,
-            [(500, anthropic_error("api_error"))] * 6,
-        ),
         "google": sequence_connection(
             "google",
             google_calls,
-            [(200, gemini_success())],
+            [(500, gemini_error("INTERNAL"))] * 6,
+        ),
+        "anthropic": sequence_connection(
+            "anthropic",
+            anthropic_calls,
+            [(200, anthropic_success())],
         ),
     }
 
@@ -229,8 +238,8 @@ def test_retry_exhausted_server_failures_trip_circuit_across_executions(tmp_path
         assert outcome.status == "execution_failed"
         assert outcome.primary_attempts == 2
 
-    assert len(anthropic_calls) == 6
-    record = JsonFileCircuitStateStore(tmp_path / "provider-circuits.json").load_all()["anthropic"]
+    assert len(google_calls) == 6
+    record = JsonFileCircuitStateStore(tmp_path / "provider-circuits.json").load_all()["google"]
     assert record.state == "open"
 
     rerouted = execute_guarded_canary(
@@ -240,11 +249,11 @@ def test_retry_exhausted_server_failures_trip_circuit_across_executions(tmp_path
         artifact_root=tmp_path / "artifacts",
         sleeper=lambda _: None,
     )
-    assert rerouted.primary_dispatch.selected_implementation.provider_family == "google"
-    assert "anthropic" in rerouted.circuit_blocked_providers
+    assert rerouted.primary_dispatch.selected_implementation.provider_family == "anthropic"
+    assert "google" in rerouted.circuit_blocked_providers
 
 
-def _open_anthropic_circuit(
+def _open_google_circuit(
     breaker: ProviderCircuitBreaker,
     store: InMemoryCircuitStateStore,
     dispatch,
@@ -252,13 +261,13 @@ def _open_anthropic_circuit(
     failure = ProviderExecutionResponse(
         dispatch_id=dispatch.dispatch_id,
         status="failed",
-        provider_family="anthropic",
-        model="claude-haiku-4-5",
-        failure=ProviderFailure(scope="provider", code="overloaded_error", message="test failure"),
+        provider_family="google",
+        model="gemini-3.5-flash-lite",
+        failure=ProviderFailure(scope="provider", code="UNAVAILABLE", message="test failure"),
     )
     for _ in range(3):
         breaker.observe(dispatch, failure)
-    assert store.load_all()["anthropic"].state == "open"
+    assert store.load_all()["google"].state == "open"
 
 
 def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_cooldown() -> None:
@@ -267,20 +276,20 @@ def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_c
     breaker = ProviderCircuitBreaker(policy(), store, clock=lambda: now[0])
     dispatch = engine().dispatch(canary_task("task-half-open"))
 
-    _open_anthropic_circuit(breaker, store, dispatch)
-    opened = store.load_all()["anthropic"]
+    _open_google_circuit(breaker, store, dispatch)
+    opened = store.load_all()["google"]
     assert opened.reopen_at == pytest.approx(60.0)
 
     now[0] = 60.0
     prepared = breaker.prepare_task(canary_task("task-probe-one"))
-    assert "anthropic" not in prepared.constraints.blocked_providers
+    assert "google" not in prepared.constraints.blocked_providers
     probe_one = engine().dispatch(prepared)
     breaker.claim_dispatch(probe_one)
     success = ProviderExecutionResponse(
         dispatch_id=probe_one.dispatch_id,
         status="succeeded",
-        provider_family="anthropic",
-        model="claude-haiku-4-5",
+        provider_family="google",
+        model="gemini-3.5-flash-lite",
         output_ref="artifact://probe-one",
     )
     first = breaker.observe(probe_one, success)
@@ -293,15 +302,15 @@ def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_c
     second_success = ProviderExecutionResponse(
         dispatch_id=probe_two.dispatch_id,
         status="succeeded",
-        provider_family="anthropic",
-        model="claude-haiku-4-5",
+        provider_family="google",
+        model="gemini-3.5-flash-lite",
         output_ref="artifact://probe-two",
     )
     closed = breaker.observe(probe_two, second_success)
     assert closed.state == "closed"
 
-    _open_anthropic_circuit(breaker, store, dispatch)
-    reopened = store.load_all()["anthropic"]
+    _open_google_circuit(breaker, store, dispatch)
+    reopened = store.load_all()["google"]
     assert reopened.trip_count == 2
     assert reopened.reopen_at == pytest.approx(now[0] + 120.0)
 
@@ -311,8 +320,8 @@ def test_half_open_connection_error_does_not_poison_provider_health_or_count_as_
     store = InMemoryCircuitStateStore()
     breaker = ProviderCircuitBreaker(policy(), store, clock=lambda: now[0])
     dispatch = engine().dispatch(canary_task("task-half-open-connection"))
-    _open_anthropic_circuit(breaker, store, dispatch)
-    opened = store.load_all()["anthropic"]
+    _open_google_circuit(breaker, store, dispatch)
+    opened = store.load_all()["google"]
     trip_count = opened.trip_count
 
     now[0] = opened.reopen_at or 60.0
@@ -321,8 +330,8 @@ def test_half_open_connection_error_does_not_poison_provider_health_or_count_as_
     connection_failure = ProviderExecutionResponse(
         dispatch_id=probe.dispatch_id,
         status="failed",
-        provider_family="anthropic",
-        model="claude-haiku-4-5",
+        provider_family="google",
+        model="gemini-3.5-flash-lite",
         failure=ProviderFailure(
             scope="transient",
             code="connection_error",
@@ -338,7 +347,7 @@ def test_half_open_connection_error_does_not_poison_provider_health_or_count_as_
     assert observed.last_failure_code == "connection_error"
 
     next_task = breaker.prepare_task(canary_task("task-next-probe"))
-    assert "anthropic" not in next_task.constraints.blocked_providers
+    assert "google" not in next_task.constraints.blocked_providers
 
 
 def test_json_store_fails_closed_on_corrupt_state(tmp_path: Path) -> None:

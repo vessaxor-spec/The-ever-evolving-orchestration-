@@ -42,7 +42,15 @@ routing:
         - irreversible_action
         - security_sensitive_operation
         - authority_violation
-        - unresolved_pipeline_loop
+    frontier_escalation:
+      agent: claude
+      model: claude-fable-5
+      profile: sol
+      reasoning: max
+      use_when:
+        - unresolved_pipeline_loop_after_opus_review
+        - long_horizon_agentic_orchestration_remains_inconclusive
+        - cross_system_authority_conflict_remains_unresolved
 
   operations:
     primary:

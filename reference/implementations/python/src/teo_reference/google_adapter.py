@@ -25,7 +25,7 @@ from .schemas import DispatchRecord
 GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1/interactions"
 CANARY_TASK_TYPES = {"high_volume_simple"}
 CANARY_RISK_LEVELS = {"low", "medium"}
-CANARY_MODELS = {"gemini-3.6-flash"}
+CANARY_MODELS = {"gemini-3.5-flash-lite", "gemini-3.6-flash"}
 GEMINI_REASONING_EFFORTS = {"minimal", "low", "medium", "high"}
 MAX_CANARY_OUTPUT_TOKENS = 1024
 
@@ -200,11 +200,11 @@ class GeminiInteractionsAdapter:
             )
         if request.model not in CANARY_MODELS:
             raise ProviderAdapterContractError(
-                "Gemini live canary is restricted to Gemini 3.6 Flash"
+                "Gemini live canary is restricted to the routed stable Gemini canary models"
             )
         if request.reasoning_effort is not None and request.reasoning_effort not in GEMINI_REASONING_EFFORTS:
             raise ProviderAdapterContractError(
-                f"Gemini 3.6 Flash does not support TEO reasoning effort {request.reasoning_effort}"
+                f"Selected Gemini canary model does not support TEO reasoning effort {request.reasoning_effort}"
             )
 
         task = request.input_payload.get("task")
