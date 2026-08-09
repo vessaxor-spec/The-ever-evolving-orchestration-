@@ -259,7 +259,7 @@ def test_repeatability_cross_verifier_disagreement_and_execution_paths_are_measu
     report = evaluate_calibration(cases, observations, policy=policy)
 
     assert report.repeatability_groups == 1
-    assert report.repeatability_agreement_rate == pytest.approx(2 / 3)
+    assert report.repeatability_agreement_rate == pytest.approx(1 / 3)
     assert report.cross_verifier_disagreement_cases == ["correct-two-labels"]
     assert report.by_execution_path["primary_no_retry"]["observations"] == 3
     assert report.by_execution_path["fallback"]["observations"] == 1

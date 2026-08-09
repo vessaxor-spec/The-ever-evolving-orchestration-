@@ -1,6 +1,6 @@
-version: 0.2
+version: 0.3
 status: public
-reviewed_at: 2026-08-07
+reviewed_at: 2026-08-09
 
 registry_rules:
   - provider_claims_are_not_teo_benchmark_results
@@ -69,6 +69,8 @@ models:
     availability: generally_available
     provider_description: next-generation intelligence for long-running agents
     teo_routing_role: candidate critical escalation implementation
+    routing_status: registered_unrouted
+    routing_status_reason: retained for evidence-based escalation evaluation; not promoted by release recency alone
     input_modalities: [text, image]
     output_modalities: [text]
     reasoning_control: output_config.effort
@@ -172,11 +174,23 @@ models:
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/models
 
+  gemini-3.5-flash-lite:
+    provider: google
+    availability: stable
+    provider_description: fastest and lowest-cost Gemini 3.5 model for high-throughput execution
+    teo_routing_role: candidate economical throughput implementation
+    routing_status: registered_unrouted
+    routing_status_reason: evaluate against current Luna and Flash throughput routes before adoption
+    evidence_type: provider_claim
+    source: https://ai.google.dev/gemini-api/docs/latest-model
+
   gemini-3.1-flash-lite:
     provider: google
     availability: stable
     provider_description: cost-efficient high-throughput Flash tier
     teo_routing_role: candidate economical throughput implementation
+    routing_status: previous_generation_candidate
+    lifecycle_note: retained for compatibility evidence while Gemini 3.5 Flash-Lite is evaluated
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/models
 
