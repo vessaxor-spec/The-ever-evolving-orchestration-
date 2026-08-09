@@ -107,7 +107,7 @@ models:
     provider_family: google
     concrete_model: gemini-3.6-flash
     availability: stable
-    role: fast mapping and multimodal processing
+    role: fast mapping, agentic execution, coding fallback, and multimodal processing
     profile: luna
     preferred_for:
       - extraction
@@ -117,6 +117,22 @@ models:
       - high-volume processing
     limitations:
       - escalate consequential synthesis to a stronger reasoning model
+
+  gemini-flash-lite:
+    provider_family: google
+    concrete_model: gemini-3.5-flash-lite
+    availability: stable
+    role: primary economical high-volume execution
+    profile: luna
+    preferred_for:
+      - extraction
+      - classification
+      - structured transformation
+      - document parsing
+      - simple high-volume work
+    limitations:
+      - escalate ambiguity and consequential synthesis to a stronger reasoning route
+      - preserve provider-diverse verification
 
   claude-sonnet:
     provider_family: anthropic
@@ -151,8 +167,8 @@ models:
     provider_family: anthropic
     concrete_model: claude-fable-5
     availability: generally_available
-    role: candidate maximum-capability escalation
-    routing_status: registered_unrouted
+    role: narrow maximum-capability frontier escalation
+    routing_status: routed_frontier_escalation
     profile: sol
     preferred_for:
       - long-running agentic work

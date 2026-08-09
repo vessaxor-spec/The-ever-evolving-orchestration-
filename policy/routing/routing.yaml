@@ -215,9 +215,10 @@ routing:
         - architectural_constraints_are_present
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
+      model: gemini-3.6-flash
+      profile: terra
       reasoning: medium
+      purpose: preserve stable cross-provider coding execution without requiring preview acceptance
     review_when:
       - public_api_changed
       - database_schema_changed
@@ -479,41 +480,42 @@ routing:
 
   high_volume_simple:
     primary:
+      agent: agy
+      model: gemini-3.5-flash-lite
+      profile: luna
+      reasoning: low
+      purpose: current stable low-cost high-throughput execution
+    fallback:
       agent: claude
       model: claude-haiku-4-5
       profile: luna
       reasoning: low
-    fallback:
-      agent: agy
-      model: gemini-3.6-flash
-      profile: luna
-      reasoning: low
-      purpose: continue high-volume work when the Anthropic route is unavailable
+      purpose: preserve provider-diverse bounded language throughput when the Google route is unavailable
     alternatives:
-      - agent: agy
-        model: gemini-3.6-flash
-        profile: luna
       - agent: codex
         model: gpt-5.6-luna
         profile: luna
+      - agent: agy
+        model: gemini-3.6-flash
+        profile: luna
     verifier:
+      agent: claude
+      model: claude-haiku-4-5
+      profile: luna
+      reasoning: default
+      purpose: provider-diverse pointwise validation of the primary Flash-Lite route
+    semantic_reviewer:
       agent: agy
       model: gemini-3.6-flash
       profile: luna
       reasoning: medium
-      purpose: provider-diverse pointwise validation of bounded high-volume output
-    semantic_reviewer:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: medium
-      purpose: fresh semantic verification when Gemini becomes the model-fallback executor
+      purpose: fresh provider-diverse verification when Haiku becomes the model-fallback executor and Google remains eligible
     technical_verifier:
       agent: codex
       model: gpt-5.6-sol
       profile: sol
       reasoning: medium
-      purpose: fresh provider-diverse verification when Anthropic is unavailable
+      purpose: fresh provider-diverse verification when Google is unavailable or a stronger independent check is required
     escalation:
       agent: claude
       model: claude-sonnet-5
@@ -595,11 +597,13 @@ fallback_order:
       model: gemini-3.6-flash
   throughput:
     - agent: agy
-      model: gemini-3.6-flash
-    - agent: codex
-      model: gpt-5.6-luna
+      model: gemini-3.5-flash-lite
     - agent: claude
       model: claude-haiku-4-5
+    - agent: codex
+      model: gpt-5.6-luna
+    - agent: agy
+      model: gemini-3.6-flash
 
 verification_policy:
   low_risk:
