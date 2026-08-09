@@ -231,6 +231,8 @@ def normalize_blinded_labels(
                 "reviewed_at": label.reviewed_at,
                 "rubric_version": label.rubric_version,
                 "observations_blinded": True,
+                "reference_control_labels_blinded": True,
+                "source_packet_id": packet_id,
                 "decision": _decision_dict(label.decision),
             }
         )
