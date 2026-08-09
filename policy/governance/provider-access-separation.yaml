@@ -1,0 +1,96 @@
+version: "1.0"
+status: active
+reviewed_at: 2026-08-09
+
+purpose: >-
+  Keep model-routing semantics independent from provider authentication, subscription,
+  credential, transport, and account-access mechanics.
+
+routing_boundary:
+  teo_owns:
+    - task_interpretation
+    - responsibility_routing
+    - team_selection
+    - worker_selection
+    - specialist_selection
+    - capability_resolution
+    - effective_risk
+    - model_selection
+    - reasoning_effort
+    - routine_fallback
+    - conditional_escalation
+    - independent_verification
+  teo_does_not_own:
+    - user_login
+    - api_key_provisioning
+    - oauth_login
+    - oauth_token_refresh
+    - subscription_management
+    - billing_account_selection
+    - service_account_provisioning
+    - delegated_identity_provisioning
+    - credential_broker_operation
+    - connector_session_creation
+    - provider_account_entitlement
+
+access_neutrality:
+  authentication_method_may_change_route: false
+  subscription_type_may_change_route: false
+  credential_presence_may_change_route: false
+  billing_mechanism_may_change_route: false
+  connector_or_client_type_may_change_route: false
+  route_may_be_selected_before_access_is_resolved: true
+  caller_or_integrator_owns_access_resolution: true
+
+routing_inputs:
+  allowed:
+    - task_type
+    - responsibility
+    - required_capabilities
+    - effective_risk
+    - model_capability_fit
+    - provider_family_diversity
+    - model_lifecycle_and_provider_availability
+    - reasoning_controls
+    - preview_authorization
+    - fallback_independence
+    - verifier_independence
+    - evidence_quality
+  forbidden_as_model_fitness_signals:
+    - api_key_available
+    - oauth_available
+    - subscription_plan
+    - account_tier
+    - billing_method
+    - credential_type
+    - login_state
+    - connector_session_type
+
+runtime_boundary:
+  provider_connection_is_injected_after_routing: true
+  runtime_connection_may_use_any_provider_supported_access_method: true
+  reference_api_key_helpers_are_convenience_only: true
+  reference_api_key_helpers_define_teo_architecture: false
+  missing_or_invalid_access_is_a_connection_or_entitlement_failure: true
+  missing_or_invalid_access_may_reclassify_task: false
+  missing_or_invalid_access_may_poison_global_provider_health: false
+  missing_or_invalid_access_proves_global_model_unavailability: false
+  access_failure_may_trigger_only_policy_authorized_runtime_handling: true
+
+records_and_telemetry:
+  persist_authentication_method: false
+  persist_subscription_type: false
+  persist_credentials: false
+  persist_authorization_headers: false
+  persist_connection_mechanism: false
+  dispatch_schema_should_not_require_access_fields: true
+
+implementation_rule: >-
+  TEO selects the implementation that best satisfies responsibility, capability, risk,
+  fallback, and independent-verification requirements. The user or integrating runtime is
+  responsible for having a valid way to access the selected implementation. API keys,
+  OAuth or subscription-backed sessions, delegated identity, service accounts, connector
+  sessions, credential brokers, and future provider-supported access mechanisms are
+  interchangeable access concerns outside model-routing semantics. A missing credential or
+  entitlement is an execution-boundary condition, not evidence that a different model was
+  intrinsically the correct route.
