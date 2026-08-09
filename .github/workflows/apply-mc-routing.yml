@@ -16,6 +16,16 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.11.15'
+      - name: Align exact migration anchor
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('policy/routing/routing.yaml'); t=p.read_text()
+          old='''    fallback:\n      agent: agy\n      model: gemini-3.1-pro-preview\n      profile: sol\n      reasoning: medium\n    review_when:\n'''
+          new='''    fallback:\n      agent: agy\n      model: gemini-3.1-pro-preview\n      profile: sol\n      reasoning: medium\n\n    review_when:\n'''
+          if t.count(old)!=1: raise SystemExit(f'anchor expected once, got {t.count(old)}')
+          p.write_text(t.replace(old,new))
+          PY
       - run: python tools/apply_mc_routing.py
       - run: rm tools/apply_mc_routing.py .github/workflows/apply-mc-routing.yml
       - run: |
