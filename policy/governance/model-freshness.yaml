@@ -1,0 +1,79 @@
+version: "1.0"
+status: active
+reviewed_at: 2026-08-09
+
+scope:
+  applies_to:
+    - primary_execution
+    - routine_fallback
+    - independent_verifier
+    - calibration_judge
+    - machine_panel
+    - guarded_canary
+    - provider_adapter
+    - registry
+    - example
+    - fixture
+    - test
+    - documentation
+
+freshness:
+  pretrained_or_remembered_knowledge_authoritative: false
+  previously_documented_model_state_authoritative_without_revalidation: false
+  require_current_authoritative_provider_check: true
+  fail_state_when_current_authority_unavailable: unverified
+  require_verification_date: true
+  require_authoritative_source_record: true
+
+required_checks:
+  - canonical_model_identifier
+  - lifecycle_status
+  - availability_status
+  - reasoning_or_thinking_controls
+  - relevant_tool_support
+  - structured_output_support
+  - material_runtime_constraints
+  - migration_or_replacement_guidance_when_applicable
+
+source_authority:
+  authoritative:
+    - provider_product_documentation
+    - provider_api_documentation
+    - provider_release_notes
+    - provider_migration_notices
+  secondary_only:
+    - practitioner_forums
+    - third_party_benchmarks
+    - third_party_reviews
+    - social_media
+  secondary_sources_may_override_provider_lifecycle_or_identifier_facts: false
+
+release_behavior:
+  newer_release_triggers_review: true
+  newer_release_auto_replaces_existing_route: false
+  review_must_consider:
+    - route_purpose
+    - capability_requirements
+    - reasoning_controls
+    - fallback_independence
+    - verifier_independence
+    - preview_or_access_constraints
+    - evidence_quality
+    - regression_risk
+
+acceptance:
+  allow_unverified_model_change: false
+  allow_training_memory_as_fallback_authority: false
+  allow_automatic_route_update_on_release: false
+  require_evidence_preservation_for_accepted_model_change: true
+
+policy: >-
+  Model state is time-sensitive. AI agents and maintainers must not rely on pretrained,
+  cached, remembered, or inherited repository assumptions as authority for the current
+  existence, identifier, lifecycle, availability, or supported controls of a model.
+  Current authoritative provider documentation must be checked before a model-bearing
+  recommendation, validation, comparison, addition, removal, or replacement. If current
+  authority cannot be established, freshness is unverified and the change must not be
+  accepted on remembered knowledge alone. A newer release triggers compatibility and
+  routing review but does not automatically replace an existing TEO route. Accepted
+  model-bearing changes preserve their verification date and authoritative evidence.
