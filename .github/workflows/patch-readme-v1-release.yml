@@ -1,0 +1,79 @@
+name: Patch README for TEO v1.0.0
+
+on:
+  push:
+    branches:
+      - agent/update-readme-v1-release
+    paths:
+      - ".github/workflows/patch-readme-v1-release.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/update-readme-v1-release
+          fetch-depth: 0
+
+      - name: Reconcile README release state
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("README.md")
+          text = path.read_text(encoding="utf-8")
+
+          replacements = [
+              (
+                  "[![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)\n",
+                  "[![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)\n[![Release](https://img.shields.io/github/v/release/vessaxor-spec/The-ever-evolving-orchestration-?label=release)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0)\n\n**Latest stable release:** [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0) · **State:** `reference_operational` · **Reference package:** `teo-reference-router==1.0.0`\n",
+              ),
+              (
+                  "TEO is at the **reference-operational functional-v1 boundary**.\n",
+                  "**TEO v1.0.0 is released.** The project has crossed the functional-v1 boundary and is now in post-v1 stewardship and evolution.\n\nThe `v1.0.0` tag is governed as an immutable historical reference to the exact repository state accepted as the first functional release. The GitHub Release is published in the `reference_operational` state and aligns with `teo-reference-router==1.0.0`.\n\nThe normative release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md), with the canonical readiness boundary in [`V1_READINESS.md`](V1_READINESS.md) and [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).\n",
+              ),
+              (
+                  "TEO v1 targets a **credible vendor-neutral orchestration specification with a runnable reference control plane**.\n",
+                  "TEO v1.0.0 establishes a **credible vendor-neutral orchestration specification with a runnable reference control plane**.\n",
+              ),
+              (
+                  "The following remain valuable but are not required to call the reference system functionally complete:\n",
+                  "The following remain valuable post-v1 work and were explicitly not required for the `v1.0.0` `reference_operational` release:\n",
+              ),
+              (
+                  "### Functional v1: reference operational\n\n**Current state.**\n\nThe architecture, governance, deterministic routing, risk controls, specialist bindings, model refinement, Mission Control routing assignments, provider-diverse fallback, fresh-verifier rotation, guarded live execution, recovery controls, telemetry, calibration instrumentation, model freshness, provider-access separation, and reproducible CI are operational as a reference system.\n",
+                  "### Functional v1: reference operational\n\n**Released as `v1.0.0` on 2026-08-09.**\n\nThe architecture, governance, deterministic routing, risk controls, specialist bindings, model refinement, Mission Control routing assignments, provider-diverse fallback, fresh-verifier rotation, guarded live execution, recovery controls, telemetry, calibration instrumentation, model freshness, provider-access separation, and reproducible CI are operational as a reference system.\n\nThe release is governed by [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md). Future compatible fixes and extensions advance through semantic release versions rather than moving or rewriting the `v1.0.0` tag.\n",
+              ),
+              (
+                  "1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).\n2. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).\n3. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).\n4. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).\n5. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).\n6. Review canonical routing under [`policy/routing/`](policy/routing/).\n7. Review runtime controls under [`policy/runtime/`](policy/runtime/).\n8. Review verification policy under [`policy/verification/`](policy/verification/).\n9. Review specialists under [`community/specialists/`](community/specialists/).\n10. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).\n11. Run validation and tests.\n",
+                  "1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).\n2. Read [`V1_READINESS.md`](V1_READINESS.md) and the [`v1.0.0 release contract`](docs/releases/v1.0.0.md).\n3. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).\n4. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).\n5. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).\n6. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).\n7. Review canonical routing under [`policy/routing/`](policy/routing/).\n8. Review runtime controls under [`policy/runtime/`](policy/runtime/).\n9. Review verification policy under [`policy/verification/`](policy/verification/).\n10. Review specialists under [`community/specialists/`](community/specialists/).\n11. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).\n12. Run validation and tests.\n",
+              ),
+          ]
+
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"Expected exactly one README match, found {count}: {old[:80]!r}")
+              text = text.replace(old, new, 1)
+
+          if "—" in text:
+              raise SystemExit("README contains an em dash; refusing update")
+
+          path.write_text(text, encoding="utf-8")
+          PY
+
+          git diff --check
+          git diff --exit-code -- README.md && { echo "README patch made no changes"; exit 1; } || true
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update README for TEO v1.0.0 release"
+          git push origin HEAD:agent/update-readme-v1-release
