@@ -77,7 +77,7 @@ TEO is at the **reference-operational functional-v1 boundary**.
 
 The current control plane has **ten active organizational teams**, **84 workers**, and **78 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
-It includes four dedicated Mission Control workers for **orchestration**, **operations**, **project delivery**, and **incident response**.
+It includes dedicated Mission Control workers for orchestration, operations, project delivery, and incident response.
 
 The repository currently implements:
 
