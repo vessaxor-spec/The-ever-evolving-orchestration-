@@ -1,0 +1,110 @@
+name: Provisional Operational Evidence
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute_live:
+        description: Execute the full 96-call provisional evidence study
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: provisional-operational-evidence
+  cancel-in-progress: false
+
+jobs:
+  evidence:
+    name: Plan or collect provisional evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out repository
+        # actions/checkout v6.1.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Set up Python
+        # actions/setup-python v6.3.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11.15"
+          cache: pip
+          cache-dependency-path: ci/requirements-ci.lock
+
+      - name: Install pinned validation environment
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
+          python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
+          python -m pip install --disable-pip-version-check --no-build-isolation --no-deps -e .
+
+      - name: Show provisional study plan
+        run: |
+          mkdir -p .teo/runtime/verifier-calibration
+          python -m teo_reference.verifier_calibration_machine_panel plan \
+            | tee .teo/runtime/verifier-calibration/provisional-plan.json
+
+      - name: Validate live provider credentials
+        if: ${{ inputs.execute_live }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          missing=0
+          for name in GEMINI_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "Missing required repository secret: ${name}" >&2
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            exit 2
+          fi
+
+      - name: Collect blinded machine-panel labels
+        if: ${{ inputs.execute_live }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python -m teo_reference.verifier_calibration_machine_panel collect-panel \
+            --execute-live
+
+      - name: Collect provisional verifier observations
+        if: ${{ inputs.execute_live }}
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python -m teo_reference.verifier_calibration_machine_panel collect-observations \
+            --packet .teo/runtime/verifier-calibration/machine-panel-packet.json \
+            --panel-labels .teo/runtime/verifier-calibration/machine-panel-labels.jsonl \
+            --collector-revision "$GITHUB_SHA" \
+            --execute-live
+
+      - name: Evaluate provisional evidence
+        if: ${{ inputs.execute_live }}
+        run: |
+          python -m teo_reference.verifier_calibration_machine_panel evaluate \
+            --packet .teo/runtime/verifier-calibration/machine-panel-packet.json \
+            --mapping .teo/runtime/verifier-calibration/machine-panel-map.json \
+            --panel-labels .teo/runtime/verifier-calibration/machine-panel-labels.jsonl \
+            --observations .teo/runtime/verifier-calibration/provisional-observations.jsonl \
+            --output .teo/runtime/verifier-calibration/provisional-evaluation.json
+
+      - name: Upload evidence bundle
+        if: ${{ inputs.execute_live }}
+        # actions/upload-artifact v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: teo-provisional-evidence-${{ github.sha }}
+          path: .teo/runtime/verifier-calibration/
+          if-no-files-found: error
+          retention-days: 30
+          include-hidden-files: true
