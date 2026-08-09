@@ -1,4 +1,4 @@
-name: Verify TEO v1.0.0 publication
+name: Ensure TEO v1.0.0 publication
 
 on:
   push:
@@ -8,12 +8,13 @@ on:
       - ".github/workflows/publish-v1-release.yml"
 
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
   issues: write
 
 jobs:
-  verify:
-    name: Verify published v1.0.0 release
+  ensure:
+    name: Ensure and verify published v1.0.0 release
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
@@ -25,7 +26,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify tag and release object
+      - name: Verify immutable tag target
         shell: bash
         run: |
           set -euo pipefail
@@ -33,6 +34,26 @@ jobs:
           TAG_SHA="$(git rev-list -n 1 "${RELEASE_TAG}")"
           test "${TAG_SHA}" = "${RELEASE_SHA}"
 
+      - name: Ensure GitHub Release exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            git show "${RELEASE_SHA}:docs/releases/v1.0.0.md" > /tmp/teo-v1.0.0-release-notes.md
+            gh release create "${RELEASE_TAG}" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --verify-tag \
+              --title "The Ever-Evolving Orchestration v1.0.0" \
+              --notes-file /tmp/teo-v1.0.0-release-notes.md \
+              --latest
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify GitHub Release object
+        shell: bash
+        run: |
+          set -euo pipefail
           gh release view "${RELEASE_TAG}" \
             --repo "${GITHUB_REPOSITORY}" \
             --json tagName,name,isDraft,isPrerelease,body,url \
@@ -54,14 +75,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Record transient verification signal
+      - name: Record release verification on publication PR
         shell: bash
         run: |
           set -euo pipefail
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            "repos/${GITHUB_REPOSITORY}/issues/87/reactions" \
-            -f content='rocket' >/dev/null
+          gh pr comment 87 \
+            --repo "${GITHUB_REPOSITORY}" \
+            --body "Automated v1.0.0 release verification passed. The annotated tag v1.0.0 resolves to 0b306bae40ed54b82f1f22c90c7c2cbc630abb55, and the GitHub Release is published as a non-draft, non-prerelease release with the reference_operational contract."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
