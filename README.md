@@ -75,12 +75,12 @@ The normative boundary is defined in [`policy/governance/provider-access-separat
 
 TEO is now at the **reference-operational** functional-v1 boundary.
 
-The repository contains:
+The current control plane has **ten active organizational teams**, **84 workers**, and **78 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
-- **10 active teams**
-- **84 workers**
-- **78 preserved specialist role cards**
-- deterministic Team -> Worker -> Specialist spawn paths
+It includes dedicated Mission Control workers for orchestration, operations, project delivery, and incident response.
+
+The repository also contains:
+
 - non-lowerable effective-risk assessment
 - specialist-driven risk elevation
 - capability-aware implementation eligibility
