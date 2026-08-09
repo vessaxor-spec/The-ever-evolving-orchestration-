@@ -1,6 +1,6 @@
-version: 0.5
+version: 0.6
 status: public-draft
-reviewed_at: 2026-08-07
+reviewed_at: 2026-08-09
 model_registry: models.yaml
 provider_evidence: registry/models/models.yaml
 
@@ -81,6 +81,36 @@ profiles:
       - summarize
       - map
       - route
+
+task_routing:
+  classifier:
+    agent: claude
+    model: claude-haiku-4-5
+    profile: luna
+    reasoning: low
+  fallback_classifier:
+    agent: agy
+    model: gemini-3.6-flash
+    profile: luna
+    reasoning: low
+  ambiguous_task_interpreter:
+    agent: claude
+    model: claude-sonnet-5
+    profile: sol
+    reasoning: high
+  engineering_task_interpreter:
+    agent: codex
+    model: gpt-5.6-sol
+    profile: sol
+    reasoning: high
+  required_output:
+    - detected_task_type
+    - required_capabilities
+    - risk_level
+    - selected_route
+    - fallback_route
+    - verification_route
+    - routing_explanation
 
 routing:
   architecture_design:
@@ -528,36 +558,6 @@ routing:
         - documentation_describes_repository_architecture
         - documentation_contains_executable_workflows
         - technical_tradeoffs_require_validation
-
-  task_routing:
-    classifier:
-      agent: claude
-      model: claude-haiku-4-5
-      profile: luna
-      reasoning: low
-    fallback_classifier:
-      agent: agy
-      model: gemini-3.6-flash
-      profile: luna
-      reasoning: low
-    ambiguous_task_interpreter:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
-    engineering_task_interpreter:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
-    required_output:
-      - detected_task_type
-      - required_capabilities
-      - risk_level
-      - selected_route
-      - fallback_route
-      - verification_route
-      - routing_explanation
 
 fallback_order:
   coding:

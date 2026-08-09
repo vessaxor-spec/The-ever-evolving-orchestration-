@@ -302,12 +302,13 @@ class OrchestrationEngine:
                 )
         capabilities = self._resolve_capabilities(task, worker)
         primary = self._resolve_primary(task_type, worker, task)
+        primary_policy_warning = self._primary_policy_warning(task_type, worker, task, primary)
         fallback = self._resolve_fallback(task_type, worker, capabilities, task, exclude={primary.model})
         verification = self._verification_plan(
             task_type, risk, task, primary, worker, specialist[1] if specialist else None
         )
 
-        warnings = []
+        warnings = [primary_policy_warning] if primary_policy_warning else []
         if specialist_warning:
             warnings.append(specialist_warning)
         worker_entry = self.config.worker_registry.get(worker)
@@ -520,6 +521,39 @@ class OrchestrationEngine:
         allowed = set(str(item) for item in worker_entry.get("preferred_implementations", []))
         allowed.update(str(item) for item in worker_entry.get("fallbacks", []))
         return choice.model in allowed
+
+    def _primary_policy_warning(
+        self,
+        task_type: str,
+        worker: str,
+        task: TaskRequest,
+        selected: ImplementationChoice,
+    ) -> str | None:
+        route = self.config.implementation_routes.get(task_type, {})
+        for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
+            candidate = route.get(key)
+            if not isinstance(candidate, dict) or not candidate.get("model"):
+                continue
+            choice = self._choice(candidate, f"routing.{task_type}.{key}")
+            if choice.model == selected.model:
+                return None
+            preview_was_only_policy_block = (
+                choice.availability == "preview"
+                and choice.model not in task.constraints.accepted_preview_models
+                and choice.model not in task.constraints.blocked_implementations
+                and (
+                    not choice.provider_family
+                    or choice.provider_family not in task.constraints.blocked_providers
+                )
+                and self._worker_allows_model(worker, choice)
+            )
+            if preview_was_only_policy_block:
+                return (
+                    f"Declared primary {choice.model} was skipped because preview implementations "
+                    "require explicit acceptance via constraints.accepted_preview_models."
+                )
+            return None
+        return None
 
     def _resolve_primary(self, task_type: str, worker: str, task: TaskRequest) -> ImplementationChoice:
         route = self.config.implementation_routes.get(task_type, {})

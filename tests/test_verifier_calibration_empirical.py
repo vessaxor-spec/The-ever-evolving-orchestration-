@@ -34,6 +34,7 @@ OBSERVATION_SCHEMA_PATH = (
 HUMAN_LABEL_SCHEMA_PATH = (
     REPO_ROOT / "reference/schemas/verifier-calibration-human-label.schema.json"
 )
+TEST_PACKET_ID = "packet-test-calibration"
 
 
 def context():
@@ -55,21 +56,27 @@ def decision_dict(decision) -> dict:
     }
 
 
+def human_label_dict(case, reviewer: str, reviewed_at: str, decision=None, *, packet_id=TEST_PACKET_ID):
+    return {
+        "case_id": case.case_id,
+        "reviewer_id": reviewer,
+        "reviewer_role": "reviewer",
+        "reviewed_at": reviewed_at,
+        "rubric_version": case.rubric_version,
+        "observations_blinded": True,
+        "reference_control_labels_blinded": True,
+        "source_packet_id": packet_id,
+        "decision": decision_dict(decision or case.gold),
+    }
+
+
 def human_labels(cases, *, reviewers=("reviewer-a", "reviewer-b"), reviewed_at="2026-08-07T14:00:00Z"):
     labels = []
     for case in cases:
         for reviewer in reviewers:
             labels.append(
                 HumanCalibrationLabel.from_dict(
-                    {
-                        "case_id": case.case_id,
-                        "reviewer_id": reviewer,
-                        "reviewer_role": "reviewer",
-                        "reviewed_at": reviewed_at,
-                        "rubric_version": case.rubric_version,
-                        "observations_blinded": True,
-                        "decision": decision_dict(case.gold),
-                    }
+                    human_label_dict(case, reviewer, reviewed_at)
                 )
             )
     return labels
@@ -219,6 +226,7 @@ def test_two_blinded_independent_reviewers_satisfy_human_label_floor() -> None:
     readiness = assess_human_label_readiness(cases, labels, empirical)
     assert readiness.human_label_requirements_met is True
     assert readiness.reviewer_ids == ["reviewer-a", "reviewer-b"]
+    assert readiness.source_packet_id == TEST_PACKET_ID
     assert readiness.undercovered_cases == []
     assert readiness.disagreement_cases == []
     assert readiness.adjudication_missing_cases == []
@@ -240,15 +248,12 @@ def test_human_disagreement_requires_distinct_adjudicator() -> None:
     ]
     labels.append(
         HumanCalibrationLabel.from_dict(
-            {
-                "case_id": case.case_id,
-                "reviewer_id": "reviewer-b",
-                "reviewer_role": "reviewer",
-                "reviewed_at": "2026-08-07T14:00:00Z",
-                "rubric_version": case.rubric_version,
-                "observations_blinded": True,
-                "decision": altered,
-            }
+            human_label_dict(
+                case,
+                "reviewer-b",
+                "2026-08-07T14:00:00Z",
+                decision=type(case.gold).from_dict(altered),
+            )
         )
     )
     readiness = assess_human_label_readiness(cases, labels, empirical)
@@ -256,19 +261,9 @@ def test_human_disagreement_requires_distinct_adjudicator() -> None:
     assert readiness.disagreement_cases == [case.case_id]
     assert readiness.adjudication_missing_cases == [case.case_id]
 
-    labels.append(
-        HumanCalibrationLabel.from_dict(
-            {
-                "case_id": case.case_id,
-                "reviewer_id": "adjudicator-c",
-                "reviewer_role": "adjudicator",
-                "reviewed_at": "2026-08-07T14:05:00Z",
-                "rubric_version": case.rubric_version,
-                "observations_blinded": True,
-                "decision": decision_dict(case.gold),
-            }
-        )
-    )
+    adjudicator = human_label_dict(case, "adjudicator-c", "2026-08-07T14:05:00Z")
+    adjudicator["reviewer_role"] = "adjudicator"
+    labels.append(HumanCalibrationLabel.from_dict(adjudicator))
     readiness = assess_human_label_readiness(cases, labels, empirical)
     assert readiness.human_label_requirements_met is True
     human_gold = build_human_gold_cases(cases, labels, empirical, base)
@@ -402,30 +397,54 @@ def test_collection_refuses_success_without_provider_reported_usage(tmp_path: Pa
     assert not (tmp_path / "observations.jsonl").exists()
 
 
-def test_human_label_schema_is_content_free_and_requires_blinding() -> None:
-    empirical, base, cases = context()
+def test_human_label_schema_is_content_free_and_requires_blinding_provenance() -> None:
+    _, _, cases = context()
     case = cases[0]
     schema = json.loads(HUMAN_LABEL_SCHEMA_PATH.read_text(encoding="utf-8"))
     Draft202012Validator.check_schema(schema)
     validator = Draft202012Validator(schema)
-    valid = {
-        "case_id": case.case_id,
-        "reviewer_id": "reviewer-a",
-        "reviewer_role": "reviewer",
-        "reviewed_at": "2026-08-07T14:00:00Z",
-        "rubric_version": case.rubric_version,
-        "observations_blinded": True,
-        "decision": decision_dict(case.gold),
-    }
+    valid = human_label_dict(case, "reviewer-a", "2026-08-07T14:00:00Z")
     validator.validate(valid)
 
-    unblinded = dict(valid)
-    unblinded["observations_blinded"] = False
-    assert list(validator.iter_errors(unblinded))
+    for field in ("observations_blinded", "reference_control_labels_blinded"):
+        unblinded = dict(valid)
+        unblinded[field] = False
+        assert list(validator.iter_errors(unblinded))
+
+    missing_packet = dict(valid)
+    missing_packet.pop("source_packet_id")
+    assert list(validator.iter_errors(missing_packet))
 
     content_bearing = dict(valid)
     content_bearing["reviewer_email"] = "person@example.test"
     assert list(validator.iter_errors(content_bearing))
+
+
+def test_canonical_human_label_rejects_missing_reference_blinding_provenance() -> None:
+    _, _, cases = context()
+    raw = human_label_dict(cases[0], "reviewer-a", "2026-08-07T14:00:00Z")
+    raw.pop("reference_control_labels_blinded")
+    with pytest.raises(CalibrationError, match="missing fields"):
+        HumanCalibrationLabel.from_dict(raw)
+
+
+def test_human_label_readiness_rejects_mixed_blinded_packets() -> None:
+    empirical, _, cases = context()
+    labels = human_labels(cases)
+    replacement = human_label_dict(
+        cases[0],
+        "reviewer-a",
+        "2026-08-07T14:00:00Z",
+        packet_id="packet-other-calibration",
+    )
+    labels = [
+        HumanCalibrationLabel.from_dict(replacement)
+        if label.case_id == cases[0].case_id and label.reviewer_id == "reviewer-a"
+        else label
+        for label in labels
+    ]
+    with pytest.raises(CalibrationError, match="one blinded review packet"):
+        assess_human_label_readiness(cases, labels, empirical)
 
 
 def test_empirical_observations_cannot_predate_completed_human_labels(tmp_path: Path) -> None:

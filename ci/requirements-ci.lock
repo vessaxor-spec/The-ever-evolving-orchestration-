@@ -1,22 +1,37 @@
-# Exact dependency set for the Python 3.11.15 GitHub Actions validation environment.
-# Update intentionally and validate the complete suite before changing versions.
+# Exact dependency set for the fixed Python 3.11.15 / Ubuntu 24.04 GitHub Actions validation environment.
+# Each dependency is pinned to the exact wheel consumed by this CI environment.
+# Update versions and hashes intentionally, then validate the complete suite before merging.
+
 # Direct project and test dependencies
-PyYAML==6.0.3
-jsonschema==4.26.0
-pytest==9.1.1
+PyYAML==6.0.3 \
+    --hash=sha256:b8bb0864c5a28024fac8a632c443c87c5aa6f215c0b126c449ae1a150412f31d
+jsonschema==4.26.0 \
+    --hash=sha256:d489f15263b8d200f8387e64b4c3a75f06629559fb73deb8fdfb525f2dab50ce
+pytest==9.1.1 \
+    --hash=sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c
 
 # jsonschema transitive dependencies for Python 3.11
-attrs==26.1.0
-jsonschema-specifications==2025.9.1
-referencing==0.37.0
-rpds-py==2026.6.3
-typing-extensions==4.16.0
+attrs==26.1.0 \
+    --hash=sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309
+jsonschema-specifications==2025.9.1 \
+    --hash=sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe
+referencing==0.37.0 \
+    --hash=sha256:381329a9f99628c9069361716891d34ad94af76e461dcb0335825aecc7692231
+rpds-py==2026.6.3 \
+    --hash=sha256:9c1255b302953c86a486b81d330d5ee1d5bd937691ce271b6be0ef0e299eaab7
+typing-extensions==4.16.0 \
+    --hash=sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8
 
 # pytest transitive dependencies for Python 3.11
-iniconfig==2.3.0
-packaging==26.2
-pluggy==1.6.0
-Pygments==2.20.0
+iniconfig==2.3.0 \
+    --hash=sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12
+packaging==26.2 \
+    --hash=sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e
+pluggy==1.6.0 \
+    --hash=sha256:e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
+Pygments==2.20.0 \
+    --hash=sha256:81a9e26dd42fd28a23a2d169d86d7ac03b46e2f8b59ed4698fb4785f946d0176
 
 # Build backend used with --no-build-isolation
-setuptools==83.0.0
+setuptools==83.0.0 \
+    --hash=sha256:29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3

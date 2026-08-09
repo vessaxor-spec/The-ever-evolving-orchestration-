@@ -26,6 +26,8 @@ class ProviderCircuitPolicy:
     max_open_cooldown_seconds: float
     half_open_max_probe_dispatches: int
     half_open_successes_required_to_close: int
+    half_open_probe_lease_seconds: float
+    half_open_non_service_health_failure_behavior: str
     service_health_signals: dict[str, frozenset[str]]
     never_global_health_signals: frozenset[str]
 
@@ -57,6 +59,10 @@ class ProviderCircuitPolicy:
             max_open_cooldown_seconds=float(trip.get("max_open_cooldown_seconds", 0)),
             half_open_max_probe_dispatches=int(half_open.get("max_probe_dispatches", 0)),
             half_open_successes_required_to_close=int(half_open.get("successes_required_to_close", 0)),
+            half_open_probe_lease_seconds=float(half_open.get("probe_lease_seconds", 0)),
+            half_open_non_service_health_failure_behavior=str(
+                half_open.get("non_service_health_failure_behavior", "")
+            ),
             service_health_signals={
                 str(provider): frozenset(str(code).strip().lower() for code in codes)
                 for provider, codes in signals.items()
@@ -82,6 +88,12 @@ class ProviderCircuitPolicy:
             raise ProviderAdapterContractError("Reference provider circuit permits exactly one half-open probe at a time")
         if self.half_open_successes_required_to_close < 1:
             raise ProviderAdapterContractError("Half-open provider circuit requires at least one successful probe")
+        if self.half_open_probe_lease_seconds <= 0:
+            raise ProviderAdapterContractError("Half-open provider probe lease must be positive")
+        if self.half_open_non_service_health_failure_behavior != "remain_half_open":
+            raise ProviderAdapterContractError(
+                "Half-open non-service-health failures must remain inconclusive rather than reopening provider health"
+            )
         required = {"anthropic", "openai", "google"}
         if set(self.service_health_signals) != required:
             raise ProviderAdapterContractError("Provider circuit health signals must cover Anthropic, OpenAI, and Google")
@@ -106,6 +118,7 @@ class ProviderCircuitRecord:
     trip_count: int = 0
     half_open_successes: int = 0
     probe_in_flight: bool = False
+    probe_claimed_at: float | None = None
     last_failure_code: str | None = None
     last_transition_at: float | None = None
 
@@ -121,6 +134,7 @@ class ProviderCircuitRecord:
             "trip_count",
             "half_open_successes",
             "probe_in_flight",
+            "probe_claimed_at",
             "last_failure_code",
             "last_transition_at",
         }
@@ -133,7 +147,7 @@ class ProviderCircuitRecord:
         state = str(data.get("state") or "")
         if not provider or state not in {"closed", "open", "half_open"}:
             raise ProviderAdapterContractError("Provider circuit record has invalid provider or state")
-        return cls(
+        record = cls(
             provider_family=provider,
             state=state,  # type: ignore[arg-type]
             failure_count=int(data.get("failure_count", 0)),
@@ -143,9 +157,19 @@ class ProviderCircuitRecord:
             trip_count=int(data.get("trip_count", 0)),
             half_open_successes=int(data.get("half_open_successes", 0)),
             probe_in_flight=bool(data.get("probe_in_flight", False)),
+            probe_claimed_at=_optional_float(data.get("probe_claimed_at")),
             last_failure_code=str(data["last_failure_code"]) if data.get("last_failure_code") else None,
             last_transition_at=_optional_float(data.get("last_transition_at")),
         )
+        if record.probe_in_flight and record.probe_claimed_at is None:
+            raise ProviderAdapterContractError(
+                "Half-open provider circuit probe-in-flight state requires probe_claimed_at"
+            )
+        if not record.probe_in_flight and record.probe_claimed_at is not None:
+            raise ProviderAdapterContractError(
+                "Provider circuit probe_claimed_at cannot persist without an in-flight probe"
+            )
+        return record
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -267,6 +291,7 @@ class ProviderCircuitBreaker:
             trip_count=trip_count,
             half_open_successes=0,
             probe_in_flight=False,
+            probe_claimed_at=None,
             last_failure_code=code,
             last_transition_at=now,
         )
@@ -284,6 +309,7 @@ class ProviderCircuitBreaker:
             trip_count=record.trip_count,
             half_open_successes=0,
             probe_in_flight=False,
+            probe_claimed_at=None,
             last_failure_code=None,
             last_transition_at=now,
         )
@@ -297,6 +323,21 @@ class ProviderCircuitBreaker:
                 state="half_open",
                 half_open_successes=0,
                 probe_in_flight=False,
+                probe_claimed_at=None,
+                last_transition_at=now,
+            )
+            self.store.save(refreshed)
+            return refreshed
+        if (
+            record.state == "half_open"
+            and record.probe_in_flight
+            and record.probe_claimed_at is not None
+            and now - record.probe_claimed_at >= self.policy.half_open_probe_lease_seconds
+        ):
+            refreshed = replace(
+                record,
+                probe_in_flight=False,
+                probe_claimed_at=None,
                 last_transition_at=now,
             )
             self.store.save(refreshed)
@@ -342,7 +383,14 @@ class ProviderCircuitBreaker:
         if record.state == "half_open":
             if record.probe_in_flight:
                 raise ProviderAdapterContractError(f"Half-open provider circuit already has a probe for {provider}")
-            self.store.save(replace(record, probe_in_flight=True, last_transition_at=now))
+            self.store.save(
+                replace(
+                    record,
+                    probe_in_flight=True,
+                    probe_claimed_at=now,
+                    last_transition_at=now,
+                )
+            )
 
     def is_service_health_failure(self, response: ProviderExecutionResponse) -> bool:
         if response.status != "failed" or response.failure is None:
@@ -368,6 +416,7 @@ class ProviderCircuitBreaker:
                     record,
                     half_open_successes=successes,
                     probe_in_flight=False,
+                    probe_claimed_at=None,
                     last_failure_code=None,
                     last_transition_at=now,
                 )
@@ -383,10 +432,15 @@ class ProviderCircuitBreaker:
 
         if record.state == "half_open":
             if health_failure:
-                return self._open(replace(record, probe_in_flight=False), now, code)
+                return self._open(
+                    replace(record, probe_in_flight=False, probe_claimed_at=None),
+                    now,
+                    code,
+                )
             updated = replace(
                 record,
                 probe_in_flight=False,
+                probe_claimed_at=None,
                 last_failure_code=code,
                 last_transition_at=now,
             )
@@ -414,6 +468,7 @@ class ProviderCircuitBreaker:
             last_failure_code=code,
             last_transition_at=now,
             probe_in_flight=False,
+            probe_claimed_at=None,
         )
         self.store.save(updated)
         return updated

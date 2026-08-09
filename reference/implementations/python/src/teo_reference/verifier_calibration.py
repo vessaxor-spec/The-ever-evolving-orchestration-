@@ -690,7 +690,9 @@ def evaluate_calibration(
         if len(statuses) < 2:
             continue
         counts = Counter(statuses)
-        repeatability_scores.append(max(counts.values()) / len(statuses))
+        total_pairs = len(statuses) * (len(statuses) - 1) // 2
+        agreeing_pairs = sum(count * (count - 1) // 2 for count in counts.values())
+        repeatability_scores.append(agreeing_pairs / total_pairs)
 
     disagreement_cases: list[str] = []
     for case_id, results in cross_verifier.items():

@@ -1,4 +1,4 @@
-version: 1
+version: 1.1
 status: active
 scope: provider_family
 applies_to:
@@ -18,6 +18,8 @@ trip_policy:
 half_open:
   max_probe_dispatches: 1
   successes_required_to_close: 2
+  probe_lease_seconds: 30
+  non_service_health_failure_behavior: remain_half_open
 
 service_health_signals:
   anthropic:
@@ -63,6 +65,8 @@ principles:
   - provider circuits represent service health, not user entitlement or connection health
   - adapters remain stateless and never own circuit state
   - open provider circuits influence new routing through blocked provider constraints
-  - half-open recovery uses bounded probes
+  - half-open recovery uses bounded leased probes
+  - abandoned half-open probe claims expire and become eligible for a later recovery probe
   - successful recovery probes close only after the configured success threshold
+  - non-service-health failures during half-open remain inconclusive and do not reopen a provider-family circuit
   - connection, authentication, billing, permission, and quota failures never open a provider-family circuit

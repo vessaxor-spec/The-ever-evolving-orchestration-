@@ -1,6 +1,6 @@
-version: 0.3
+version: 0.4
 status: public-draft
-reviewed_at: 2026-08-05
+reviewed_at: 2026-08-09
 registry_source: registry/models/models.yaml
 review_policy: >-
   These aliases are role-based defaults. Replace the concrete implementation
@@ -152,6 +152,7 @@ models:
     concrete_model: claude-fable-5
     availability: generally_available
     role: candidate maximum-capability escalation
+    routing_status: registered_unrouted
     profile: sol
     preferred_for:
       - long-running agentic work

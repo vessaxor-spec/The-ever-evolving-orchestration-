@@ -11,6 +11,8 @@
     "reviewed_at",
     "rubric_version",
     "observations_blinded",
+    "reference_control_labels_blinded",
+    "source_packet_id",
     "decision"
   ],
   "properties": {
@@ -29,6 +31,12 @@
     },
     "rubric_version": {"type": "string", "minLength": 1},
     "observations_blinded": {"const": true},
+    "reference_control_labels_blinded": {"const": true},
+    "source_packet_id": {
+      "type": "string",
+      "minLength": 8,
+      "pattern": "^packet-[A-Za-z0-9._-]+$"
+    },
     "decision": {
       "type": "object",
       "additionalProperties": false,
