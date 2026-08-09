@@ -23,3 +23,7 @@ The decision changes executable routing rather than only README wording.
 The change is based on current first-party provider documentation reviewed on 2026-08-09 and the existing TEO role boundaries. Provider claims establish current capability and availability evidence, not permanent superiority.
 
 The change must remain reversible through routing policy if TEO-specific evidence later shows a different implementation is better for a role.
+
+## Execution status
+
+The guarded migration has been applied to the branch. Normal read-only reference CI must pass before merge; any failing conformance test must be reconciled to the approved routing decision rather than bypassed.
