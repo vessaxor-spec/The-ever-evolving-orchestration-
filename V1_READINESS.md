@@ -13,10 +13,23 @@ The v1 reference system is expected to include:
 - bounded retry, redispatch, circuit breaking, telemetry, and verification controls,
 - runnable calibration and evidence tooling,
 - model-freshness governance,
+- provider-access separation governance,
 - reproducible CI and linked-configuration validation, and
 - an executable provisional machine-panel evidence path.
 
 Independent human calibration is intentionally tracked as a stronger post-v1 stewardship tier. Its absence must remain visible and it continues to block human-ground-truth quality claims and any authority expansion that policy requires humans to approve.
+
+## Provider access boundary
+
+TEO v1 owns the decision about which implementation should perform the task. It does not own the user's provider login, API-key provisioning, OAuth token lifecycle, subscription management, billing account, service account, delegated identity, connector session, or credential broker.
+
+The user or integrating runtime is responsible for valid access to the selected implementation. API keys, OAuth or subscription-backed sessions, delegated identity, service accounts, connectors, credential brokers, and other provider-supported mechanisms may satisfy that boundary without changing the TEO route.
+
+Reference API-key helpers and the repository-hosted GitHub Actions evidence workflow are convenience harnesses. They are not an architectural requirement and must not be interpreted as evidence that TEO requires API access rather than OAuth, subscription access, or another provider-supported connection method.
+
+Missing credentials or entitlement are execution-boundary conditions. They do not prove that another model was the correct route and must not become model-fitness signals.
+
+See `policy/governance/provider-access-separation.yaml` and `docs/specification/provider-access-boundary.md`.
 
 ## Operational evidence paths
 
@@ -35,6 +48,8 @@ Independent human calibration is intentionally tracked as a stronger post-v1 ste
 This path exercises the complete collection and evaluation machinery while preserving explicit `provisional_machine_panel` evidence semantics.
 
 It cannot establish human ground truth, authorize verifier-quality claims, broaden live execution, or change routing automatically.
+
+The repository-hosted workflow currently provides an optional API-key convenience harness for this study because GitHub Actions does not inherit an end user's interactive provider session. Other runtimes may execute the same collectors through another injected provider connection.
 
 ### Human stewardship path
 
@@ -55,8 +70,10 @@ The following are useful production-hardening extensions but are not required to
 
 These belong to post-v1 runtime evolution unless evidence demonstrates that one is required to preserve an existing v1 invariant.
 
+Provider-specific account provisioning and authentication-product development are outside TEO's routing scope rather than missing post-v1 orchestration features.
+
 ## Release labels
 
-`reference_operational` means the architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational.
+`reference_operational` means the architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational. Access to selected models is supplied by the caller or integrating runtime.
 
 `human_calibrated` is a stronger later state reached only after independent blinded human review, empirical collection, residual-risk review, and explicit human acceptance are complete.
