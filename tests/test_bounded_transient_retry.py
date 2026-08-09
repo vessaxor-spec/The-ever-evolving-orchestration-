@@ -68,32 +68,14 @@ def sequence_connection(
     )
 
 
-def anthropic_overloaded() -> dict:
-    return {
-        "type": "error",
-        "error": {"type": "api_error", "message": "temporary server failure"},
-    }
-
-
-def anthropic_success() -> dict:
-    return {
-        "id": "msg_retry_success",
-        "model": "claude-haiku-4-5",
-        "content": [{"type": "text", "text": "label_a\nlabel_b"}],
-    }
-
-
-def anthropic_provider_failure() -> dict:
-    return {
-        "type": "error",
-        "error": {"type": "rate_limit_error", "message": "provider unavailable"},
-    }
+def gemini_overloaded() -> dict:
+    return {"error": {"status": "UNAVAILABLE", "message": "temporary server failure"}}
 
 
 def gemini_success() -> dict:
     return {
-        "id": "int_retry_fallback",
-        "model": "gemini-3.6-flash",
+        "id": "int_retry_success",
+        "model": "gemini-3.5-flash-lite",
         "status": "completed",
         "steps": [
             {
@@ -101,6 +83,18 @@ def gemini_success() -> dict:
                 "content": [{"type": "text", "text": "label_a\nlabel_b"}],
             }
         ],
+    }
+
+
+def gemini_provider_failure() -> dict:
+    return {"error": {"status": "RESOURCE_EXHAUSTED", "message": "provider unavailable"}}
+
+
+def anthropic_success() -> dict:
+    return {
+        "id": "msg_retry_fallback",
+        "model": "claude-haiku-4-5",
+        "content": [{"type": "text", "text": "label_a\nlabel_b"}],
     }
 
 
@@ -142,12 +136,12 @@ def test_transient_then_success_reuses_primary_dispatch_without_redispatch(tmp_p
         engine(),
         task(),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
+            "google": sequence_connection(
+                "google",
                 calls,
                 [
-                    (500, anthropic_overloaded()),
-                    (200, anthropic_success()),
+                    (500, gemini_overloaded()),
+                    (200, gemini_success()),
                 ],
             )
         },
@@ -158,6 +152,7 @@ def test_transient_then_success_reuses_primary_dispatch_without_redispatch(tmp_p
 
     assert outcome.status == "primary_executed"
     assert outcome.execution_succeeded is True
+    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
     assert outcome.primary_attempts == 2
     assert outcome.primary_retry_delays_seconds == (0.5,)
     assert delays == [0.5]
@@ -173,12 +168,12 @@ def test_jitter_is_bounded_and_deterministic_when_source_is_injected(tmp_path: P
         engine(),
         task(),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
+            "google": sequence_connection(
+                "google",
                 calls,
                 [
-                    (500, anthropic_overloaded()),
-                    (200, anthropic_success()),
+                    (500, gemini_overloaded()),
+                    (200, gemini_success()),
                 ],
             )
         },
@@ -192,21 +187,21 @@ def test_jitter_is_bounded_and_deterministic_when_source_is_injected(tmp_path: P
 
 
 def test_non_transient_failure_is_never_retried(tmp_path: Path) -> None:
-    calls: list[dict] = []
     google_calls: list[dict] = []
+    anthropic_calls: list[dict] = []
     outcome = execute_guarded_canary(
         engine(),
         task(),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
-                calls,
-                [(429, anthropic_provider_failure())],
-            ),
             "google": sequence_connection(
                 "google",
                 google_calls,
-                [(200, gemini_success())],
+                [(429, gemini_provider_failure())],
+            ),
+            "anthropic": sequence_connection(
+                "anthropic",
+                anthropic_calls,
+                [(200, anthropic_success())],
             ),
         },
         artifact_root=tmp_path,
@@ -215,29 +210,31 @@ def test_non_transient_failure_is_never_retried(tmp_path: Path) -> None:
 
     assert outcome.status == "fallback_executed"
     assert outcome.primary_attempts == 1
-    assert len(calls) == 1
+    assert outcome.fallback_dispatch is not None
+    assert outcome.fallback_dispatch.selected_implementation.model == "claude-haiku-4-5"
     assert len(google_calls) == 1
+    assert len(anthropic_calls) == 1
 
 
 def test_transient_retry_can_surface_provider_failure_then_redispatch(tmp_path: Path) -> None:
-    anthropic_calls: list[dict] = []
     google_calls: list[dict] = []
+    anthropic_calls: list[dict] = []
     outcome = execute_guarded_canary(
         engine(),
         task(),
         {
-            "anthropic": sequence_connection(
-                "anthropic",
-                anthropic_calls,
-                [
-                    (500, anthropic_overloaded()),
-                    (429, anthropic_provider_failure()),
-                ],
-            ),
             "google": sequence_connection(
                 "google",
                 google_calls,
-                [(200, gemini_success())],
+                [
+                    (500, gemini_overloaded()),
+                    (429, gemini_provider_failure()),
+                ],
+            ),
+            "anthropic": sequence_connection(
+                "anthropic",
+                anthropic_calls,
+                [(200, anthropic_success())],
             ),
         },
         artifact_root=tmp_path,
@@ -250,8 +247,9 @@ def test_transient_retry_can_surface_provider_failure_then_redispatch(tmp_path: 
     assert outcome.fallback_trigger_scope == "provider"
     assert outcome.fallback_dispatch is not None
     assert outcome.fallback_dispatch.dispatch_id != outcome.primary_dispatch.dispatch_id
-    assert len(anthropic_calls) == 2
-    assert len(google_calls) == 1
+    assert outcome.fallback_dispatch.selected_implementation.model == "claude-haiku-4-5"
+    assert len(google_calls) == 2
+    assert len(anthropic_calls) == 1
 
 
 def test_retry_policy_rejects_fallback_after_transient_exhaustion() -> None:
