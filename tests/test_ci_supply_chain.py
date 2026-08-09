@@ -9,8 +9,10 @@ LOCKFILE = REPO_ROOT / "ci/requirements-ci.lock"
 WORKFLOWS = (
     REPO_ROOT / ".github/workflows/reference-ci.yml",
     REPO_ROOT / ".github/workflows/specialist-evidence-resolution.yml",
+    REPO_ROOT / ".github/workflows/provisional-operational-evidence.yml",
 )
 HASH_PATTERN = re.compile(r"--hash=sha256:[0-9a-f]{64}$")
+ACTION_SHA_PATTERN = re.compile(r"uses:\s+[^@\s]+@[0-9a-f]{40}(?:\s|$)")
 
 
 def _locked_requirements() -> list[list[str]]:
@@ -51,3 +53,14 @@ def test_all_ci_lockfile_installs_require_hash_verification() -> None:
         text = workflow.read_text(encoding="utf-8")
         assert expected in text, f"{workflow.name} does not require lockfile hashes"
         assert "--no-deps -r ci/requirements-ci.lock" not in text.replace(expected, "")
+
+
+def test_all_external_workflow_actions_are_sha_pinned() -> None:
+    for workflow in WORKFLOWS:
+        for raw in workflow.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line.startswith("uses:"):
+                continue
+            assert ACTION_SHA_PATTERN.fullmatch(line), (
+                f"{workflow.name} contains an external action that is not pinned to a full SHA: {line}"
+            )
