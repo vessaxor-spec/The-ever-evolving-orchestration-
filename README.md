@@ -251,24 +251,38 @@ Provider access is an execution concern after routing. Authentication mechanics 
 
 ## Current implementation directions
 
-The mappings below are implementation choices, not constitutional claims about permanent model superiority.
+These are **routing directions**, not a permanent model ranking. Mission Control resolves responsibility, capability, effective risk, specialist context, and verification requirements before applying them. A model being newer or stronger in aggregate does not automatically make it the correct route.
 
-| Capability direction | Current primary use | Cross-provider support |
-|---|---|---|
-| Engineering execution | GPT-5.6 Terra | Gemini 3.6 Flash fallback with Claude Sonnet 5 verification where mapped |
-| Difficult engineering reasoning | GPT-5.6 Sol | Claude Sonnet 5 fallback with Gemini Pro verification where explicitly authorized |
-| High-consequence specialist reasoning | Claude Opus 5 | GPT-5.6 Sol fallback with Gemini Pro verification where explicitly authorized |
-| General planning and semantic work | Claude Sonnet 5 | GPT-5.6 Sol fallback with Gemini Pro verification where explicitly authorized |
-| Broad research and grounded synthesis | Gemini Pro route under current evidence and preview policy | Claude Sonnet 5 fallback with GPT-5.6 Sol verification |
-| Fast bounded and multimodal execution | Gemini 3.6 Flash | GPT-5.6 Terra fallback with Claude Sonnet 5 verification |
-| Economical high-volume work | GPT-5.6 Luna or Claude Haiku 4.5 where routed | cross-provider Flash, Haiku, or Luna paths under policy |
-| Executable verification | route-specific independent verifier | provider-diverse semantic, research, executable, or qualified-human verification |
+| Workload shape | Current routed direction | Supporting path | Mission Control rationale |
+|---|---|---|---|
+| Orchestration, coordination, and general semantic planning | **Claude Sonnet 5** | GPT-5.6 Sol for engineering-heavy orchestration; Gemini 3.1 Pro Preview for research-heavy context when explicitly accepted; Claude Opus 5 for unresolved high-consequence tradeoffs | Sonnet is the default coordination workhorse. Supporting models are selected by the dominant constraint rather than by provider preference. |
+| Bounded engineering implementation | **GPT-5.6 Terra** | GPT-5.6 Sol for planning or cross-component reasoning; Gemini 3.1 Pro Preview as cross-provider fallback where explicitly accepted; Claude Sonnet 5 for semantic review | Terra is the execution lane for inspect, edit, test, debug, and verify work where the main problem is implementation rather than architectural uncertainty. |
+| Difficult engineering reasoning, deep debugging, and refactor planning | **GPT-5.6 Sol** | Claude Sonnet 5 cross-provider fallback; Gemini 3.1 Pro Preview for independent research or verification where explicitly accepted | Sol is reserved for tasks dominated by cross-system reasoning, hidden invariants, root-cause synthesis, or implementation-aware planning. |
+| High-consequence specialist reasoning | **Claude Opus 5** | GPT-5.6 Sol fallback; Gemini 3.1 Pro Preview independent verifier where explicitly accepted; qualified human approval remains mandatory at critical effective risk | Opus 5 is the established high-consequence reasoning route for selected specialist templates. Capability does not remove human authority requirements. |
+| Broad research and grounded synthesis | **Gemini 3.1 Pro Preview**, only with explicit preview acceptance | Gemini 3.6 Flash for fast collection; Claude Sonnet 5 for cross-provider synthesis fallback and contradiction challenge; GPT-5.6 Sol when technical claims require implementation validation | Research separates collection, synthesis, contradiction analysis, and technical verification rather than forcing one model to own the whole evidence chain. |
+| Multimodal, spatial, and rapid agentic interpretation | **Gemini 3.6 Flash** | Claude Sonnet 5 cross-provider fallback; Gemini 3.1 Pro Preview escalation for ambiguous or long-context cross-modal synthesis; GPT-5.6 Sol for technical follow-up | Gemini 3.6 Flash is the current stable multimodal and agentic lane. Fallback must preserve the task's actual modality requirements rather than merely switch providers. |
+| Economical high-volume bounded work | **Claude Haiku 4.5** on the current reference route | Gemini 3.6 Flash routine fallback; GPT-5.6 Luna registered alternative; Claude Sonnet 5 escalation when ambiguity exceeds throughput scope | Throughput routing optimizes boundedness, latency, cost, and validation. It is not a lower-quality version of the reasoning routes. |
+| Executable and semantic verification | **Route-specific independent verifier** | Provider-diverse semantic, research, executable, deterministic, or qualified-human verification according to risk and evidence type | Verification is a separate responsibility. TEO does not maintain one universal verifier model because the correct verification method depends on the claim being checked. |
 
-Reasoning effort is part of the executable dispatch contract where the selected implementation supports a corresponding control.
+### Evidence-gated candidates
 
-A preview model remains ineligible unless the concrete preview implementation is explicitly accepted for that task.
+Two current models are deliberately **not auto-promoted** merely because provider evidence describes them as newer or more capable:
 
-Model freshness is governed by [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml). Newer does not automatically mean better, but stale inherited model knowledge is not accepted as evidence.
+- **Claude Fable 5** is registered as a frontier-capability candidate. Anthropic positions it above Opus 5 for the most demanding long-horizon work, but TEO has not yet produced route-specific evidence that justifies replacing the established Opus 5 high-consequence templates. Its higher operating cost and distinct safety-classifier/refusal behavior also change the execution contract. It should therefore enter through an explicit evaluation or conditional frontier-escalation proposal, not silent global promotion.
+- **Gemini 3.5 Flash-Lite** is registered as a throughput candidate. Google positions it specifically for high-volume, low-cost autonomous execution and document/data extraction. TEO should evaluate it against the current Haiku 4.5, Gemini 3.6 Flash, and GPT-5.6 Luna throughput paths before assigning it a default route.
+
+### Interpretation rules
+
+- **Terra and Sol are not interchangeable engineering labels.** Terra is primarily the bounded execution lane; Sol is the difficult-reasoning and cross-system lane.
+- **Opus 5 and Fable 5 are not interchangeable escalation labels.** Opus 5 remains the established routed high-consequence implementation; Fable 5 remains evidence-gated until route-specific evaluation supports promotion.
+- **Gemini 3.6 Flash and Flash-Lite-class models solve different optimization problems.** Flash is the stable agentic and multimodal lane; Flash-Lite is a throughput candidate.
+- **Preview models do not become defaults by being stronger.** Gemini 3.1 Pro Preview remains task-ineligible unless that exact preview implementation is explicitly accepted.
+- **Fallback must remain capability-valid.** Cross-provider diversity is required where policy calls for it, but a fallback is eligible only if it can actually satisfy the task's modality, tooling, context, and reasoning requirements.
+- **Authentication never changes these directions.** API keys, OAuth or subscription-backed sessions, delegated identity, and other provider-supported access mechanisms belong to the execution boundary after routing.
+
+Reasoning effort is part of the executable dispatch contract where the selected implementation supports a corresponding control. Mission Control may raise effort when risk or task complexity justifies it, but maximum effort and premium modes are conditional tools rather than routine defaults.
+
+Model freshness is governed by [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml). Newer triggers evaluation; it does not automatically trigger replacement.
 
 ## Provider-aware fallback and recovery
 
