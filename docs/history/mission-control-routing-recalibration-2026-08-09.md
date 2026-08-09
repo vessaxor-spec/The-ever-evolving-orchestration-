@@ -19,3 +19,5 @@ This record captures the executable routing update approved after Mission Contro
 Provider claims establish current capability and availability evidence, not permanent TEO superiority. These assignments remain evidence-revisable under the model-freshness policy.
 
 The guarded live runtime and worker eligibility were reconciled with this policy so the new Flash-Lite throughput primary is executable within the existing bounded canary rather than being documentation-only routing state.
+
+The verifier topology is also explicit: Sonnet 5 verifies the Flash-Lite primary; Gemini 3.6 Flash becomes the fresh verifier when Haiku executes a model-scoped fallback; Sol verifies Haiku after a Google provider-scoped failure. This keeps every guarded redispatch provider-diverse and verifier-fresh.
