@@ -68,9 +68,9 @@ models:
     provider: anthropic
     availability: generally_available
     provider_description: next-generation intelligence for long-running agents
-    teo_routing_role: candidate critical escalation implementation
-    routing_status: registered_unrouted
-    routing_status_reason: retained for evidence-based escalation evaluation; not promoted by release recency alone
+    teo_routing_role: narrow frontier escalation after established high-consequence routes remain inconclusive
+    routing_status: routed_frontier_escalation
+    routing_status_reason: only for unresolved long-horizon or cross-system escalation where added capability justifies cost and latency
     input_modalities: [text, image]
     output_modalities: [text]
     reasoning_control: output_config.effort
@@ -178,9 +178,15 @@ models:
     provider: google
     availability: stable
     provider_description: fastest and lowest-cost Gemini 3.5 model for high-throughput execution
-    teo_routing_role: candidate economical throughput implementation
-    routing_status: registered_unrouted
-    routing_status_reason: evaluate against current Luna and Flash throughput routes before adoption
+    teo_routing_role: primary economical throughput implementation
+    routing_status: routed
+    input_modalities: [text, image, video, audio, pdf]
+    output_modalities: [text]
+    reasoning_control: thinking_level
+    reasoning_levels: [minimal, low, medium, high]
+    reasoning_default: minimal
+    context_window_tokens: 1048576
+    max_output_tokens: 65536
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/latest-model
 
