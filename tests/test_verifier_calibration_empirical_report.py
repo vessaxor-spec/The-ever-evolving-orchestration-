@@ -49,6 +49,8 @@ def labels_for(cases):
                         "reviewed_at": "2026-08-07T14:00:00Z",
                         "rubric_version": case.rubric_version,
                         "observations_blinded": True,
+                        "reference_control_labels_blinded": True,
+                        "source_packet_id": "packet-test-report",
                         "decision": decision_dict(case.gold),
                     }
                 )
