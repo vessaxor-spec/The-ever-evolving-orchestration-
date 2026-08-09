@@ -27,3 +27,5 @@ The change must remain reversible through routing policy if TEO-specific evidenc
 ## Execution status
 
 The guarded migration has been applied to the branch. Normal read-only reference CI must pass before merge; any failing conformance test must be reconciled to the approved routing decision rather than bypassed.
+
+A post-migration synchronization commit was issued after the PR was reopened to ensure the normal pull-request CI evaluates the final routing tree.
