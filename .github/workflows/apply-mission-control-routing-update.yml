@@ -19,12 +19,45 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.11.15'
-      - name: Apply guarded routing migration
-        run: python tools/apply_mission_control_routing_update.py
+      - name: Apply guarded executable routing migration
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          script = Path('tools/apply_mission_control_routing_update.py').read_text(encoding='utf-8')
+          executable = script.split('# 8) README reflects executable policy', 1)[0]
+          exec(compile(executable, 'routing-migration', 'exec'))
+          PY
+      - name: Reconcile README to executable routing
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('README.md')
+          text = p.read_text(encoding='utf-8')
+          replacements = {
+            '| Bounded engineering implementation | **GPT-5.6 Terra** | GPT-5.6 Sol for planning or cross-component reasoning; Gemini 3.1 Pro Preview as cross-provider fallback where explicitly accepted; Claude Sonnet 5 for semantic review |':
+            '| Bounded engineering implementation | **GPT-5.6 Terra** | GPT-5.6 Sol for planning or cross-component reasoning; stable Gemini 3.6 Flash as routine cross-provider coding fallback; Claude Sonnet 5 for semantic review |',
+            '| Economical high-volume bounded work | **Claude Haiku 4.5** on the current reference route | Gemini 3.6 Flash routine fallback; GPT-5.6 Luna registered alternative; Claude Sonnet 5 escalation when ambiguity exceeds throughput scope |':
+            '| Economical high-volume bounded work | **Gemini 3.5 Flash-Lite** | Claude Haiku 4.5 cross-provider fallback; GPT-5.6 Luna independent alternative; Gemini 3.6 Flash for stronger bounded agentic or multimodal work |',
+            '- **Claude Fable 5** is registered as a frontier-capability candidate. Anthropic positions it above Opus 5 for the most demanding long-horizon work, but TEO has not yet produced route-specific evidence that justifies replacing the established Opus 5 high-consequence templates. Its higher operating cost and distinct safety-classifier/refusal behavior also change the execution contract. It should therefore enter through an explicit evaluation or conditional frontier-escalation proposal, not silent global promotion.':
+            '- **Claude Fable 5** is routed only as a narrow frontier escalation after established Opus/Sol high-consequence paths remain inconclusive and the expected capability gain justifies materially higher cost and latency. It does not replace Opus 5 as the routine high-consequence specialist route.',
+            '- **Gemini 3.5 Flash-Lite** is registered as a throughput candidate. Google positions it specifically for high-volume, low-cost autonomous execution and document/data extraction. TEO should evaluate it against the current Haiku 4.5, Gemini 3.6 Flash, and GPT-5.6 Luna throughput paths before assigning it a default route.':
+            '- **Gemini 3.5 Flash-Lite** is the primary economical bounded-throughput implementation. Claude Haiku 4.5 remains the first cross-provider fallback, GPT-5.6 Luna remains an independent alternative, and Gemini 3.6 Flash remains the stronger bounded agentic and multimodal lane.',
+            '- **Opus 5 and Fable 5 are not interchangeable escalation labels.** Opus 5 remains the established routed high-consequence implementation; Fable 5 remains evidence-gated until route-specific evaluation supports promotion.':
+            '- **Opus 5 and Fable 5 are not interchangeable escalation labels.** Opus 5 remains the established high-consequence implementation; Fable 5 is reserved for unresolved frontier escalation rather than routine use.',
+            '- **Gemini 3.6 Flash and Flash-Lite-class models solve different optimization problems.** Flash is the stable agentic and multimodal lane; Flash-Lite is a throughput candidate.':
+            '- **Gemini 3.6 Flash and Gemini 3.5 Flash-Lite solve different optimization problems.** Flash is the stable agentic, coding-fallback, and multimodal lane; Flash-Lite is the primary economical bounded-throughput lane.'
+          }
+          for old, new in replacements.items():
+              if text.count(old) != 1:
+                  raise SystemExit(f'expected one README match, found {text.count(old)} for: {old[:80]}')
+              text = text.replace(old, new)
+          p.write_text(text, encoding='utf-8')
+          PY
       - name: Remove one-shot migration mechanism
         run: |
           rm tools/apply_mission_control_routing_update.py
           rm .github/workflows/apply-mission-control-routing-update.yml
+          rm -f docs/history/.routing-recalibration-trigger docs/history/.routing-recalibration-trigger2
       - name: Commit routing update
         run: |
           git config user.name "github-actions[bot]"
