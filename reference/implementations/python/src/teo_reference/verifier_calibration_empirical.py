@@ -81,6 +81,8 @@ class HumanCalibrationLabel:
     reviewed_at: str
     rubric_version: str
     observations_blinded: bool
+    reference_control_labels_blinded: bool
+    source_packet_id: str
     decision: LiveVerificationDecision
 
     @classmethod
@@ -92,6 +94,8 @@ class HumanCalibrationLabel:
             "reviewed_at",
             "rubric_version",
             "observations_blinded",
+            "reference_control_labels_blinded",
+            "source_packet_id",
             "decision",
         }
         _require_exact_fields(data, fields, "Human calibration label")
@@ -103,9 +107,16 @@ class HumanCalibrationLabel:
             raise CalibrationError(
                 "Human calibration label reviewer_id must be an opaque identifier, not a name or email"
             )
+        source_packet_id = _required_text(data["source_packet_id"], "source_packet_id")
+        if not source_packet_id.startswith("packet-"):
+            raise CalibrationError("Human calibration label source_packet_id must identify a blinded review packet")
         if data["observations_blinded"] is not True:
             raise CalibrationError(
                 "Human calibration labels must attest that model observations were blinded"
+            )
+        if data["reference_control_labels_blinded"] is not True:
+            raise CalibrationError(
+                "Human calibration labels must attest that reference-control labels were blinded"
             )
         decision_raw = data["decision"]
         if not isinstance(decision_raw, dict):
@@ -121,6 +132,8 @@ class HumanCalibrationLabel:
             reviewed_at=_required_offset_datetime(data["reviewed_at"], "reviewed_at"),
             rubric_version=_required_text(data["rubric_version"], "rubric_version"),
             observations_blinded=True,
+            reference_control_labels_blinded=True,
+            source_packet_id=source_packet_id,
             decision=decision,
         )
 
@@ -130,6 +143,7 @@ class HumanLabelReadiness:
     human_label_requirements_met: bool
     minimum_independent_reviewers_per_case: int
     reviewer_ids: list[str]
+    source_packet_id: str | None
     undercovered_cases: list[str]
     disagreement_cases: list[str]
     adjudication_missing_cases: list[str]
@@ -255,8 +269,6 @@ class EmpiricalCalibrationObservation:
         )
 
     def to_base_observation(self) -> CalibrationObservation:
-        # Compatibility object only. Empirical output relabels this path to calibration_direct
-        # before it leaves this module, so no persisted record claims primary execution.
         return CalibrationObservation(
             case_id=self.case_id,
             verifier_provider_family=self.verifier_provider_family,
@@ -446,6 +458,7 @@ def load_empirical_policy(path: str | Path) -> EmpiricalCalibrationPolicy:
         _required_bool(collection.get(field), f"collection.{field}", expected=False)
     for field in (
         "reviewers_blinded_from_model_observations",
+        "reviewers_blinded_from_reference_control_labels",
         "adjudication_required_on_disagreement",
         "adjudicator_must_be_distinct_from_case_reviewers",
         "require_offset_aware_timestamp",
@@ -574,6 +587,11 @@ def assess_human_label_readiness(
     unknown = sorted({label.case_id for label in labels} - known_cases)
     if unknown:
         raise CalibrationError("Human labels reference unknown cases: " + ", ".join(unknown))
+    packet_ids = {label.source_packet_id for label in labels}
+    if len(packet_ids) != 1:
+        raise CalibrationError(
+            "Human calibration labels must originate from one blinded review packet"
+        )
     seen: set[tuple[str, str, str]] = set()
     for label in labels:
         identity = (label.case_id, label.reviewer_id, label.reviewer_role)
@@ -582,6 +600,8 @@ def assess_human_label_readiness(
         seen.add(identity)
         if label.rubric_version != policy.rubric_version:
             raise CalibrationError(f"Human label for {label.case_id} uses unsupported rubric version")
+        if not label.observations_blinded or not label.reference_control_labels_blinded:
+            raise CalibrationError("Human calibration label blinding provenance is incomplete")
 
     by_case: dict[str, list[HumanCalibrationLabel]] = defaultdict(list)
     for label in labels:
@@ -613,6 +633,7 @@ def assess_human_label_readiness(
         human_label_requirements_met=not undercovered and not adjudication_missing,
         minimum_independent_reviewers_per_case=policy.minimum_independent_reviewers_per_case,
         reviewer_ids=sorted({label.reviewer_id for label in labels}),
+        source_packet_id=next(iter(packet_ids)),
         undercovered_cases=undercovered,
         disagreement_cases=sorted(disagreements),
         adjudication_missing_cases=sorted(adjudication_missing),
@@ -641,7 +662,6 @@ def build_human_gold_cases(
         if needs_adjudication or consensus is None:
             raise CalibrationError(f"Human label consensus is incomplete for {case.case_id}")
         human_gold.append(replace(case, gold=consensus))
-    # Independent human labels cannot override objective deterministic invariants.
     validate_gold_corpus(human_gold, policy=base_policy)
     return human_gold
 
@@ -821,7 +841,6 @@ def collect_live_observations(
     if len(revision) < 7:
         raise CalibrationError("collector_revision must identify a concrete repository revision")
 
-    # Fail before any paid/provider call if label chronology is invalid.
     collection_started_at = _required_offset_datetime(now(), "collection_started_at")
     latest_label = max(_parsed_time(label.reviewed_at) for label in labels)
     if _parsed_time(collection_started_at) < latest_label:
