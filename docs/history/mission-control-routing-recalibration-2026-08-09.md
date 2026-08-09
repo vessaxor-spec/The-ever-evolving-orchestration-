@@ -17,3 +17,5 @@ This record captures the executable routing update approved after Mission Contro
 - Provider access mechanisms remain outside model-selection semantics.
 
 Provider claims establish current capability and availability evidence, not permanent TEO superiority. These assignments remain evidence-revisable under the model-freshness policy.
+
+The guarded live runtime and worker eligibility were reconciled with this policy so the new Flash-Lite throughput primary is executable within the existing bounded canary rather than being documentation-only routing state.
