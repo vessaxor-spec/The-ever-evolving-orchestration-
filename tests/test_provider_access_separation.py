@@ -95,7 +95,8 @@ def test_ai_instructions_preserve_connection_neutrality() -> None:
     text = AI_INSTRUCTIONS.read_text(encoding="utf-8")
     assert "## Connection neutrality" in text
     assert "Connection mechanism is separate from routing semantics" in text
-    assert "API keys, OAuth, delegated identity, service accounts, connector sessions" in text
+    assert "API keys, OAuth or subscription-backed sessions, delegated identity" in text
+    assert "service accounts, connector sessions" in text
     assert "must not change the selected Team, Worker, Specialist, model role, fallback, verifier, or reasoning effort" in text
 
 
