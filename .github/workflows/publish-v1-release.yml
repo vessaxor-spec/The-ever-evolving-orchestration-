@@ -1,0 +1,79 @@
+name: Publish TEO v1.0.0
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/publish-v1-release.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish immutable v1.0.0 reference
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      RELEASE_SHA: 0b306bae40ed54b82f1f22c90c7c2cbc630abb55
+      RELEASE_TAG: v1.0.0
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 0
+
+      - name: Verify fixed release candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          git cat-file -e "${RELEASE_SHA}^{commit}"
+          git show "${RELEASE_SHA}:pyproject.toml" | grep -F 'version = "1.0.0"'
+          git show "${RELEASE_SHA}:docs/releases/v1.0.0.md" | grep -F '**Release state:** `reference_operational`'
+          if git ls-remote --exit-code --tags origin "refs/tags/${RELEASE_TAG}" >/dev/null 2>&1; then
+            echo "Refusing to overwrite existing tag ${RELEASE_TAG}."
+            exit 1
+          fi
+          if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Refusing to overwrite existing release ${RELEASE_TAG}."
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create annotated release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${RELEASE_TAG}" "${RELEASE_SHA}" -m "TEO v1.0.0 - reference_operational"
+          git push origin "refs/tags/${RELEASE_TAG}"
+
+      - name: Publish GitHub Release
+        shell: bash
+        run: |
+          set -euo pipefail
+          git show "${RELEASE_SHA}:docs/releases/v1.0.0.md" > /tmp/teo-v1.0.0-release-notes.md
+          gh release create "${RELEASE_TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --verify-tag \
+            --title "The Ever-Evolving Orchestration v1.0.0" \
+            --notes-file /tmp/teo-v1.0.0-release-notes.md \
+            --latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify published release
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG_SHA="$(git ls-remote origin "refs/tags/${RELEASE_TAG}^{}" | awk '{print $1}')"
+          test "${TAG_SHA}" = "${RELEASE_SHA}"
+          gh release view "${RELEASE_TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --json tagName,isDraft,isPrerelease,url \
+            --jq 'select(.tagName == "v1.0.0" and .isDraft == false and .isPrerelease == false) | .url'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
