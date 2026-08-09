@@ -77,3 +77,9 @@ Provider-specific account provisioning and authentication-product development ar
 `reference_operational` means the architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational. Access to selected models is supplied by the caller or integrating runtime.
 
 `human_calibrated` is a stronger later state reached only after independent blinded human review, empirical collection, residual-risk review, and explicit human acceptance are complete.
+
+## v1.0.0 release contract
+
+The normative human-readable release contract for the first functional-v1 tag is `docs/releases/v1.0.0.md`.
+
+That contract defines the claims, explicit non-claims, authority boundary, release acceptance gates, tag immutability rule, and semantic-version intent for `v1.0.0` and later v1 releases. The `v1.0.0` tag must not be created unless its acceptance gates are satisfied for the exact release candidate.
