@@ -24,7 +24,7 @@ TEO is built around one enduring premise:
 
 > **The model is not the architecture.**
 
-The architecture resolves responsibility before implementation. A task is interpreted, risk-assessed, assigned to an accountable team and worker, optionally narrowed through a specialist, translated into required capabilities, routed to an eligible implementation, given a fallback, and independently verified.
+The architecture resolves responsibility before implementation. A task is interpreted, risk-assessed, assigned to an accountable team and worker, optionally narrowed through a specialist, translated into required capabilities, routed to an eligible implementation, given a capability-valid fallback, and independently verified.
 
 That structure is designed to survive model releases, provider changes, new access mechanisms, and future implementations without repeatedly redesigning how work is understood and governed.
 
@@ -47,7 +47,7 @@ Task
   -> Evidence-bearing outcome
 ```
 
-TEO decides **which implementation should perform the task** and which independent verifier should assess the result.
+TEO decides **which implementation should perform the task**, which fallback remains valid if that route fails, and which independent verifier should assess the result.
 
 TEO does **not** own the user's provider account, subscription, authentication session, API key, billing relationship, credential broker, OAuth login, or connector session.
 
@@ -73,13 +73,13 @@ The normative boundary is defined in [`policy/governance/provider-access-separat
 
 ## Current state
 
-TEO is now at the **reference-operational** functional-v1 boundary.
+TEO is at the **reference-operational functional-v1 boundary**.
 
 The current control plane has **ten active organizational teams**, **84 workers**, and **78 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
 It includes dedicated Mission Control workers for orchestration, operations, project delivery, and incident response.
 
-The repository also contains:
+The repository currently implements:
 
 - non-lowerable effective-risk assessment
 - specialist-driven risk elevation
@@ -93,26 +93,29 @@ The repository also contains:
 - bounded transient retry under the same dispatch
 - canonical fallback redispatch with a fresh verifier
 - persistent provider-family circuit state with Closed, Open, and Half-Open recovery
+- abandoned half-open probe recovery
 - content-free provider-attempt telemetry
 - strict external JSON Schema boundaries
 - verifier-calibration instrumentation
 - blinded independent-human review tooling
 - a separate provisional provider-diverse machine-panel evidence path
 - a six-card regulated evidence/freshness pilot with CI validation and mutation resistance
-- model-freshness governance that requires current authoritative evidence rather than inherited model knowledge
-- provider-access separation governance that prevents authentication mechanics from drifting into routing policy
+- model-freshness governance based on current authoritative evidence
+- provider-access separation governance
 - reproducible CI with pinned dependencies and artifact hashes
 
 ### Functional v1 means
 
 TEO v1 targets a **credible vendor-neutral orchestration specification with a runnable reference control plane**.
 
-It does not mean that TEO must become a production distributed orchestration platform before v1 can exist.
+It does not require TEO to become a production distributed orchestration platform before v1 can exist.
 
-The following are required for functional v1 and are implemented:
+The functional-v1 boundary includes:
 
 - architecture and governance
 - deterministic routing and risk controls
+- team, worker, and specialist resolution
+- model and reasoning-effort routing
 - provider-diverse fallback and verification
 - guarded live provider execution
 - retry, fallback, circuit-breaker, and telemetry controls
@@ -126,7 +129,7 @@ The authoritative release boundary is defined in [`policy/governance/v1-readines
 
 ### What is intentionally not a functional-v1 blocker
 
-The following remain valuable, but are not required to call the reference system functionally complete:
+The following remain valuable but are not required to call the reference system functionally complete:
 
 - independent blinded human calibration
 - a human-ground-truth verifier-quality claim
@@ -156,7 +159,8 @@ It owns:
 - worker and specialist activation
 - capability resolution
 - execution order and dependencies
-- implementation and fallback assignment
+- implementation assignment
+- routine fallback assignment
 - verification assignment
 - escalation triggers
 - final completion status
@@ -249,40 +253,63 @@ Retry, fallback, escalation, circuit state, and provider health are distinct con
 
 Provider access is an execution concern after routing. Authentication mechanics must not become routing authority.
 
-## Current implementation directions
+## Current executable routing directions
 
-These are **routing directions**, not a permanent model ranking. Mission Control resolves responsibility, capability, effective risk, specialist context, and verification requirements before applying them. A model being newer or stronger in aggregate does not automatically make it the correct route.
+These are **active routing directions**, not a permanent model ranking. Mission Control resolves responsibility, capability, effective risk, specialist context, and verification requirements before applying them.
 
-| Workload shape | Current routed direction | Supporting path | Mission Control rationale |
-|---|---|---|---|
-| Orchestration, coordination, and general semantic planning | **Claude Sonnet 5** | GPT-5.6 Sol for engineering-heavy orchestration; Gemini 3.1 Pro Preview for research-heavy context when explicitly accepted; Claude Opus 5 for unresolved high-consequence tradeoffs | Sonnet is the default coordination workhorse. Supporting models are selected by the dominant constraint rather than by provider preference. |
-| Bounded engineering implementation | **GPT-5.6 Terra** | GPT-5.6 Sol for planning or cross-component reasoning; stable Gemini 3.6 Flash as routine cross-provider coding fallback; Claude Sonnet 5 for semantic review | Terra is the execution lane for inspect, edit, test, debug, and verify work where the main problem is implementation rather than architectural uncertainty. |
-| Difficult engineering reasoning, deep debugging, and refactor planning | **GPT-5.6 Sol** | Claude Sonnet 5 cross-provider fallback; Gemini 3.1 Pro Preview for independent research or verification where explicitly accepted | Sol is reserved for tasks dominated by cross-system reasoning, hidden invariants, root-cause synthesis, or implementation-aware planning. |
-| High-consequence specialist reasoning | **Claude Opus 5** | GPT-5.6 Sol fallback; Gemini 3.1 Pro Preview independent verifier where explicitly accepted; qualified human approval remains mandatory at critical effective risk | Opus 5 is the established high-consequence reasoning route for selected specialist templates. Capability does not remove human authority requirements. |
-| Broad research and grounded synthesis | **Gemini 3.1 Pro Preview**, only with explicit preview acceptance | Gemini 3.6 Flash for fast collection; Claude Sonnet 5 for cross-provider synthesis fallback and contradiction challenge; GPT-5.6 Sol when technical claims require implementation validation | Research separates collection, synthesis, contradiction analysis, and technical verification rather than forcing one model to own the whole evidence chain. |
-| Multimodal, spatial, and rapid agentic interpretation | **Gemini 3.6 Flash** | Claude Sonnet 5 cross-provider fallback; Gemini 3.1 Pro Preview escalation for ambiguous or long-context cross-modal synthesis; GPT-5.6 Sol for technical follow-up | Gemini 3.6 Flash is the current stable multimodal and agentic lane. Fallback must preserve the task's actual modality requirements rather than merely switch providers. |
-| Economical high-volume bounded work | **Gemini 3.5 Flash-Lite** | Claude Haiku 4.5 cross-provider fallback; GPT-5.6 Luna independent alternative; Gemini 3.6 Flash for stronger bounded agentic or multimodal work | Throughput routing optimizes boundedness, latency, cost, and validation. It is not a lower-quality version of the reasoning routes. |
-| Executable and semantic verification | **Route-specific independent verifier** | Provider-diverse semantic, research, executable, deterministic, or qualified-human verification according to risk and evidence type | Verification is a separate responsibility. TEO does not maintain one universal verifier model because the correct verification method depends on the claim being checked. |
+A model being newer or stronger in aggregate does not automatically make it the correct route.
 
-### Evidence-gated candidates
+| Workload shape | Active primary | Routine fallback / support | Verification / escalation | Mission Control rationale |
+|---|---|---|---|---|
+| Orchestration, coordination, and general semantic planning | **Claude Sonnet 5** | GPT-5.6 Sol for engineering-heavy orchestration; Gemini 3.1 Pro Preview for research-heavy context only when explicitly accepted | Claude Opus 5 for unresolved high-consequence tradeoffs; route-specific independent verification | Sonnet is the coordination workhorse. Supporting models are selected by the dominant constraint rather than provider preference. |
+| Bounded engineering implementation | **GPT-5.6 Terra** | **Gemini 3.6 Flash** as the stable routine cross-provider coding fallback; GPT-5.6 Sol for planning or cross-component reasoning | Claude Sonnet 5 semantic review where required | Terra owns inspect, edit, test, debug, and verify work where implementation is the dominant problem. Stable Gemini 3.6 Flash avoids making routine coding resilience depend on preview acceptance. |
+| Difficult engineering reasoning, deep debugging, and refactor planning | **GPT-5.6 Sol** | Claude Sonnet 5 cross-provider reasoning fallback; Gemini 3.1 Pro Preview for independent research where explicitly accepted | Route-specific independent verifier | Sol is reserved for cross-system reasoning, hidden invariants, root-cause synthesis, and implementation-aware planning. |
+| High-consequence specialist reasoning | **Claude Opus 5** | GPT-5.6 Sol cross-provider fallback | Gemini research/verification path where capability-valid; qualified human approval remains mandatory at critical effective risk | Opus remains the established routed high-consequence specialist implementation. Capability never removes human authority requirements. |
+| Frontier unresolved reasoning | **Claude Fable 5**, conditional only | Entered only after established Opus/Sol paths remain materially inconclusive | Existing Mission Control escalation and verification controls remain in force | Fable is a narrow frontier escalation lane, not a global Opus replacement or routine fallback. |
+| Broad research and grounded synthesis | **Gemini 3.1 Pro Preview**, only with explicit preview acceptance | Gemini 3.6 Flash for faster collection; Claude Sonnet 5 for cross-provider synthesis and contradiction challenge; GPT-5.6 Sol for technical validation | Independent source grounding and route-specific verification | Research separates collection, synthesis, contradiction analysis, and technical verification rather than forcing one model to own the whole evidence chain. |
+| Multimodal, spatial, and rapid agentic interpretation | **Gemini 3.6 Flash** | Claude Sonnet 5 when the fallback remains modality-capable; GPT-5.6 Sol for technical follow-up | Gemini 3.1 Pro Preview may be used for ambiguous long-context synthesis only when explicitly accepted | Gemini 3.6 Flash is the stable multimodal and stronger bounded agentic lane. Fallback must preserve actual modality requirements. |
+| Economical high-volume bounded work | **Gemini 3.5 Flash-Lite** | **Claude Haiku 4.5** first cross-provider fallback; GPT-5.6 Luna independent economical alternative; Gemini 3.6 Flash for stronger bounded agentic or multimodal work | **Claude Sonnet 5** verifies the primary Flash-Lite route; **Gemini 3.6 Flash** becomes the fresh verifier when Haiku is the executor and Google remains eligible; **GPT-5.6 Sol** verifies when Google is provider-blocked or stronger technical review is required | Throughput routing optimizes boundedness, latency, cost, and validation while maintaining provider-diverse recovery and fresh-verifier rotation. |
+| Executable and semantic verification | **Route-specific independent verifier** | Provider-diverse semantic, research, executable, deterministic, or qualified-human verification according to risk and evidence type | Fresh verifier assignment follows every canonical fallback redispatch | Verification is a separate responsibility. TEO intentionally does not maintain one universal verifier model. |
 
-Two current models are deliberately **not auto-promoted** merely because provider evidence describes them as newer or more capable:
+### Active throughput topology
 
-- **Claude Fable 5** is routed only as a narrow frontier escalation after established Opus/Sol paths remain inconclusive. Anthropic positions it above Opus 5 for the most demanding long-horizon work, but TEO has not yet produced route-specific evidence that justifies replacing the established Opus 5 high-consequence templates. Its higher operating cost and distinct safety-classifier/refusal behavior also change the execution contract. It should therefore enter through an explicit evaluation or conditional frontier-escalation proposal, not silent global promotion.
-- **Gemini 3.5 Flash-Lite** is the primary economical bounded-throughput implementation. Google positions it specifically for high-volume, low-cost autonomous execution and document/data extraction. TEO should evaluate it against the current Haiku 4.5, Gemini 3.6 Flash, and GPT-5.6 Luna throughput paths before assigning it a default route.
+The bounded `high_volume_simple` canary now uses this executable topology:
+
+```text
+Primary execution
+Gemini 3.5 Flash-Lite (Google)
+  -> verifier: Claude Sonnet 5 (Anthropic)
+
+Model-scoped Flash-Lite failure
+Claude Haiku 4.5 (Anthropic)
+  -> fresh verifier: Gemini 3.6 Flash (Google)
+
+Google provider-scoped failure
+Claude Haiku 4.5 (Anthropic)
+  -> fresh verifier: GPT-5.6 Sol (OpenAI)
+
+Independent economical alternative
+GPT-5.6 Luna (OpenAI)
+```
+
+This topology is intentionally asymmetric. Executor fallback and verifier rotation are selected together so provider diversity remains meaningful after redispatch.
 
 ### Interpretation rules
 
-- **Terra and Sol are not interchangeable engineering labels.** Terra is primarily the bounded execution lane; Sol is the difficult-reasoning and cross-system lane.
-- **Opus 5 and Fable 5 are not interchangeable escalation labels.** Opus 5 remains the established routed high-consequence implementation; Fable 5 remains evidence-gated until route-specific evaluation supports promotion.
-- **Gemini 3.6 Flash and Flash-Lite-class models solve different optimization problems.** Flash is the stable agentic and multimodal lane; Flash-Lite is a throughput candidate.
+- **Terra and Sol are not interchangeable engineering labels.** Terra is the bounded execution lane; Sol is the difficult-reasoning and cross-system lane.
+- **Opus 5 and Fable 5 are not interchangeable escalation labels.** Opus 5 remains the established high-consequence specialist route. Fable 5 is a narrow frontier escalation after established paths remain materially inconclusive.
+- **Gemini 3.6 Flash and Gemini 3.5 Flash-Lite solve different optimization problems.** Flash is the stronger stable agentic and multimodal lane. Flash-Lite is the active high-throughput bounded route.
+- **Haiku 4.5 is no longer the primary throughput executor.** It is the first cross-provider fallback for the bounded throughput route.
 - **Preview models do not become defaults by being stronger.** Gemini 3.1 Pro Preview remains task-ineligible unless that exact preview implementation is explicitly accepted.
-- **Fallback must remain capability-valid.** Cross-provider diversity is required where policy calls for it, but a fallback is eligible only if it can actually satisfy the task's modality, tooling, context, and reasoning requirements.
+- **Fallback must remain capability-valid.** Provider diversity does not excuse modality, tooling, context, or reasoning mismatch.
+- **Fallback gets a fresh verifier.** Canonical redispatch cannot silently inherit an invalid or same-provider verifier.
 - **Authentication never changes these directions.** API keys, OAuth or subscription-backed sessions, delegated identity, and other provider-supported access mechanisms belong to the execution boundary after routing.
 
-Reasoning effort is part of the executable dispatch contract where the selected implementation supports a corresponding control. Mission Control may raise effort when risk or task complexity justifies it, but maximum effort and premium modes are conditional tools rather than routine defaults.
+Reasoning effort is part of the executable dispatch contract where the selected implementation supports a corresponding control. Mission Control may raise effort when risk or complexity justifies it, but maximum effort and premium modes are conditional tools rather than routine defaults.
 
 Model freshness is governed by [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml). Newer triggers evaluation; it does not automatically trigger replacement.
+
+The canonical routing source is [`policy/routing/routing.yaml`](policy/routing/routing.yaml). The README summarizes that policy and must not outrank it.
 
 ## Provider-aware fallback and recovery
 
@@ -297,11 +324,21 @@ Core rules:
 3. Block the provider family for provider-scoped task recovery when policy identifies provider-level unavailability.
 4. Keep bounded transient retry under the same dispatch, model, provider, reasoning effort, and verifier.
 5. Treat fallback as a new orchestration decision with a new dispatch and fresh verifier.
-6. Do not use high-cost escalation capacity as an ordinary availability fallback.
+6. Do not use frontier or high-cost escalation capacity as an ordinary availability fallback.
 7. Keep circuit state separate from route selection. Circuit state constrains eligibility; canonical routing chooses the alternative.
 8. Do not poison provider-family health because one user has invalid credentials, missing entitlement, billing failure, account quota exhaustion, or a local connection problem.
 9. Execute only the verifier assigned by the active dispatch.
 10. Fail closed when no eligible independent verifier remains.
+
+### Circuit semantics
+
+Provider-family circuit state is a reliability constraint, not routing authority.
+
+- service-health failures can accumulate toward opening a circuit
+- tenant/account and local-connection failures do not poison global provider health
+- Half-Open probes use recoverable ownership rather than permanent in-flight state
+- a local connection error during Half-Open is inconclusive and does not count as provider recovery
+- canonical routing selects the next eligible implementation after circuit constraints are applied
 
 See [`docs/methodology/provider-aware-fallbacks.md`](docs/methodology/provider-aware-fallbacks.md) and [`policy/runtime/`](policy/runtime/).
 
@@ -398,6 +435,8 @@ User authentication method, subscription entitlement, billing state, and credent
 
 A new model release triggers evaluation, not automatic promotion.
 
+Current model evidence belongs in the model registry and evidence records, not as permanent truth embedded in README prose. The README should describe active routing roles and governance boundaries; provider catalogs remain independently refreshable.
+
 ## Regulated evidence pilot
 
 TEO maintains a six-card evidence-backed freshness pilot for high-consequence specialist domains:
@@ -424,6 +463,7 @@ The repository test and validation system covers, among other controls:
 - routing and risk behavior
 - specialist model refinement and reasoning effort
 - provider-diverse fallback and verifier assignment
+- active throughput primary/fallback/verifier topology
 - preview authorization
 - finalization integrity guards
 - retry and fallback behavior
@@ -457,14 +497,15 @@ CI validates the control plane. It does not convert provisional evidence into hu
 
 1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).
 2. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
-3. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
-4. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
-5. Review team and worker routing under [`policy/routing/`](policy/routing/).
-6. Review runtime controls under [`policy/runtime/`](policy/runtime/).
-7. Review verification policy under [`policy/verification/`](policy/verification/).
-8. Review specialists under [`community/specialists/`](community/specialists/).
-9. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
-10. Run validation and tests.
+3. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
+4. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
+5. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
+6. Review canonical routing under [`policy/routing/`](policy/routing/).
+7. Review runtime controls under [`policy/runtime/`](policy/runtime/).
+8. Review verification policy under [`policy/verification/`](policy/verification/).
+9. Review specialists under [`community/specialists/`](community/specialists/).
+10. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
+11. Run validation and tests.
 
 ### For AI agents
 
@@ -477,7 +518,7 @@ Read in this order:
 5. [`community/teams/`](community/teams/)
 6. [`community/workers/`](community/workers/)
 7. [`community/specialists/`](community/specialists/)
-8. [`policy/routing/`](policy/routing/)
+8. [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
 9. [`policy/runtime/`](policy/runtime/)
 10. [`policy/verification/`](policy/verification/)
 11. [`models.yaml`](models.yaml)
@@ -623,7 +664,7 @@ The final outcome contract supports:
 
 **Current state.**
 
-The architecture, governance, deterministic routing, risk controls, specialist bindings, model refinement, fallback, independent verification, guarded live execution, recovery controls, telemetry, calibration instrumentation, model freshness, provider-access separation, and reproducible CI are operational as a reference system.
+The architecture, governance, deterministic routing, risk controls, specialist bindings, model refinement, Mission Control routing assignments, provider-diverse fallback, fresh-verifier rotation, guarded live execution, recovery controls, telemetry, calibration instrumentation, model freshness, provider-access separation, and reproducible CI are operational as a reference system.
 
 ### Post-v1 stewardship and hardening
 
