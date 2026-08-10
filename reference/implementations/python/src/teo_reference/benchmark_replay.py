@@ -229,7 +229,8 @@ def _dispatch_mismatches(
         mismatches.append("task_type")
     if dispatch.risk_level != fixture["risk_level"]:
         mismatches.append("risk_level")
-    if sorted(dispatch.required_capabilities) != sorted(fixture["required_capabilities"]):
+    required = set(str(item) for item in fixture["required_capabilities"])
+    if not required.issubset(set(dispatch.required_capabilities)):
         mismatches.append("required_capabilities")
 
     implementation = dispatch.selected_implementation
@@ -326,6 +327,13 @@ def run_controlled_replay(
     preflight must resolve the declared candidate through normal TEO routing before the
     guarded canary is allowed to execute.
     """
+    repo = Path(repo_root).resolve()
+    engine_root = Path(engine.config.root).resolve()
+    if repo != engine_root:
+        raise ProviderAdapterContractError(
+            "Controlled replay repo_root must match the routing engine configuration root"
+        )
+
     plan_data = plan.to_dict()
     fixture_by_id = _fixture_map(plan_data, fixtures)
     policy = retry_policy or RetryPolicy.load(engine.config.root)
@@ -355,7 +363,6 @@ def run_controlled_replay(
                     fixture=fixture,
                     trial_index=trial_index,
                 )
-
                 preflight = engine.dispatch(task)
                 _assert_dispatch_matches(
                     preflight,
@@ -408,7 +415,7 @@ def run_controlled_replay(
                 route_outcome = build_guarded_canary_route_outcome(
                     runtime_outcome,
                     telemetry.events,
-                    repo_root=repo_root,
+                    repo_root=repo,
                     versions=_version_context(candidate),
                     verification=verification,
                 )
@@ -448,7 +455,7 @@ def run_controlled_replay(
     }
     manifest = BenchmarkExperimentManifest.from_dict(
         manifest_data,
-        repo_root=repo_root,
+        repo_root=repo,
     )
     return ControlledReplayExecution(
         plan=plan,
@@ -460,8 +467,7 @@ def run_controlled_replay(
 def _validate_replay_bundle(bundle: ControlledReplayExecution) -> None:
     plan = bundle.plan.to_dict()
     manifest = bundle.manifest.to_dict()
-    expected_experiment_id = f"replay-{bundle.plan.sha256}"
-    if manifest["experiment_id"] != expected_experiment_id:
+    if manifest["experiment_id"] != f"replay-{bundle.plan.sha256}":
         raise ProviderAdapterContractError(
             "Controlled replay manifest does not preserve the replay plan digest"
         )
@@ -507,7 +513,7 @@ def evaluate_controlled_replay(
     repo_root: str | Path,
     generated_at: str | None = None,
 ) -> BenchmarkExperimentReport:
-    """Evaluate a completed live replay through the existing Benchmark Lab report contract."""
+    """Evaluate completed live replay evidence through the existing report contract."""
     _validate_replay_bundle(bundle)
     report = evaluate_benchmark(
         bundle.manifest,
@@ -517,15 +523,15 @@ def evaluate_controlled_replay(
         generated_at=generated_at,
     )
     payload = report.to_dict()
-    limitations: list[str] = []
     stale = (
         "Multi-verifier disagreement measurement and live replay execution are not yet implemented."
     )
-    for item in payload["limitations"]:
-        if item == stale:
-            limitations.append("Multi-verifier disagreement measurement is not yet implemented.")
-        else:
-            limitations.append(item)
+    limitations = [
+        "Multi-verifier disagreement measurement is not yet implemented."
+        if item == stale
+        else item
+        for item in payload["limitations"]
+    ]
     limitations.append(
         "Controlled live replay used normal TEO routing with additive isolation, isolated per-trial circuit state, and the assigned live verifier; Benchmark Lab did not acquire route-selection authority."
     )
