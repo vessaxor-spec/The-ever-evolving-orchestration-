@@ -320,13 +320,7 @@ def run_controlled_replay(
     random_source: RandomSource = random,
     attempt_clock: AttemptClock = monotonic,
 ) -> ControlledReplayExecution:
-    """Execute a declared replay without granting Benchmark Lab route-selection authority.
-
-    Candidate isolation is additive only: a plan may block implementations or provider
-    families, but it cannot directly select, unblock, or rewrite a route. A no-network
-    preflight must resolve the declared candidate through normal TEO routing before the
-    guarded canary is allowed to execute.
-    """
+    """Execute a declared replay without granting Benchmark Lab route-selection authority."""
     repo = Path(repo_root).resolve()
     engine_root = Path(engine.config.root).resolve()
     if repo != engine_root:
@@ -506,6 +500,54 @@ def _validate_replay_bundle(bundle: ControlledReplayExecution) -> None:
             )
 
 
+def _resolved_evaluation_fixtures(
+    bundle: ControlledReplayExecution,
+    fixtures: Sequence[BenchmarkFixtureRecord],
+    *,
+    repo_root: str | Path,
+) -> tuple[list[BenchmarkFixtureRecord], list[str]]:
+    original = {str(item.to_dict()["fixture_id"]): item.to_dict() for item in fixtures}
+    outcomes = {record.to_dict()["outcome_id"]: record.to_dict() for record in bundle.outcomes}
+    manifest = bundle.manifest.to_dict()
+    resolved: dict[str, set[tuple[str, ...]]] = {fixture_id: set() for fixture_id in original}
+
+    for binding in manifest["bindings"]:
+        fixture_id = str(binding["fixture_id"])
+        if fixture_id not in original:
+            raise ProviderAdapterContractError(
+                f"Controlled replay references unknown fixture {fixture_id}"
+            )
+        outcome = outcomes[str(binding["outcome_id"])]
+        capabilities = tuple(sorted(outcome["primary_route"]["required_capabilities"]))
+        declared = set(original[fixture_id]["required_capabilities"])
+        if not declared.issubset(set(capabilities)):
+            raise ProviderAdapterContractError(
+                f"Controlled replay lost fixture-required capabilities for {fixture_id}"
+            )
+        resolved[fixture_id].add(capabilities)
+
+    evaluation_fixtures: list[BenchmarkFixtureRecord] = []
+    original_hashes: list[str] = []
+    for fixture_id in sorted(original):
+        capability_sets = resolved[fixture_id]
+        if len(capability_sets) != 1:
+            raise ProviderAdapterContractError(
+                f"Controlled replay capability context drifted across candidates for {fixture_id}"
+            )
+        resolved_capabilities = list(next(iter(capability_sets)))
+        payload = dict(original[fixture_id])
+        original_hashes.append(str(payload["integrity_sha256"]))
+        payload["required_capabilities"] = resolved_capabilities
+        payload["integrity_sha256"] = _canonical_sha256(
+            payload,
+            omit="integrity_sha256",
+        )
+        evaluation_fixtures.append(
+            BenchmarkFixtureRecord.from_dict(payload, repo_root=repo_root)
+        )
+    return evaluation_fixtures, original_hashes
+
+
 def evaluate_controlled_replay(
     bundle: ControlledReplayExecution,
     fixtures: Sequence[BenchmarkFixtureRecord],
@@ -515,9 +557,14 @@ def evaluate_controlled_replay(
 ) -> BenchmarkExperimentReport:
     """Evaluate completed live replay evidence through the existing report contract."""
     _validate_replay_bundle(bundle)
+    evaluation_fixtures, original_hashes = _resolved_evaluation_fixtures(
+        bundle,
+        fixtures,
+        repo_root=repo_root,
+    )
     report = evaluate_benchmark(
         bundle.manifest,
-        fixtures,
+        evaluation_fixtures,
         bundle.outcomes,
         repo_root=repo_root,
         generated_at=generated_at,
@@ -532,10 +579,14 @@ def evaluate_controlled_replay(
         else item
         for item in payload["limitations"]
     ]
-    limitations.append(
-        "Controlled live replay used normal TEO routing with additive isolation, isolated per-trial circuit state, and the assigned live verifier; Benchmark Lab did not acquire route-selection authority."
+    limitations.extend(
+        [
+            "Controlled live replay used normal TEO routing with additive isolation, isolated per-trial circuit state, and the assigned live verifier; Benchmark Lab did not acquire route-selection authority.",
+            "Fixture capabilities are minimum task requirements for live replay. Canonical routing may add worker capabilities, but every candidate must resolve the same full capability context before comparison.",
+        ]
     )
     payload["limitations"] = limitations
+    payload["provenance"]["fixture_integrity_sha256"] = original_hashes
     payload["integrity_sha256"] = _canonical_sha256(
         payload,
         omit="integrity_sha256",
