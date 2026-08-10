@@ -192,6 +192,69 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             f"Specialist {specialist} consequence rule elevated effective risk to critical using trigger {matched!r}."
         )
 
+    def _documentation_recovery_verification_plan(
+        self,
+        risk: str,
+        task: TaskRequest,
+        primary: ImplementationChoice,
+        worker: str,
+        specialist_entry: dict[str, Any] | None,
+    ) -> VerificationPlan:
+        """Choose a fresh provider-diverse verifier from the canonical worker pool.
+
+        This path is used only when the documentation route's declared technical
+        verifier becomes ineligible after a canonical redispatch. It never changes
+        the primary execution route, accepts preview models, or weakens risk policy.
+        """
+        methods = list(
+            self.config.routing.get("verification_policy", {})
+            .get(risk, {})
+            .get("minimum", ["output_validation"])
+        )
+        specialist_risk = (specialist_entry or {}).get("risk_profile")
+        effective_risk = risk
+        if specialist_risk in RISK_ORDER and RISK_ORDER[specialist_risk] > RISK_ORDER[risk]:
+            effective_risk = str(specialist_risk)
+            methods = list(
+                self.config.routing.get("verification_policy", {})
+                .get(effective_risk, {})
+                .get("minimum", methods)
+            )
+
+        worker_entry = self.config.worker_registry[worker]
+        seen: set[str] = set()
+        for source_key in ("preferred_implementations", "fallbacks"):
+            for model in worker_entry.get(source_key, []):
+                choice = self._choice(
+                    {"agent": "registry", "model": model},
+                    f"workers.{worker}.{source_key}",
+                )
+                if choice.model in seen:
+                    continue
+                seen.add(choice.model)
+                if choice.model == primary.model or not self._eligible(choice, task):
+                    continue
+                if not choice.provider_family or choice.provider_family == primary.provider_family:
+                    continue
+                choice.reasoning = self._reasoning_from_source(choice, "documentation") or "medium"
+                return VerificationPlan(
+                    team=str(
+                        self.config.team_routes["documentation"].get(
+                            "verification_team", "verification"
+                        )
+                    ),
+                    method=list(dict.fromkeys(methods)),
+                    implementation=choice,
+                    independent=True,
+                    human_approval_required=(
+                        task.constraints.require_human_approval or effective_risk == "critical"
+                    ),
+                )
+
+        raise SpecialistRoutingError(
+            "No provider-diverse recovery verifier is available for documentation redispatch"
+        )
+
     def _verification_plan(
         self,
         task_type: str,
@@ -201,14 +264,26 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
         worker: str,
         specialist_entry: dict[str, Any] | None,
     ) -> VerificationPlan:
-        plan = super()._verification_plan(
-            task_type,
-            risk,
-            task,
-            primary,
-            worker,
-            specialist_entry,
-        )
+        try:
+            plan = super()._verification_plan(
+                task_type,
+                risk,
+                task,
+                primary,
+                worker,
+                specialist_entry,
+            )
+        except RoutingError:
+            if task_type != "documentation":
+                raise
+            plan = self._documentation_recovery_verification_plan(
+                risk,
+                task,
+                primary,
+                worker,
+                specialist_entry,
+            )
+
         if task_type != "high_volume_simple":
             return plan
         if (
