@@ -92,7 +92,7 @@ It includes dedicated Mission Control workers for orchestration, operations, pro
 
 The repository information-architecture migration **R1 through R5 is complete**. Current authority, historical activation records, research, executable reference code, evidence, registries, and stewardship documentation now have governed canonical locations under [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
 
-The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, and **Source-backed Cost Attribution** complete at their declared milestones. Reference Implementation CI #443 passed **585 automated tests**, **444 tracked-file layout checks**, regulated specialist evidence validation, **30 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The canonical current priority is **Shadow Route Evaluation**, which remains recommendation-only and has no live policy-write authority. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
+The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, and **Shadow Route Evaluation** complete at their declared milestones. Reference Implementation CI #445 passed **602 automated tests**, **451 tracked-file layout checks**, regulated specialist evidence validation, **34 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The canonical current priority is the **Qualified-human approval lifecycle**, which remains at 40% until explicit runtime authority identity, disposition, evidence, and audit linkage are complete. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
 
 The post-v1 hard audit completed on 2026-08-10 without finding a critical control-plane defect. The final audited tree passed **390 tracked-file layout checks**, **519 automated tests**, regulated specialist evidence validation, **18 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The durable audit record is [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
@@ -133,6 +133,7 @@ The repository currently implements:
 - canonical integrity-protected Route-Outcome Evidence
 - controlled Benchmark and Outcome Lab replay, disagreement measurement, and consequential conclusion handoff
 - source-backed effective-dated route-cost attribution with explicit unknown semantics
+- governed Shadow Route Evaluation with exact evidence binding, bounded specialist #82 dispositions, independent challenge, and Mission Control or maintainer review handoff
 - strict external JSON Schema boundaries
 - verifier-calibration instrumentation
 - blinded independent-human review tooling
@@ -175,7 +176,7 @@ The following remain valuable post-v1 work and were explicitly not required for 
 - distributed circuit-state coordination
 - distributed telemetry export and retention infrastructure
 - streaming runtime support
-- governed shadow route evaluation and later reviewed route adaptation
+- reviewed route adaptation beyond completed shadow evaluation
 - automated qualified-human approval integration
 - TEO-managed API-key provisioning
 - TEO-managed OAuth login
@@ -402,6 +403,10 @@ The Python reference implementation is a runnable control plane that can:
 - execute controlled Benchmark and Outcome Lab replay and evaluation
 - preserve multi-verifier disagreement and consequential conclusion handoffs
 - attribute route and verifier cost from explicit source-backed billable surfaces when evidence is sufficient
+- build governed shadow-evaluation inputs from immutable evidence
+- emit only bounded specialist #82 shadow-recommendation states
+- independently challenge model-originated shadow recommendations
+- hand verified shadow recommendations only to Mission Control or maintainer review without policy-write authority
 - finalize evidence-bearing outcomes
 - preserve audit records
 
@@ -514,6 +519,7 @@ The repository test and validation system covers, among other controls:
 - canonical Route-Outcome Evidence integrity and lineage
 - Benchmark and Outcome Lab comparability, replay, disagreement, and conclusion-control boundaries
 - source-backed cost-attribution evidence, arithmetic, unknown-state, and billable-surface controls
+- Shadow Route Evaluation evidence binding, bounded states, anti-Goodhart behavior, independent challenge, and authority denials
 - live verification boundaries
 - calibration evidence contracts
 - human-review blinding provenance
@@ -536,7 +542,7 @@ The reference CI:
 7. validates linked TEO configuration
 8. executes the end-to-end reference lifecycle
 
-The latest accepted main-line validation before the current Shadow Route Evaluation workstream is Reference Implementation CI #443: 585 tests passed, 444 tracked files passed layout validation, 30 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed.
+The latest accepted validation for the completed Shadow Route Evaluation implementation is Reference Implementation CI #445: 602 tests passed, 451 tracked files passed layout validation, 34 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed.
 
 The 2026-08-10 post-v1 hard audit is recorded in [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The audited reference CI run completed with 519 tests passing and provider-diverse execution, fallback, and verification intact.
 
@@ -559,7 +565,7 @@ CI validates the control plane. It does not convert provisional evidence into hu
 11. Review verification policy under [`policy/verification/`](policy/verification/).
 12. Review specialists under [`community/specialists/`](community/specialists/).
 13. Review current model and provider evidence under [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml) and [`registry/`](registry/).
-14. Review the completed evidence contracts in [`docs/specification/route-outcome-evidence.md`](docs/specification/route-outcome-evidence.md), [`docs/specification/benchmark-outcome-lab.md`](docs/specification/benchmark-outcome-lab.md), and [`docs/specification/source-backed-cost-attribution.md`](docs/specification/source-backed-cost-attribution.md).
+14. Review the completed evidence contracts in [`docs/specification/route-outcome-evidence.md`](docs/specification/route-outcome-evidence.md), [`docs/specification/benchmark-outcome-lab.md`](docs/specification/benchmark-outcome-lab.md), [`docs/specification/source-backed-cost-attribution.md`](docs/specification/source-backed-cost-attribution.md), and [`docs/specification/shadow-route-evaluation.md`](docs/specification/shadow-route-evaluation.md).
 15. Review the latest hard-audit record under [`docs/history/audits/`](docs/history/audits/).
 16. Run validation and tests.
 
@@ -741,7 +747,7 @@ The repository layout is governed and CI-enforced. Root normalization, documenta
 
 Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, integrity, evidence, and controlled-evaluation work while `v1.0.0` remains the immutable stable release.
 
-Route-Outcome Evidence, the Benchmark and Outcome Lab, and Source-backed Cost Attribution have completed their current milestones. The canonical `NOW` workstream is Shadow Route Evaluation, which is being developed as a governed recommendation-only evidence loop for specialist #82. It cannot write live routing policy, widen live execution, lower risk, bypass capabilities or verification, or satisfy qualified-human approval.
+Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, and Shadow Route Evaluation have completed their current milestones. The canonical `NOW` workstream is the Qualified-human approval lifecycle. That workstream implements explicit authority evidence for requirements that existing policy already imposes; it does not create new human-approval requirements or widen live execution by itself.
 
 The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
@@ -749,14 +755,13 @@ The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence meta
 
 Current and future work may include:
 
-- Shadow Route Evaluation, the current canonical `NOW` workstream
+- the Qualified-human approval lifecycle, the current canonical `NOW` workstream
+- evidence-governed live-scope expansion after applicable authority gates pass
 - optional independent blinded human calibration research ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
-- evidence-governed live-scope expansion
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls
 - streaming execution paths
 - governed route adaptation only after independently challenged shadow evidence and maintainer review
-- qualified-human approval integration
 - continued regulated-evidence pilot observation
 - ongoing model-freshness reviews as provider catalogs evolve
 
