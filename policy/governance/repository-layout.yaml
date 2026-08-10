@@ -141,20 +141,7 @@ contracts:
       - routing-validation.md
       - specialist-allocation.md
       - specialist-freshness.md
-    temporary_history_exceptions:
-      - ai-mediated-discovery-refresh-2026-08-05.md
-      - assurance-specialist-staging-2026-08-06.md
-      - final-specialist-tranche-staging-2026-08-06.md
-      - model-routing-audit-2026-08-07.md
-      - native-operations-refresh-2026-08-05.md
-      - physical-systems-staging-2026-08-06.md
-      - platform-reliability-core-staging-2026-08-06.md
-      - platform-reliability-operations-staging-2026-08-06.md
-      - principal-engineering-activation-2026-08-06.md
-      - principal-engineering-team-expansion-2026-08-06.md
-      - regulated-specialist-refresh-2026-08-05.md
-      - research-analytics-security-assurance-2026-08-05.md
-      - systems-engineering-specialist-staging-2026-08-06.md
+    temporary_history_exceptions: []
     future_history_location: docs/history
     future_rule: >-
       Methodology contains reusable methods. Dated records of staging, activation,
@@ -165,8 +152,7 @@ contracts:
     path: docs/history
     canonical_direct_files:
       - README.md
-    temporary_direct_exceptions:
-      - mission-control-routing-recalibration-2026-08-09.md
+    temporary_direct_exceptions: []
     approved_subdirectories:
       - activation
       - audits
@@ -218,7 +204,8 @@ migration:
   completed_phases:
     - R1_layout_constitution
     - R2_root_and_research_normalization
-  current_phase: R3
+    - R3_documentation_lifecycle_separation
+  current_phase: R4
   sequence:
     - R1_layout_constitution
     - R2_root_and_research_normalization
