@@ -1,0 +1,151 @@
+version: 0.2
+status: proposed_inactive
+recorded_at: 2026-08-10
+authority: non_normative_research
+activation_authorized: false
+
+purpose: >-
+  Define the candidate TEO allocation for orchestration-evaluation-analyst without
+  modifying the active specialist registry, worker topology, routing policy, model
+  policy, runtime authority, or reference behavior.
+
+candidate:
+  specialist_id: orchestration-evaluation-analyst
+  role_card: research/runtime/orchestration-evaluation-analyst/role-card.md
+  proposed_primary_team: research
+  proposed_supporting_teams:
+    - mission_control
+    - verification
+    - review
+    - platform_reliability
+  proposed_worker_binding: analytics
+  proposed_risk_profile: high
+  proposed_task_scope:
+    included:
+      - completed_dispatch_cohort_analysis
+      - route_outcome_evaluation
+      - comparative_routing_evidence
+      - fallback_and_retry_dependence_analysis
+      - verifier_disagreement_analysis
+      - routing_regression_detection
+      - cost_latency_quality_tradeoff_analysis
+      - evidence_sufficiency_assessment
+      - shadow_route_recommendation
+    excluded:
+      - live_dispatch_control
+      - active_route_selection
+      - routing_policy_write
+      - risk_policy_write
+      - capability_policy_write
+      - verification_policy_write
+      - model_policy_write
+      - production_runtime_authority
+      - automatic_route_promotion_or_demotion
+      - self_approval
+
+ownership_rationale: >-
+  Research owns the evaluator so the routing authority does not also own the function
+  that judges its route outcomes. The existing analytics worker already owns statistical
+  inference, experiment design, causal reasoning, cohort analysis, reproducibility, and
+  decision briefing. Mission Control remains the consumer and decision owner for any
+  routing-policy recommendation.
+
+proposed_model_policy:
+  template: sol_deep_engineering
+  rationale: >-
+    The candidate is an evidence-heavy analytical specialization of the Research analytics
+    worker. The existing data-analyst specialist already uses this lane. A binding or
+    critical routing-policy decision should escalate outside the analyst rather than making
+    the analyst itself the default high-consequence authority.
+  expected_primary:
+    provider: openai
+    model: gpt-5.6-sol
+  expected_routine_fallback:
+    provider: anthropic
+    model: claude-sonnet-5
+  expected_independent_verifier:
+    provider: google
+    model: gemini-3.1-pro-preview
+  connection_method_affects_selection: false
+
+recommendation_states:
+  - NO_CHANGE_JUSTIFIED
+  - INSUFFICIENT_EVIDENCE
+  - SHADOW_CHANGE_CANDIDATE
+  - REGRESSION_INVESTIGATION
+  - POLICY_OR_CONTROL_CONCERN
+
+hard_invariants:
+  evaluation_is_post_run_only: true
+  primary_ownership_is_separate_from_mission_control: true
+  live_routing_authority_remains_with_mission_control: true
+  analyst_cannot_apply_its_own_recommendation: true
+  historical_performance_cannot_override_capability_eligibility: true
+  effective_risk_cannot_be_lowered: true
+  verification_independence_cannot_be_weakened: true
+  provider_diversity_cannot_be_traded_away_for_cost: true
+  preview_authorization_remains_explicit: true
+  qualified_human_authority_cannot_be_substituted: true
+  verifier_quality_must_be_considered_before_using_pass_rate: true
+  correlation_is_not_causation: true
+  failure_and_uncertain_outcomes_must_be_retained: true
+  cost_must_be_source_backed_or_unknown: true
+  evidence_must_be_scoped_to_concrete_versions: true
+  content_minimized_telemetry_must_remain_content_minimized: true
+
+critical_escalation_intents:
+  - modify live routing policy
+  - apply route recommendation automatically
+  - lower effective risk
+  - bypass required capability
+  - remove independent verification
+  - weaken provider diversity
+  - remove qualified human approval
+  - promote model directly
+  - demote model directly
+  - change preview authorization
+  - change production runtime authority
+  - suppress contradictory evidence before policy decision
+
+critical_behavior:
+  effective_risk: critical
+  qualified_human_or_maintainer_approval_required: true
+  specialist_disposition: recommendation_only
+  direct_write_authority: false
+
+activation_gates:
+  role_card_complete: true
+  duplication_review_complete: true
+  authority_leakage_review_complete: true
+  research_location_only: true
+  live_registry_unchanged: true
+  live_routing_unchanged: true
+  live_worker_topology_unchanged: true
+  live_model_policy_unchanged: true
+  telemetry_privacy_compatibility_required: true
+  outcome_and_evidence_schema_compatibility_required: true
+  conformance_cases_must_be_implemented_before_activation: true
+  independent_verification_required: true
+  documentation_truth_update_required_if_activated: true
+  repository_layout_update_required_if_new_active_metadata_is_added: true
+  explicit_maintainer_review_required: true
+
+future_activation_surfaces:
+  required_if_approved:
+    - community/specialists/orchestration-evaluation-analyst.md
+    - active specialist allocation registry
+    - policy/routing/core/specialist-model-routing.yaml
+    - specialist spawn and conformance coverage as applicable
+    - documentation truth tests and counts
+  prohibited_by_this_research_package:
+    - direct activation
+    - silent loader changes
+    - automatic route mutation
+
+current_effect:
+  active_specialist_count_change: 0
+  active_worker_count_change: 0
+  active_team_count_change: 0
+  generic_route_count_change: 0
+  runtime_behavior_change: false
+  policy_authority_change: false
