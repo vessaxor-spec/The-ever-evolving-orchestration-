@@ -1,16 +1,16 @@
 name: Post-v1 Status Integrity Remediation
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - agent/post-v1-status-integrity-audit
 
 permissions:
   contents: write
 
 jobs:
   remediate:
-    if: github.head_ref == 'agent/post-v1-status-integrity-audit' && github.actor != 'github-actions[bot]'
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-24.04
     steps:
       - name: Check out audit branch
