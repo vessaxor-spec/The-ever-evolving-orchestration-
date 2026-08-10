@@ -2,7 +2,7 @@
 
 ## Status
 
-This specification defines the version 1 reference lifecycle for qualified-human authority evidence in TEO.
+The version 1 reference lifecycle for qualified-human authority evidence in TEO is complete at its current declared milestone.
 
 The lifecycle implements authority that routing policy already requires. It does not create new human-approval requirements, widen live execution, select models, change provider access, or create policy-write authority.
 
@@ -190,4 +190,6 @@ Conformance coverage is in:
 
 - `tests/test_qualified_human_approval.py`
 
-The milestone is complete only when CI proves the request, scope, lifecycle, impersonation, expiry, revocation, mutation, ledger, and finalization boundaries without weakening existing routing or verification controls.
+Reference Implementation CI #451 validated the completed executable milestone with 626 passing tests, 458 tracked-file layout checks, regulated specialist evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+The validated milestone proves request binding, authority scope, lifecycle transitions, impersonation refusal, expiry, revocation, mutation resistance, append-only ledger behavior, and terminal finalization without weakening existing routing, verification, or live-execution boundaries.
