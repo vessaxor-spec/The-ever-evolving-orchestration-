@@ -2,22 +2,23 @@
 
 ## Status
 
-This specification defines the first executable foundation for TEO's Benchmark and Outcome Lab.
+This specification defines the current executable foundation for TEO's Benchmark and Outcome Lab, including controlled live replay.
 
 Benchmark Lab version: `1`
 
-This layer evaluates completed route-outcome evidence. It does not acquire routing, model-selection, verification, approval, retry, fallback, or policy-write authority.
+This layer evaluates controlled route-outcome evidence. It does not acquire routing, model-selection, verification, approval, retry, fallback, provider-access, or policy-write authority.
 
 ## Purpose
 
 The Benchmark and Outcome Lab turns fixed controlled fixtures and canonical route-outcome records into reproducible comparative evidence.
 
-The first implementation focuses on four problems:
+The current implementation focuses on five problems:
 
 1. keep the task and evaluation setup fixed enough that route comparisons are interpretable;
 2. preserve nondeterminism through repeated trials rather than treating one run as ground truth;
 3. reject incomparable cohorts instead of forcing a score;
-4. keep fallback, retry, verification failure, missingness, uncertainty, and version context visible.
+4. keep fallback, retry, verification failure, missingness, uncertainty, and version context visible;
+5. execute controlled replay through normal TEO routing without giving the evaluation layer a forced-model bypass.
 
 ## Evidence basis
 
@@ -32,15 +33,20 @@ TEO does not depend on those frameworks. The sources inform evaluation controls 
 ## Canonical artifacts
 
 - evaluator: `reference/implementations/python/src/teo_reference/benchmark_lab.py`
+- controlled replay runner: `reference/implementations/python/src/teo_reference/benchmark_replay.py`
 - fixture schema: `reference/schemas/benchmark-fixture.schema.json`
 - experiment schema: `reference/schemas/benchmark-experiment.schema.json`
 - report schema: `reference/schemas/benchmark-report.schema.json`
+- replay-plan schema: `reference/schemas/benchmark-replay-plan.schema.json`
 - controlled fixtures: `reference/datasets/benchmark-lab/benchmark-fixtures-v1.jsonl`
-- trial outcomes: `reference/datasets/benchmark-lab/route-outcomes-v1.jsonl`
-- experiment manifest: `reference/datasets/benchmark-lab/benchmark-experiment-v1.json`
-- conformance tests: `tests/test_benchmark_lab.py`
+- reference trial outcomes: `reference/datasets/benchmark-lab/route-outcomes-v1.jsonl`
+- reference experiment manifest: `reference/datasets/benchmark-lab/benchmark-experiment-v1.json`
+- benchmark conformance tests: `tests/test_benchmark_lab.py`
+- controlled replay conformance tests: `tests/test_benchmark_replay.py`
 
 ## Evaluation sequence
+
+Offline evaluation follows:
 
 ```text
 controlled fixture bank
@@ -53,6 +59,22 @@ controlled fixture bank
   -> integrity-protected benchmark report
   -> independent evaluation / specialist #82
   -> shadow recommendation later
+```
+
+Controlled live replay extends the same evidence path:
+
+```text
+fixed controlled fixture
+  -> declared replay plan
+  -> additive route-isolation constraints
+  -> no-network normal-routing preflight
+  -> exact candidate and verifier match
+  -> guarded canary execution
+  -> assigned live independent verifier
+  -> canonical route-outcome evidence
+  -> standard replay experiment manifest
+  -> comparability gate
+  -> integrity-protected benchmark report
 ```
 
 The report is evidence. It cannot edit routing policy.
@@ -74,6 +96,10 @@ A benchmark fixture declares:
 
 Benchmark fixtures are distinct from production telemetry. Controlled fixture content may be retained when it is synthetic, public, or otherwise authorized for evaluation. Production route-outcome evidence remains content-minimized.
 
+For offline evaluation, fixture capabilities remain exact comparison context.
+
+For controlled live replay, fixture capabilities are minimum task requirements. Normal TEO routing may add worker or routing capabilities. The replay evaluator requires every candidate and trial for a fixture to resolve the same full canonical capability context before comparison. It does not rewrite the source fixture. Final report provenance preserves the original fixture integrity hashes.
+
 ## Experiment manifest
 
 Every experiment declares before evaluation:
@@ -93,6 +119,74 @@ Every experiment declares before evaluation:
 - regression baseline when the study type is regression.
 
 Version and harness identity are evidence, not incidental metadata.
+
+Controlled live replay v1 is intentionally limited to `system_to_system` claims. Additive isolation changes the evaluated route context, so the live runner refuses `executor_only` claims rather than overstating model-only causality. Offline controlled experiments may still use `executor_only` when their stricter non-executor comparability conditions are satisfied.
+
+## Controlled live replay plan
+
+A replay plan is separately schema-validated before any provider execution.
+
+It declares:
+
+- replay identity;
+- suite and version;
+- repeated-trial count;
+- fixed stopping rule and primary metric;
+- harness identity and version;
+- active attempt budget;
+- tool-access profile;
+- candidate provider, model, reasoning effort, verifier, runtime, repository, policy, registry, and tool-version context;
+- additive implementation or provider blocks used to isolate a canonical route.
+
+The replay plan may restrict eligibility. It may not directly select or unblock a model, lower risk, remove required capabilities, change the assigned verifier, accept a preview model, alter provider access, or satisfy qualified-human approval.
+
+The replay experiment ID is `replay-<plan_sha256>`, binding the generated evidence to the complete declared replay plan.
+
+## Replay preflight and execution authority
+
+Before any provider call, the replay runner sends the fixed task through the normal TEO routing engine with only the replay plan's additive isolation constraints.
+
+The preflight must prove that the resulting canonical dispatch matches the declared candidate for:
+
+- task type;
+- effective risk;
+- minimum fixture-required capabilities;
+- provider family;
+- concrete model;
+- reasoning effort;
+- assigned verifier provider and model;
+- independent-verification requirement;
+- absence of a qualified-human requirement within the currently authorized live scope.
+
+A mismatch fails closed before network execution.
+
+The execution phase then uses the existing guarded canary. The replay layer does not own a separate provider adapter, retry mechanism, fallback engine, verifier, or routing path.
+
+Each trial receives:
+
+- a fresh in-memory circuit-state store;
+- the active bounded retry policy;
+- a fresh content-free runtime telemetry sink;
+- the normal guarded canary runtime;
+- the verifier assigned by the canonical dispatch;
+- canonical Route-Outcome Evidence construction;
+- an isolated artifact path.
+
+The replay harness attempt budget must equal the active canary retry policy. Version 1 does not claim a wall-time deadline because the current reference runtime does not implement preemptive cancellation.
+
+## Current live scope
+
+Controlled live replay does not widen runtime authority.
+
+It is restricted to the same currently authorized live canary scope:
+
+- task type: `high_volume_simple`;
+- effective risk: low or medium;
+- existing provider adapters only;
+- existing eligibility, capability, preview, retry, fallback, circuit, and verification controls;
+- provider-diverse independent verification.
+
+High and critical live replay remain unauthorized.
 
 ## Repeated trials
 
@@ -118,7 +212,7 @@ It checks:
 - one route-outcome record cannot be reused across multiple trials;
 - route-outcome task type matches the fixture;
 - effective risk matches the fixture;
-- required capabilities match the fixture;
+- required capability context is comparable;
 - primary provider, model, and reasoning effort match the declared candidate;
 - assigned verifier matches the declared candidate;
 - runtime version matches;
@@ -126,7 +220,9 @@ It checks:
 - registry revision matches;
 - declared tool versions match.
 
-For `executor_only` claims, all non-executor comparison fields must remain fixed across candidates, including verifier, runtime, routing policy, registry, and declared tool versions.
+For offline `executor_only` claims, all non-executor comparison fields must remain fixed across candidates, including verifier, runtime, routing policy, registry, and declared tool versions.
+
+For controlled live replay, every candidate must resolve the same full canonical capability context for each source fixture. Source fixture integrity remains unchanged and is preserved in final report provenance.
 
 A failed comparability gate returns `evidence_sufficiency: insufficient` and no candidate scorecard.
 
@@ -185,10 +281,12 @@ Benchmark fixtures and reports use SHA-256 over canonical JSON content.
 Reports preserve:
 
 - experiment manifest digest;
-- fixture integrity digests;
+- source fixture integrity digests;
 - ordered source route-outcome IDs;
 - experiment and suite identity;
 - harness and candidate identity through the source manifest.
+
+Controlled replay additionally binds the generated experiment identity to the complete replay-plan digest.
 
 Persisted reports are schema and integrity validated when written and read.
 
@@ -199,6 +297,7 @@ The Benchmark Lab may produce controlled comparative evidence.
 It may not:
 
 - select a winner as routing policy;
+- force a model around normal TEO eligibility;
 - promote or demote a model;
 - weaken capability eligibility;
 - lower effective risk;
@@ -206,29 +305,30 @@ It may not:
 - weaken independent verification;
 - remove provider-diversity requirements;
 - satisfy qualified-human approval;
+- treat provider authentication or connection mechanism as a routing signal;
 - calculate unsupported cost claims;
 - hide failures or missing trials;
 - use one candidate's favorable harness while representing the result as an executor-only comparison.
 
-## Deliberately incomplete in version 1 foundation
+## Remaining incomplete gates
 
-This first implementation does not complete the entire Benchmark and Outcome Lab milestone.
+Controlled live replay is implemented and validated, but the current Benchmark and Outcome Lab milestone remains incomplete.
 
-Two material capabilities remain open:
+Two material gates remain:
 
-1. **Live controlled replay runner.** The current evaluator consumes already-produced canonical route-outcome records. It does not yet execute benchmark fixtures through candidate routes under a controlled runtime harness.
-2. **Multi-verifier disagreement measurement.** The current report preserves the canonical runtime verifier disposition but does not yet execute or join multiple independent benchmark verifier observations.
+1. **Multi-verifier disagreement measurement.** The report preserves the canonical runtime verifier disposition but does not yet execute or join multiple independent benchmark-verifier observations.
+2. **Consequential-conclusion independent-verification handoff.** Benchmark evidence cannot yet express and enforce the explicit independent challenge required before a consequential evaluation conclusion advances to Mission Control or maintainer review.
 
-The report states both limitations explicitly.
+These gaps keep the workstream in progress.
 
 ## Relationship to specialist #82
 
 `orchestration-evaluation-analyst` remains the post-run specialist that interprets controlled evidence, tests evidence sufficiency, and produces bounded recommendation states.
 
-Benchmark Lab itself does not produce `SHADOW_CHANGE_CANDIDATE` or any other policy recommendation. That remains a later governed handoff.
+Benchmark Lab itself does not produce `SHADOW_CHANGE_CANDIDATE` or any other policy recommendation. That remains a later governed handoff under the Shadow Route Evaluation workstream.
 
 ## Relationship to the Progress Tracker
 
-This foundation advances, but does not close, the current `NOW` Benchmark and Outcome Lab workstream.
+Controlled live replay advances, but does not close, the current `NOW` Benchmark and Outcome Lab workstream.
 
-The next gate after this foundation is validated is to add a controlled replay runner and multi-verifier observation contract while preserving the same fixture, comparability, provenance, and authority boundaries.
+After Reference Implementation CI #423 validated the replay implementation, the workstream is tracked at 75 percent. The remaining gates are multi-verifier disagreement measurement and consequential-conclusion independent verification while preserving the same fixture, comparability, provenance, routing, and authority boundaries.
