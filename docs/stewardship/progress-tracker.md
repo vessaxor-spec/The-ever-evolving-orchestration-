@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 538 tests passed |
+| Latest validated test suite | 546 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -68,7 +68,7 @@ Rules:
 | Control integrity | Operational | 90% | Post-v1 hardening with conformance and mutation resistance | Continue closing uncovered finalization, authority, and recovery mutation gaps as discovered |
 | Verifier calibration evidence | In progress | 70% | Deterministic and empirical verifier evidence | Strengthen repeatability, disagreement, adversarial, and route-specific evidence |
 | Regulated specialist evidence pilot | In progress | 60% | Six-card maintainability pilot | Demonstrate repeated refresh cycles, expiry, provenance, authority resolution, and mutation resistance |
-| Route-outcome evidence | In progress | 15% | Canonical route-outcome evidence contract | Implement joined, version-scoped, privacy-preserving outcome records and validation |
+| Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
 | Benchmark and Outcome Lab | Planned | 5% | Controlled evaluation architecture | Add benchmark fixtures, replay, comparative experiments, and reproducible reports |
 | Source-backed cost attribution | Planned | 10% | Effective-dated pricing and cost contract | Add versioned pricing evidence and route-level cost calculation |
 | Shadow route evaluation | Planned | 5% | Governed recommendation-only evaluation loop | Connect Outcome Lab evidence to specialist #82 without live policy-write authority |
@@ -79,45 +79,27 @@ Rules:
 
 ## NOW
 
-### Route-Outcome Evidence Contract
+### Benchmark and Outcome Lab
 
-This is the highest-priority implementation milestone after activation of `orchestration-evaluation-analyst`.
+Build controlled evaluation on top of the completed route-outcome evidence contract.
 
 Completion criteria for the current milestone:
 
-- define a canonical route-outcome record or linked record set;
-- connect task classification, effective risk, Team, Worker, Specialist, capabilities, selected implementation, reasoning effort, fallback, verifier, retries, final outcome, latency, normalized usage, and failure mode;
-- preserve concrete model, verifier, runtime, tool, and policy version context where decision-relevant;
-- distinguish primary-route success from fallback-assisted success;
-- retain failures, uncertainty, escalations, and abandoned outcomes;
-- preserve content-minimized telemetry and avoid unnecessary user identifiers;
-- represent missing cost and other material fields as unknown rather than zero or guessed values;
-- define provenance and integrity requirements;
-- define external or persisted schemas where appropriate;
-- add deterministic validation and conformance tests;
-- provide reproducible fixtures that `orchestration-evaluation-analyst` can analyze after execution.
+- define fixed benchmark fixtures with explicit task class, risk, capability, route, verifier, and version context;
+- support replayable evaluation cases without silently changing task identity or authority boundaries;
+- compare routes and concrete model versions only across sufficiently comparable cohorts;
+- compare reasoning-effort settings where the underlying capability and task remain comparable;
+- preserve primary-route outcomes separately from retry-assisted and fallback-assisted outcomes;
+- measure verifier disagreement without optimizing merely for verifier pass rate;
+- detect regressions across declared runtime, model, verifier, tool, registry, or policy changes;
+- report uncertainty, missingness, evidence sufficiency, and practical limitations rather than forcing a winner;
+- produce reproducible experiment records that can be independently checked;
+- require independent verification for consequential evaluation conclusions;
+- keep all analyst outputs recommendation-only and outside live policy-write authority.
 
-The milestone is complete only when the evidence contract is executable and testable. A research document alone is insufficient.
+The milestone is complete only when controlled benchmark and replay evidence can be reproduced from declared fixtures and route-outcome records. A dashboard or aggregate score alone is insufficient.
 
 ## NEXT
-
-### Benchmark and Outcome Lab
-
-Build controlled evaluation on top of the route-outcome contract.
-
-Required capabilities:
-
-- fixed benchmark fixtures;
-- replayable evaluation cases;
-- route and model/version comparisons;
-- reasoning-effort comparisons;
-- cohort comparability gates;
-- fallback and retry dependence analysis;
-- verifier disagreement analysis;
-- regression detection;
-- uncertainty and evidence-sufficiency reporting;
-- reproducible experiment records;
-- independent verification of consequential evaluation conclusions.
 
 ### Source-backed cost attribution
 
@@ -127,7 +109,7 @@ Cost optimization must remain subordinate to capability, risk, verification, pro
 
 ### Shadow route evaluation
 
-Connect completed outcome evidence to `orchestration-evaluation-analyst` and allow bounded outputs such as:
+Connect completed outcome evidence and controlled evaluation to `orchestration-evaluation-analyst` and allow bounded outputs such as:
 
 - `NO_CHANGE_JUSTIFIED`
 - `INSUFFICIENT_EVIDENCE`
@@ -192,13 +174,15 @@ The fixed corpus, deterministic checks, empirical instrumentation, provider-dive
 
 The six-card pilot has dated authoritative claims, validation, expiry behavior, authority resolution, and mutation resistance. Repeated refresh-cycle maintainability must be demonstrated before broader rollout is justified.
 
-### Route-outcome evidence, 15%
+### Route-outcome evidence, 100%
 
-The architectural requirement is accepted, the roadmap defines the need, and specialist #82 is active. The canonical executable evidence contract and join layer are not yet complete, so most of this milestone remains ahead.
+The canonical executable route-outcome join is implemented with strict schema validation, primary/fallback lineage, retry preservation, independent-verification linkage, version context, explicit unknown cost, content minimization, provenance, integrity checks, abandoned-outcome support, append-only reference persistence, deterministic conformance tests, and reproducible analyst-ready fixtures. Reference Implementation CI run #407 validated the milestone with 546 passing tests, 414 tracked-file layout checks, regulated evidence validation, 19 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+Future distributed persistence, continuous evaluation feeds, and source-backed cost calculation are separate declared workstreams and do not keep this milestone open.
 
 ### Benchmark and Outcome Lab, 5%
 
-The strategic architecture is recorded, but the controlled evaluation substrate is not yet implemented.
+The strategic architecture is recorded and now has a canonical route-outcome evidence substrate, but the controlled benchmark, replay, comparison, and reproducible experiment layer is not yet implemented.
 
 ### Source-backed cost attribution, 10%
 
@@ -206,7 +190,7 @@ The governance doctrine is established: pricing must be effective-dated, source-
 
 ### Shadow route evaluation, 5%
 
-The analyst and recommendation states exist, but the continuous evidence feed, experiment substrate, and governed evaluation runner are not yet implemented.
+The analyst and recommendation states exist, and canonical route-outcome evidence is now available, but the controlled evaluation substrate and governed evaluation runner are not yet implemented.
 
 ### Qualified-human approval lifecycle, 40%
 
@@ -249,3 +233,4 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
 - [`community/specialists/orchestration-evaluation-analyst.md`](../../community/specialists/orchestration-evaluation-analyst.md): active post-run route evaluator
+- [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
