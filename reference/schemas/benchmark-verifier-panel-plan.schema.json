@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-verifier-panel-plan.schema.json",
+  "title": "TEO Benchmark Verifier Panel Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "panel_plan_id",
+    "panel_plan_version",
+    "experiment_id",
+    "policy",
+    "panels"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_verifier_panel_plan"},
+    "panel_plan_id": {"type": "string", "minLength": 1},
+    "panel_plan_version": {"type": "string", "minLength": 1},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "minimum_observers_per_trial",
+        "minimum_provider_families",
+        "decision_use",
+        "canonical_runtime_verifier_override"
+      ],
+      "properties": {
+        "minimum_observers_per_trial": {"const": 2},
+        "minimum_provider_families": {"const": 2},
+        "decision_use": {"const": "diagnostic_only"},
+        "canonical_runtime_verifier_override": {"const": false}
+      }
+    },
+    "panels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "observers"],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "observers": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["observer_id", "provider_family", "model", "reasoning_effort"],
+              "properties": {
+                "observer_id": {"type": "string", "minLength": 1},
+                "provider_family": {"type": "string", "minLength": 1},
+                "model": {"type": "string", "minLength": 1},
+                "reasoning_effort": {"type": ["string", "null"]}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
