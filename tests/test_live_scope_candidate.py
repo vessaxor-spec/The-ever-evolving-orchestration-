@@ -11,7 +11,7 @@ from teo_reference.live_scope_candidate import (
     evaluate_live_scope_candidate,
 )
 from teo_reference.provider_adapter import ProviderAdapterContractError
-from teo_reference.runtime_canary import execute_guarded_canary
+from teo_reference.runtime_canary import _copy_task_for_redispatch, execute_guarded_canary
 from teo_reference.schemas import TaskRequest
 from teo_reference.specialist_routing import SpecialistRoutingEngine
 
@@ -30,6 +30,17 @@ def documentation_task(*, risk_level: str = "low") -> TaskRequest:
             "task": "Draft a bounded technical note from the supplied facts only.",
             "task_type": "documentation",
             "risk_level": risk_level,
+        }
+    )
+
+
+def throughput_task() -> TaskRequest:
+    return TaskRequest.from_dict(
+        {
+            "task_id": "task-throughput-regression-guard",
+            "task": "Classify this bounded item.",
+            "task_type": "high_volume_simple",
+            "risk_level": "low",
         }
     )
 
@@ -56,6 +67,36 @@ def test_runtime_override_no_longer_mutates_shared_documentation_worker() -> Non
         "claude-haiku-4-5",
     ]
     assert worker["fallbacks"] == ["gemini-3.1-pro-preview", "gpt-5.6-sol"]
+
+
+def test_throughput_primary_and_fresh_verifier_rotation_survive_override_removal() -> None:
+    routing_engine = engine()
+    task = throughput_task()
+    primary = routing_engine.dispatch(task)
+
+    assert primary.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert primary.selected_implementation.provider_family == "google"
+    assert primary.fallback_implementation is not None
+    assert primary.fallback_implementation.model == "claude-haiku-4-5"
+    assert primary.fallback_implementation.provider_family == "anthropic"
+    assert primary.verification.implementation.model == "claude-sonnet-5"
+    assert primary.verification.implementation.provider_family == "anthropic"
+
+    model_redispatch = routing_engine.dispatch(
+        _copy_task_for_redispatch(task, primary, "model")
+    )
+    assert model_redispatch.selected_implementation.model == "claude-haiku-4-5"
+    assert model_redispatch.selected_implementation.provider_family == "anthropic"
+    assert model_redispatch.verification.implementation.model == "gemini-3.6-flash"
+    assert model_redispatch.verification.implementation.provider_family == "google"
+
+    provider_redispatch = routing_engine.dispatch(
+        _copy_task_for_redispatch(task, primary, "provider")
+    )
+    assert provider_redispatch.selected_implementation.model == "claude-haiku-4-5"
+    assert provider_redispatch.selected_implementation.provider_family == "anthropic"
+    assert provider_redispatch.verification.implementation.model == "gpt-5.6-sol"
+    assert provider_redispatch.verification.implementation.provider_family == "openai"
 
 
 def test_documentation_preflight_reports_repaired_topology_and_remaining_evidence_gates() -> None:
