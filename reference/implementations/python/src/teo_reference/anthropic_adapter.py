@@ -248,7 +248,7 @@ class AnthropicMessagesAdapter:
             provider_model = payload.get("model") if isinstance(payload.get("model"), str) else None
             if not _provider_model_matches(request.model, provider_model):
                 raise ProviderAdapterContractError(
-                    "Anthropic response reported a model different from the dispatch-authorized model"
+                    "Anthropic response reported a model outside the dispatch-authorized model or alias set"
                 )
             text = _extract_text(payload)
             if not text:
