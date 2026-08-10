@@ -1,0 +1,179 @@
+name: Branch Retention
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  cleanup-agent-branch:
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'agent/')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Delete accounted agent branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          repo_owner="${REPO%%/*}"
+
+          branch_exists() {
+            local branch="$1"
+            gh api "/repos/${REPO}/git/ref/heads/${branch}" >/dev/null 2>&1
+          }
+
+          has_open_pr() {
+            local branch="$1"
+            local count
+            count="$(gh api "/repos/${REPO}/pulls?state=open&head=${repo_owner}:${branch}&per_page=1" --jq 'length')"
+            [[ "$count" != "0" ]]
+          }
+
+          delete_if_safe() {
+            local branch="$1"
+
+            if [[ "$branch" != agent/* ]]; then
+              echo "Refusing non-agent branch: $branch"
+              return 1
+            fi
+
+            if has_open_pr "$branch"; then
+              echo "Preserving $branch because it backs an open pull request"
+              return 0
+            fi
+
+            if ! branch_exists "$branch"; then
+              echo "Already absent: $branch"
+              return 0
+            fi
+
+            echo "Deleting accounted branch: $branch"
+            gh api --method DELETE "/repos/${REPO}/git/refs/heads/${branch}"
+          }
+
+          if [[ "$HEAD_REF" == "agent/branch-retention-hygiene" ]]; then
+            # BEGIN LEGACY_AGENT_BRANCH_SNAPSHOT
+            legacy_branches=(
+              "agent/activate-principal-specialists"
+              "agent/activate-systems-engineering-route"
+              "agent/add-analytics-worker"
+              "agent/add-assurance-specialists"
+              "agent/add-compliance-worker"
+              "agent/add-final-principal-specialists"
+              "agent/add-final-specialist-tranche"
+              "agent/add-first-time-capsule"
+              "agent/add-incident-response-route"
+              "agent/add-market-research-worker"
+              "agent/add-mission-control-routes"
+              "agent/add-mission-control-workers"
+              "agent/add-physical-systems-specialists"
+              "agent/add-platform-reliability-core"
+              "agent/add-platform-reliability-operations"
+              "agent/add-reference-ci"
+              "agent/add-research-worker"
+              "agent/add-routing-conformance"
+              "agent/add-specialist-freshness-capsule"
+              "agent/add-systems-engineering-specialist"
+              "agent/add-user-research-worker"
+              "agent/ai-mediated-discovery-final"
+              "agent/align-reference-version-v1"
+              "agent/anthropic-live-canary"
+              "agent/bounded-transient-retry"
+              "agent/capsule-0006-runtime-evidence"
+              "agent/capsule-0008-final"
+              "agent/capsule-0008"
+              "agent/centralize-roadmap-research"
+              "agent/control-integrity-hardening"
+              "agent/decouple-routing-from-provider-access"
+              "agent/decouple-routing-from-provider-access-final"
+              "agent/decouple-routing-from-provider-access-v2"
+              "agent/decouple-routing-from-provider-access-v3"
+              "agent/deepen-research-analytics-security"
+              "agent/define-v1-release-contract"
+              "agent/document-compliance-milestone"
+              "agent/document-main-protection"
+              "agent/document-principal-engineering-activation"
+              "agent/document-principal-engineering-final"
+              "agent/document-user-research-milestone"
+              "agent/documentation-lifecycle-separation"
+              "agent/empirical-verifier-calibration"
+              "agent/enable-readme-reconciliation"
+              "agent/ensure-v1-release-publication"
+              "agent/fix-specialist-roster-audit"
+              "agent/guarded-canary-fallback"
+              "agent/live-independent-verification"
+              "agent/mission-control-routing-recalibration"
+              "agent/model-freshness-governance"
+              "agent/model-routing-audit-2026-08-07"
+              "agent/multi-provider-canary-parity"
+              "agent/native-operations-final"
+              "agent/persistent-runtime-telemetry"
+              "agent/phase-5-reference-router"
+              "agent/policy-topology"
+              "agent/post-v1-status-integrity-audit"
+              "agent/prepare-community-governance"
+              "agent/prepare-main-protection"
+              "agent/principal-engineering-teams"
+              "agent/principal-expansion-completeness-lock"
+              "agent/provider-adapter-contract"
+              "agent/provider-aware-fallbacks"
+              "agent/provider-directed-retry-timing"
+              "agent/provisional-evidence-workflow"
+              "agent/provisional-machine-panel-calibration"
+              "agent/publish-v1-release"
+              "agent/readme-capsule-0007"
+              "agent/readme-control-plane-truth"
+              "agent/readme-post-routing-recalibration"
+              "agent/readme-post-v1-audit-alignment"
+              "agent/reconcile-live-runtime-readme"
+              "agent/reconcile-model-freshness-governance"
+              "agent/reconcile-verification-runtime-readme"
+              "agent/refine-implementation-directions"
+              "agent/refresh-ai-mediated-discovery"
+              "agent/refresh-native-operations"
+              "agent/refresh-regulated-specialists"
+              "agent/regulated-evidence-pilot"
+              "agent/regulated-refresh-final"
+              "agent/regulated-refresh-verified"
+              "agent/remove-v1-release-workflow"
+              "agent/repository-layout-constitution"
+              "agent/repository-wide-specialist-remediation"
+              "agent/research-analytics-security-final"
+              "agent/resolve-code-review-worker"
+              "agent/roadmap-intelligence-control-plane"
+              "agent/root-research-normalization"
+              "agent/specialist-constitutional-integration"
+              "agent/specialist-freshness-foundation"
+              "agent/specialist-freshness-foundation-final"
+              "agent/specialist-freshness-foundation-v2"
+              "agent/specialist-freshness-foundation-v3"
+              "agent/specialist-freshness-foundation-v4"
+              "agent/stateful-provider-circuit-breaker"
+              "agent/update-readme-current-state"
+              "agent/update-readme-machine-panel-evidence"
+              "agent/update-readme-operational-evidence"
+              "agent/update-readme-v1-release"
+              "agent/v1-operational-readiness"
+              "agent/verifier-calibration-evidence"
+              "agent/verify-main-ruleset"
+              "agent/verify-v1-release-publication"
+              "agent/worker-implementation-topology"
+            )
+            # END LEGACY_AGENT_BRANCH_SNAPSHOT
+
+            for branch in "${legacy_branches[@]}"; do
+              delete_if_safe "$branch"
+            done
+          fi
+
+          delete_if_safe "$HEAD_REF"
