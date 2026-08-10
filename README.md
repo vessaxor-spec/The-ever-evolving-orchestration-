@@ -17,6 +17,8 @@ A vendor-neutral orchestration specification and runnable reference control plan
 
 **Latest stable release:** [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0) · **State:** `reference_operational` · **Reference package:** `teo-reference-router==1.0.0`
 
+**Current development package:** `teo-reference-router==1.0.1.dev0`
+
 </div>
 
 ---
@@ -80,11 +82,35 @@ The normative boundary is defined in [`policy/governance/provider-access-separat
 
 The `v1.0.0` tag is governed as an immutable historical reference to the exact repository state accepted as the first functional release. The GitHub Release is published in the `reference_operational` state and aligns with `teo-reference-router==1.0.0`.
 
+Current `main` is post-release development and identifies as `teo-reference-router==1.0.1.dev0`. This development identity does not move, rewrite, or replace the immutable `v1.0.0` release boundary.
+
 The normative release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md), with the canonical readiness boundary in [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) and [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
 
 The current control plane has **ten active organizational teams**, **84 workers**, and **78 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
 It includes dedicated Mission Control workers for orchestration, operations, project delivery, and incident response.
+
+The repository information-architecture migration **R1 through R5 is complete**. Current authority, historical activation records, research, executable reference code, evidence, registries, and stewardship documentation now have governed canonical locations under [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
+
+The post-v1 hard audit completed on 2026-08-10 without finding a critical control-plane defect. The final audited tree passed **390 tracked-file layout checks**, **519 automated tests**, regulated specialist evidence validation, **18 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The durable audit record is [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
+
+### Current authority and preserved staged artifacts
+
+TEO deliberately distinguishes an artifact's internal lifecycle label from the authority that activates it.
+
+Direct current routing and worker authority reports `status: active`.
+
+Five worker-definition files are intentionally different. They are cryptographically preserved staged artifacts whose exact Git blob identities are protected by conformance tests:
+
+- `community/workers/extensions/systems-engineering-worker.yaml`
+- `community/workers/extensions/platform-reliability-core-workers.yaml`
+- `community/workers/extensions/platform-reliability-operations-workers.yaml`
+- `community/workers/extensions/physical-systems-workers.yaml`
+- `community/workers/extensions/assurance-workers.yaml`
+
+Those files retain their original `public-draft` artifact status. Their current execution authority is conferred by the active [`policy/routing/activation/principal-engineering.yaml`](policy/routing/activation/principal-engineering.yaml) manifest, which records them as `loaded_staged_workers` and records the corresponding teams as activated.
+
+This is intentional. Do not rewrite preserved staged blobs merely to make lifecycle labels visually uniform.
 
 The repository currently implements:
 
@@ -151,7 +177,9 @@ The following remain valuable post-v1 work and were explicitly not required for 
 - TEO-managed subscription or entitlement management
 - a TEO-managed credential broker
 
-Independent human calibration remains the stronger evidence tier and is required before claims or scope changes that policy explicitly reserves for human acceptance. It is tracked as a community stewardship path rather than a blocker to the functional reference release.
+Independent human calibration remains the stronger evidence tier and is required before claims or scope changes that policy explicitly reserves for human acceptance. It is tracked in [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75) as a community stewardship program rather than a blocker to the functional reference release.
+
+Repository branch cleanup is separately tracked in [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100). It is repository hygiene only and is not routing or runtime authority.
 
 ## Mission Control
 
@@ -407,7 +435,7 @@ It remains required before:
 - route changes that require explicit human acceptance
 - replacing the independent-human evidence tier
 
-The preferred path is public GitHub community stewardship. The machine-panel path does not remove or impersonate that human tier.
+The preferred path is public GitHub community stewardship through [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75). The machine-panel path does not remove or impersonate that human tier.
 
 ### Provisional operational evidence
 
@@ -485,16 +513,20 @@ The repository test and validation system covers, among other controls:
 - regulated evidence validation and mutation resistance
 - external JSON Schema enforcement
 - documentation-truth invariants
+- repository authority and lifecycle integrity
 
 The reference CI:
 
 1. installs a hash-pinned validation environment on a fixed Python patch version
-2. compiles Python sources
-3. runs the complete automated test suite
-4. validates regulated specialist evidence
-5. parses reference schemas
-6. validates linked TEO configuration
-7. executes the end-to-end reference lifecycle
+2. validates the governed repository layout
+3. compiles Python sources
+4. runs the complete automated test suite
+5. validates regulated specialist evidence
+6. parses reference schemas
+7. validates linked TEO configuration
+8. executes the end-to-end reference lifecycle
+
+The 2026-08-10 post-v1 hard audit is recorded in [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The audited reference CI run completed with 519 tests passing and provider-diverse execution, fallback, and verification intact.
 
 CI validates the control plane. It does not convert provisional evidence into human-ground-truth claims.
 
@@ -514,7 +546,8 @@ CI validates the control plane. It does not convert provisional evidence into hu
 10. Review verification policy under [`policy/verification/`](policy/verification/).
 11. Review specialists under [`community/specialists/`](community/specialists/).
 12. Review current model and provider evidence under [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml) and [`registry/`](registry/).
-13. Run validation and tests.
+13. Review the latest hard-audit record under [`docs/history/audits/`](docs/history/audits/).
+14. Run validation and tests.
 
 ### For AI agents
 
@@ -602,7 +635,6 @@ The final outcome contract supports:
 ├── CODE_OF_CONDUCT.md
 ├── LICENSE
 ├── pyproject.toml
-├── policy/routing/core/implementation-defaults.yaml
 │
 ├── policy/
 │   ├── governance/
@@ -684,11 +716,23 @@ The architecture, governance, deterministic routing, risk controls, specialist b
 
 The release is governed by [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md). Future compatible fixes and extensions advance through semantic release versions rather than moving or rewriting the `v1.0.0` tag.
 
+### Repository information architecture
+
+**R1 through R5 complete.**
+
+The repository layout is governed and CI-enforced. Root normalization, documentation lifecycle separation, routing policy topology, worker-extension topology, and implementation-default placement are complete. Historical activation and audit records remain preserved separately from current authority.
+
+### Current development line
+
+Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, and integrity work while `v1.0.0` remains the immutable stable release.
+
+The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
+
 ### Post-v1 stewardship and hardening
 
-Future work may include:
+Current and future work may include:
 
-- independent blinded human calibration through community stewardship
+- independent blinded human calibration through community stewardship ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
 - evidence-governed live-scope expansion
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls
@@ -699,7 +743,9 @@ Future work may include:
 - continued regulated-evidence pilot observation
 - ongoing model-freshness reviews as provider catalogs evolve
 
-These are extensions and evidence-strengthening work. They should not be confused with missing core routing architecture.
+Repository branch hygiene is tracked separately in [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100) and is not a control-plane blocker.
+
+These are extensions, evidence-strengthening, or stewardship work. They should not be confused with missing core routing architecture.
 
 ## Community stewardship
 
