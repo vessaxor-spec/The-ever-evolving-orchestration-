@@ -26,6 +26,8 @@ ANTHROPIC_VERSION = "2023-06-01"
 CANARY_TASK_TYPES = {"high_volume_simple"}
 CANARY_RISK_LEVELS = {"low", "medium"}
 CANARY_MODELS = {"claude-haiku-4-5", "claude-haiku-4-5-20251001"}
+IMPLEMENTED_MODELS = CANARY_MODELS | {"claude-sonnet-5"}
+SONNET_5_EFFORTS = {"low", "medium", "high", "xhigh", "max"}
 MAX_CANARY_OUTPUT_TOKENS = 1024
 
 
@@ -134,10 +136,10 @@ def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
 
 
 class AnthropicMessagesAdapter:
-    """Single-attempt Anthropic Messages adapter for the guarded TEO canary.
+    """Single-attempt Anthropic Messages adapter for implemented guarded models.
 
-    Routing selects Anthropic and Claude Haiku 4.5. The injected ProviderConnection owns
-    how that provider is reached and authorized. The adapter never branches on connection type.
+    The adapter can implement models before a task class is authorized to use them.
+    Runtime wrappers and live-scope policy remain the authority boundary.
     """
 
     provider_family = "anthropic"
@@ -161,12 +163,17 @@ class AnthropicMessagesAdapter:
             raise ProviderAdapterContractError("Anthropic adapter received a non-Anthropic request")
         if request.risk_level not in CANARY_RISK_LEVELS:
             raise ProviderAdapterContractError(
-                "Anthropic live canary is restricted to low and medium risk execution"
+                "Anthropic guarded execution is restricted to low and medium risk"
             )
-        if request.model not in CANARY_MODELS:
+        if request.model not in IMPLEMENTED_MODELS:
             raise ProviderAdapterContractError(
-                "Anthropic live canary is restricted to Claude Haiku 4.5"
+                "Anthropic guarded adapter does not implement the requested model"
             )
+        if request.model == "claude-sonnet-5":
+            if request.reasoning_effort not in SONNET_5_EFFORTS:
+                raise ProviderAdapterContractError(
+                    "Claude Sonnet 5 guarded execution requires an explicit supported effort"
+                )
 
         task = request.input_payload.get("task")
         if not isinstance(task, str) or not task.strip():
@@ -177,16 +184,17 @@ class AnthropicMessagesAdapter:
             raise ProviderAdapterContractError("max_output_tokens must be an integer")
         if raw_max_tokens < 1 or raw_max_tokens > MAX_CANARY_OUTPUT_TOKENS:
             raise ProviderAdapterContractError(
-                f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for the canary"
+                f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for guarded execution"
             )
 
-        body = json.dumps(
-            {
-                "model": request.model,
-                "max_tokens": raw_max_tokens,
-                "messages": [{"role": "user", "content": task}],
-            }
-        ).encode("utf-8")
+        payload: dict[str, Any] = {
+            "model": request.model,
+            "max_tokens": raw_max_tokens,
+            "messages": [{"role": "user", "content": task}],
+        }
+        if request.model == "claude-sonnet-5":
+            payload["output_config"] = {"effort": request.reasoning_effort}
+        body = json.dumps(payload).encode("utf-8")
 
         try:
             connection_response = self._connection.invoke(
@@ -240,7 +248,7 @@ class AnthropicMessagesAdapter:
             provider_model = payload.get("model") if isinstance(payload.get("model"), str) else None
             if not _provider_model_matches(request.model, provider_model):
                 raise ProviderAdapterContractError(
-                    "Anthropic response reported a model outside the dispatch-authorized Haiku alias set"
+                    "Anthropic response reported a model different from the dispatch-authorized model"
                 )
             text = _extract_text(payload)
             if not text:
@@ -252,7 +260,7 @@ class AnthropicMessagesAdapter:
                     failure=ProviderFailure(
                         scope="capability",
                         code="no_text_output",
-                        message="Anthropic returned no text content for the canary task",
+                        message="Anthropic returned no text content for the guarded task",
                     ),
                     usage=usage,
                 )
@@ -264,6 +272,8 @@ class AnthropicMessagesAdapter:
                 evidence.append(f"anthropic_request_id:{request_id}")
             if provider_model:
                 evidence.append(f"anthropic_response_model:{provider_model}")
+            if request.model == "claude-sonnet-5" and request.reasoning_effort:
+                evidence.append(f"teo_reasoning_effort:{request.reasoning_effort}")
             return ProviderExecutionResponse(
                 dispatch_id=request.dispatch_id,
                 status="succeeded",
