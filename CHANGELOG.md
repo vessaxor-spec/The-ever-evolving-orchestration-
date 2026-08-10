@@ -19,14 +19,14 @@ All notable public changes to TEO are recorded here.
 - reusable methodology is now separated from dated staging, activation, refresh, audit, and routing-recalibration history
 - active routing policy is now separated into canonical core, extension, and activation namespaces
 - stable base workers, active worker extensions, and implementation defaults now have separate canonical topology
-- current actively loaded routing and worker authority metadata now reports `active` rather than the legacy `public-draft` state
+- direct current routing and worker authority now reports `active`, while cryptographically pinned staged workers preserve their original artifact status and receive current authority through the activation manifest
 - current development builds identify as `1.0.1.dev0` so post-release `main` does not claim the exact immutable `1.0.0` package identity
 - the Gemini 3.1 Flash-Lite compatibility note now reflects completed Gemini 3.5 Flash-Lite promotion and current provider deprecation guidance
 
 ### Validation
 
 - repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
-- active-authority integrity tests reject legacy `public-draft` status on current routing and worker control files
+- active-authority integrity tests distinguish direct `active` authority from byte-preserved staged worker definitions activated through the principal-engineering manifest
 - release-history integrity tests require an explicit `v1.0.0` changelog boundary
 
 ### Status
