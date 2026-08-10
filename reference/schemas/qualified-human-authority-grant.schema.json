@@ -11,6 +11,7 @@
     "issued_at",
     "valid_from",
     "valid_until",
+    "subject_type",
     "subject_ref",
     "authority_class",
     "scope",
@@ -28,6 +29,7 @@
     "issued_at": {"type": "string", "format": "date-time"},
     "valid_from": {"type": "string", "format": "date-time"},
     "valid_until": {"type": ["string", "null"], "format": "date-time"},
+    "subject_type": {"const": "human"},
     "subject_ref": {"type": "string", "minLength": 1},
     "authority_class": {"type": "string", "minLength": 1},
     "scope": {
