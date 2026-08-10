@@ -32,9 +32,9 @@ def specialist_ids() -> list[str]:
     return sorted(bundle().specialist_registry)
 
 
-def test_active_registry_contains_exactly_81_spawnable_specialists() -> None:
+def test_active_registry_contains_exactly_82_spawnable_specialists() -> None:
     config = bundle()
-    assert len(config.specialist_registry) == 81
+    assert len(config.specialist_registry) == 82
     assert set(entry["primary_team"] for entry in config.specialist_registry.values()) == set(TEAM_TASK_TYPES)
     assert config.validate() == []
 

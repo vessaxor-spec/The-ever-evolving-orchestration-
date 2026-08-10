@@ -86,7 +86,7 @@ Current `main` is post-release development and identifies as `teo-reference-rout
 
 The normative release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md), with the canonical readiness boundary in [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) and [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
 
-The current control plane has **ten active organizational teams**, **84 workers**, and **81 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
+The current control plane has **ten active organizational teams**, **84 workers**, and **82 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
 It includes dedicated Mission Control workers for orchestration, operations, project delivery, and incident response.
 
@@ -234,7 +234,7 @@ The architecture is organizational before it is model-selective. Implementations
 
 ## Specialist layer
 
-TEO includes **81 public specialist role cards**.
+TEO includes **82 public specialist role cards**.
 
 Each specialist preserves its complete identity, responsibilities, protocols, capabilities, safety boundaries, collaboration rules, outputs, and examples. TEO allocation adds orchestration context. It does not compress, generalize, weaken, or replace the specialist.
 

@@ -35,7 +35,7 @@ The active executable registries currently resolve to:
 
 - **10 teams**
 - **84 workers**
-- **81 specialists**
+- **82 specialists**
 - **4 Mission Control workers**
 
 These counts are derived from the same `ConfigBundle` composition used by the reference router rather than from a manually maintained subset.
@@ -98,7 +98,7 @@ Every team definition follows the same operating structure where applicable:
 
 ## Specialist roster
 
-TEO currently contains **81 active preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
+TEO currently contains **82 active preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
 The authoritative base registry is [`community/specialists/specialists.yaml`](../specialists/specialists.yaml). Active additive allocations are defined in [`community/specialists/principal-engineering-active.yaml`](../specialists/principal-engineering-active.yaml) and [`community/specialists/workforce-expansion-active.yaml`](../specialists/workforce-expansion-active.yaml).
 

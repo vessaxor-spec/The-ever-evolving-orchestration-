@@ -1,12 +1,11 @@
-version: 1.0
+version: 1.1
 status: active
 reviewed_at: 2026-08-10
 policy: >-
-  These cases exercise the three bounded workforce-expansion specialists through
-  existing explicit specialist spawn routes. Each begins at low caller-declared
-  risk so the specialist profile must elevate effective risk to high. The model
-  policy is expected to retain three-provider primary, routine fallback, and
-  independent verifier diversity.
+  These cases exercise the bounded workforce-expansion specialists through existing
+  explicit specialist spawn routes. Each begins at low caller-declared risk so the
+  specialist profile must elevate effective risk to high. Model policy must retain
+  three-provider primary, routine fallback, and independent verifier diversity.
 
 cases:
   - id: fraud-forensic-investigation
@@ -43,4 +42,16 @@ cases:
     expected_risk: high
     primary_provider: anthropic
     fallback_provider: openai
+    verifier_provider: google
+
+  - id: orchestration-evaluation
+    task: Evaluate completed TEO dispatch cohorts, quantify fallback dependence and verifier disagreement, and return a bounded shadow recommendation without changing live routing.
+    task_type: specialist_research
+    domain: analytics
+    specialist: orchestration-evaluation-analyst
+    expected_team: research
+    expected_worker: analytics
+    expected_risk: high
+    primary_provider: openai
+    fallback_provider: anthropic
     verifier_provider: google
