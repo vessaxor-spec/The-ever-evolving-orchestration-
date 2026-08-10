@@ -78,13 +78,26 @@ def test_team_architecture_readme_matches_executable_roster() -> None:
 def test_root_readme_preserves_current_control_plane_truth() -> None:
     text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
-    assert "ten active organizational teams" in text
-    assert "82 preserved specialist role cards" in text
-    assert "dedicated Mission Control workers for orchestration, operations, project delivery, and incident response" in text
-    assert "community/specialists/workforce-expansion-active.yaml" in text
+    for phrase in (
+        "ten active organizational teams",
+        "82 preserved specialist role cards",
+        "dedicated Mission Control workers for orchestration, operations, project delivery, and incident response",
+        "community/specialists/workforce-expansion-active.yaml",
+        "Shadow Route Evaluation",
+        "602 automated tests",
+        "451 tracked-file layout checks",
+        "34 JSON Schema",
+        "Qualified-human approval lifecycle",
+        "Issue #100",
+        "is complete",
+    ):
+        assert phrase in text
 
     for worker in EXPECTED_MISSION_CONTROL_WORKERS:
         assert f"`{worker}`" in text
+
+    assert "source-backed historical cost attribution" not in text
+    assert "route-outcome learning and shadow-route evaluation" not in text
 
 
 def test_progress_tracker_matches_executable_roster_and_current_priority() -> None:
@@ -97,29 +110,29 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 585 tests passed |",
+        "| Latest validated test suite | 602 tests passed |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
-        "| Shadow route evaluation | Planned | 5% |",
+        "| Shadow route evaluation | Complete | 100% |",
+        "| Qualified-human approval lifecycle | In progress | 40% |",
         "## NOW",
-        "### Shadow route evaluation",
+        "### Qualified-human approval lifecycle",
         "## NEXT",
+        "### Evidence-governed live execution expansion",
         "## LATER",
     ):
         assert phrase in text
 
     now_section = text.split("## NOW", 1)[1].split("## NEXT", 1)[0]
     next_section = text.split("## NEXT", 1)[1].split("## LATER", 1)[0]
-    assert "### Source-backed cost attribution" not in now_section
-    assert "### Shadow route evaluation" in now_section
-    assert "SHADOW_CHANGE_CANDIDATE" in now_section
-    assert "policy" in now_section.lower()
-    assert "No additional workstream is promoted" in next_section
+    assert "### Shadow route evaluation" not in now_section
+    assert "qualified-human" in now_section.lower()
+    assert "impersonating qualified-human approval" in now_section
+    assert "### Evidence-governed live execution expansion" in next_section
+    assert "High and critical live execution remains unauthorized" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
-    assert "multi-verifier disagreement" in text
-    assert "qualified-human approval" in text
-    assert "Reference Implementation CI run #437" in text
+    assert "Reference Implementation CI run #445" in text
     assert "78 active specialists" not in text
 
     benchmark_spec = (
@@ -166,6 +179,21 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Cost is one evaluation dimension",
     ):
         assert phrase in cost_spec
+
+    shadow_spec = (
+        REPO_ROOT / "docs" / "specification" / "shadow-route-evaluation.md"
+    ).read_text(encoding="utf-8")
+    for phrase in (
+        "Shadow evaluation is a post-run analytical layer",
+        "A specialist name is not enough to establish independence.",
+        "SHADOW_CHANGE_CANDIDATE",
+        "Lower source-backed cost can support a recommendation, but lower cost alone can never create",
+        "policy_write_authority",
+        "A shadow recommendation does not advance directly to Mission Control review.",
+        "mission_control_or_maintainer_review",
+        "Direct outcome-to-self-modifying-routing authority is outside TEO's design.",
+    ):
+        assert phrase in shadow_spec
 
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/shadow-recommendation-verification.schema.json",
+  "title": "TEO Shadow Recommendation Verification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "shadow_evaluation_version",
+    "record_type",
+    "verification_id",
+    "verified_at",
+    "recommendation_id",
+    "recommendation_integrity_sha256",
+    "verifier",
+    "independent",
+    "decision",
+    "checks",
+    "human_reason",
+    "evidence",
+    "policy_write_authority",
+    "qualified_human_approval_satisfied",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "shadow_evaluation_version": {"const": "1"},
+    "record_type": {"const": "shadow_recommendation_verification"},
+    "verification_id": {"type": "string", "pattern": "^shadow-verification-[a-f0-9]{20}$"},
+    "verified_at": {"type": "string", "format": "date-time"},
+    "recommendation_id": {"type": "string", "pattern": "^shadow-recommendation-[a-f0-9]{20}$"},
+    "recommendation_integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "verifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_type", "actor_id", "provider_family", "model"],
+      "properties": {
+        "actor_type": {"enum": ["human", "specialist", "system"]},
+        "actor_id": {"type": "string", "minLength": 1},
+        "provider_family": {"type": ["string", "null"], "minLength": 1},
+        "model": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "independent": {"const": true},
+    "decision": {"enum": ["verified", "rejected", "needs_human"]},
+    "checks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_binding",
+        "evidence_sufficiency",
+        "uncertainty_preserved",
+        "authority_boundary_preserved",
+        "cost_not_primary_authority",
+        "unsupported_causality_absent"
+      ],
+      "properties": {
+        "source_binding": {"enum": ["pass", "fail", "uncertain"]},
+        "evidence_sufficiency": {"enum": ["pass", "fail", "uncertain"]},
+        "uncertainty_preserved": {"enum": ["pass", "fail", "uncertain"]},
+        "authority_boundary_preserved": {"enum": ["pass", "fail", "uncertain"]},
+        "cost_not_primary_authority": {"enum": ["pass", "fail", "uncertain"]},
+        "unsupported_causality_absent": {"enum": ["pass", "fail", "uncertain"]}
+      }
+    },
+    "human_reason": {
+      "enum": ["none", "insufficient_evidence", "conflicting_evidence", "unverifiable_recommendation", "authority_uncertainty"]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "policy_write_authority": {"const": false},
+    "qualified_human_approval_satisfied": {"const": false},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}

@@ -92,6 +92,8 @@ It includes dedicated Mission Control workers for orchestration, operations, pro
 
 The repository information-architecture migration **R1 through R5 is complete**. Current authority, historical activation records, research, executable reference code, evidence, registries, and stewardship documentation now have governed canonical locations under [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
 
+The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, and **Shadow Route Evaluation** complete at their declared milestones. Reference Implementation CI #445 passed **602 automated tests**, **451 tracked-file layout checks**, regulated specialist evidence validation, **34 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The canonical current priority is the **Qualified-human approval lifecycle**, which remains at 40% until explicit runtime authority identity, disposition, evidence, and audit linkage are complete. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
+
 The post-v1 hard audit completed on 2026-08-10 without finding a critical control-plane defect. The final audited tree passed **390 tracked-file layout checks**, **519 automated tests**, regulated specialist evidence validation, **18 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The durable audit record is [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
 ### Current authority and preserved staged artifacts
@@ -128,11 +130,16 @@ The repository currently implements:
 - persistent provider-family circuit state with Closed, Open, and Half-Open recovery
 - abandoned half-open probe recovery
 - content-free provider-attempt telemetry
+- canonical integrity-protected Route-Outcome Evidence
+- controlled Benchmark and Outcome Lab replay, disagreement measurement, and consequential conclusion handoff
+- source-backed effective-dated route-cost attribution with explicit unknown semantics
+- governed Shadow Route Evaluation with exact evidence binding, bounded specialist #82 dispositions, independent challenge, and Mission Control or maintainer review handoff
 - strict external JSON Schema boundaries
 - verifier-calibration instrumentation
 - blinded independent-human review tooling
 - a separate provisional provider-diverse machine-panel evidence path
 - a six-card regulated evidence/freshness pilot with CI validation and mutation resistance
+- an active `orchestration-evaluation-analyst` specialist with bounded shadow-recommendation states and no live routing authority
 - model-freshness governance based on current authoritative evidence
 - provider-access separation governance
 - reproducible CI with pinned dependencies and artifact hashes
@@ -169,8 +176,7 @@ The following remain valuable post-v1 work and were explicitly not required for 
 - distributed circuit-state coordination
 - distributed telemetry export and retention infrastructure
 - streaming runtime support
-- source-backed historical cost attribution
-- route-outcome learning
+- reviewed route adaptation beyond completed shadow evaluation
 - automated qualified-human approval integration
 - TEO-managed API-key provisioning
 - TEO-managed OAuth login
@@ -179,7 +185,7 @@ The following remain valuable post-v1 work and were explicitly not required for 
 
 Independent human calibration is an optional evidence-enhancement study. It can support specific claims of independent human validation when maintainers choose to run it, but it is not a release, routing, model-selection, live-scope, or architectural gate. It is tracked in [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75) as optional research rather than an approval authority over TEO.
 
-Repository branch cleanup is separately tracked in [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100). It is repository hygiene only and is not routing or runtime authority.
+Repository branch-retention cleanup tracked in [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100) is complete. Branch hygiene remains repository stewardship only and is not routing or runtime authority.
 
 ## Mission Control
 
@@ -393,6 +399,14 @@ The Python reference implementation is a runnable control plane that can:
 - maintain provider-family circuit state
 - record content-free provider-attempt telemetry
 - execute the assigned independent verifier on the guarded live path
+- build and persist canonical Route-Outcome Evidence
+- execute controlled Benchmark and Outcome Lab replay and evaluation
+- preserve multi-verifier disagreement and consequential conclusion handoffs
+- attribute route and verifier cost from explicit source-backed billable surfaces when evidence is sufficient
+- build governed shadow-evaluation inputs from immutable evidence
+- emit only bounded specialist #82 shadow-recommendation states
+- independently challenge model-originated shadow recommendations
+- hand verified shadow recommendations only to Mission Control or maintainer review without policy-write authority
 - finalize evidence-bearing outcomes
 - preserve audit records
 
@@ -502,6 +516,10 @@ The repository test and validation system covers, among other controls:
 - retry and fallback behavior
 - circuit recovery and abandoned half-open probe handling
 - content-free telemetry
+- canonical Route-Outcome Evidence integrity and lineage
+- Benchmark and Outcome Lab comparability, replay, disagreement, and conclusion-control boundaries
+- source-backed cost-attribution evidence, arithmetic, unknown-state, and billable-surface controls
+- Shadow Route Evaluation evidence binding, bounded states, anti-Goodhart behavior, independent challenge, and authority denials
 - live verification boundaries
 - calibration evidence contracts
 - human-review blinding provenance
@@ -524,6 +542,8 @@ The reference CI:
 7. validates linked TEO configuration
 8. executes the end-to-end reference lifecycle
 
+The latest accepted validation for the completed Shadow Route Evaluation implementation is Reference Implementation CI #445: 602 tests passed, 451 tracked files passed layout validation, 34 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed.
+
 The 2026-08-10 post-v1 hard audit is recorded in [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The audited reference CI run completed with 519 tests passing and provider-diverse execution, fallback, and verification intact.
 
 CI validates the control plane. It does not convert provisional evidence into human-ground-truth claims.
@@ -534,36 +554,39 @@ CI validates the control plane. It does not convert provisional evidence into hu
 
 1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`docs/philosophy/manifesto.md`](docs/philosophy/manifesto.md), and [`docs/specification/lexicon.md`](docs/specification/lexicon.md).
 2. Read [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) and the [`v1.0.0 release contract`](docs/releases/v1.0.0.md).
-3. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
-4. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
-5. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
-6. Read [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
-7. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
-8. Review canonical routing under [`policy/routing/`](policy/routing/).
-9. Review runtime controls under [`policy/runtime/`](policy/runtime/).
-10. Review verification policy under [`policy/verification/`](policy/verification/).
-11. Review specialists under [`community/specialists/`](community/specialists/).
-12. Review current model and provider evidence under [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml) and [`registry/`](registry/).
-13. Review the latest hard-audit record under [`docs/history/audits/`](docs/history/audits/).
-14. Run validation and tests.
+3. Read the canonical [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) for current post-v1 sequencing.
+4. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
+5. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
+6. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
+7. Read [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
+8. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
+9. Review canonical routing under [`policy/routing/`](policy/routing/).
+10. Review runtime controls under [`policy/runtime/`](policy/runtime/).
+11. Review verification policy under [`policy/verification/`](policy/verification/).
+12. Review specialists under [`community/specialists/`](community/specialists/).
+13. Review current model and provider evidence under [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml) and [`registry/`](registry/).
+14. Review the completed evidence contracts in [`docs/specification/route-outcome-evidence.md`](docs/specification/route-outcome-evidence.md), [`docs/specification/benchmark-outcome-lab.md`](docs/specification/benchmark-outcome-lab.md), [`docs/specification/source-backed-cost-attribution.md`](docs/specification/source-backed-cost-attribution.md), and [`docs/specification/shadow-route-evaluation.md`](docs/specification/shadow-route-evaluation.md).
+15. Review the latest hard-audit record under [`docs/history/audits/`](docs/history/audits/).
+16. Run validation and tests.
 
 ### For AI agents
 
 Read in this order:
 
 1. [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md)
-2. [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml)
-3. [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml)
-4. [`policy/routing/core/team-routing.yaml`](policy/routing/core/team-routing.yaml)
-5. [`community/teams/`](community/teams/)
-6. [`community/workers/`](community/workers/)
-7. [`community/specialists/`](community/specialists/)
-8. [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml)
-9. [`policy/runtime/`](policy/runtime/)
-10. [`policy/verification/`](policy/verification/)
-11. [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml)
-12. [`registry/`](registry/)
-13. [`reference/datasets/`](reference/datasets/)
+2. [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md)
+3. [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml)
+4. [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml)
+5. [`policy/routing/core/team-routing.yaml`](policy/routing/core/team-routing.yaml)
+6. [`community/teams/`](community/teams/)
+7. [`community/workers/`](community/workers/)
+8. [`community/specialists/`](community/specialists/)
+9. [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml)
+10. [`policy/runtime/`](policy/runtime/)
+11. [`policy/verification/`](policy/verification/)
+12. [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml)
+13. [`registry/`](registry/)
+14. [`reference/datasets/`](reference/datasets/)
 
 Do not route from remembered provider assumptions when current evidence is materially relevant.
 
@@ -722,7 +745,9 @@ The repository layout is governed and CI-enforced. Root normalization, documenta
 
 ### Current development line
 
-Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, and integrity work while `v1.0.0` remains the immutable stable release.
+Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, integrity, evidence, and controlled-evaluation work while `v1.0.0` remains the immutable stable release.
+
+Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, and Shadow Route Evaluation have completed their current milestones. The canonical `NOW` workstream is the Qualified-human approval lifecycle. That workstream implements explicit authority evidence for requirements that existing policy already imposes; it does not create new human-approval requirements or widen live execution by itself.
 
 The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
@@ -730,18 +755,17 @@ The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence meta
 
 Current and future work may include:
 
+- the Qualified-human approval lifecycle, the current canonical `NOW` workstream
+- evidence-governed live-scope expansion after applicable authority gates pass
 - optional independent blinded human calibration research ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
-- evidence-governed live-scope expansion
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls
 - streaming execution paths
-- source-backed historical cost attribution
-- route-outcome evaluation and learning
-- qualified-human approval integration
+- governed route adaptation only after independently challenged shadow evidence and maintainer review
 - continued regulated-evidence pilot observation
 - ongoing model-freshness reviews as provider catalogs evolve
 
-Repository branch hygiene is tracked separately in [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100) and is not a control-plane blocker.
+Repository branch-retention cleanup under [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100) is complete and is not a control-plane blocker.
 
 These are extensions, evidence-strengthening, or stewardship work. They should not be confused with missing core routing architecture.
 

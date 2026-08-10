@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 585 tests passed |
+| Latest validated test suite | 602 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -71,7 +71,7 @@ Rules:
 | Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
-| Shadow route evaluation | Planned | 5% | Governed recommendation-only evaluation loop | Connect completed outcome, benchmark, verification, and cost evidence to specialist #82 without live policy-write authority |
+| Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve evidence and authority boundaries through later reviewed adaptation |
 | Qualified-human approval lifecycle | In progress | 40% | Explicit approval record and authority handoff | Integrate identity, role, disposition, evidence, and audit linkage into runtime flow |
 | Live execution expansion | In progress | 30% | Bounded low and medium risk canary | Expand only task-class by task-class after evidence, verification, recovery, and authority gates pass |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
@@ -79,38 +79,36 @@ Rules:
 
 ## NOW
 
-### Shadow route evaluation
+### Qualified-human approval lifecycle
 
-Connect the completed evidence chain to `orchestration-evaluation-analyst` without giving the analyst or evaluation runner live routing authority.
+Complete the explicit runtime approval lifecycle for work that already requires qualified-human authority under TEO policy.
 
-The input evidence is now available from:
-
-- canonical Route-Outcome Evidence;
-- completed Benchmark and Outcome Lab reports;
-- multi-verifier disagreement evidence;
-- independently challenged consequential benchmark conclusions;
-- source-backed, effective-dated route-cost attribution.
+This workstream is next because TEO now has a complete evidence chain from route outcomes through controlled evaluation, source-backed cost, shadow recommendation, independent challenge, and Mission Control or maintainer review. The remaining authority gap is not another model-evaluation layer. It is the explicit runtime record and handoff for the human authority that policy already requires.
 
 Completion criteria for the current milestone:
 
-- define a versioned shadow-evaluation input and output contract;
-- consume evidence by immutable IDs and integrity hashes rather than mutable summaries;
-- preserve the declared task, route, model, verifier, runtime, policy, registry, and cost evidence context needed to evaluate a recommendation;
-- evaluate evidence sufficiency before producing any change candidate;
-- emit only the bounded specialist #82 states `NO_CHANGE_JUSTIFIED`, `INSUFFICIENT_EVIDENCE`, `SHADOW_CHANGE_CANDIDATE`, `REGRESSION_INVESTIGATION`, or `POLICY_OR_CONTROL_CONCERN`;
-- keep quality, risk, capability, verification, provider diversity, human authority, reliability, and evidence sufficiency ahead of cost optimization;
-- require independently challenged consequential benchmark conclusions where a shadow recommendation materially depends on them;
-- preserve the distinction between primary success, retry dependence, fallback dependence, verifier disagreement, and cost dependence;
-- make every shadow recommendation reproducible from declared source evidence;
-- prevent analyst output from writing routing policy, widening live scope, accepting preview models, lowering effective risk, changing provider access, or satisfying qualified-human approval;
-- require Mission Control and maintainer review before any later policy change is proposed;
-- add conformance tests that fail if recommendation-only boundaries are weakened.
+- define a versioned qualified-human approval request and disposition contract;
+- bind every approval request to the exact dispatch, effective risk, task identity, required authority reason, execution evidence, verification evidence, and applicable review evidence;
+- record the approving human's qualified role or authority class without turning personal identity into routing authority;
+- distinguish requested, approved, rejected, expired, revoked, and unable-to-determine states where applicable;
+- require evidence that the approving role is authorized for the declared authority requirement;
+- prevent model, specialist, verifier, Mission Control, or maintainer records from impersonating qualified-human approval;
+- prevent a shadow recommendation or review handoff from satisfying qualified-human approval;
+- make approval decisions integrity protected, auditable, and reproducible from declared evidence;
+- preserve explicit refusal when required authority is missing, expired, ambiguous, or outside scope;
+- bind finalization to the exact approval record where policy requires human authority;
+- keep provider access, model selection, and billing identity outside the approval-qualification decision;
+- add conformance and mutation tests that fail if qualified-human requirements can be bypassed or self-satisfied.
 
-A score, ranking, or cheapest-route selection is insufficient. The milestone requires a governed recommendation-only evidence loop with explicit authority boundaries.
+The milestone implements authority evidence that existing policy already requires. It does not broaden which tasks require human approval and it does not widen live execution by itself.
 
 ## NEXT
 
-No additional workstream is promoted ahead of the current Shadow Route Evaluation milestone. Existing in-progress portfolio work continues within its declared scopes, and the next sequencing decision should be made from repository evidence after the shadow-evaluation gate is complete.
+### Evidence-governed live execution expansion
+
+After the qualified-human approval lifecycle is complete, reconsider task-class-by-task-class live-scope expansion using the now-complete route-outcome, Benchmark Lab, cost-attribution, shadow-evaluation, recovery, verification, and authority evidence chain.
+
+High and critical live execution remains unauthorized unless and until the applicable task class independently satisfies its authority, capability, verification, recovery, evidence, and human-approval gates.
 
 ## LATER
 
@@ -132,10 +130,6 @@ Evidence
 ```
 
 Direct outcome-to-self-modifying-routing authority is outside the current TEO design.
-
-### Wider live execution
-
-Broaden live execution only after the applicable task class demonstrates reliable authority, capability, verification, telemetry, recovery, evidence, and human-approval behavior.
 
 ### Distributed runtime hardening
 
@@ -163,7 +157,7 @@ The main invariants are implemented and heavily tested. The remaining ten percen
 
 The fixed corpus, deterministic checks, empirical instrumentation, provider-diverse observations, blinded review tooling, and machine-panel path exist. Additional repeatability, route-specific, adversarial, and accumulated empirical evidence remains useful. Independent human calibration remains optional research and is not a release or routing gate.
 
-Benchmark Lab now measures multi-verifier disagreement for controlled evaluations, but that diagnostic capability does not by itself complete the broader verifier-calibration evidence program.
+Benchmark Lab measures multi-verifier disagreement for controlled evaluations, but that diagnostic capability does not by itself complete the broader verifier-calibration evidence program.
 
 ### Regulated specialist evidence pilot, 60%
 
@@ -201,31 +195,43 @@ The first-party evidence set covers the standard paid API surfaces currently rel
 
 Provider connection mechanism remains outside routing and is not treated as a billing identity. A subscription, OAuth-backed CLI, connector, or other surface is attributed only when evidence exists for that explicit commercial surface. API list prices are never inferred solely from provider and model identity.
 
-Execution usage remains in canonical Route-Outcome Evidence. The live verification path now preserves normalized verifier usage through an additive evidence helper while keeping the existing `VerificationResult` compatibility API unchanged. Pricing changes do not rewrite historical route outcomes.
+Execution usage remains in canonical Route-Outcome Evidence. The live verification path preserves normalized verifier usage through an additive evidence helper while keeping the existing `VerificationResult` compatibility API unchanged. Pricing changes do not rewrite historical route outcomes.
 
 Reference Implementation CI run #437 validated the executable milestone with 585 passing tests, 444 tracked-file layout checks, regulated evidence validation, 30 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
 
 Future pricing refreshes, negotiated or subscription billing surfaces, additional provider-native charge dimensions, and downstream use in Shadow Route Evaluation are compatible maintenance or separate governed extensions and do not keep this milestone open.
 
-### Shadow route evaluation, 5%
+### Shadow route evaluation, 100%
 
-Specialist #82 and bounded recommendation states exist. Canonical route-outcome evidence, the full controlled Benchmark Lab milestone, independently challenged consequential conclusions, and source-backed route-cost evidence now exist. The governed evidence join and recommendation runner into specialist #82 are not yet implemented, so this workstream remains planned.
+The current milestone is complete.
+
+The governed shadow-evaluation layer binds benchmark manifests, benchmark reports, Route-Outcome Evidence, source-backed cost records, and consequential benchmark conclusion challenge records by immutable record identity and integrity hash. Consequential evaluation requires the exact conclusion, independent verification, and review handoff chain bound back to the exact benchmark report.
+
+The evaluator records the concrete provider/model operating `orchestration-evaluation-analyst`, checks evidence sufficiency before recommendation, preserves verified quality, primary reliability, retry dependence, fallback dependence, verifier disagreement, latency, regression, and source-backed cost as separate signals, and emits only the five bounded specialist #82 states.
+
+Anti-Goodhart controls prevent lower cost alone from creating a change candidate and prevent a final-quality gain from being promoted when retry or fallback dependence worsens. Regression signals preempt promotion. Unresolved human-authority or missing-verification outcomes surface as policy/control concerns. A `SHADOW_CHANGE_CANDIDATE` is explicitly shadow-only and is neither a causal superiority claim nor deployment authorization.
+
+Every recommendation denies policy-write, live-routing, live-scope, risk-lowering, capability-bypass, verifier-bypass, preview-acceptance, provider-access-change, and qualified-human-approval authority. Model-originated recommendations require provider-diverse independent challenge before a handoff can advance to `mission_control_or_maintainer_review`. The handoff still has no policy-write or live-routing authority and cannot satisfy qualified-human approval.
+
+Reference Implementation CI run #445 validated the executable milestone with 602 passing tests, 451 tracked-file layout checks, regulated evidence validation, 34 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+Future policy adaptation remains a separate governed stage requiring Mission Control and maintainer decision, reviewed policy change, CI, deployment, post-change evaluation, and rollback if regression.
 
 ### Qualified-human approval lifecycle, 40%
 
 Critical-risk policy already preserves qualified-human requirements, but a complete explicit runtime approval lifecycle with authority identity, disposition, evidence, and audit linkage remains incomplete.
 
-The Benchmark Lab review-handoff record explicitly does not satisfy qualified-human approval and therefore does not advance this percentage.
+Benchmark and shadow review handoffs explicitly do not satisfy qualified-human approval. Completion of the evidence and shadow-evaluation layers therefore makes this authority lifecycle the current priority rather than reducing its remaining scope.
 
 ### Live execution expansion, 30%
 
-Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, controlled replay, and economic evidence exist for a bounded canary. Broader task classes and high or critical execution remain evidence-gated.
+Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, controlled replay, economic evidence, and governed shadow evaluation exist for a bounded canary. Broader task classes and high or critical execution remain evidence-gated.
 
-Benchmark Lab and cost-attribution completion do not widen live execution scope.
+Benchmark Lab, cost attribution, and Shadow Route Evaluation completion do not widen live execution scope.
 
 ### Distributed runtime hardening, 20%
 
-The reference semantics for recovery, circuit state, telemetry, audit, execution, evaluation, and cost evidence are proven in the current reference architecture. Distributed coordination, persistence, access control, retention, and streaming remain later work.
+The reference semantics for recovery, circuit state, telemetry, audit, execution, evaluation, cost evidence, and shadow recommendation are proven in the current single-process reference architecture. Distributed coordination, persistence, access control, retention, and streaming remain later work.
 
 ### Licensing and contribution terms, 10%
 
@@ -259,3 +265,4 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
 - [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone
 - [`../specification/source-backed-cost-attribution.md`](../specification/source-backed-cost-attribution.md): completed source-backed cost-attribution contract
+- [`../specification/shadow-route-evaluation.md`](../specification/shadow-route-evaluation.md): completed governed Shadow Route Evaluation contract

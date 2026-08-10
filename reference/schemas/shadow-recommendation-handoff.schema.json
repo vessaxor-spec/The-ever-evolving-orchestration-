@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/shadow-recommendation-handoff.schema.json",
+  "title": "TEO Shadow Recommendation Review Handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "shadow_evaluation_version",
+    "record_type",
+    "handoff_id",
+    "created_at",
+    "recommendation_id",
+    "recommendation_integrity_sha256",
+    "disposition",
+    "destination",
+    "status",
+    "verification_id",
+    "verification_integrity_sha256",
+    "independent_verification_performed",
+    "policy_write_authority",
+    "live_routing_authority",
+    "qualified_human_approval_satisfied",
+    "notes",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "shadow_evaluation_version": {"const": "1"},
+    "record_type": {"const": "shadow_recommendation_handoff"},
+    "handoff_id": {"type": "string", "pattern": "^shadow-handoff-[a-f0-9]{20}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "recommendation_id": {"type": "string", "pattern": "^shadow-recommendation-[a-f0-9]{20}$"},
+    "recommendation_integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "disposition": {
+      "enum": [
+        "NO_CHANGE_JUSTIFIED",
+        "INSUFFICIENT_EVIDENCE",
+        "SHADOW_CHANGE_CANDIDATE",
+        "REGRESSION_INVESTIGATION",
+        "POLICY_OR_CONTROL_CONCERN"
+      ]
+    },
+    "destination": {"const": "mission_control_or_maintainer_review"},
+    "status": {"enum": ["ready_for_review", "rejected", "needs_human"]},
+    "verification_id": {"type": "string", "pattern": "^shadow-verification-[a-f0-9]{20}$"},
+    "verification_integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "independent_verification_performed": {"const": true},
+    "policy_write_authority": {"const": false},
+    "live_routing_authority": {"const": false},
+    "qualified_human_approval_satisfied": {"const": false},
+    "notes": {
+      "type": "array",
+      "minItems": 2,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}
