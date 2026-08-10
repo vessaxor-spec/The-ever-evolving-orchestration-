@@ -196,7 +196,7 @@ The governance doctrine is established: pricing must be effective-dated, source-
 
 ### Shadow route evaluation, 5%
 
-The analyst and recommendation states exist, and canonical route-outcome evidence is now available, but the controlled evaluation substrate and governed evaluation runner are not yet implemented.
+The analyst and recommendation states exist, canonical route-outcome evidence is available, and the first controlled evaluation foundation now exists. The continuous evidence feed, multi-verifier/independent-challenge handoff, and governed evaluation runner into specialist #82 are not yet implemented, so this workstream remains planned.
 
 ### Qualified-human approval lifecycle, 40%
 
