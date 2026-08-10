@@ -50,7 +50,7 @@ def test_systems_engineering_responsibility_surface_is_preserved() -> None:
     role_text = (REPO_ROOT / staging["specialist"]["role_card"]).read_text(
         encoding="utf-8"
     )
-    worker_text = (REPO_ROOT / staging["worker"]["definition"]).read_text(
+    worker_text = (REPO_ROOT / "community" / "workers" / "extensions" / "systems-engineering-worker.yaml").read_text(
         encoding="utf-8"
     )
 

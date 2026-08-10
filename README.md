@@ -513,7 +513,7 @@ CI validates the control plane. It does not convert provisional evidence into hu
 9. Review runtime controls under [`policy/runtime/`](policy/runtime/).
 10. Review verification policy under [`policy/verification/`](policy/verification/).
 11. Review specialists under [`community/specialists/`](community/specialists/).
-12. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
+12. Review current model and provider evidence under [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml) and [`registry/`](registry/).
 13. Run validation and tests.
 
 ### For AI agents
@@ -530,7 +530,7 @@ Read in this order:
 8. [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml)
 9. [`policy/runtime/`](policy/runtime/)
 10. [`policy/verification/`](policy/verification/)
-11. [`models.yaml`](models.yaml)
+11. [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml)
 12. [`registry/`](registry/)
 13. [`reference/datasets/`](reference/datasets/)
 
@@ -602,7 +602,7 @@ The final outcome contract supports:
 ├── CODE_OF_CONDUCT.md
 ├── LICENSE
 ├── pyproject.toml
-├── models.yaml
+├── policy/routing/core/implementation-defaults.yaml
 │
 ├── policy/
 │   ├── governance/

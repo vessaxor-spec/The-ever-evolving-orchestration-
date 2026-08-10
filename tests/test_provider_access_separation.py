@@ -105,7 +105,7 @@ def test_routing_and_model_registry_do_not_encode_authentication_mechanics() -> 
         REPO_ROOT / "policy/routing/core/routing.yaml",
         REPO_ROOT / "policy/routing/core/specialist-model-routing.yaml",
         REPO_ROOT / "policy/routing/core/team-routing.yaml",
-        REPO_ROOT / "models.yaml",
+        REPO_ROOT / "policy/routing/core/implementation-defaults.yaml",
     ]
     forbidden_keys = {
         "api_key",

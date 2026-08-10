@@ -4,7 +4,7 @@ This directory contains current machine-readable routing authority. Its structur
 
 ## Canonical areas
 
-- [`core/`](core/) contains canonical base team, implementation, and specialist-model routing policy.
+- [`core/`](core/) contains canonical base team, implementation, specialist-model routing policy, and implementation defaults.
 - [`extensions/`](extensions/) contains additive active route families loaded alongside the core policy.
 - [`activation/`](activation/) contains current activation manifests that prove which staged topology has become active.
 

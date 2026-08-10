@@ -162,7 +162,7 @@ def test_specialist_depth_and_boundaries_are_preserved() -> None:
 
 def test_staged_worker_contract_has_distinct_teams_and_authority() -> None:
     staging = load_yaml(STAGING_PATH)
-    worker_path = REPO_ROOT / staging["worker_contract"]["path"]
+    worker_path = REPO_ROOT / "docs" / "history" / "activation" / "final-specialist-workers.yaml"
     workers = load_yaml(worker_path)["workers"]
 
     assert git_blob_sha(worker_path) == staging["worker_contract"]["canonical_blob_sha"]
@@ -251,7 +251,7 @@ def test_new_specialists_are_not_in_active_registry_or_new_routes() -> None:
 
 def test_history_record_and_staged_worker_file_avoid_em_dash() -> None:
     staging = load_yaml(STAGING_PATH)
-    worker_text = (REPO_ROOT / staging["worker_contract"]["path"]).read_text(encoding="utf-8")
+    worker_text = (REPO_ROOT / "docs" / "history" / "activation" / "final-specialist-workers.yaml").read_text(encoding="utf-8")
     history_text = HISTORY_PATH.read_text(encoding="utf-8")
 
     assert "—" not in worker_text

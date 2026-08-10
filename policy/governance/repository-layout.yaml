@@ -28,10 +28,7 @@ root:
     - LICENSE
     - pyproject.toml
     - .gitignore
-  temporary_exceptions:
-    models.yaml:
-      target: policy/routing/implementation-defaults.yaml
-      migration_phase: R5
+  temporary_exceptions: {}
   allowed_directories:
     - .github
     - assets
@@ -78,6 +75,7 @@ contracts:
       - activation
     canonical_subdirectories:
       core:
+        - implementation-defaults.yaml
         - routing.yaml
         - specialist-model-routing.yaml
         - team-routing.yaml
@@ -101,11 +99,13 @@ contracts:
     canonical_direct_files:
       - README.md
       - workers.yaml
-    temporary_direct_extensions:
+    temporary_direct_extensions: []
+    approved_subdirectories:
+      - extensions
+    canonical_extensions:
       - analytics-worker.yaml
       - assurance-workers.yaml
       - compliance-worker.yaml
-      - final-specialist-workers.yaml
       - incident-response-worker.yaml
       - market-research-worker.yaml
       - physical-systems-workers.yaml
@@ -117,12 +117,10 @@ contracts:
       - specialist-completion-workers.yaml
       - systems-engineering-worker.yaml
       - user-research-worker.yaml
-    approved_subdirectories:
-      - extensions
     future_rule: >-
-      New worker extension files should be placed under community/workers/extensions
-      after the loader migration is complete. Until then, any additional direct extension
-      requires an explicit repository-layout policy change.
+      Direct worker-extension YAML is prohibited. Stable base workers remain in
+      workers.yaml and additive active worker definitions belong in extensions.
+      Superseded worker staging state belongs under docs/history.
 
   docs_methodology:
     path: docs/methodology
@@ -200,7 +198,8 @@ migration:
     - R2_root_and_research_normalization
     - R3_documentation_lifecycle_separation
     - R4_policy_topology
-  current_phase: R5
+    - R5_worker_and_implementation_topology
+  current_phase: complete
   sequence:
     - R1_layout_constitution
     - R2_root_and_research_normalization

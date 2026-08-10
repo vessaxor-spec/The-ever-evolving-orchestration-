@@ -95,7 +95,7 @@ def test_assurance_cards_are_full_preserved_allocations() -> None:
 
 def test_assurance_workers_enforce_independence_and_human_authority() -> None:
     staging = load_yaml(STAGING_PATH)
-    worker_path = REPO_ROOT / staging["worker_contract"]["path"]
+    worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "assurance-workers.yaml"
     workers = load_yaml(worker_path)["workers"]
 
     assert git_blob_sha(worker_path) == staging["worker_contract"]["canonical_blob_sha"]

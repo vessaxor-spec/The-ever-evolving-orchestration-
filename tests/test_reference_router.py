@@ -156,7 +156,7 @@ def build_repo(root: Path) -> Path:
         },
     )
     write_yaml(
-        root / "models.yaml",
+        root / "policy/routing/core/implementation-defaults.yaml",
         {
             "models": {
                 "terra": {

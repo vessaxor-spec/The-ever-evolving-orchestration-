@@ -231,7 +231,7 @@ implementation_resolution:
     - policy/routing/extensions/mission-control-routing.yaml
     - policy/routing/extensions/research-routing.yaml
     - policy/routing/extensions/review-routing.yaml
-  model_registry: models.yaml
+  model_registry: policy/routing/core/implementation-defaults.yaml
   rule: >-
     Resolve the selected worker and optional specialist to the best currently
     available implementation using capability fit, task risk, context, cost,
