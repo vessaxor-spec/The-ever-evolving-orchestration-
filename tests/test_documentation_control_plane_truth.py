@@ -85,13 +85,15 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "community/specialists/workforce-expansion-active.yaml",
         "Shadow Route Evaluation",
         "Qualified-human approval lifecycle",
-        "634 automated tests",
-        "463 tracked-file layout checks",
+        "641 automated tests",
+        "465 tracked-file layout checks",
         "38 JSON Schema",
         "evidence-governed live execution expansion",
-        "now at 40%",
+        "now at 55%",
         "`documentation` is the first staged candidate",
+        "fallback/fresh-verifier topology and direct adapter readiness are validated",
         "no live-execution authority",
+        "The next gate is controlled documentation live replay",
         "Issue #100",
         "is complete",
     ):
@@ -115,18 +117,19 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 634 tests passed |",
+        "| Latest validated test suite | 641 tests passed |",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
         "| Shadow route evaluation | Complete | 100% |",
         "| Qualified-human approval lifecycle | Complete | 100% |",
-        "| Live execution expansion | In progress | 40% |",
+        "| Live execution expansion | In progress | 55% |",
         "## NOW",
         "### Evidence-governed live execution expansion",
         "`documentation` is the first bounded candidate",
         "staged only",
+        "The next material gate is controlled live replay",
         "## NEXT",
         "No additional workstream is promoted",
         "## LATER",
@@ -139,11 +142,13 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "### Evidence-governed live execution expansion" in now_section
     assert "do not authorize high or critical live execution" in now_section
     assert "High and critical live execution remains unauthorized" in now_section
-    assert "initial documentation fallback is same-provider Claude Haiku 4.5" in now_section
-    assert "reuses the primary Terra verifier" in now_section
+    assert "former `runtime-worker-overrides.yaml` behavior" in text
+    assert "GPT-5.6 Sol as the provider-diverse non-preview routine fallback" in now_section
+    assert "Gemini 3.6 Flash as the fresh provider-diverse verifier" in now_section
+    assert "Existing canary wrappers and live-verification task scope remain `high_volume_simple` only" in now_section
     assert "No additional workstream is promoted" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
-    assert "Reference Implementation CI run #463" in text
+    assert "Reference Implementation CI run #473" in text
     assert "78 active specialists" not in text
 
     benchmark_spec = (
@@ -234,6 +239,9 @@ def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> 
     assert "prove all 82 active specialists are deterministically spawnable" in text
     assert "`documentation` is the first staged candidate" in text
     assert "live activation is not authorized" in text
-    assert "reuses the primary GPT-5.6 Terra verifier" in text
+    assert "provider-diverse non-preview routine fallback: GPT-5.6 Sol" in text
+    assert "fresh redispatch verifier: Gemini 3.6 Flash" in text
+    assert "The next evidence gate is controlled documentation live replay" in text
+    assert "remains the only accepted live execution scope" in text
     assert "78 preserved specialist" not in text
     assert "78 active specialists" not in text
