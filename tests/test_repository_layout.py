@@ -61,6 +61,27 @@ def test_r2_paths_are_no_longer_temporary_exceptions() -> None:
     assert "R2_root_and_research_normalization" in policy["migration"]["completed_phases"]
 
 
+def test_r2_active_navigation_uses_canonical_paths() -> None:
+    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+    ai_instructions = (REPO_ROOT / "AI_INSTRUCTIONS.md").read_text(encoding="utf-8")
+    release_contract = (REPO_ROOT / "docs/releases/v1.0.0.md").read_text(encoding="utf-8")
+
+    for canonical in (
+        "docs/philosophy/manifesto.md",
+        "docs/specification/lexicon.md",
+        "docs/releases/v1-readiness.md",
+    ):
+        assert canonical in readme
+
+    assert "docs/specification/lexicon.md" in ai_instructions
+    assert "docs/releases/v1-readiness.md" in release_contract
+
+    for retired in ("](MANIFESTO.md)", "](LEXICON.md)", "](V1_READINESS.md)"):
+        assert retired not in readme
+    assert "`LEXICON.md`" not in ai_instructions
+    assert "- `V1_READINESS.md`" not in release_contract
+
+
 def test_unknown_root_file_is_rejected() -> None:
     policy = validator.load_policy(POLICY_PATH)
     paths = _current_paths() | {"FINAL_ARCHITECTURE_V2.md"}
