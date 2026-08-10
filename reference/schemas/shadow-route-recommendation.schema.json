@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/shadow-route-recommendation.schema.json",
+  "title": "TEO Shadow Route Recommendation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "shadow_evaluation_version",
+    "record_type",
+    "recommendation_id",
+    "generated_at",
+    "evaluation_id",
+    "evaluation_integrity_sha256",
+    "specialist_id",
+    "candidate_id",
+    "baseline_candidate_id",
+    "disposition",
+    "evidence_sufficiency",
+    "comparison",
+    "cost_evidence",
+    "supporting_evidence",
+    "contradictory_evidence",
+    "limitations",
+    "proposed_change",
+    "review_destination",
+    "authority",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "shadow_evaluation_version": {"const": "1"},
+    "record_type": {"const": "shadow_route_recommendation"},
+    "recommendation_id": {"type": "string", "pattern": "^shadow-recommendation-[a-f0-9]{20}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "evaluation_id": {"type": "string", "pattern": "^shadow-input-[a-f0-9]{20}$"},
+    "evaluation_integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "specialist_id": {"const": "orchestration-evaluation-analyst"},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "baseline_candidate_id": {"type": "string", "minLength": 1},
+    "disposition": {
+      "enum": [
+        "NO_CHANGE_JUSTIFIED",
+        "INSUFFICIENT_EVIDENCE",
+        "SHADOW_CHANGE_CANDIDATE",
+        "REGRESSION_INVESTIGATION",
+        "POLICY_OR_CONTROL_CONCERN"
+      ]
+    },
+    "evidence_sufficiency": {"enum": ["sufficient_for_shadow_review", "insufficient"]},
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verified_completion_rate_delta",
+        "primary_verified_completion_rate_delta",
+        "fallback_assistance_rate_delta",
+        "retry_assistance_rate_delta",
+        "mean_total_duration_ms_delta",
+        "verifier_disagreement_status",
+        "candidate_regression_signal"
+      ],
+      "properties": {
+        "verified_completion_rate_delta": {"type": ["number", "null"]},
+        "primary_verified_completion_rate_delta": {"type": ["number", "null"]},
+        "fallback_assistance_rate_delta": {"type": ["number", "null"]},
+        "retry_assistance_rate_delta": {"type": ["number", "null"]},
+        "mean_total_duration_ms_delta": {"type": ["number", "null"]},
+        "verifier_disagreement_status": {"enum": ["measured", "insufficient", "not_measured"]},
+        "candidate_regression_signal": {"type": "boolean"}
+      }
+    },
+    "cost_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "candidate_total_amount", "baseline_total_amount", "delta_amount", "currency"],
+      "properties": {
+        "status": {"enum": ["known", "partial", "unknown", "not_requested"]},
+        "candidate_total_amount": {"type": ["string", "null"], "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"},
+        "baseline_total_amount": {"type": ["string", "null"], "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"},
+        "delta_amount": {"type": ["string", "null"], "pattern": "^-?(0|[1-9][0-9]*)(\\.[0-9]+)?$"},
+        "currency": {"type": ["string", "null"], "enum": ["USD", null]}
+      }
+    },
+    "supporting_evidence": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "contradictory_evidence": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "proposed_change": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["candidate_id", "baseline_candidate_id", "description", "status"],
+          "properties": {
+            "candidate_id": {"type": "string", "minLength": 1},
+            "baseline_candidate_id": {"type": "string", "minLength": 1},
+            "description": {"type": "string", "minLength": 1},
+            "status": {"const": "shadow_only_not_authorized"}
+          }
+        }
+      ]
+    },
+    "review_destination": {"const": "independent_challenge_then_mission_control_or_maintainer_review"},
+    "authority": {"$ref": "#/$defs/authorityDenials"},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "authorityDenials": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy_write_authority",
+        "live_routing_authority",
+        "live_scope_change_authority",
+        "effective_risk_lowering_authority",
+        "capability_bypass_authority",
+        "verifier_bypass_authority",
+        "preview_acceptance_authority",
+        "provider_access_change_authority",
+        "qualified_human_approval_satisfied"
+      ],
+      "properties": {
+        "policy_write_authority": {"const": false},
+        "live_routing_authority": {"const": false},
+        "live_scope_change_authority": {"const": false},
+        "effective_risk_lowering_authority": {"const": false},
+        "capability_bypass_authority": {"const": false},
+        "verifier_bypass_authority": {"const": false},
+        "preview_acceptance_authority": {"const": false},
+        "provider_access_change_authority": {"const": false},
+        "qualified_human_approval_satisfied": {"const": false}
+      }
+    }
+  }
+}
