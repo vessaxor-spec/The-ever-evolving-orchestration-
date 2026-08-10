@@ -189,7 +189,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "SHADOW_CHANGE_CANDIDATE",
         "Lower source-backed cost can support a recommendation, but lower cost alone can never create",
         "policy_write_authority",
-        "independent_challenge_then_mission_control_or_maintainer_review",
+        "A shadow recommendation does not advance directly to Mission Control review.",
+        "mission_control_or_maintainer_review",
         "Direct outcome-to-self-modifying-routing authority is outside TEO's design.",
     ):
         assert phrase in shadow_spec
