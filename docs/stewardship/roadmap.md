@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, and reference control-plane phases.
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control-plane, operational-evidence, shadow-evaluation, and qualified-human authority milestones declared to date.
 
 The current roadmap is focused on proving and operating the decision system rather than adding model/provider abstractions for their own sake.
 
@@ -23,7 +23,7 @@ For the current operational state, completion estimates, active milestone, and N
 - provider-diverse live independent verification
 - six-card regulated evidence/freshness pilot
 
-## Current: control integrity and operational evidence
+## Current: control integrity and evidence-governed operation
 
 ### Control integrity
 
@@ -58,17 +58,44 @@ Measure:
 
 Do not broaden live verification based on model confidence alone. Broader scope remains governed by applicable authority, capability, verification, telemetry, recovery, evidence, risk, and maintainer-review controls. Optional human calibration may strengthen the evidence base but does not create a separate approval authority.
 
-### Route-outcome evidence
+### Completed operational evidence chain
 
-Join routing, provider-attempt telemetry, verification evidence, and final outcomes into an evaluation layer that measures decision quality without allowing the execution model to grade itself.
+The current reference control plane now includes completed declared milestones for:
 
-### Cost attribution
+- canonical Route-Outcome Evidence with primary/fallback lineage, retry preservation, verification linkage, version context, and integrity protection;
+- the Benchmark and Outcome Lab with controlled replay, multi-verifier disagreement, and independently challenged consequential conclusions;
+- source-backed cost attribution with explicit billable surfaces, effective-dated evidence, and fail-closed unknown semantics;
+- governed Shadow Route Evaluation with bounded specialist #82 recommendation states, anti-Goodhart controls, independent challenge, and no live policy-write authority;
+- qualified-human approval with scoped authority grants, exact evidence-bound requests, append-only dispositions, expiry/revocation, and terminal human finalization.
 
-Add source-backed, effective-dated pricing records and versioned cost calculations. Pricing must remain separate from provider usage telemetry.
+These layers provide evidence and authority control. They do not automatically authorize route changes or broader live execution.
 
 ### Qualified-human authority
 
-Implement an explicit approval lifecycle for decisions requiring qualified human authority, including identity/role of the approval authority, disposition, evidence, and audit linkage.
+The explicit approval lifecycle is implemented for work that policy already marks as requiring qualified-human authority.
+
+Human-required model execution remains `awaiting_human` until a separately scoped human authority grant and approval disposition are validated. Model, specialist, verifier, Mission Control, maintainer review, provider access, and billing identity do not self-satisfy that gate.
+
+Completion of this lifecycle does not broaden which tasks require human approval and does not widen live execution.
+
+### Evidence-governed live execution expansion
+
+The current operational priority is to evaluate one bounded live task-class expansion at a time beyond the existing low or medium risk `high_volume_simple` canary.
+
+Any candidate expansion must preserve:
+
+- non-lowerable effective risk;
+- capability-valid execution and fallback;
+- provider-diverse recovery and independent verification;
+- retry, fallback, circuit-state, telemetry, and Route-Outcome Evidence;
+- explicit rollback or recovery behavior;
+- shadow and cost evidence as supporting signals rather than sole promotion criteria;
+- qualified-human approval wherever policy independently requires it;
+- explicit preview-model acceptance;
+- provider-access separation;
+- conformance and mutation resistance for live-scope boundaries.
+
+High and critical live execution remains outside the current guarded runtime and is not part of the next bounded milestone.
 
 ### Distributed runtime hardening
 
@@ -91,10 +118,12 @@ A broader regulated evidence registry is not authorized merely because the pilot
 
 Broaden live execution by task class only when the applicable authority, capability, verification, telemetry, recovery, evidence, and human-approval controls have demonstrated reliable behavior.
 
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate candidate passes the current Progress Tracker gate.
+
 High and critical live execution remains outside the current guarded runtime.
 
 ## Community and licensing
 
 Finalize licensing and contribution terms before representing TEO as open source or inviting external code contribution under reuse rights that have not yet been granted.
 
-The roadmap is directional. Routing and verification quality remain the priority.
+The roadmap is directional. Routing, authority, verification, and evidence quality remain the priority.
