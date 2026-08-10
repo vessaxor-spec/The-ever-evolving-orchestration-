@@ -1,5 +1,5 @@
 version: 0.4
-status: public-draft
+status: active
 reviewed_at: 2026-08-09
 registry_source: registry/models/models.yaml
 review_policy: >-
@@ -154,7 +154,7 @@ models:
       - unresolved ambiguity
       - security-sensitive reasoning
       - difficult cross-system decisions
-      - disagreement resolution
+      - disagreement_resolution
     limitations:
       - reserve for cases where added reasoning depth justifies cost and latency
 
