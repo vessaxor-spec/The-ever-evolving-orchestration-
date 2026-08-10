@@ -35,6 +35,8 @@ jobs:
 
           ROOT = Path('.')
           WORKFLOW = '.github/workflows/r5-finalize-topology-migrate.yml'
+          LAYOUT = 'policy/governance/repository-layout.yaml'
+          LAYOUT_TEST = 'tests/test_repository_layout.py'
           WORKER_FILES = [
               'incident-response-worker.yaml',
               'research-worker.yaml',
@@ -62,9 +64,17 @@ jobs:
                   raise SystemExit(f'{context}: expected exactly one replacement, found {count}')
               return text.replace(old, new, 1)
 
+          # Retarget current consumers only. Governance, registry, history, capsules,
+          # and the migration regression test are handled separately or intentionally
+          # preserve retired path text.
           tracked = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
           for name in tracked:
-              if name == WORKFLOW or name.startswith('docs/history/') or name.startswith('community/capsules/'):
+              if (
+                  name in {WORKFLOW, LAYOUT, LAYOUT_TEST}
+                  or name.startswith('docs/history/')
+                  or name.startswith('community/capsules/')
+                  or name.startswith('registry/')
+              ):
                   continue
               path = ROOT / name
               try:
@@ -92,7 +102,7 @@ jobs:
               if updated != text:
                   path.write_text(updated, encoding='utf-8')
 
-          layout_path = ROOT / 'policy/governance/repository-layout.yaml'
+          layout_path = ROOT / LAYOUT
           layout = layout_path.read_text(encoding='utf-8')
           layout = replace_once(
               layout,
@@ -173,31 +183,32 @@ jobs:
           )
           changelog_path.write_text(changelog, encoding='utf-8')
 
-          tests_path = ROOT / 'tests/test_repository_layout.py'
+          tests_path = ROOT / LAYOUT_TEST
           tests = tests_path.read_text(encoding='utf-8')
           tests = tests.replace('    assert policy["migration"]["current_phase"] == "R5"\n', '')
           if 'R5_OLD_PATHS = {' not in tests:
               tests += '''\n\nR5_WORKER_FILES = {\n    "analytics-worker.yaml",\n    "assurance-workers.yaml",\n    "compliance-worker.yaml",\n    "incident-response-worker.yaml",\n    "market-research-worker.yaml",\n    "physical-systems-workers.yaml",\n    "platform-reliability-core-workers.yaml",\n    "platform-reliability-operations-workers.yaml",\n    "principal-engineering-active-workers.yaml",\n    "research-worker.yaml",\n    "runtime-worker-overrides.yaml",\n    "specialist-completion-workers.yaml",\n    "systems-engineering-worker.yaml",\n    "user-research-worker.yaml",\n}\n\nR5_OLD_PATHS = {\n    "models.yaml",\n    "community/workers/final-specialist-workers.yaml",\n    *{f"community/workers/{name}" for name in R5_WORKER_FILES},\n}\n\nR5_CANONICAL_PATHS = {\n    "policy/routing/core/implementation-defaults.yaml",\n    "docs/history/activation/final-specialist-workers.yaml",\n    *{f"community/workers/extensions/{name}" for name in R5_WORKER_FILES},\n}\n\n\ndef test_r5_worker_and_implementation_paths_are_canonical() -> None:\n    paths = _current_paths()\n    assert R5_OLD_PATHS.isdisjoint(paths)\n    assert R5_CANONICAL_PATHS <= paths\n\n\ndef test_r5_closes_layout_exceptions_and_completes_migration() -> None:\n    policy = validator.load_policy(POLICY_PATH)\n    workers = policy["contracts"]["community_workers"]\n    routing = policy["contracts"]["policy_routing"]\n    assert policy["root"]["temporary_exceptions"] == {}\n    assert workers["temporary_direct_extensions"] == []\n    assert set(workers["canonical_extensions"]) == R5_WORKER_FILES\n    assert "implementation-defaults.yaml" in routing["canonical_subdirectories"]["core"]\n    assert "R5_worker_and_implementation_topology" in policy["migration"]["completed_phases"]\n    assert policy["migration"]["current_phase"] == "complete"\n\n\ndef test_undeclared_worker_extension_is_rejected() -> None:\n    policy = validator.load_policy(POLICY_PATH)\n    paths = _current_paths() | {"community/workers/extensions/random-worker.yaml"}\n    errors = validator.validate_layout(paths, policy)\n    assert any("Undeclared worker extension" in error for error in errors)\n'''
           tests_path.write_text(tests, encoding='utf-8')
 
-          historical_worker_tests = {
-              'tests/test_assurance_staging.py': 'assurance-workers.yaml',
-              'tests/test_final_specialist_tranche_staging.py': 'principal-engineering-active-workers.yaml',
-              'tests/test_physical_systems_staging.py': 'physical-systems-workers.yaml',
-              'tests/test_platform_reliability_core_staging.py': 'platform-reliability-core-workers.yaml',
-              'tests/test_platform_reliability_operations_staging.py': 'platform-reliability-operations-workers.yaml',
-              'tests/test_systems_engineering_specialist_staging.py': 'systems-engineering-worker.yaml',
+          historical_targets = {
+              'tests/test_assurance_staging.py': 'community/workers/extensions/assurance-workers.yaml',
+              'tests/test_final_specialist_tranche_staging.py': 'docs/history/activation/final-specialist-workers.yaml',
+              'tests/test_physical_systems_staging.py': 'community/workers/extensions/physical-systems-workers.yaml',
+              'tests/test_platform_reliability_core_staging.py': 'community/workers/extensions/platform-reliability-core-workers.yaml',
+              'tests/test_platform_reliability_operations_staging.py': 'community/workers/extensions/platform-reliability-operations-workers.yaml',
+              'tests/test_systems_engineering_specialist_staging.py': 'community/workers/extensions/systems-engineering-worker.yaml',
           }
-          for test_name, worker_file in historical_worker_tests.items():
+          for test_name, target in historical_targets.items():
               path = ROOT / test_name
               text = path.read_text(encoding='utf-8')
+              target_expr = ' / '.join(f'"{part}"' for part in target.split('/'))
               text = text.replace(
-                  'worker_path = REPO_ROOT / staging["worker_contract"]["path"]',
-                  f'worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "{worker_file}"',
+                  'REPO_ROOT / staging["worker_contract"]["path"]',
+                  f'REPO_ROOT / {target_expr}',
               )
               text = text.replace(
-                  'worker_path = REPO_ROOT / staging["worker"]["definition"]',
-                  f'worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "{worker_file}"',
+                  'REPO_ROOT / staging["worker"]["definition"]',
+                  f'REPO_ROOT / {target_expr}',
               )
               path.write_text(text, encoding='utf-8')
 
@@ -205,7 +216,12 @@ jobs:
           tracked = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
           bare_model = re.compile(r'(?<![/A-Za-z0-9_.-])models\.yaml')
           for name in tracked:
-              if name == WORKFLOW or name.startswith('docs/history/') or name.startswith('community/capsules/'):
+              if (
+                  name in {WORKFLOW, LAYOUT_TEST}
+                  or name.startswith('docs/history/')
+                  or name.startswith('community/capsules/')
+                  or name.startswith('registry/')
+              ):
                   continue
               path = ROOT / name
               try:
