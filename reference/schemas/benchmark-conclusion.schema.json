@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-conclusion.schema.json",
+  "title": "TEO Benchmark Conclusion",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "conclusion_id",
+    "created_at",
+    "experiment_id",
+    "report_integrity_sha256",
+    "conclusion_kind",
+    "consequence_level",
+    "statement",
+    "evidence_refs",
+    "originator",
+    "independent_verification_required",
+    "policy_write_authority",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_conclusion"},
+    "conclusion_id": {"type": "string", "pattern": "^conclusion-[0-9a-f]{20}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "report_integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "conclusion_kind": {
+      "enum": [
+        "descriptive_summary",
+        "comparative_claim",
+        "regression_finding",
+        "evidence_insufficiency"
+      ]
+    },
+    "consequence_level": {"enum": ["routine", "consequential"]},
+    "statement": {"type": "string", "minLength": 1},
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "originator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_type", "actor_id", "provider_family", "model"],
+      "properties": {
+        "actor_type": {"enum": ["specialist", "human", "system"]},
+        "actor_id": {"type": "string", "minLength": 1},
+        "provider_family": {"type": ["string", "null"], "minLength": 1},
+        "model": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "independent_verification_required": {"type": "boolean"},
+    "policy_write_authority": {"const": false},
+    "integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
