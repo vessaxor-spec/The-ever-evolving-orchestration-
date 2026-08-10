@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-report.schema.json",
+  "title": "TEO Benchmark Lab Experiment Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "experiment_id",
+    "generated_at",
+    "study_type",
+    "claim_scope",
+    "suite_id",
+    "suite_version",
+    "fixture_count",
+    "trials_per_fixture",
+    "primary_metric",
+    "comparability_status",
+    "comparability_issues",
+    "evidence_sufficiency",
+    "candidate_metrics",
+    "regression_signals",
+    "verifier_disagreement",
+    "limitations",
+    "provenance",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_report"},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "study_type": {"enum": ["benchmark", "replay", "regression"]},
+    "claim_scope": {"enum": ["system_to_system", "executor_only"]},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_version": {"type": "string", "minLength": 1},
+    "fixture_count": {"type": "integer", "minimum": 0},
+    "trials_per_fixture": {"type": "integer", "minimum": 2},
+    "primary_metric": {"const": "verified_completion_rate"},
+    "comparability_status": {"enum": ["passed", "failed"]},
+    "comparability_issues": {"type": "array", "items": {"type": "string"}},
+    "evidence_sufficiency": {"enum": ["descriptive_only", "insufficient"]},
+    "candidate_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "trials",
+          "completed",
+          "primary_completed",
+          "fallback_assisted_completed",
+          "retry_assisted_completed",
+          "verification_failed",
+          "awaiting_human",
+          "verification_missing",
+          "execution_failed",
+          "abandoned",
+          "verified_completion_rate",
+          "verified_completion_wilson95",
+          "primary_verified_completion_rate",
+          "primary_verified_completion_wilson95",
+          "fallback_assistance_rate",
+          "retry_assistance_rate",
+          "pass_any_trial_fixture_rate",
+          "pass_all_trials_fixture_rate",
+          "mean_total_duration_ms",
+          "token_observation_status",
+          "total_tokens_observed"
+        ],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "trials": {"type": "integer", "minimum": 0},
+          "completed": {"type": "integer", "minimum": 0},
+          "primary_completed": {"type": "integer", "minimum": 0},
+          "fallback_assisted_completed": {"type": "integer", "minimum": 0},
+          "retry_assisted_completed": {"type": "integer", "minimum": 0},
+          "verification_failed": {"type": "integer", "minimum": 0},
+          "awaiting_human": {"type": "integer", "minimum": 0},
+          "verification_missing": {"type": "integer", "minimum": 0},
+          "execution_failed": {"type": "integer", "minimum": 0},
+          "abandoned": {"type": "integer", "minimum": 0},
+          "verified_completion_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "verified_completion_wilson95": {"$ref": "#/$defs/interval"},
+          "primary_verified_completion_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "primary_verified_completion_wilson95": {"$ref": "#/$defs/interval"},
+          "fallback_assistance_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "retry_assistance_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "pass_any_trial_fixture_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "pass_all_trials_fixture_rate": {"type": "number", "minimum": 0, "maximum": 1},
+          "mean_total_duration_ms": {"type": "number", "minimum": 0},
+          "token_observation_status": {"enum": ["complete", "partial", "unknown"]},
+          "total_tokens_observed": {"type": ["integer", "null"], "minimum": 0}
+        }
+      }
+    },
+    "regression_signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "metric", "baseline_candidate_id", "delta", "classification"],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "metric": {"enum": ["verified_completion_rate", "primary_verified_completion_rate"]},
+          "baseline_candidate_id": {"type": "string", "minLength": 1},
+          "delta": {"type": "number", "exclusiveMaximum": 0},
+          "classification": {"const": "descriptive_drop"}
+        }
+      }
+    },
+    "verifier_disagreement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reason"],
+      "properties": {
+        "status": {"const": "not_measured"},
+        "reason": {"type": "string", "minLength": 1}
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_sha256", "fixture_integrity_sha256", "source_outcome_ids"],
+      "properties": {
+        "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "fixture_integrity_sha256": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "source_outcome_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["low", "high"],
+      "properties": {
+        "low": {"type": "number", "minimum": 0, "maximum": 1},
+        "high": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    }
+  }
+}

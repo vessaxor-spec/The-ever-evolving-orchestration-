@@ -2,6 +2,15 @@
 
 from .anthropic_adapter import AnthropicMessagesAdapter, execute_anthropic_canary_once
 from .anthropic_verifier import AnthropicLiveVerifier
+from .benchmark_lab import (
+    BenchmarkExperimentManifest,
+    BenchmarkExperimentReport,
+    BenchmarkFixtureRecord,
+    JsonlBenchmarkReportSink,
+    evaluate_benchmark,
+    load_benchmark_fixtures,
+    load_route_outcomes,
+)
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
 from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
 from .google_verifier import GoogleLiveVerifier
@@ -69,6 +78,9 @@ __all__ = [
     "AnthropicLiveVerifier",
     "AnthropicMessagesAdapter",
     "BaseOrchestrationEngine",
+    "BenchmarkExperimentManifest",
+    "BenchmarkExperimentReport",
+    "BenchmarkFixtureRecord",
     "CanaryRuntimeOutcome",
     "CircuitStateStore",
     "DispatchRecord",
@@ -79,6 +91,7 @@ __all__ = [
     "InMemoryCircuitStateStore",
     "InMemoryRuntimeTelemetrySink",
     "JsonFileCircuitStateStore",
+    "JsonlBenchmarkReportSink",
     "JsonlRouteOutcomeSink",
     "JsonlRuntimeTelemetrySink",
     "LiveVerificationDecision",
@@ -116,6 +129,7 @@ __all__ = [
     "active_execution_from_outcome",
     "build_abandoned_route_outcome",
     "build_guarded_canary_route_outcome",
+    "evaluate_benchmark",
     "execute_anthropic_canary_once",
     "execute_gemini_canary_once",
     "execute_guarded_canary",
@@ -123,5 +137,7 @@ __all__ = [
     "execute_openai_canary_once",
     "execute_provider_once",
     "execute_with_transient_retry",
+    "load_benchmark_fixtures",
+    "load_route_outcomes",
     "verify_guarded_canary_outcome",
 ]
