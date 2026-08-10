@@ -85,7 +85,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         assert phrase in text
 
     assert "78 active specialists" not in text
-    assert "direct outcome-to-self-modifying-routing" in text
+    assert "Direct outcome-to-self-modifying-routing authority" in text
 
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
