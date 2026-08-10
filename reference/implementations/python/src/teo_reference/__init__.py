@@ -11,6 +11,12 @@ from .benchmark_lab import (
     load_benchmark_fixtures,
     load_route_outcomes,
 )
+from .benchmark_replay import (
+    BenchmarkReplayPlan,
+    ControlledReplayExecution,
+    evaluate_controlled_replay,
+    run_controlled_replay,
+)
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
 from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
 from .google_verifier import GoogleLiveVerifier
@@ -81,8 +87,10 @@ __all__ = [
     "BenchmarkExperimentManifest",
     "BenchmarkExperimentReport",
     "BenchmarkFixtureRecord",
+    "BenchmarkReplayPlan",
     "CanaryRuntimeOutcome",
     "CircuitStateStore",
+    "ControlledReplayExecution",
     "DispatchRecord",
     "FinalOutcome",
     "GeminiInteractionsAdapter",
@@ -130,6 +138,7 @@ __all__ = [
     "build_abandoned_route_outcome",
     "build_guarded_canary_route_outcome",
     "evaluate_benchmark",
+    "evaluate_controlled_replay",
     "execute_anthropic_canary_once",
     "execute_gemini_canary_once",
     "execute_guarded_canary",
@@ -139,5 +148,6 @@ __all__ = [
     "execute_with_transient_retry",
     "load_benchmark_fixtures",
     "load_route_outcomes",
+    "run_controlled_replay",
     "verify_guarded_canary_outcome",
 ]
