@@ -1,6 +1,6 @@
 version: "1.1"
 status: active
-reviewed_at: 2026-08-09
+reviewed_at: 2026-08-10
 
 v1_definition:
   target: credible_vendor_neutral_orchestration_specification_with_runnable_reference_control_plane
@@ -56,9 +56,9 @@ provisional_operational_evidence:
 human_stewardship:
   blocking_for_functional_v1_release: false
   blocking_for_human_ground_truth_claims: true
-  blocking_for_evidence_based_scope_expansion: true
-  blocking_for_future_route_changes_when_policy_requires_human_acceptance: true
-  preferred_execution_model: github_community_stewardship
+  blocking_for_evidence_based_scope_expansion: false
+  blocking_for_future_route_changes_when_policy_requires_human_acceptance: false
+  preferred_execution_model: optional_public_research
   issue_tracker: 75
 
 authority_boundary:
@@ -72,15 +72,17 @@ release_states:
   - id: reference_operational
     description: Architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational; access to selected models is supplied by the caller or integrating runtime.
   - id: human_calibrated
-    description: Independent blinded human calibration and residual-risk acceptance have been completed.
+    description: An optional independent blinded human calibration study has been completed and can support specifically scoped human-validation claims.
 
 policy: >-
   TEO v1 is a functional reference-system milestone, not a provider-account provisioning
-  product and not a claim that every future production hardening feature or human
+  product and not a claim that every future production hardening feature or optional human
   calibration study is complete. TEO owns model-routing correctness; callers and integrating
   runtimes own valid access to the selected implementation through API keys, OAuth or
   subscription-backed sessions, delegated identity, connectors, or other provider-supported
   mechanisms. Access method must not alter model-routing semantics. Independent human
-  calibration remains the stronger evidence tier and is required before human ground-truth
-  claims, policy-governed scope expansion, or route changes that require explicit human
-  acceptance. It does not block tagging a functionally complete v1 reference release.
+  calibration is an optional evidence-enhancement mechanism. It is required only before
+  making a specifically scoped claim that verifier evidence has been independently
+  human-validated; it does not authorize or veto releases, routing changes, live-scope
+  decisions, model selection, or architectural evolution. Qualified human approval remains
+  mandatory wherever the underlying task or effective-risk policy independently requires it.

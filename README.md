@@ -177,7 +177,7 @@ The following remain valuable post-v1 work and were explicitly not required for 
 - TEO-managed subscription or entitlement management
 - a TEO-managed credential broker
 
-Independent human calibration remains the stronger evidence tier and is required before claims or scope changes that policy explicitly reserves for human acceptance. It is tracked in [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75) as a community stewardship program rather than a blocker to the functional reference release.
+Independent human calibration is an optional evidence-enhancement study. It can support specific claims of independent human validation when maintainers choose to run it, but it is not a release, routing, model-selection, live-scope, or architectural gate. It is tracked in [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75) as optional research rather than an approval authority over TEO.
 
 Repository branch cleanup is separately tracked in [Issue #100](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/100). It is repository hygiene only and is not routing or runtime authority.
 
@@ -424,18 +424,15 @@ The verifier-calibration system includes:
 - a separate provisional machine-panel tier when independent human reviewers are unavailable
 - strict evidence labeling that prevents machine-panel evidence from being presented as human ground truth
 
-### Human stewardship
+### Optional independent human calibration
 
-Independent blinded human calibration is **not required to tag the functional reference v1**.
+Independent blinded human calibration is an optional evidence-enhancement study. It is not required for the functional reference release and does not authorize or veto releases, routing changes, model selection, live-scope decisions, or architectural evolution.
 
-It remains required before:
+When maintainers choose to run the study, its blinded protocol can support a specific claim that verifier evidence has been independently human-validated. Without such a study, TEO must simply avoid making that particular claim.
 
-- claiming human-ground-truth verifier quality
-- evidence-based scope expansion where policy requires human acceptance
-- route changes that require explicit human acceptance
-- replacing the independent-human evidence tier
+Normal engineering evolution remains governed by reproducible evidence, policy constraints, automated and adversarial testing, CI, public technical review, and maintainer governance. Qualified human approval remains mandatory only where the underlying task or effective-risk policy independently requires it.
 
-The preferred path is public GitHub community stewardship through [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75). The machine-panel path does not remove or impersonate that human tier.
+The optional study is tracked in [Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75). Public issues, pull requests, technical feedback, and voluntary study contributions remain the normal collaboration mechanisms.
 
 ### Provisional operational evidence
 
@@ -732,7 +729,7 @@ The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence meta
 
 Current and future work may include:
 
-- independent blinded human calibration through community stewardship ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
+- optional independent blinded human calibration research ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
 - evidence-governed live-scope expansion
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls
