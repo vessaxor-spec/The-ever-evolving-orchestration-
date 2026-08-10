@@ -54,6 +54,8 @@ def test_ecommerce_supports_conversational_and_agentic_discovery() -> None:
 
 
 def test_refresh_is_documented_as_one_systemic_theme() -> None:
-    methodology = (ROOT / "docs" / "methodology" / "ai-mediated-discovery-refresh-2026-08-05.md").read_text(encoding="utf-8")
+    historical_record = (
+        ROOT / "docs" / "history" / "audits" / "ai-mediated-discovery-refresh-2026-08-05.md"
+    ).read_text(encoding="utf-8")
     for name in ["Google Search Central", "Google Ads Help", "Meta Engineering", "Amazon Science"]:
-        assert name in methodology
+        assert name in historical_record
