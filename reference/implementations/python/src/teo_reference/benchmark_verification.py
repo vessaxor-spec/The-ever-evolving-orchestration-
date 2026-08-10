@@ -48,10 +48,6 @@ def _canonical_sha256(data: Mapping[str, Any], *, omit: str | None = None) -> st
     return hashlib.sha256(encoded).hexdigest()
 
 
-def _text_sha256(value: str) -> str:
-    return hashlib.sha256(value.encode("utf-8")).hexdigest()
-
-
 def _load_schema(repo_root: str | Path, relative_path: str) -> dict[str, Any]:
     path = Path(repo_root) / relative_path
     if not path.is_file():
@@ -93,10 +89,9 @@ def _validate_panel_semantics(data: dict[str, Any]) -> None:
                 f"Benchmark verifier panel candidate {candidate_id} is duplicated"
             )
         candidate_ids.add(candidate_id)
-
         observer_ids: set[str] = set()
         identities: set[tuple[str, str, str | None]] = set()
-        provider_families: set[str] = set()
+        providers: set[str] = set()
         for observer in panel["observers"]:
             observer_id = str(observer["observer_id"])
             if observer_id in observer_ids:
@@ -116,9 +111,8 @@ def _validate_panel_semantics(data: dict[str, Any]) -> None:
                     f"Benchmark verifier panel for {candidate_id} repeats an observer identity"
                 )
             identities.add(identity)
-            provider_families.add(str(observer["provider_family"]))
-
-        if len(provider_families) < 2:
+            providers.add(str(observer["provider_family"]))
+        if len(providers) < 2:
             raise ProviderAdapterContractError(
                 f"Benchmark verifier panel for {candidate_id} requires at least two provider families"
             )
@@ -130,10 +124,7 @@ class BenchmarkVerifierPanelPlan:
 
     @classmethod
     def from_dict(
-        cls,
-        data: dict[str, Any],
-        *,
-        repo_root: str | Path,
+        cls, data: dict[str, Any], *, repo_root: str | Path
     ) -> "BenchmarkVerifierPanelPlan":
         _validate_schema(
             data,
@@ -158,10 +149,7 @@ class BenchmarkVerifierObservation:
 
     @classmethod
     def from_dict(
-        cls,
-        data: dict[str, Any],
-        *,
-        repo_root: str | Path,
+        cls, data: dict[str, Any], *, repo_root: str | Path
     ) -> "BenchmarkVerifierObservation":
         _validate_schema(
             data,
@@ -179,9 +167,9 @@ class BenchmarkVerifierObservation:
             unsupported_claims_absent=str(checks["unsupported_claims_absent"]),  # type: ignore[arg-type]
             human_reason=str(decision["human_reason"]),  # type: ignore[arg-type]
         )
-        expected = str(data["integrity_sha256"])
-        actual = _canonical_sha256(data, omit="integrity_sha256")
-        if expected != actual:
+        if str(data["integrity_sha256"]) != _canonical_sha256(
+            data, omit="integrity_sha256"
+        ):
             raise ProviderAdapterContractError(
                 "Benchmark verifier observation integrity hash does not match content"
             )
@@ -193,16 +181,14 @@ class BenchmarkVerifierObservation:
 
 def _panel_map(plan: BenchmarkVerifierPanelPlan) -> dict[str, dict[str, Any]]:
     return {
-        str(panel["candidate_id"]): panel
-        for panel in plan.to_dict()["panels"]
+        str(panel["candidate_id"]): panel for panel in plan.to_dict()["panels"]
     }
 
 
 def _active_route(outcome: dict[str, Any]) -> dict[str, Any]:
-    role = outcome.get("active_route_role")
-    if role == "primary":
+    if outcome.get("active_route_role") == "primary":
         return outcome["primary_route"]
-    if role == "fallback" and outcome.get("fallback_route") is not None:
+    if outcome.get("active_route_role") == "fallback" and outcome.get("fallback_route"):
         return outcome["fallback_route"]
     raise ProviderAdapterContractError(
         "Benchmark verifier panel requires a successful active execution route"
@@ -263,18 +249,18 @@ def execute_benchmark_verifier_panel(
     executor = active["implementation"]
     runtime_verifier = active["verifier"]
     observers = panel["observers"]
-    if any(str(observer["model"]) == str(executor["model"]) for observer in observers):
+    if any(str(item["model"]) == str(executor["model"]) for item in observers):
         raise ProviderAdapterContractError(
             "Benchmark verifier panel cannot reuse the active executor model as an observer"
         )
 
     timestamp = observed_at or datetime.now(timezone.utc).isoformat()
-    output_sha256 = _text_sha256(output)
+    output_sha256 = hashlib.sha256(output.encode("utf-8")).hexdigest()
     records: list[BenchmarkVerifierObservation] = []
     for observer in observers:
         request = LiveVerificationRequest(
             dispatch_id=str(active["dispatch_id"]),
-            task_id=str(outcome_data["task_id"]),
+            task_id=str(active["dispatch_id"]),
             verifier_provider_family=str(observer["provider_family"]),
             verifier_model=str(observer["model"]),
             verifier_reasoning_effort=(
@@ -296,7 +282,10 @@ def execute_benchmark_verifier_panel(
         payload: dict[str, Any] = {
             "benchmark_lab_version": BENCHMARK_LAB_VERSION,
             "record_type": "benchmark_verifier_observation",
-            "observation_id": f"observation-{hashlib.sha256(seed.encode('utf-8')).hexdigest()[:20]}",
+            "observation_id": (
+                "observation-"
+                + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:20]
+            ),
             "experiment_id": plan.to_dict()["experiment_id"],
             "fixture_id": fixture_id,
             "candidate_id": candidate_id,
@@ -331,23 +320,24 @@ def execute_benchmark_verifier_panel(
     return tuple(records)
 
 
-def _trial_disagreement(observations: Sequence[dict[str, Any]]) -> tuple[bool, bool, bool, bool]:
+def _trial_disagreement(
+    observations: Sequence[dict[str, Any]],
+) -> tuple[bool, bool, bool, bool]:
     statuses = {str(item["decision"]["status"]) for item in observations}
-    human_reasons = {str(item["decision"]["human_reason"]) for item in observations}
-    check_names = (
+    reasons = {str(item["decision"]["human_reason"]) for item in observations}
+    checks = (
         "output_present",
         "task_adherence",
         "format_consistency",
         "unsupported_claims_absent",
     )
-    criterion_disagreement = any(
+    criterion = any(
         len({str(item["decision"]["checks"][name]) for item in observations}) > 1
-        for name in check_names
+        for name in checks
     )
-    status_disagreement = len(statuses) > 1
-    human_reason_disagreement = len(human_reasons) > 1
-    disagreement = status_disagreement or criterion_disagreement or human_reason_disagreement
-    return disagreement, status_disagreement, criterion_disagreement, human_reason_disagreement
+    status = len(statuses) > 1
+    human_reason = len(reasons) > 1
+    return status or criterion or human_reason, status, criterion, human_reason
 
 
 def attach_verifier_disagreement(
@@ -378,12 +368,15 @@ def attach_verifier_disagreement(
         raise ProviderAdapterContractError(
             "Benchmark verifier panel plan must cover the exact manifest candidate set"
         )
-
-    outcome_by_id = {str(item.to_dict()["outcome_id"]): item.to_dict() for item in outcomes}
+    outcome_by_id = {
+        str(record.to_dict()["outcome_id"]): record.to_dict() for record in outcomes
+    }
     if len(outcome_by_id) != len(outcomes):
-        raise ProviderAdapterContractError("Benchmark verifier outcomes contain duplicate outcome IDs")
+        raise ProviderAdapterContractError(
+            "Benchmark verifier outcomes contain duplicate outcome IDs"
+        )
 
-    binding_by_key: dict[tuple[str, str, int], dict[str, Any]] = {}
+    bindings: dict[tuple[str, str, int], dict[str, Any]] = {}
     expected: set[tuple[str, str, int, str]] = set()
     for binding in manifest_data["bindings"]:
         key = (
@@ -391,7 +384,7 @@ def attach_verifier_disagreement(
             str(binding["fixture_id"]),
             int(binding["trial_index"]),
         )
-        binding_by_key[key] = binding
+        bindings[key] = binding
         outcome = outcome_by_id.get(str(binding["outcome_id"]))
         if outcome is None:
             continue
@@ -403,7 +396,7 @@ def attach_verifier_disagreement(
             expected.add((*key, str(observer["observer_id"])))
 
     issues: list[str] = []
-    observation_by_key: dict[tuple[str, str, int, str], dict[str, Any]] = {}
+    seen: dict[tuple[str, str, int, str], dict[str, Any]] = {}
     output_hashes: dict[tuple[str, str, int], set[str]] = {}
     panel_sha = panel_plan.sha256
     for record in observations:
@@ -415,10 +408,10 @@ def attach_verifier_disagreement(
         )
         key4 = (*key3, str(item["observer_id"]))
         label = ":".join(str(part) for part in key4)
-        if key4 in observation_by_key:
+        if key4 in seen:
             issues.append(f"duplicate_observation:{label}")
             continue
-        observation_by_key[key4] = item
+        seen[key4] = item
         if item["experiment_id"] != manifest_data["experiment_id"]:
             issues.append(f"experiment_mismatch:{label}")
         if item["panel_plan_sha256"] != panel_sha:
@@ -426,7 +419,7 @@ def attach_verifier_disagreement(
         if key4 not in expected:
             issues.append(f"unexpected_observation:{label}")
             continue
-        binding = binding_by_key[key3]
+        binding = bindings[key3]
         if item["outcome_id"] != binding["outcome_id"]:
             issues.append(f"outcome_mismatch:{label}")
             continue
@@ -457,13 +450,11 @@ def attach_verifier_disagreement(
             issues.append(f"executor_model_reused:{label}")
         output_hashes.setdefault(key3, set()).add(str(item["output_sha256"]))
 
-    for missing in sorted(expected - set(observation_by_key)):
-        issues.append("missing_observation:" + ":".join(str(part) for part in missing))
-    for key3, hashes in output_hashes.items():
+    for key in sorted(expected - set(seen)):
+        issues.append("missing_observation:" + ":".join(str(part) for part in key))
+    for key, hashes in output_hashes.items():
         if len(hashes) > 1:
-            issues.append(
-                "output_hash_disagreement:" + ":".join(str(part) for part in key3)
-            )
+            issues.append("output_hash_disagreement:" + ":".join(str(part) for part in key))
 
     if issues:
         disagreement: dict[str, Any] = {
@@ -473,88 +464,75 @@ def attach_verifier_disagreement(
             "canonical_runtime_verifier_override": False,
         }
     else:
-        candidate_summaries: list[dict[str, Any]] = []
-        total_verifiable_trials = 0
-        total_observations = 0
-        total_unanimous = 0
-        total_disagreement = 0
-        total_status_disagreement = 0
-        total_criterion_disagreement = 0
-        total_human_reason_disagreement = 0
-
+        summaries: list[dict[str, Any]] = []
+        totals = {
+            "verifiable": 0,
+            "observations": 0,
+            "unanimous": 0,
+            "disagreement": 0,
+            "status": 0,
+            "criterion": 0,
+            "human_reason": 0,
+        }
         for candidate_id in sorted(candidate_ids):
-            trial_keys = sorted(
-                {
-                    key[:3]
-                    for key in expected
-                    if key[0] == candidate_id
-                }
-            )
+            trial_keys = sorted({key[:3] for key in expected if key[0] == candidate_id})
             panel_size = len(panels[candidate_id]["observers"])
-            disagreement_trials = 0
-            status_disagreement_trials = 0
-            criterion_disagreement_trials = 0
-            human_reason_disagreement_trials = 0
+            candidate_counts = {
+                "disagreement": 0,
+                "status": 0,
+                "criterion": 0,
+                "human_reason": 0,
+            }
             for trial_key in trial_keys:
                 trial_observations = [
-                    observation_by_key[(*trial_key, str(observer["observer_id"]))]
+                    seen[(*trial_key, str(observer["observer_id"]))]
                     for observer in panels[candidate_id]["observers"]
                 ]
-                (
-                    any_disagreement,
-                    status_disagreement,
-                    criterion_disagreement,
-                    human_reason_disagreement,
-                ) = _trial_disagreement(trial_observations)
-                disagreement_trials += int(any_disagreement)
-                status_disagreement_trials += int(status_disagreement)
-                criterion_disagreement_trials += int(criterion_disagreement)
-                human_reason_disagreement_trials += int(human_reason_disagreement)
-
-            verifiable_trials = len(trial_keys)
-            observation_count = verifiable_trials * panel_size
-            unanimous_trials = verifiable_trials - disagreement_trials
-            candidate_summaries.append(
+                values = _trial_disagreement(trial_observations)
+                for name, value in zip(candidate_counts, values):
+                    candidate_counts[name] += int(value)
+            verifiable = len(trial_keys)
+            observation_count = verifiable * panel_size
+            unanimous = verifiable - candidate_counts["disagreement"]
+            summaries.append(
                 {
                     "candidate_id": candidate_id,
                     "panel_size": panel_size,
-                    "verifiable_trials": verifiable_trials,
+                    "verifiable_trials": verifiable,
                     "observation_count": observation_count,
-                    "unanimous_trials": unanimous_trials,
-                    "disagreement_trials": disagreement_trials,
+                    "unanimous_trials": unanimous,
+                    "disagreement_trials": candidate_counts["disagreement"],
                     "disagreement_rate": (
-                        disagreement_trials / verifiable_trials if verifiable_trials else 0.0
+                        candidate_counts["disagreement"] / verifiable if verifiable else 0.0
                     ),
-                    "status_disagreement_trials": status_disagreement_trials,
-                    "criterion_disagreement_trials": criterion_disagreement_trials,
-                    "human_reason_disagreement_trials": human_reason_disagreement_trials,
+                    "status_disagreement_trials": candidate_counts["status"],
+                    "criterion_disagreement_trials": candidate_counts["criterion"],
+                    "human_reason_disagreement_trials": candidate_counts["human_reason"],
                 }
             )
-            total_verifiable_trials += verifiable_trials
-            total_observations += observation_count
-            total_unanimous += unanimous_trials
-            total_disagreement += disagreement_trials
-            total_status_disagreement += status_disagreement_trials
-            total_criterion_disagreement += criterion_disagreement_trials
-            total_human_reason_disagreement += human_reason_disagreement_trials
+            totals["verifiable"] += verifiable
+            totals["observations"] += observation_count
+            totals["unanimous"] += unanimous
+            for name in ("disagreement", "status", "criterion", "human_reason"):
+                totals[name] += candidate_counts[name]
 
         disagreement = {
             "status": "measured",
             "panel_plan_id": plan_data["panel_plan_id"],
             "panel_plan_version": plan_data["panel_plan_version"],
-            "observation_count": total_observations,
-            "verifiable_trials": total_verifiable_trials,
-            "unanimous_trials": total_unanimous,
-            "disagreement_trials": total_disagreement,
+            "observation_count": totals["observations"],
+            "verifiable_trials": totals["verifiable"],
+            "unanimous_trials": totals["unanimous"],
+            "disagreement_trials": totals["disagreement"],
             "disagreement_rate": (
-                total_disagreement / total_verifiable_trials
-                if total_verifiable_trials
+                totals["disagreement"] / totals["verifiable"]
+                if totals["verifiable"]
                 else 0.0
             ),
-            "status_disagreement_trials": total_status_disagreement,
-            "criterion_disagreement_trials": total_criterion_disagreement,
-            "human_reason_disagreement_trials": total_human_reason_disagreement,
-            "candidate_summaries": candidate_summaries,
+            "status_disagreement_trials": totals["status"],
+            "criterion_disagreement_trials": totals["criterion"],
+            "human_reason_disagreement_trials": totals["human_reason"],
+            "candidate_summaries": summaries,
             "decision_use": "diagnostic_only",
             "canonical_runtime_verifier_override": False,
         }
@@ -565,18 +543,17 @@ def attach_verifier_disagreement(
         for item in report_data["limitations"]
         if "Multi-verifier disagreement measurement" not in item
     ]
-    diagnostic_note = (
+    note = (
         "Benchmark verifier disagreement is diagnostic only. No majority vote, panel pass rate, or observer preference overrides the canonical runtime verifier or route-outcome disposition."
     )
-    if diagnostic_note not in report_data["limitations"]:
-        report_data["limitations"].append(diagnostic_note)
+    if note not in report_data["limitations"]:
+        report_data["limitations"].append(note)
     report_data["provenance"]["panel_plan_sha256"] = panel_sha
     report_data["provenance"]["source_verifier_observation_ids"] = sorted(
         str(item.to_dict()["observation_id"]) for item in observations
     )
     report_data["integrity_sha256"] = _canonical_sha256(
-        report_data,
-        omit="integrity_sha256",
+        report_data, omit="integrity_sha256"
     )
     return BenchmarkExperimentReport.from_dict(report_data, repo_root=repo_root)
 
