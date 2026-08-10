@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-replay-plan.schema.json",
+  "title": "TEO Benchmark Lab Controlled Live Replay Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "replay_id",
+    "claim_scope",
+    "suite_id",
+    "suite_version",
+    "trials_per_fixture",
+    "primary_metric",
+    "stopping_rule",
+    "harness",
+    "candidates"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_replay_plan"},
+    "replay_id": {"type": "string", "minLength": 1},
+    "claim_scope": {"const": "system_to_system"},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_version": {"type": "string", "minLength": 1},
+    "trials_per_fixture": {"type": "integer", "minimum": 2},
+    "primary_metric": {"const": "verified_completion_rate"},
+    "stopping_rule": {"const": "fixed_trials"},
+    "harness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "harness_id",
+        "harness_version",
+        "tool_access_profile",
+        "max_attempts",
+        "max_wall_time_seconds",
+        "selection_mode",
+        "circuit_state_profile",
+        "verification_mode"
+      ],
+      "properties": {
+        "harness_id": {"type": "string", "minLength": 1},
+        "harness_version": {"type": "string", "minLength": 1},
+        "tool_access_profile": {"const": "none"},
+        "max_attempts": {"type": "integer", "minimum": 1, "maximum": 2},
+        "max_wall_time_seconds": {"const": null},
+        "selection_mode": {"const": "policy_with_additive_blocks"},
+        "circuit_state_profile": {"const": "isolated_per_trial"},
+        "verification_mode": {"const": "assigned_live_verifier"}
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "provider_family",
+          "model",
+          "reasoning_effort",
+          "verifier_provider_family",
+          "verifier_model",
+          "runtime_version",
+          "repository_revision",
+          "routing_policy_revision",
+          "registry_revision",
+          "tool_versions",
+          "isolation"
+        ],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "provider_family": {"type": "string", "minLength": 1},
+          "model": {"type": "string", "minLength": 1},
+          "reasoning_effort": {"type": ["string", "null"]},
+          "verifier_provider_family": {"type": "string", "minLength": 1},
+          "verifier_model": {"type": "string", "minLength": 1},
+          "runtime_version": {"type": "string", "minLength": 1},
+          "repository_revision": {"type": "string", "minLength": 1},
+          "routing_policy_revision": {"type": ["string", "null"]},
+          "registry_revision": {"type": ["string", "null"]},
+          "tool_versions": {
+            "type": "object",
+            "additionalProperties": {"type": ["string", "null"]}
+          },
+          "isolation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["blocked_implementations", "blocked_providers"],
+            "properties": {
+              "blocked_implementations": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1},
+                "uniqueItems": true
+              },
+              "blocked_providers": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1},
+                "uniqueItems": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
