@@ -84,10 +84,11 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "dedicated Mission Control workers for orchestration, operations, project delivery, and incident response",
         "community/specialists/workforce-expansion-active.yaml",
         "Shadow Route Evaluation",
-        "602 automated tests",
-        "451 tracked-file layout checks",
-        "34 JSON Schema",
         "Qualified-human approval lifecycle",
+        "626 automated tests",
+        "458 tracked-file layout checks",
+        "38 JSON Schema",
+        "evidence-governed live execution expansion",
         "Issue #100",
         "is complete",
     ):
@@ -96,6 +97,7 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
     for worker in EXPECTED_MISSION_CONTROL_WORKERS:
         assert f"`{worker}`" in text
 
+    assert "automated qualified-human approval integration" not in text
     assert "source-backed historical cost attribution" not in text
     assert "route-outcome learning and shadow-route evaluation" not in text
 
@@ -110,29 +112,30 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 602 tests passed |",
+        "| Latest validated test suite | 626 tests passed |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
         "| Shadow route evaluation | Complete | 100% |",
-        "| Qualified-human approval lifecycle | In progress | 40% |",
+        "| Qualified-human approval lifecycle | Complete | 100% |",
+        "| Live execution expansion | In progress | 30% |",
         "## NOW",
-        "### Qualified-human approval lifecycle",
-        "## NEXT",
         "### Evidence-governed live execution expansion",
+        "## NEXT",
+        "No additional workstream is promoted",
         "## LATER",
     ):
         assert phrase in text
 
     now_section = text.split("## NOW", 1)[1].split("## NEXT", 1)[0]
     next_section = text.split("## NEXT", 1)[1].split("## LATER", 1)[0]
-    assert "### Shadow route evaluation" not in now_section
-    assert "qualified-human" in now_section.lower()
-    assert "impersonating qualified-human approval" in now_section
-    assert "### Evidence-governed live execution expansion" in next_section
-    assert "High and critical live execution remains unauthorized" in next_section
+    assert "### Qualified-human approval lifecycle" not in now_section
+    assert "### Evidence-governed live execution expansion" in now_section
+    assert "do not authorize high or critical live execution" in now_section
+    assert "High and critical live execution remains unauthorized" in now_section
+    assert "No additional workstream is promoted" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
-    assert "Reference Implementation CI run #445" in text
+    assert "Reference Implementation CI run #451" in text
     assert "78 active specialists" not in text
 
     benchmark_spec = (
@@ -194,6 +197,23 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Direct outcome-to-self-modifying-routing authority is outside TEO's design.",
     ):
         assert phrase in shadow_spec
+
+    qualified_human_spec = (
+        REPO_ROOT / "docs" / "specification" / "qualified-human-approval-lifecycle.md"
+    ).read_text(encoding="utf-8")
+    for phrase in (
+        "complete at its current declared milestone",
+        "A model-verification result cannot satisfy a qualified-human approval requirement.",
+        "qualified_human_authority_grant",
+        "actor_type: human",
+        "Maintainer status by itself is not approval authority.",
+        "The original Route-Outcome Evidence remains immutable.",
+        "model selection;",
+        "provider access or authentication method;",
+        "billing identity;",
+        "Reference Implementation CI #451",
+    ):
+        assert phrase in qualified_human_spec
 
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
