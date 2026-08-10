@@ -36,9 +36,11 @@ The current roadmap is focused on proving and operating the decision system rath
 - enforce JSON Schemas at external control-plane boundaries
 - keep machine-readable policy and implementation behavior mutation-tested
 
-### Verifier calibration
+### Verifier calibration evidence
 
-Build deterministic gold-label and human-rated calibration evidence for the guarded verifier rubric.
+Build deterministic and empirical calibration evidence for the guarded verifier rubric using the fixed reference corpus, machine-checkable invariants, provider-diverse observations, and other reproducible evaluation methods.
+
+Independent human calibration is an optional evidence-enhancement study under Issue #75. It is not a release, routing, model-selection, live-scope, or architectural gate. A completed human study is required only before making a specifically scoped claim that verifier evidence has been independently human-validated.
 
 Measure:
 
@@ -52,7 +54,7 @@ Measure:
 - latency and normalized usage
 - retry/fallback relationship to outcomes
 
-Do not broaden live verification based on model confidence alone.
+Do not broaden live verification based on model confidence alone. Broader scope remains governed by applicable authority, capability, verification, telemetry, recovery, evidence, risk, and maintainer-review controls. Optional human calibration may strengthen the evidence base but does not create a separate approval authority.
 
 ### Route-outcome evidence
 
