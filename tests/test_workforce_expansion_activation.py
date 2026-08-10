@@ -20,6 +20,14 @@ EXPECTED_SPECIALISTS = {
     "fraud-forensic-investigation-specialist": ("research", "osint"),
     "talent-acquisition-specialist": ("mission_control", "operations"),
     "insurance-claims-specialist": ("mission_control", "operations"),
+    "orchestration-evaluation-analyst": ("research", "analytics"),
+}
+
+EXPECTED_MODELS = {
+    "fraud-forensic-investigation-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro-preview"),
+    "talent-acquisition-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro-preview"),
+    "insurance-claims-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro-preview"),
+    "orchestration-evaluation-analyst": ("gpt-5.6-sol", "claude-sonnet-5", "gemini-3.1-pro-preview"),
 }
 
 CRITICAL_CONSEQUENCE_CASES = {
@@ -38,6 +46,11 @@ CRITICAL_CONSEQUENCE_CASES = {
         "domain": "operations",
         "task": "Review the claim file and make the coverage decision, including whether to deny claim payment.",
     },
+    "orchestration-evaluation-analyst": {
+        "task_type": "specialist_research",
+        "domain": "analytics",
+        "task": "Use the evaluation to modify live routing policy and apply route recommendation automatically.",
+    },
 }
 
 
@@ -53,7 +66,7 @@ def conformance_cases() -> list[dict[str, Any]]:
     return cases
 
 
-def test_workforce_expansion_activates_exactly_three_additive_specialists() -> None:
+def test_workforce_expansion_activates_exactly_four_additive_specialists() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     activation = load_yaml(ACTIVATION_PATH)
     allocations = load_yaml(ALLOCATION_PATH)
@@ -61,13 +74,13 @@ def test_workforce_expansion_activates_exactly_three_additive_specialists() -> N
     assert activation["status"] == "active"
     assert activation["scope"] == {
         "prior_specialist_count": 78,
-        "specialist_count": 81,
-        "new_specialist_count": 3,
+        "specialist_count": 82,
+        "new_specialist_count": 4,
         "new_team_count": 0,
         "new_worker_count": 0,
         "new_generic_route_count": 0,
     }
-    assert len(bundle.specialist_registry) == 81
+    assert len(bundle.specialist_registry) == 82
     assert set(allocations["specialists"]) == set(EXPECTED_SPECIALISTS)
     assert set(activation["activated_specialists"]) == set(EXPECTED_SPECIALISTS)
     assert bundle.validate() == []
@@ -110,6 +123,11 @@ def test_workforce_expansion_role_cards_preserve_authority_boundaries() -> None:
             "qualified-human approval",
             "must remain intact",
         ],
+        "orchestration-evaluation-analyst": [
+            "I evaluate evidence about routing. I do not control live routing.",
+            "Recommendations remain shadow recommendations until separately reviewed",
+            "must remain intact",
+        ],
     }
 
     for specialist_id, phrases in required_phrases.items():
@@ -129,7 +147,7 @@ def test_workforce_expansion_conformance_routes_risk_and_provider_diversity() ->
     engine = SpecialistRoutingEngine(bundle)
     cases = conformance_cases()
 
-    assert len(cases) == 3
+    assert len(cases) == 4
     assert {case["specialist"] for case in cases} == set(EXPECTED_SPECIALISTS)
 
     for case in cases:
@@ -169,6 +187,8 @@ def test_workforce_specialist_critical_request_preserves_human_approval() -> Non
     engine = SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
 
     for case in conformance_cases():
+        specialist = case["specialist"]
+        expected_primary, expected_fallback, expected_verifier = EXPECTED_MODELS[specialist]
         dispatch = engine.dispatch(
             TaskRequest.from_dict(
                 {
@@ -176,23 +196,24 @@ def test_workforce_specialist_critical_request_preserves_human_approval() -> Non
                     "task_type": case["task_type"],
                     "domain": case["domain"],
                     "risk_level": "critical",
-                    "specialist": case["specialist"],
+                    "specialist": specialist,
                     "constraints": PREVIEW_ACCEPTANCE,
                 }
             )
         )
         assert dispatch.risk_level == "critical"
         assert dispatch.verification.human_approval_required is True
-        assert dispatch.selected_implementation.model == "claude-opus-5"
+        assert dispatch.selected_implementation.model == expected_primary
         assert dispatch.fallback_implementation is not None
-        assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
-        assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+        assert dispatch.fallback_implementation.model == expected_fallback
+        assert dispatch.verification.implementation.model == expected_verifier
 
 
 def test_workforce_consequence_rules_automatically_raise_critical_risk() -> None:
     engine = SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
 
     for specialist, case in CRITICAL_CONSEQUENCE_CASES.items():
+        expected_primary, expected_fallback, expected_verifier = EXPECTED_MODELS[specialist]
         dispatch = engine.dispatch(
             TaskRequest.from_dict(
                 {
@@ -207,15 +228,29 @@ def test_workforce_consequence_rules_automatically_raise_critical_risk() -> None
         )
         assert dispatch.risk_level == "critical"
         assert dispatch.verification.human_approval_required is True
-        assert dispatch.selected_implementation.model == "claude-opus-5"
+        assert dispatch.selected_implementation.model == expected_primary
         assert dispatch.selected_implementation.reasoning == "xhigh"
         assert dispatch.fallback_implementation is not None
-        assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
-        assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+        assert dispatch.fallback_implementation.model == expected_fallback
+        assert dispatch.verification.implementation.model == expected_verifier
         assert any(
             "consequence rule elevated effective risk to critical" in explanation
             for explanation in dispatch.routing_explanation
         )
+
+
+def test_orchestration_evaluator_remains_shadow_only() -> None:
+    text = (REPO_ROOT / "community" / "specialists" / "orchestration-evaluation-analyst.md").read_text(
+        encoding="utf-8"
+    )
+    for phrase in (
+        "I evaluate evidence about routing. I do not control live routing.",
+        "Does not select or modify the live route for an active task",
+        "Does not write routing, worker, specialist, risk, verification, capability, model, or runtime policy",
+        "Recommendations remain shadow recommendations until separately reviewed",
+        "The analyst may explain evidence relevant to such a decision. It may not execute or self-approve the decision.",
+    ):
+        assert phrase in text
 
 
 def test_workforce_expansion_does_not_expand_regulated_evidence_pilot() -> None:
