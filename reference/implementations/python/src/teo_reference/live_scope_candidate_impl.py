@@ -6,12 +6,12 @@ from typing import Any
 
 import yaml
 
-from .anthropic_adapter import CANARY_MODELS as ANTHROPIC_EXECUTOR_MODELS
+from .anthropic_adapter import IMPLEMENTED_MODELS as ANTHROPIC_EXECUTOR_MODELS
 from .anthropic_verifier import SUPPORTED_MODELS as ANTHROPIC_VERIFIER_MODELS
 from .engine import RoutingError
 from .google_adapter import CANARY_MODELS as GOOGLE_EXECUTOR_MODELS
 from .google_verifier import SUPPORTED_MODEL_EFFORTS as GOOGLE_VERIFIER_MODEL_EFFORTS
-from .openai_adapter import CANARY_MODELS as OPENAI_EXECUTOR_MODELS
+from .openai_adapter import IMPLEMENTED_MODELS as OPENAI_EXECUTOR_MODELS
 from .openai_verifier import SUPPORTED_MODELS as OPENAI_VERIFIER_MODELS
 from .provider_adapter import ProviderAdapterContractError
 from .runtime_canary import _copy_task_for_redispatch
@@ -296,7 +296,7 @@ def evaluate_live_scope_candidate(
                 primary.selected_implementation.provider_family,
                 primary.selected_implementation.model,
             ),
-            "The guarded executor must support the canonical primary model before activation.",
+            "The guarded executor implementation must support the canonical primary model before activation.",
         ),
         LiveScopeCandidateGate(
             "failure_redispatch_executor_adapter_supported",
@@ -308,7 +308,7 @@ def evaluate_live_scope_candidate(
                 )
                 for dispatch in redispatches
             ),
-            "Every measured failure redispatch executor must have guarded adapter support.",
+            "Every measured failure redispatch executor must have guarded adapter implementation support.",
         ),
         LiveScopeCandidateGate(
             "primary_verifier_adapter_supported",
@@ -316,7 +316,7 @@ def evaluate_live_scope_candidate(
                 primary.verification.implementation.provider_family,
                 primary.verification.implementation.model,
             ),
-            "The guarded verifier must support the canonical primary verifier before activation.",
+            "The guarded verifier implementation must support the canonical primary verifier before activation.",
         ),
         LiveScopeCandidateGate(
             "failure_redispatch_verifier_adapter_supported",
@@ -328,7 +328,7 @@ def evaluate_live_scope_candidate(
                 )
                 for dispatch in redispatches
             ),
-            "Every measured failure redispatch verifier must have guarded verifier adapter support.",
+            "Every measured failure redispatch verifier must have guarded verifier implementation support.",
         ),
         LiveScopeCandidateGate(
             "fallback_redispatch_verifier_is_fresh",
