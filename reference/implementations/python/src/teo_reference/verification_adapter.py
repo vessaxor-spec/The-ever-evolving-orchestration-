@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Literal, Mapping, Protocol
 from urllib.parse import unquote, urlparse
 
-from .provider_adapter import ProviderAdapterContractError
+from .provider_adapter import ProviderAdapterContractError, ProviderUsage
 from .provider_connection import ProviderConnection
 from .schemas import DispatchRecord, VerificationResult
 
@@ -233,6 +233,7 @@ class LiveVerificationResponse:
     provider_family: str
     model: str
     evidence: tuple[str, ...] = ()
+    usage: ProviderUsage | None = None
 
 
 class LiveVerifierAdapter(Protocol):
