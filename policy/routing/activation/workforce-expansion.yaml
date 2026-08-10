@@ -1,11 +1,11 @@
-version: 1.0
+version: 1.1
 status: active
 activated_at: 2026-08-10
 
 scope:
   prior_specialist_count: 78
-  specialist_count: 81
-  new_specialist_count: 3
+  specialist_count: 82
+  new_specialist_count: 4
   new_team_count: 0
   new_worker_count: 0
   new_generic_route_count: 0
@@ -18,6 +18,7 @@ activated_specialists:
   - fraud-forensic-investigation-specialist
   - talent-acquisition-specialist
   - insurance-claims-specialist
+  - orchestration-evaluation-analyst
 
 reused_spawn_paths:
   fraud-forensic-investigation-specialist:
@@ -32,6 +33,10 @@ reused_spawn_paths:
     task_type: specialist_mission_control
     primary_team: mission_control
     worker_binding: operations
+  orchestration-evaluation-analyst:
+    task_type: specialist_research
+    primary_team: research
+    worker_binding: analytics
 
 activation_gates:
   role_cards_exist: true
@@ -53,7 +58,7 @@ routing_policy:
   explicit_specialist_spawn_task_type_required: true
   specialist_must_match_selected_team_and_worker: true
   specialist_risk_elevates_effective_risk: true
-  high_risk_is_minimum_for_all_three_specialists: true
+  high_risk_is_minimum_for_all_four_specialists: true
   critical_effective_risk_requires_qualified_human_approval: true
   routine_fallback_must_cross_provider_boundary: true
   verifier_must_be_independent_from_executor: true
@@ -86,6 +91,16 @@ consequence_escalation:
       - medical_causality_or_injury_disposition
       - catastrophic_loss_litigation_or_regulatory_escalation
     human_authority: qualified_adjuster_claims_owner_siu_medical_reviewer_or_legal_authority
+  orchestration-evaluation-analyst:
+    critical_when:
+      - live_routing_policy_write_or_automatic_recommendation_application
+      - effective_risk_or_capability_requirement_reduction
+      - verification_or_provider_diversity_weakening
+      - qualified_human_authority_removal
+      - direct_model_promotion_or_demotion
+      - preview_authorization_or_production_runtime_authority_change
+      - contradictory_evidence_suppression
+    human_authority: mission_control_maintainer_verification_or_applicable_qualified_human_authority
 
 preservation_policy:
   base_specialist_registry_changed: false
@@ -96,6 +111,7 @@ preservation_policy:
   new_role_cards_are_additive: true
   role_card_paths_must_remain_canonical: true
   specialist_capabilities_must_not_be_reduced: true
+  orchestration_evaluator_remains_shadow_only: true
 
 regulated_evidence_pilot:
   scope_count: 6
