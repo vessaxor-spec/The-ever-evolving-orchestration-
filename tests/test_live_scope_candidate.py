@@ -45,7 +45,7 @@ def test_documentation_is_staged_without_widening_active_live_scope() -> None:
     assert set(candidate["risk_levels"]) == {"low", "medium"}
 
 
-def test_documentation_preflight_preserves_canonical_route_and_reports_real_blockers() -> None:
+def test_documentation_preflight_reports_resolved_route_and_real_blockers() -> None:
     evaluation = evaluate_live_scope_candidate(engine())
     gates = {gate.name: gate.passed for gate in evaluation.gates}
 
@@ -57,30 +57,37 @@ def test_documentation_preflight_preserves_canonical_route_and_reports_real_bloc
     assert evaluation.primary_dispatch["primary_provider_family"] == "anthropic"
     assert evaluation.primary_dispatch["primary_model"] == "claude-sonnet-5"
     assert evaluation.primary_dispatch["primary_reasoning_effort"] == "medium"
-    assert evaluation.primary_dispatch["fallback_provider_family"] == "openai"
-    assert evaluation.primary_dispatch["fallback_model"] == "gpt-5.6-sol"
+    assert evaluation.primary_dispatch["fallback_provider_family"] == "anthropic"
+    assert evaluation.primary_dispatch["fallback_model"] == "claude-haiku-4-5"
     assert evaluation.primary_dispatch["verifier_provider_family"] == "openai"
     assert evaluation.primary_dispatch["verifier_model"] == "gpt-5.6-terra"
     assert evaluation.primary_dispatch["verifier_reasoning_effort"] == "medium"
     assert evaluation.primary_dispatch["human_approval_required"] is False
 
+    for redispatch in (
+        evaluation.model_failure_redispatch,
+        evaluation.provider_failure_redispatch,
+    ):
+        assert redispatch is not None
+        assert redispatch["primary_provider_family"] == "google"
+        assert redispatch["primary_model"] == "gemini-3.5-flash-lite"
+        assert redispatch["verifier_provider_family"] == "openai"
+        assert redispatch["verifier_model"] == "gpt-5.6-terra"
+
     assert gates["active_scope_unchanged"] is True
     assert gates["exact_primary_route_matches"] is True
-    assert gates["exact_fallback_route_matches"] is True
+    assert gates["exact_initial_fallback_matches"] is True
+    assert gates["initial_fallback_provider_diverse"] is False
     assert gates["primary_verifier_matches"] is True
+    assert gates["failure_redispatch_route_matches"] is True
     assert gates["primary_executor_adapter_supported"] is False
-    assert gates["fallback_executor_adapter_supported"] is False
+    assert gates["failure_redispatch_executor_adapter_supported"] is True
     assert gates["primary_verifier_adapter_supported"] is False
-    assert gates["fallback_verifier_adapter_supported"] is True
-    assert gates["fallback_redispatch_has_fresh_provider_diverse_verifier"] is False
+    assert gates["failure_redispatch_verifier_adapter_supported"] is False
+    assert gates["fallback_redispatch_verifier_is_fresh"] is False
     assert gates["controlled_replay_evidence_present"] is False
     assert gates["shadow_evaluation_evidence_present"] is False
     assert gates["high_and_critical_risk_refusal_proven"] is True
-
-    assert evaluation.model_failure_redispatch is not None
-    assert "error" in evaluation.model_failure_redispatch
-    assert evaluation.provider_failure_redispatch is not None
-    assert "error" in evaluation.provider_failure_redispatch
 
 
 def test_staged_documentation_candidate_cannot_invoke_guarded_runtime(tmp_path: Path) -> None:
