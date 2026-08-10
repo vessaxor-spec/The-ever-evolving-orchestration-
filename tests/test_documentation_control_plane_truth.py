@@ -75,7 +75,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 536 tests passed |",
+        "| Latest validated test suite | 538 tests passed |",
         "## NOW",
         "### Route-Outcome Evidence Contract",
         "## NEXT",
