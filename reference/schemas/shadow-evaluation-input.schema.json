@@ -10,6 +10,7 @@
     "evaluation_id",
     "created_at",
     "specialist_id",
+    "analyst_actor",
     "question",
     "consequence_level",
     "candidate_id",
@@ -28,6 +29,17 @@
     "evaluation_id": {"type": "string", "pattern": "^shadow-input-[a-f0-9]{20}$"},
     "created_at": {"type": "string", "format": "date-time"},
     "specialist_id": {"const": "orchestration-evaluation-analyst"},
+    "analyst_actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_type", "actor_id", "provider_family", "model"],
+      "properties": {
+        "actor_type": {"const": "specialist"},
+        "actor_id": {"const": "orchestration-evaluation-analyst"},
+        "provider_family": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1}
+      }
+    },
     "question": {"type": "string", "minLength": 1},
     "consequence_level": {"enum": ["routine", "consequential"]},
     "candidate_id": {"type": "string", "minLength": 1},
