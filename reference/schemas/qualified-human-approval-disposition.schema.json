@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/qualified-human-approval-disposition.schema.json",
+  "title": "TEO Qualified-Human Approval Disposition",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "qualified_human_approval_version",
+    "record_type",
+    "disposition_id",
+    "effective_at",
+    "state",
+    "approval_request_id",
+    "approval_request_integrity_sha256",
+    "previous_disposition_id",
+    "previous_disposition_integrity_sha256",
+    "actor",
+    "authority_grant_ref",
+    "approval_expires_at",
+    "reason",
+    "evidence",
+    "identity_is_routing_signal",
+    "policy_write_authority",
+    "live_routing_authority",
+    "live_scope_change_authority",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "qualified_human_approval_version": {"const": "1"},
+    "record_type": {"const": "qualified_human_approval_disposition"},
+    "disposition_id": {"type": "string", "pattern": "^approval-disposition-[a-f0-9]{20}$"},
+    "effective_at": {"type": "string", "format": "date-time"},
+    "state": {"enum": ["approved", "rejected", "unable_to_determine", "expired", "revoked"]},
+    "approval_request_id": {"type": "string", "pattern": "^approval-request-[a-f0-9]{20}$"},
+    "approval_request_integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "previous_disposition_id": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^approval-disposition-[a-f0-9]{20}$"}
+      ]
+    },
+    "previous_disposition_integrity_sha256": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      ]
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actor_type", "subject_ref"],
+      "properties": {
+        "actor_type": {"enum": ["human", "system"]},
+        "subject_ref": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "authority_grant_ref": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["grant_id", "integrity_sha256", "authority_class"],
+          "properties": {
+            "grant_id": {"type": "string", "pattern": "^authority-grant-[a-f0-9]{20}$"},
+            "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "authority_class": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "approval_expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "reason": {"type": "string", "minLength": 1},
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "identity_is_routing_signal": {"const": false},
+    "policy_write_authority": {"const": false},
+    "live_routing_authority": {"const": false},
+    "live_scope_change_authority": {"const": false},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}
