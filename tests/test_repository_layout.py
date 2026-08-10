@@ -8,6 +8,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = REPO_ROOT / "ci/validate_repository_layout.py"
 POLICY_PATH = REPO_ROOT / "policy/governance/repository-layout.yaml"
 
+R2_OLD_PATHS = {
+    "MANIFESTO.md",
+    "LEXICON.md",
+    "STEWARDSHIP.md",
+    "ROADMAP.md",
+    "V1_READINESS.md",
+    "research/ROADMAP_RESEARCH.md",
+}
+R2_CANONICAL_PATHS = {
+    "docs/philosophy/manifesto.md",
+    "docs/specification/lexicon.md",
+    "docs/stewardship/stewardship.md",
+    "docs/stewardship/roadmap.md",
+    "docs/releases/v1-readiness.md",
+    "research/roadmaps/intelligence-control-plane.md",
+}
+
 
 def _load_validator():
     spec = importlib.util.spec_from_file_location("teo_repository_layout", VALIDATOR_PATH)
@@ -27,6 +44,21 @@ def _current_paths() -> set[str]:
 def test_current_tracked_repository_layout_conforms() -> None:
     policy = validator.load_policy(POLICY_PATH)
     assert validator.validate_layout(_current_paths(), policy) == []
+
+
+def test_r2_normalized_paths_are_canonical() -> None:
+    paths = _current_paths()
+    assert R2_OLD_PATHS.isdisjoint(paths)
+    assert R2_CANONICAL_PATHS <= paths
+
+
+def test_r2_paths_are_no_longer_temporary_exceptions() -> None:
+    policy = validator.load_policy(POLICY_PATH)
+    root_exceptions = set(policy["root"]["temporary_exceptions"])
+    research_exceptions = set(policy["contracts"]["research"]["temporary_direct_exceptions"])
+    assert R2_OLD_PATHS.isdisjoint(root_exceptions | {f"research/{name}" for name in research_exceptions})
+    assert policy["migration"]["current_phase"] == "R3"
+    assert "R2_root_and_research_normalization" in policy["migration"]["completed_phases"]
 
 
 def test_unknown_root_file_is_rejected() -> None:
