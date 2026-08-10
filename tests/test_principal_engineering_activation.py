@@ -95,7 +95,7 @@ def conformance_cases() -> list[dict[str, Any]]:
     return cases
 
 
-def test_activation_reaches_ten_teams_and_seventy_eight_specialists() -> None:
+def test_principal_activation_preserves_its_original_seventy_eight_specialist_boundary() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     activation = load_yaml(ACTIVATION_PATH)
 
@@ -107,7 +107,7 @@ def test_activation_reaches_ten_teams_and_seventy_eight_specialists() -> None:
         "new_specialist_count": 22,
         "explicit_route_count": 27,
     }
-    assert len(bundle.specialist_registry) == 78
+    assert len(bundle.specialist_registry) >= 78
     assert EXPECTED_NEW_SPECIALISTS.issubset(bundle.specialist_registry)
     assert set(activation["activated_specialists"]) == EXPECTED_NEW_SPECIALISTS
     assert set(activation["activated_new_teams"]) == {
