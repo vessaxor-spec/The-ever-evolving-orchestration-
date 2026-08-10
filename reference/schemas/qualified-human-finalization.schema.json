@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/qualified-human-finalization.schema.json",
+  "title": "TEO Qualified-Human Finalization",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "qualified_human_approval_version",
+    "record_type",
+    "finalization_id",
+    "finalized_at",
+    "status",
+    "approval_state",
+    "block_reason",
+    "approval_request_ref",
+    "current_disposition_ref",
+    "route_outcome_ref",
+    "dispatch_id",
+    "task_id",
+    "qualified_human_approval_satisfied",
+    "approver_subject_ref",
+    "authority_class",
+    "route_outcome_mutated",
+    "identity_is_routing_signal",
+    "model_selection_is_qualification_signal",
+    "provider_access_is_qualification_signal",
+    "billing_identity_is_qualification_signal",
+    "policy_write_authority",
+    "live_routing_authority",
+    "live_scope_change_authority",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "qualified_human_approval_version": {"const": "1"},
+    "record_type": {"const": "qualified_human_finalization"},
+    "finalization_id": {"type": "string", "pattern": "^human-finalization-[a-f0-9]{20}$"},
+    "finalized_at": {"type": "string", "format": "date-time"},
+    "status": {"enum": ["completed", "blocked"]},
+    "approval_state": {"enum": ["requested", "approved", "rejected", "unable_to_determine", "expired", "revoked"]},
+    "block_reason": {"enum": ["none", "missing_approval", "rejected", "unable_to_determine", "expired", "revoked"]},
+    "approval_request_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["approval_request_id", "integrity_sha256"],
+      "properties": {
+        "approval_request_id": {"type": "string", "pattern": "^approval-request-[a-f0-9]{20}$"},
+        "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "current_disposition_ref": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["disposition_id", "integrity_sha256"],
+          "properties": {
+            "disposition_id": {"type": "string", "pattern": "^approval-disposition-[a-f0-9]{20}$"},
+            "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          }
+        }
+      ]
+    },
+    "route_outcome_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome_id", "integrity_sha256"],
+      "properties": {
+        "outcome_id": {"type": "string", "pattern": "^outcome-[a-f0-9]{20}$"},
+        "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "dispatch_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "qualified_human_approval_satisfied": {"type": "boolean"},
+    "approver_subject_ref": {"type": ["string", "null"], "minLength": 1},
+    "authority_class": {"type": ["string", "null"], "minLength": 1},
+    "route_outcome_mutated": {"const": false},
+    "identity_is_routing_signal": {"const": false},
+    "model_selection_is_qualification_signal": {"const": false},
+    "provider_access_is_qualification_signal": {"const": false},
+    "billing_identity_is_qualification_signal": {"const": false},
+    "policy_write_authority": {"const": false},
+    "live_routing_authority": {"const": false},
+    "live_scope_change_authority": {"const": false},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}
