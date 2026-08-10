@@ -22,15 +22,29 @@ It is historical audit evidence. It does not replace current policy, registries,
 
 No critical control-plane defect was found in routing order, effective-risk preservation, capability eligibility, provider-diverse fallback, verifier independence, regulated-evidence structure, specialist preservation, current repository topology, or guarded live-execution authority.
 
-The audit identified four actionable metadata or process alignment defects and one non-authoritative repository-hygiene debt.
+The audit identified four actionable metadata or process alignment defects and one non-authoritative repository-hygiene debt. The first remediation attempt also proved that TEO's historical preservation controls reject an apparently harmless status mutation when that mutation would change a cryptographically pinned staged worker definition.
 
 ## Actionable findings
 
-### 1. Active authority retained legacy `public-draft` metadata
+### 1. Current authority had two distinct lifecycle mechanisms that were not sufficiently obvious
 
-Eighteen files that are explicitly loaded as current routing or worker authority still declared `status: public-draft` even though the repository is released in `reference_operational` state and those files are part of the active control plane.
+The initial metadata scan found eighteen currently loaded routing or worker files that declared `status: public-draft`.
 
-Disposition: corrected to `status: active` without changing routing, worker responsibilities, model selection, fallbacks, verification, risk, or specialist role-card content. Regression tests now enforce the active lifecycle state.
+Thirteen are ordinary current authority files. Their legacy draft status was stale and was corrected to `status: active` without changing routing, worker responsibilities, model selection, fallbacks, verification, risk, or specialist role-card content.
+
+Five worker files are different:
+
+- `community/workers/extensions/systems-engineering-worker.yaml`
+- `community/workers/extensions/platform-reliability-core-workers.yaml`
+- `community/workers/extensions/platform-reliability-operations-workers.yaml`
+- `community/workers/extensions/physical-systems-workers.yaml`
+- `community/workers/extensions/assurance-workers.yaml`
+
+Those five are canonical staged blobs whose exact Git blob identities are preserved by historical activation tests. Their current execution authority is conferred separately by `policy/routing/activation/principal-engineering.yaml`, which lists them as `loaded_staged_workers` and records their teams as activated.
+
+The first attempted normalization changed only each file's `status` line. Reference CI correctly rejected that mutation because it changed the preserved canonical blob identities. The five files were restored byte-for-byte.
+
+Disposition: direct current authority now reports `active`; cryptographically pinned staged definitions retain their original `public-draft` artifact status and are proven active through the separate activation manifest. Regression tests now enforce both mechanisms instead of flattening them into one status model.
 
 ### 2. Changelog lacked the immutable v1.0.0 boundary
 
@@ -92,7 +106,8 @@ The audit verified that the weekly regulated-evidence authority-resolution workf
 
 - Architecture and control invariants: aligned
 - Routing and runtime behavior: aligned
-- Specialist and worker responsibility model: aligned after status metadata correction
+- Specialist and worker responsibility model: aligned
+- Direct versus staged worker activation lifecycle: aligned and regression-protected
 - Repository lifecycle topology: aligned
 - Model freshness: aligned after one compatibility-note refresh
 - Release and process metadata: aligned after remediation
