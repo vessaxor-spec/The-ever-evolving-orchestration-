@@ -24,6 +24,13 @@ from .provider_connection import (
     ProviderConnectionRequest,
     ProviderConnectionResponse,
 )
+from .route_outcome import (
+    JsonlRouteOutcomeSink,
+    RouteOutcomeRecord,
+    RouteOutcomeVersionContext,
+    build_abandoned_route_outcome,
+    build_guarded_canary_route_outcome,
+)
 from .runtime_canary import CanaryRuntimeOutcome, execute_guarded_canary
 from .runtime_circuit_breaker import (
     CircuitStateStore,
@@ -72,6 +79,7 @@ __all__ = [
     "InMemoryCircuitStateStore",
     "InMemoryRuntimeTelemetrySink",
     "JsonFileCircuitStateStore",
+    "JsonlRouteOutcomeSink",
     "JsonlRuntimeTelemetrySink",
     "LiveVerificationDecision",
     "LiveVerificationError",
@@ -97,6 +105,8 @@ __all__ = [
     "ReasoningEffort",
     "RetryExecution",
     "RetryPolicy",
+    "RouteOutcomeRecord",
+    "RouteOutcomeVersionContext",
     "RuntimeTelemetryEvent",
     "RuntimeTelemetryPolicy",
     "RuntimeTelemetrySink",
@@ -104,6 +114,8 @@ __all__ = [
     "TaskRequest",
     "VerificationResult",
     "active_execution_from_outcome",
+    "build_abandoned_route_outcome",
+    "build_guarded_canary_route_outcome",
     "execute_anthropic_canary_once",
     "execute_gemini_canary_once",
     "execute_guarded_canary",
