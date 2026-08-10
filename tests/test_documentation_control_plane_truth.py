@@ -75,17 +75,21 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 538 tests passed |",
+        "| Latest validated test suite | 546 tests passed |",
+        "| Route-outcome evidence | Complete | 100% |",
         "## NOW",
-        "### Route-Outcome Evidence Contract",
-        "## NEXT",
         "### Benchmark and Outcome Lab",
+        "## NEXT",
+        "### Source-backed cost attribution",
+        "### Shadow route evaluation",
         "## LATER",
     ):
         assert phrase in text
 
-    assert "78 active specialists" not in text
+    now_section = text.split("## NOW", 1)[1].split("## NEXT", 1)[0]
+    assert "### Route-Outcome Evidence Contract" not in now_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
+    assert "78 active specialists" not in text
 
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
