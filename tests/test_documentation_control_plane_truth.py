@@ -113,6 +113,20 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "Two material gates remain" not in benchmark_spec
     assert "does not yet execute or join multiple independent benchmark-verifier observations" not in benchmark_spec
 
+    benchmark_source = (
+        REPO_ROOT
+        / "reference"
+        / "implementations"
+        / "python"
+        / "src"
+        / "teo_reference"
+        / "benchmark_lab.py"
+    ).read_text(encoding="utf-8")
+    assert "Multi-verifier disagreement measurement and live replay execution are not yet implemented." not in benchmark_source
+    assert "but does not yet run or join multiple independent benchmark verifier observations." not in benchmark_source
+    assert "This report has not been enriched with a declared multi-verifier" in benchmark_source
+    assert "Controlled live replay and multi-verifier observation collection are separate executable layers." in benchmark_source
+
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
     text = (REPO_ROOT / "docs" / "stewardship" / "roadmap.md").read_text(
