@@ -82,17 +82,21 @@ Completion of this lifecycle does not broaden which tasks require human approval
 
 The current operational priority is to evaluate one bounded live task-class expansion at a time beyond the existing low or medium risk `high_volume_simple` canary.
 
-`documentation` is the first staged candidate. Candidate selection and an executable no-network preflight are complete, but **live activation is not authorized**. The preflight records actual routing and adapter readiness rather than creating a separate execution path.
+`documentation` is the first staged candidate. Candidate selection, executable no-network preflight, fallback/fresh-verifier repair, and direct provider-adapter readiness are complete, but **live activation is not authorized**.
 
-Current blockers that must be resolved before documentation replay or activation include:
+The repaired staged route is:
 
-- the initial documentation fallback currently remains Anthropic-family rather than provider-diverse;
-- failure redispatch resolves to Gemini 3.5 Flash-Lite but reuses the primary GPT-5.6 Terra verifier, violating the fresh-verifier requirement;
-- guarded Claude Sonnet 5 execution support is not yet implemented;
-- guarded GPT-5.6 Terra verification support is not yet implemented;
-- controlled documentation replay, shadow evaluation, and rollback/recovery evidence remain outstanding.
+- primary executor: Claude Sonnet 5 at medium effort;
+- provider-diverse non-preview routine fallback: GPT-5.6 Sol;
+- primary verifier: GPT-5.6 Terra at medium effort;
+- model/provider failure redispatch executor: GPT-5.6 Sol;
+- fresh redispatch verifier: Gemini 3.6 Flash at medium effort.
 
-The worker-level runtime override that contributes to the fallback mismatch must be reconciled as an explicit routing/control decision rather than silently bypassed by the candidate evaluator.
+The previous runtime worker override no longer mutates the shared documentation worker. The existing `high_volume_simple` Flash-Lite -> Haiku recovery and fresh-verifier rotation remain protected by regression tests.
+
+Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the adapter layer without widening the active canary wrappers or live-verification task scope. Implemented capability is not live-execution authority.
+
+The next evidence gate is controlled documentation live replay. Replay must exercise the exact staged topology and produce canonical evidence while leaving `documentation` outside active telemetry, live-verification, and guarded-execution scope. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates.
 
 Any candidate expansion must preserve:
 
@@ -130,7 +134,7 @@ A broader regulated evidence registry is not authorized merely because the pilot
 
 Broaden live execution by task class only when the applicable authority, capability, verification, telemetry, recovery, evidence, and human-approval controls have demonstrated reliable behavior.
 
-The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope. `documentation` is staged for evaluation and cannot enter active telemetry, verification, or guarded execution scope until its fallback, adapter, replay, shadow, recovery, and independent-review gates pass.
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope. `documentation` is staged for controlled replay and cannot enter active telemetry, verification, or guarded execution scope until replay, shadow, recovery, and independent-review gates pass.
 
 High and critical live execution remains outside the current guarded runtime.
 

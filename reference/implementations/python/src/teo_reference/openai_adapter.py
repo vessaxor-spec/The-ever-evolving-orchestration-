@@ -25,6 +25,7 @@ OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
 CANARY_TASK_TYPES = {"high_volume_simple"}
 CANARY_RISK_LEVELS = {"low", "medium"}
 CANARY_MODELS = {"gpt-5.6-luna"}
+IMPLEMENTED_MODELS = CANARY_MODELS | {"gpt-5.6-sol"}
 OPENAI_REASONING_EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MAX_CANARY_OUTPUT_TOKENS = 1024
 
@@ -148,7 +149,11 @@ def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
 
 
 class OpenAIResponsesAdapter:
-    """Single-attempt OpenAI Responses adapter for the guarded TEO canary."""
+    """Single-attempt OpenAI Responses adapter for implemented guarded models.
+
+    Implemented model support is intentionally broader than active canary authority.
+    Runtime wrappers and live-scope policy remain the execution authorization boundary.
+    """
 
     provider_family = "openai"
 
@@ -171,11 +176,11 @@ class OpenAIResponsesAdapter:
             raise ProviderAdapterContractError("OpenAI adapter received a non-OpenAI request")
         if request.risk_level not in CANARY_RISK_LEVELS:
             raise ProviderAdapterContractError(
-                "OpenAI live canary is restricted to low and medium risk execution"
+                "OpenAI guarded execution is restricted to low and medium risk"
             )
-        if request.model not in CANARY_MODELS:
+        if request.model not in IMPLEMENTED_MODELS:
             raise ProviderAdapterContractError(
-                "OpenAI live canary is restricted to GPT-5.6 Luna"
+                "OpenAI guarded adapter does not implement the requested model"
             )
         if request.reasoning_effort is not None and request.reasoning_effort not in OPENAI_REASONING_EFFORTS:
             raise ProviderAdapterContractError(
@@ -191,7 +196,7 @@ class OpenAIResponsesAdapter:
             raise ProviderAdapterContractError("max_output_tokens must be an integer")
         if raw_max_tokens < 1 or raw_max_tokens > MAX_CANARY_OUTPUT_TOKENS:
             raise ProviderAdapterContractError(
-                f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for the canary"
+                f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for guarded execution"
             )
 
         payload: dict[str, Any] = {
@@ -276,7 +281,7 @@ class OpenAIResponsesAdapter:
                     failure=ProviderFailure(
                         scope="capability",
                         code="incomplete_response",
-                        message="OpenAI response was incomplete within the authorized canary limits",
+                        message="OpenAI response was incomplete within the authorized guarded limits",
                     ),
                     usage=usage,
                 )
@@ -290,7 +295,7 @@ class OpenAIResponsesAdapter:
                     failure=ProviderFailure(
                         scope="capability",
                         code="no_text_output",
-                        message="OpenAI returned no text content for the canary task",
+                        message="OpenAI returned no text content for the guarded task",
                     ),
                     usage=usage,
                 )

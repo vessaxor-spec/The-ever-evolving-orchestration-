@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record  
-**Last reconciled:** 2026-08-10  
+**Last reconciled:** 2026-08-11  
 **Stable release:** `v1.0.0`  
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 634 tests passed |
+| Latest validated test suite | 641 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -74,7 +74,7 @@ Rules:
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve evidence and authority boundaries through later reviewed adaptation |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, and finalization boundaries |
-| Live execution expansion | In progress | 40% | `documentation` staged candidate selected and executable preflight validated | Reconcile documentation fallback and fresh-verifier topology, then add missing adapter support before controlled replay |
+| Live execution expansion | In progress | 55% | `documentation` topology and staged adapter readiness validated | Run controlled documentation live replay without widening active scope |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
@@ -86,9 +86,13 @@ Reconsider live-scope expansion task class by task class using the now-complete 
 
 `documentation` is the first bounded candidate. It is **staged only** and has no live-execution authority. The active guarded runtime remains limited to `high_volume_simple` at low or medium effective risk.
 
-Reference Implementation CI run #463 validated the candidate-selection and executable-preflight slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+Reference Implementation CI run #463 validated the original candidate-selection and executable-preflight slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
 
-The no-network preflight preserved current routing truth and exposed material blockers before activation: the initial documentation fallback is same-provider Claude Haiku 4.5, model/provider failure redispatch resolves to Gemini 3.5 Flash-Lite but reuses the primary Terra verifier, guarded Sonnet 5 execution support is missing, guarded Terra verification support is missing, and no documentation replay or shadow-evaluation evidence exists yet. These findings are activation blockers, not reasons to weaken provider diversity or preview controls.
+The candidate preflight exposed an unintended global worker override that changed ordinary `documentation` routing. That override has now been removed. Canonical documentation routing again preserves Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, GPT-5.6 Terra as the primary verifier, and Gemini 3.6 Flash as the fresh provider-diverse verifier after Sonnet or Anthropic failure redispatch. The route-level Gemini 3.1 Pro Preview fallback remains blocked without explicit acceptance.
+
+The exact staged adapter capabilities needed by that topology are now implemented without granting live authority: Claude Sonnet 5 bounded execution carries assigned effort through Anthropic `output_config.effort`; GPT-5.6 Sol is implemented by the OpenAI Responses adapter; and GPT-5.6 Terra is implemented by the strict structured-output OpenAI verifier. Existing canary wrappers and live-verification task scope remain `high_volume_simple` only.
+
+Reference Implementation CI run #473 validated this topology and adapter-readiness gate with 641 passing tests, 465 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The same suite also proves the existing Flash-Lite -> Haiku throughput recovery and fresh-verifier rotation remain intact after removal of the global worker override.
 
 Completion criteria for the current bounded milestone:
 
@@ -104,13 +108,13 @@ Completion criteria for the current bounded milestone:
 - do not authorize high or critical live execution in this milestone;
 - add conformance and mutation tests that fail if live-scope boundaries, rollback, verification, or authority gates are weakened.
 
-The candidate-selection criterion is now satisfied for `documentation`. The next material gate is to reconcile the documentation worker override and fallback/fresh-verifier topology, then add the missing Sonnet executor and Terra verifier support. Controlled replay and shadow evaluation come only after those control gaps are closed.
+Candidate selection, fallback/fresh-verifier topology, and direct adapter-readiness criteria are now satisfied for `documentation`. The next material gate is controlled live replay for the exact staged route. Replay must remain evidence generation only and cannot add `documentation` to active telemetry, live-verification, or guarded-execution scope. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates.
 
 The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded activation change satisfies every applicable criterion. High and critical live execution remains unauthorized.
 
 ## NEXT
 
-No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after the staged `documentation` candidate has completed adapter, fallback, replay, shadow, recovery, and independent-review gates and has either been accepted or rejected for activation.
+No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
 
 ## LATER
 
@@ -237,15 +241,17 @@ Reference Implementation CI run #451 validated the executable milestone with 626
 
 This milestone implements authority evidence for requirements existing policy already imposes. It does not broaden which tasks require qualified-human approval and does not widen live execution.
 
-### Live execution expansion, 40%
+### Live execution expansion, 55%
 
-The first bounded expansion candidate is now selected: `documentation`, low or medium effective risk only. A machine-readable staged-candidate policy and executable no-network preflight preserve the current active scope while measuring actual primary, fallback, verifier, redispatch, adapter, replay, and shadow-evidence gates.
+The first bounded expansion candidate is `documentation`, low or medium effective risk only. Candidate selection, a machine-readable staged policy, no-network route preflight, corrected fallback/fresh-verifier topology, and direct adapter readiness are now validated while active live authority remains unchanged.
 
-The preflight exposed a routing-control mismatch that must be resolved before activation. `runtime-worker-overrides.yaml` changes the shared documentation worker's implementation ordering, causing the initial documentation dispatch to record same-provider Claude Haiku 4.5 as fallback. When Sonnet or Anthropic is blocked, redispatch instead selects Gemini 3.5 Flash-Lite but retains GPT-5.6 Terra as verifier, reusing the primary verifier implementation and violating the guarded runtime's fresh-verifier requirement.
+The former `runtime-worker-overrides.yaml` behavior unintentionally mutated the shared documentation worker. That global implementation-order override has been removed. Ordinary documentation dispatch now records Claude Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, and GPT-5.6 Terra as the primary verifier. Model- or provider-scoped Sonnet recovery redispatch selects GPT-5.6 Sol with Gemini 3.6 Flash as a fresh provider-diverse verifier.
 
-Guarded Sonnet 5 execution and Terra verification also remain unsupported by the current adapter allowlists. Controlled documentation replay, shadow evaluation, and rollback/recovery evidence do not yet exist.
+Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the provider-adapter layer. The active provider canary wrappers and live-verification task scope remain limited to `high_volume_simple`, so adapter support does not create documentation live authority.
 
-Reference Implementation CI run #463 validated the staged-candidate slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+Reference Implementation CI run #473 validated this gate with 641 passing tests, 465 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The test suite also preserves the existing `high_volume_simple` Flash-Lite primary, Haiku fallback, Gemini fresh verifier after model-scoped failure, and Sol fresh verifier after Google provider-scoped failure.
+
+Controlled documentation replay, canonical replay Route-Outcome Evidence, downstream Shadow Route Evaluation, and rollback/recovery evidence do not yet exist for this candidate. Independent review of any later active-scope policy change also remains required.
 
 No live scope has widened. `documentation` remains `activation_authorized: false`; `high_volume_simple` at low or medium effective risk remains the only accepted guarded live execution class, and high or critical live execution remains unauthorized.
 
@@ -279,6 +285,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`roadmap.md`](roadmap.md): canonical stewardship roadmap
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
 - [`../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md`](../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md): staged `documentation` live-scope candidate research and blockers
+- [`../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md`](../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md): repaired documentation fallback, fresh-verifier, and staged adapter-readiness evidence
 - [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate
 - [`docs/releases/v1.0.0.md`](../releases/v1.0.0.md): immutable functional-v1 release contract
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
