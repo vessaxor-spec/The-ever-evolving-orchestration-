@@ -1,0 +1,45 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-10
+policy: >-
+  This file extends the active TEO specialist allocation registry with bounded
+  domain specialists discovered through external workforce-gap analysis. The
+  extension reuses existing teams and workers and must not rewrite, reduce, or
+  override any previously preserved specialist role card.
+
+specialists:
+  fraud-forensic-investigation-specialist:
+    primary_team: research
+    supporting_teams:
+      - assurance
+      - review
+      - verification
+      - mission_control
+    worker_binding: osint
+    risk_profile: high
+    role_card: community/specialists/fraud-forensic-investigation-specialist.md
+
+  talent-acquisition-specialist:
+    primary_team: mission_control
+    supporting_teams:
+      - planning
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: operations
+    risk_profile: high
+    role_card: community/specialists/talent-acquisition-specialist.md
+
+  insurance-claims-specialist:
+    primary_team: mission_control
+    supporting_teams:
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: operations
+    risk_profile: high
+    role_card: community/specialists/insurance-claims-specialist.md
+
+allocation_overrides: {}
