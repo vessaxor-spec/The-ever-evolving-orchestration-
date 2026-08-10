@@ -21,7 +21,7 @@ def test_functional_v1_does_not_require_human_calibration() -> None:
     assert policy["human_stewardship"]["blocking_for_functional_v1_release"] is False
 
 
-def test_deferred_human_tier_cannot_be_replaced_by_machine_panel() -> None:
+def test_machine_panel_cannot_impersonate_human_validation() -> None:
     policy = load_policy()
     provisional = policy["provisional_operational_evidence"]
     authority = policy["authority_boundary"]
@@ -35,16 +35,20 @@ def test_deferred_human_tier_cannot_be_replaced_by_machine_panel() -> None:
     assert authority["provisional_evidence_must_remain_provisional"] is True
 
 
-def test_runtime_human_authority_is_not_weakened() -> None:
+def test_optional_human_calibration_does_not_become_engineering_authority() -> None:
     policy = load_policy()
     assert policy["authority_boundary"]["critical_effective_risk_still_requires_qualified_human_approval"] is True
     stewardship = policy["human_stewardship"]
     assert stewardship["blocking_for_human_ground_truth_claims"] is True
-    assert stewardship["blocking_for_evidence_based_scope_expansion"] is True
+    assert stewardship["blocking_for_evidence_based_scope_expansion"] is False
+    assert stewardship["blocking_for_future_route_changes_when_policy_requires_human_acceptance"] is False
+    assert stewardship["preferred_execution_model"] == "optional_public_research"
 
 
-def test_community_stewardship_is_documented() -> None:
+def test_optional_human_calibration_study_is_documented() -> None:
     text = STEWARDSHIP_PATH.read_text(encoding="utf-8")
     assert "Issue #75" in text
     assert "Machine-panel evidence is not a substitute" in text
     assert "private alias map" in text
+    assert "optional evidence-enhancement mechanism" in text
+    assert "not an approval authority" in text
