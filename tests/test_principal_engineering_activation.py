@@ -325,7 +325,7 @@ def test_activation_artifacts_do_not_use_em_dashes() -> None:
         REPO_ROOT / "policy" / "routing" / "principal-engineering-routing.yaml",
         ACTIVATION_PATH,
         CONFORMANCE_PATH,
-        REPO_ROOT / "docs" / "methodology" / "principal-engineering-activation-2026-08-06.md",
+        REPO_ROOT / "docs" / "history" / "activation" / "principal-engineering-activation-2026-08-06.md",
     ]
     for path in artifacts:
         assert path.is_file()
