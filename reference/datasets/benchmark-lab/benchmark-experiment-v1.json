@@ -1,0 +1,56 @@
+{
+  "benchmark_lab_version": "1",
+  "bindings": [
+    {"candidate_id": "candidate-google-flash-lite", "fixture_id": "classify-alpha", "outcome_id": "outcome-a-alpha-1", "trial_index": 1},
+    {"candidate_id": "candidate-google-flash-lite", "fixture_id": "classify-alpha", "outcome_id": "outcome-a-alpha-2", "trial_index": 2},
+    {"candidate_id": "candidate-google-flash-lite", "fixture_id": "classify-beta", "outcome_id": "outcome-a-beta-1", "trial_index": 1},
+    {"candidate_id": "candidate-google-flash-lite", "fixture_id": "classify-beta", "outcome_id": "outcome-a-beta-2", "trial_index": 2},
+    {"candidate_id": "candidate-openai-luna", "fixture_id": "classify-alpha", "outcome_id": "outcome-b-alpha-1", "trial_index": 1},
+    {"candidate_id": "candidate-openai-luna", "fixture_id": "classify-alpha", "outcome_id": "outcome-b-alpha-2", "trial_index": 2},
+    {"candidate_id": "candidate-openai-luna", "fixture_id": "classify-beta", "outcome_id": "outcome-b-beta-1", "trial_index": 1},
+    {"candidate_id": "candidate-openai-luna", "fixture_id": "classify-beta", "outcome_id": "outcome-b-beta-2", "trial_index": 2}
+  ],
+  "candidates": [
+    {
+      "candidate_id": "candidate-google-flash-lite",
+      "model": "gemini-3.5-flash-lite",
+      "provider_family": "google",
+      "reasoning_effort": "low",
+      "registry_revision": "benchmark-registry-v1",
+      "routing_policy_revision": "benchmark-policy-v1",
+      "runtime_version": "1.0.1.dev0",
+      "tool_versions": {"benchmark-harness": "1"},
+      "verifier_model": "claude-sonnet-5",
+      "verifier_provider_family": "anthropic"
+    },
+    {
+      "candidate_id": "candidate-openai-luna",
+      "model": "gpt-5.6-luna",
+      "provider_family": "openai",
+      "reasoning_effort": "low",
+      "registry_revision": "benchmark-registry-v1",
+      "routing_policy_revision": "benchmark-policy-v1",
+      "runtime_version": "1.0.1.dev0",
+      "tool_versions": {"benchmark-harness": "1"},
+      "verifier_model": "claude-sonnet-5",
+      "verifier_provider_family": "anthropic"
+    }
+  ],
+  "claim_scope": "executor_only",
+  "experiment_id": "benchmark-lab-foundation-v1",
+  "harness": {
+    "harness_id": "teo-offline-route-outcome-evaluator",
+    "harness_version": "1",
+    "max_attempts": 2,
+    "max_wall_time_seconds": null,
+    "tool_access_profile": "none-offline"
+  },
+  "primary_metric": "verified_completion_rate",
+  "record_type": "benchmark_experiment",
+  "regression_baseline_candidate_id": null,
+  "stopping_rule": "fixed_trials",
+  "study_type": "benchmark",
+  "suite_id": "high-volume-classification-v1",
+  "suite_version": "1",
+  "trials_per_fixture": 2
+}
