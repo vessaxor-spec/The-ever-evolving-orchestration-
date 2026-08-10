@@ -63,3 +63,38 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
 
     for worker in EXPECTED_MISSION_CONTROL_WORKERS:
         assert f"`{worker}`" in text
+
+
+def test_progress_tracker_matches_executable_roster_and_current_priority() -> None:
+    text = (
+        REPO_ROOT / "docs" / "stewardship" / "progress-tracker.md"
+    ).read_text(encoding="utf-8")
+
+    for phrase in (
+        "| Organizational teams | 10 |",
+        "| Workers | 84 |",
+        "| Active specialists | 82 |",
+        "| Mission Control workers | 4 |",
+        "| Latest validated test suite | 538 tests passed |",
+        "## NOW",
+        "### Route-Outcome Evidence Contract",
+        "## NEXT",
+        "### Benchmark and Outcome Lab",
+        "## LATER",
+    ):
+        assert phrase in text
+
+    assert "78 active specialists" not in text
+    assert "Direct outcome-to-self-modifying-routing authority" in text
+
+
+def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
+    text = (REPO_ROOT / "docs" / "stewardship" / "roadmap.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert "[`progress-tracker.md`](progress-tracker.md)" in text
+    assert "82 active preserved specialist role cards" in text
+    assert "prove all 82 active specialists are deterministically spawnable" in text
+    assert "78 preserved specialist" not in text
+    assert "78 active specialists" not in text

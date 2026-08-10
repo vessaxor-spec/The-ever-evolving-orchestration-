@@ -4,12 +4,14 @@ TEO has completed the foundation, team architecture, routing validation, registr
 
 The current roadmap is focused on proving and operating the decision system rather than adding model/provider abstractions for their own sake.
 
+For the current operational state, completion estimates, active milestone, and NOW/NEXT/LATER sequencing, see [`progress-tracker.md`](progress-tracker.md). This roadmap defines direction; the progress tracker records execution state.
+
 ## Completed foundation
 
 - public project identity, Constitution, Lexicon, and stewardship rules
 - ten accountable teams
 - stable worker architecture
-- 78 preserved specialist role cards
+- 82 active preserved specialist role cards
 - provider/model/capability registries
 - deterministic task and risk routing
 - fallback, escalation, verification, and human-authority controls
@@ -26,7 +28,7 @@ The current roadmap is focused on proving and operating the decision system rath
 ### Control integrity
 
 - require effective risk to preserve all higher risk signals
-- prove all 78 active specialists are deterministically spawnable
+- prove all 82 active specialists are deterministically spawnable
 - enforce capability and implementation eligibility at runtime
 - require explicit preview-model authorization
 - enforce provider-diverse independent verification
