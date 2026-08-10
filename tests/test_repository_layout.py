@@ -25,6 +25,39 @@ R2_CANONICAL_PATHS = {
     "research/roadmaps/intelligence-control-plane.md",
 }
 
+R3_OLD_PATHS = {
+    "docs/methodology/ai-mediated-discovery-refresh-2026-08-05.md",
+    "docs/methodology/assurance-specialist-staging-2026-08-06.md",
+    "docs/methodology/final-specialist-tranche-staging-2026-08-06.md",
+    "docs/methodology/model-routing-audit-2026-08-07.md",
+    "docs/methodology/native-operations-refresh-2026-08-05.md",
+    "docs/methodology/physical-systems-staging-2026-08-06.md",
+    "docs/methodology/platform-reliability-core-staging-2026-08-06.md",
+    "docs/methodology/platform-reliability-operations-staging-2026-08-06.md",
+    "docs/methodology/principal-engineering-activation-2026-08-06.md",
+    "docs/methodology/principal-engineering-team-expansion-2026-08-06.md",
+    "docs/methodology/regulated-specialist-refresh-2026-08-05.md",
+    "docs/methodology/research-analytics-security-assurance-2026-08-05.md",
+    "docs/methodology/systems-engineering-specialist-staging-2026-08-06.md",
+    "docs/history/mission-control-routing-recalibration-2026-08-09.md",
+}
+R3_CANONICAL_PATHS = {
+    "docs/history/audits/ai-mediated-discovery-refresh-2026-08-05.md",
+    "docs/history/activation/assurance-specialist-staging-2026-08-06.md",
+    "docs/history/activation/final-specialist-tranche-staging-2026-08-06.md",
+    "docs/history/audits/model-routing-audit-2026-08-07.md",
+    "docs/history/audits/native-operations-refresh-2026-08-05.md",
+    "docs/history/activation/physical-systems-staging-2026-08-06.md",
+    "docs/history/activation/platform-reliability-core-staging-2026-08-06.md",
+    "docs/history/activation/platform-reliability-operations-staging-2026-08-06.md",
+    "docs/history/activation/principal-engineering-activation-2026-08-06.md",
+    "docs/history/activation/principal-engineering-team-expansion-2026-08-06.md",
+    "docs/history/audits/regulated-specialist-refresh-2026-08-05.md",
+    "docs/history/audits/research-analytics-security-assurance-2026-08-05.md",
+    "docs/history/activation/systems-engineering-specialist-staging-2026-08-06.md",
+    "docs/history/audits/mission-control-routing-recalibration-2026-08-09.md",
+}
+
 
 def _load_validator():
     spec = importlib.util.spec_from_file_location("teo_repository_layout", VALIDATOR_PATH)
@@ -57,7 +90,6 @@ def test_r2_paths_are_no_longer_temporary_exceptions() -> None:
     root_exceptions = set(policy["root"]["temporary_exceptions"])
     research_exceptions = set(policy["contracts"]["research"]["temporary_direct_exceptions"])
     assert R2_OLD_PATHS.isdisjoint(root_exceptions | {f"research/{name}" for name in research_exceptions})
-    assert policy["migration"]["current_phase"] == "R3"
     assert "R2_root_and_research_normalization" in policy["migration"]["completed_phases"]
 
 
@@ -80,6 +112,35 @@ def test_r2_active_navigation_uses_canonical_paths() -> None:
         assert retired not in readme
     assert "`LEXICON.md`" not in ai_instructions
     assert "- `V1_READINESS.md`" not in release_contract
+
+
+def test_r3_history_paths_are_canonical() -> None:
+    paths = _current_paths()
+    assert R3_OLD_PATHS.isdisjoint(paths)
+    assert R3_CANONICAL_PATHS <= paths
+    assert "docs/history/activation/README.md" in paths
+    assert "docs/history/audits/README.md" in paths
+
+
+def test_r3_history_exceptions_are_closed() -> None:
+    policy = validator.load_policy(POLICY_PATH)
+    assert policy["contracts"]["docs_methodology"]["temporary_history_exceptions"] == []
+    assert policy["contracts"]["docs_history"]["temporary_direct_exceptions"] == []
+    assert policy["migration"]["current_phase"] == "R4"
+    assert "R3_documentation_lifecycle_separation" in policy["migration"]["completed_phases"]
+
+
+def test_r3_methodology_and_history_indexes_explain_lifecycle() -> None:
+    methodology = (REPO_ROOT / "docs/methodology/README.md").read_text(encoding="utf-8")
+    history = (REPO_ROOT / "docs/history/README.md").read_text(encoding="utf-8")
+    activation = (REPO_ROOT / "docs/history/activation/README.md").read_text(encoding="utf-8")
+    audits = (REPO_ROOT / "docs/history/audits/README.md").read_text(encoding="utf-8")
+
+    assert "reusable methods" in methodology.lower()
+    assert "docs/history" in methodology
+    assert "no longer represents current operational authority" in history
+    assert "Do not use an activation-history record as current routing authority." in activation
+    assert "may later become stale" in audits
 
 
 def test_unknown_root_file_is_rejected() -> None:

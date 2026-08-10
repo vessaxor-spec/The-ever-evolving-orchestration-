@@ -11,7 +11,7 @@ ACTIVE_ROUTING_PATH = REPO_ROOT / "policy" / "routing" / "team-routing.yaml"
 ACTIVE_WORKERS_PATH = REPO_ROOT / "community" / "workers" / "workers.yaml"
 ACTIVE_SPECIALISTS_PATH = REPO_ROOT / "community" / "specialists" / "specialists.yaml"
 EVIDENCE_PILOT_PATH = REPO_ROOT / "policy" / "specialists" / "evidence-pilot.yaml"
-METHODOLOGY_PATH = REPO_ROOT / "docs" / "methodology" / "final-specialist-tranche-staging-2026-08-06.md"
+HISTORY_PATH = REPO_ROOT / "docs" / "history" / "activation" / "final-specialist-tranche-staging-2026-08-06.md"
 
 EXPECTED_SPECIALISTS = {
     "cloud-architect": ("planning", "cloud_architecture", "high"),
@@ -249,13 +249,13 @@ def test_new_specialists_are_not_in_active_registry_or_new_routes() -> None:
     assert "specialist_execution_cannot_self_review_or_self_verify" in rules
 
 
-def test_methodology_and_staged_worker_file_avoid_em_dash() -> None:
+def test_history_record_and_staged_worker_file_avoid_em_dash() -> None:
     staging = load_yaml(STAGING_PATH)
     worker_text = (REPO_ROOT / staging["worker_contract"]["path"]).read_text(encoding="utf-8")
-    methodology_text = METHODOLOGY_PATH.read_text(encoding="utf-8")
+    history_text = HISTORY_PATH.read_text(encoding="utf-8")
 
     assert "—" not in worker_text
-    assert "—" not in methodology_text
+    assert "—" not in history_text
 
 
 def test_regulated_evidence_pilot_remains_exactly_six() -> None:
