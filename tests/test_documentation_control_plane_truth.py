@@ -52,6 +52,28 @@ def test_team_architecture_readme_matches_executable_roster() -> None:
     assert "56 specialist" not in text
     assert "## Core teams" not in text
 
+    specialist_text = (
+        REPO_ROOT / "community" / "specialists" / "README.md"
+    ).read_text(encoding="utf-8")
+    bundle = ConfigBundle.load(REPO_ROOT)
+
+    for phrase in (
+        "**10 teams**",
+        "**84 workers**",
+        "**82 active specialists**",
+        "**4 Mission Control workers**",
+        "**Total active specialists: 82**",
+        "principal-engineering-active.yaml",
+        "workforce-expansion-active.yaml",
+    ):
+        assert phrase in specialist_text
+
+    for specialist in bundle.specialist_registry:
+        assert f"]({specialist}.md)" in specialist_text
+
+    assert "**Total specialists:** 56" not in specialist_text
+    assert "Description column reproduces" not in specialist_text
+
 
 def test_root_readme_preserves_current_control_plane_truth() -> None:
     text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
