@@ -37,7 +37,7 @@ def test_staged_specialist_and_worker_match_canonical_blobs() -> None:
     worker = staging["worker"]
 
     specialist_path = REPO_ROOT / specialist["role_card"]
-    worker_path = REPO_ROOT / worker["definition"]
+    worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "systems-engineering-worker.yaml"
 
     assert specialist_path.is_file()
     assert worker_path.is_file()
