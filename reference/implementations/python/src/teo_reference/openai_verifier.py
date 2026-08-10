@@ -15,7 +15,7 @@ from .verification_adapter import (
 )
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
-SUPPORTED_MODELS = {"gpt-5.6-sol", "gpt-5.6-luna"}
+SUPPORTED_MODELS = {"gpt-5.6-sol", "gpt-5.6-luna", "gpt-5.6-terra"}
 SUPPORTED_EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 
 
@@ -63,7 +63,7 @@ class OpenAILiveVerifier:
             raise LiveVerificationError("OpenAI verifier received a non-OpenAI assignment")
         if request.verifier_model not in SUPPORTED_MODELS:
             raise LiveVerificationError(
-                "Guarded OpenAI live verification supports GPT-5.6 Sol and GPT-5.6 Luna"
+                "Guarded OpenAI live verification supports GPT-5.6 Sol, Luna, and Terra"
             )
         if request.risk_level not in {"low", "medium"}:
             raise LiveVerificationError("Guarded live verification refuses high and critical risk")
