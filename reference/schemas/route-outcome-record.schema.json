@@ -1,0 +1,298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/route-outcome-record.schema.json",
+  "title": "TEO Route Outcome Evidence Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "route_outcome_version",
+    "record_type",
+    "recorded_at",
+    "outcome_id",
+    "task_type",
+    "risk_level",
+    "primary_route",
+    "fallback_route",
+    "active_route_role",
+    "final_disposition",
+    "verification_status",
+    "human_approval_required",
+    "fallback_assisted",
+    "retry_assisted",
+    "versions",
+    "cost",
+    "provenance",
+    "abandonment_reason",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "route_outcome_version": {"const": "1"},
+    "record_type": {"const": "route_outcome"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "outcome_id": {"type": "string", "pattern": "^outcome-[a-f0-9]{20}$"},
+    "task_type": {"type": "string", "minLength": 1},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "primary_route": {"$ref": "#/$defs/route"},
+    "fallback_route": {
+      "oneOf": [
+        {"type": "null"},
+        {"$ref": "#/$defs/route"}
+      ]
+    },
+    "active_route_role": {
+      "type": ["string", "null"],
+      "enum": ["primary", "fallback", null]
+    },
+    "final_disposition": {
+      "enum": [
+        "completed",
+        "verification_failed",
+        "awaiting_human",
+        "verification_missing",
+        "execution_failed",
+        "abandoned"
+      ]
+    },
+    "verification_status": {
+      "type": ["string", "null"],
+      "enum": ["passed", "failed", "needs_human", null]
+    },
+    "human_approval_required": {"type": "boolean"},
+    "fallback_assisted": {"type": "boolean"},
+    "retry_assisted": {"type": "boolean"},
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_version",
+        "repository_revision",
+        "routing_policy_revision",
+        "registry_revision",
+        "tool_versions"
+      ],
+      "properties": {
+        "runtime_version": {"type": "string", "minLength": 1},
+        "repository_revision": {"type": "string", "minLength": 1},
+        "routing_policy_revision": {"type": ["string", "null"], "minLength": 1},
+        "registry_revision": {"type": ["string", "null"], "minLength": 1},
+        "tool_versions": {
+          "type": "object",
+          "additionalProperties": {"type": ["string", "null"], "minLength": 1}
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "amount", "currency", "source"],
+      "properties": {
+        "status": {"const": "unknown"},
+        "amount": {"type": "null"},
+        "currency": {"type": "null"},
+        "source": {"type": "null"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_dispatch_ids",
+        "verification_dispatch_id",
+        "telemetry_event_count"
+      ],
+      "properties": {
+        "source_dispatch_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "verification_dispatch_id": {"type": ["string", "null"], "minLength": 1},
+        "telemetry_event_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "abandonment_reason": {"type": ["string", "null"], "minLength": 1},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dispatch_id",
+        "role",
+        "selected_team",
+        "selected_worker",
+        "selected_specialist",
+        "required_capabilities",
+        "implementation",
+        "verifier",
+        "attempts",
+        "attempt_count",
+        "retry_used",
+        "execution_status",
+        "failure_scope",
+        "failure_code"
+      ],
+      "properties": {
+        "dispatch_id": {"type": "string", "minLength": 1},
+        "role": {"enum": ["primary", "fallback"]},
+        "selected_team": {"type": "string", "minLength": 1},
+        "selected_worker": {"type": "string", "minLength": 1},
+        "selected_specialist": {"type": ["string", "null"], "minLength": 1},
+        "required_capabilities": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "implementation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider_family", "model", "reasoning_effort"],
+          "properties": {
+            "provider_family": {"type": ["string", "null"], "minLength": 1},
+            "model": {"type": "string", "minLength": 1},
+            "reasoning_effort": {
+              "oneOf": [
+                {"type": "null"},
+                {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]}
+              ]
+            }
+          }
+        },
+        "verifier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider_family", "model"],
+          "properties": {
+            "provider_family": {"type": ["string", "null"], "minLength": 1},
+            "model": {"type": "string", "minLength": 1}
+          }
+        },
+        "attempts": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/attempt"}
+        },
+        "attempt_count": {"type": "integer", "minimum": 0},
+        "retry_used": {"type": "boolean"},
+        "execution_status": {"enum": ["succeeded", "failed", "abandoned"]},
+        "failure_scope": {
+          "type": ["string", "null"],
+          "enum": ["request", "transient", "model", "provider", "capability", null]
+        },
+        "failure_code": {"type": ["string", "null"], "minLength": 1}
+      }
+    },
+    "attempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recorded_at",
+        "attempt_number",
+        "provider_family",
+        "model",
+        "reasoning_effort",
+        "status",
+        "failure_scope",
+        "failure_code",
+        "duration_ms",
+        "retry_after_seconds",
+        "usage"
+      ],
+      "properties": {
+        "recorded_at": {"type": "string", "format": "date-time"},
+        "attempt_number": {"type": "integer", "minimum": 1},
+        "provider_family": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "reasoning_effort": {
+          "oneOf": [
+            {"type": "null"},
+            {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]}
+          ]
+        },
+        "status": {"enum": ["succeeded", "failed"]},
+        "failure_scope": {
+          "type": ["string", "null"],
+          "enum": ["request", "transient", "model", "provider", "capability", null]
+        },
+        "failure_code": {"type": ["string", "null"], "minLength": 1},
+        "duration_ms": {"type": "number", "minimum": 0},
+        "retry_after_seconds": {"type": ["number", "null"], "minimum": 0},
+        "usage": {
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "input_tokens",
+                "output_tokens",
+                "cached_input_tokens",
+                "cache_creation_input_tokens",
+                "reasoning_output_tokens",
+                "tool_tokens",
+                "total_tokens"
+              ],
+              "properties": {
+                "input_tokens": {"type": ["integer", "null"], "minimum": 0},
+                "output_tokens": {"type": ["integer", "null"], "minimum": 0},
+                "cached_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+                "cache_creation_input_tokens": {"type": ["integer", "null"], "minimum": 0},
+                "reasoning_output_tokens": {"type": ["integer", "null"], "minimum": 0},
+                "tool_tokens": {"type": ["integer", "null"], "minimum": 0},
+                "total_tokens": {"type": ["integer", "null"], "minimum": 0}
+              }
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "succeeded"}}},
+          "then": {
+            "properties": {
+              "failure_scope": {"type": "null"},
+              "failure_code": {"type": "null"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"status": {"const": "failed"}}},
+          "then": {
+            "properties": {
+              "failure_scope": {"type": "string"},
+              "failure_code": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"final_disposition": {"const": "abandoned"}}},
+      "then": {
+        "properties": {
+          "abandonment_reason": {"type": "string", "minLength": 1},
+          "active_route_role": {"type": "null"},
+          "verification_status": {"type": "null"}
+        }
+      },
+      "else": {
+        "properties": {
+          "abandonment_reason": {"type": "null"}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"fallback_assisted": {"const": true}}},
+      "then": {
+        "properties": {
+          "active_route_role": {"const": "fallback"},
+          "fallback_route": {"type": "object"}
+        }
+      }
+    }
+  ]
+}
