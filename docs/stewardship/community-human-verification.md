@@ -46,7 +46,7 @@ The private alias map must never be given to reviewers before their decisions ar
 
 ## Authority boundary
 
-Machine-panel evidence remains provisional and must not be misrepresented as human review or human ground truth.
+Machine-panel evidence is not a substitute for independent human validation when a claim is specifically presented as independently human-validated. Machine-panel evidence remains provisional and must not be misrepresented as human review or human ground truth.
 
 Independent human calibration, when performed, adds evidence. It does not self-authorize route changes, broaden live execution, veto engineering decisions, or become a prerequisite for future TEO development.
 
