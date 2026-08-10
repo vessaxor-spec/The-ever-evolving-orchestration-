@@ -18,11 +18,11 @@ def engine() -> SpecialistRoutingEngine:
     return SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
 
 
-def test_specialist_model_policy_covers_all_78_active_specialists_exactly_once() -> None:
+def test_specialist_model_policy_covers_all_81_active_specialists_exactly_once() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     policy = yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8"))
-    assert len(bundle.specialist_registry) == 78
-    assert len(policy["specialists"]) == 78
+    assert len(bundle.specialist_registry) == 81
+    assert len(policy["specialists"]) == 81
     assert set(policy["specialists"]) == set(bundle.specialist_registry)
 
 

@@ -6,7 +6,7 @@ from teo_reference.config import ConfigBundle
 REPO_ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_TEAM_COUNT = 10
 EXPECTED_WORKER_COUNT = 84
-EXPECTED_SPECIALIST_COUNT = 78
+EXPECTED_SPECIALIST_COUNT = 81
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -41,7 +41,7 @@ def test_team_architecture_readme_matches_executable_roster() -> None:
     for phrase in (
         "**10 teams**",
         "**84 workers**",
-        "**78 specialists**",
+        "**81 specialists**",
         "**4 Mission Control workers**",
     ):
         assert phrase in text
@@ -57,8 +57,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
     text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
     assert "ten active organizational teams" in text
-    assert "78 preserved specialist role cards" in text
+    assert "81 preserved specialist role cards" in text
     assert "dedicated Mission Control workers for orchestration, operations, project delivery, and incident response" in text
+    assert "community/specialists/workforce-expansion-active.yaml" in text
 
     for worker in EXPECTED_MISSION_CONTROL_WORKERS:
         assert f"`{worker}`" in text

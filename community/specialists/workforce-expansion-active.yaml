@@ -1,0 +1,94 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-10
+policy: >-
+  This file extends the active TEO specialist allocation registry with bounded
+  domain specialists discovered through external workforce-gap analysis. The
+  extension reuses existing teams and workers and must not rewrite, reduce, or
+  override any previously preserved specialist role card.
+
+specialists:
+  fraud-forensic-investigation-specialist:
+    primary_team: research
+    supporting_teams:
+      - assurance
+      - review
+      - verification
+      - mission_control
+    worker_binding: osint
+    risk_profile: high
+    risk_escalation:
+      critical_patterns:
+        - declare fraud
+        - committed fraud
+        - accuse
+        - named allegation
+        - public allegation
+        - employment rejection
+        - lending denial
+        - insurance denial
+        - eligibility denial
+        - withhold payment
+        - freeze assets
+        - law enforcement referral
+        - regulatory referral
+        - litigation referral
+    role_card: community/specialists/fraud-forensic-investigation-specialist.md
+
+  talent-acquisition-specialist:
+    primary_team: mission_control
+    supporting_teams:
+      - planning
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: operations
+    risk_profile: high
+    risk_escalation:
+      critical_patterns:
+        - reject candidate
+        - candidate rejection
+        - final hiring decision
+        - make the hiring decision
+        - select the finalist
+        - make an offer
+        - compensation decision
+        - background check
+        - criminal record
+        - credit history
+        - health information
+        - disability information
+        - work authorization decision
+        - automated employment decision
+    role_card: community/specialists/talent-acquisition-specialist.md
+
+  insurance-claims-specialist:
+    primary_team: mission_control
+    supporting_teams:
+      - research
+      - assurance
+      - review
+      - verification
+    worker_binding: operations
+    risk_profile: high
+    risk_escalation:
+      critical_patterns:
+        - coverage decision
+        - accept coverage
+        - deny coverage
+        - deny claim
+        - claim denial
+        - close the claim
+        - payment decision
+        - reserve decision
+        - settlement decision
+        - determine liability
+        - negligence conclusion
+        - siu referral
+        - medical causality
+        - litigation referral
+        - regulatory referral
+    role_card: community/specialists/insurance-claims-specialist.md
+
+allocation_overrides: {}

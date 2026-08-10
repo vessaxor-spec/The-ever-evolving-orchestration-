@@ -1,0 +1,103 @@
+version: 1.0
+status: active
+activated_at: 2026-08-10
+
+scope:
+  prior_specialist_count: 78
+  specialist_count: 81
+  new_specialist_count: 3
+  new_team_count: 0
+  new_worker_count: 0
+  new_generic_route_count: 0
+
+active_extensions:
+  specialist_allocations: community/specialists/workforce-expansion-active.yaml
+  conformance: reference/datasets/workforce-expansion-routing-conformance.yaml
+
+activated_specialists:
+  - fraud-forensic-investigation-specialist
+  - talent-acquisition-specialist
+  - insurance-claims-specialist
+
+reused_spawn_paths:
+  fraud-forensic-investigation-specialist:
+    task_type: specialist_research
+    primary_team: research
+    worker_binding: osint
+  talent-acquisition-specialist:
+    task_type: specialist_mission_control
+    primary_team: mission_control
+    worker_binding: operations
+  insurance-claims-specialist:
+    task_type: specialist_mission_control
+    primary_team: mission_control
+    worker_binding: operations
+
+activation_gates:
+  role_cards_exist: true
+  specialist_allocations_exist: true
+  existing_team_worker_spawn_paths_reused: true
+  no_new_worker_authority_required: true
+  no_new_generic_routes_required: true
+  specialist_model_policy_coverage_required: true
+  provider_diverse_fallbacks_required: true
+  independent_verification_required: true
+  critical_human_approval_required: true
+  conformance_dataset_required: true
+  original_56_role_registry_unchanged: true
+  principal_engineering_extension_unchanged: true
+  regulated_evidence_pilot_unchanged: true
+
+routing_policy:
+  team_selection_precedes_worker_and_specialist_selection: true
+  explicit_specialist_spawn_task_type_required: true
+  specialist_must_match_selected_team_and_worker: true
+  specialist_risk_elevates_effective_risk: true
+  high_risk_is_minimum_for_all_three_specialists: true
+  critical_effective_risk_requires_qualified_human_approval: true
+  routine_fallback_must_cross_provider_boundary: true
+  verifier_must_be_independent_from_executor: true
+  no_specialist_may_self_approve_consequential_outcome: true
+
+consequence_escalation:
+  fraud-forensic-investigation-specialist:
+    critical_when:
+      - named_accusation_or_public_allegation
+      - employment_lending_insurance_or_eligibility_adverse_action
+      - payment_restriction_or_asset_action
+      - enforcement_litigation_or_regulatory_referral
+      - intrusive_sensitive_personal_data_collection
+    human_authority: qualified_investigator_legal_compliance_or_accountable_decision_owner
+  talent-acquisition-specialist:
+    critical_when:
+      - dispositive_candidate_ranking_or_rejection
+      - final_hiring_or_offer_decision
+      - protected_or_highly_sensitive_data_materially_affects_decision
+      - background_credit_health_criminal_or_work_authorization_judgment
+      - regulated_automated_employment_decision
+    human_authority: qualified_recruiter_hiring_manager_hr_or_legal_authority
+  insurance-claims-specialist:
+    critical_when:
+      - coverage_acceptance_or_denial
+      - claim_denial_closure_or_material_restriction
+      - payment_reserve_settlement_or_recovery_decision
+      - liability_or_negligence_conclusion
+      - adverse_fraud_or_siu_referral
+      - medical_causality_or_injury_disposition
+      - catastrophic_loss_litigation_or_regulatory_escalation
+    human_authority: qualified_adjuster_claims_owner_siu_medical_reviewer_or_legal_authority
+
+preservation_policy:
+  base_specialist_registry_changed: false
+  principal_engineering_specialist_registry_changed: false
+  protected_staged_worker_blobs_changed: false
+  existing_team_routes_changed: false
+  existing_generic_implementation_routes_changed: false
+  new_role_cards_are_additive: true
+  role_card_paths_must_remain_canonical: true
+  specialist_capabilities_must_not_be_reduced: true
+
+regulated_evidence_pilot:
+  scope_count: 6
+  expansion_authorized: false
+  workforce_expansion_does_not_change_pilot_scope: true

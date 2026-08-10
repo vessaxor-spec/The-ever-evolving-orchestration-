@@ -1,0 +1,46 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-10
+policy: >-
+  These cases exercise the three bounded workforce-expansion specialists through
+  existing explicit specialist spawn routes. Each begins at low caller-declared
+  risk so the specialist profile must elevate effective risk to high. The model
+  policy is expected to retain three-provider primary, routine fallback, and
+  independent verifier diversity.
+
+cases:
+  - id: fraud-forensic-investigation
+    task: Reconcile authorized public records and supplied evidence, identify contradictions and entity links, and produce bounded investigative hypotheses without declaring fraud.
+    task_type: specialist_research
+    domain: osint
+    specialist: fraud-forensic-investigation-specialist
+    expected_team: research
+    expected_worker: osint
+    expected_risk: high
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: talent-acquisition
+    task: Build a structured evidence-based candidate assessment against approved job requirements while preserving qualified-human hiring authority.
+    task_type: specialist_mission_control
+    domain: operations
+    specialist: talent-acquisition-specialist
+    expected_team: mission_control
+    expected_worker: operations
+    expected_risk: high
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google
+
+  - id: insurance-claims
+    task: Normalize an authorized first notice of loss, identify missing evidence and escalation signals, and prepare an adjuster-ready handoff without deciding coverage or liability.
+    task_type: specialist_mission_control
+    domain: operations
+    specialist: insurance-claims-specialist
+    expected_team: mission_control
+    expected_worker: operations
+    expected_risk: high
+    primary_provider: anthropic
+    fallback_provider: openai
+    verifier_provider: google

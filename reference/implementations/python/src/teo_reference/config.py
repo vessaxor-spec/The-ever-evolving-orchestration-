@@ -297,7 +297,10 @@ class ConfigBundle:
             ),
             specialists=_load_specialists(
                 root_path / "community/specialists/specialists.yaml",
-                (root_path / "community/specialists/principal-engineering-active.yaml",),
+                (
+                    root_path / "community/specialists/principal-engineering-active.yaml",
+                    root_path / "community/specialists/workforce-expansion-active.yaml",
+                ),
             ),
             models=_load_yaml(root_path / "policy/routing/core/implementation-defaults.yaml"),
             capabilities=_load_yaml(root_path / "registry/capabilities/capabilities.yaml"),

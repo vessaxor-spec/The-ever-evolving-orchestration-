@@ -1,6 +1,6 @@
-version: 1.0
+version: 1.1
 status: active
-reviewed_at: '2026-08-07'
+reviewed_at: '2026-08-10'
 policy: Specialist-aware implementation refinement is additive. Team and worker routing resolve first. Specialist routing
   may refine model and reasoning effort only; it cannot change team authority, specialist capability, qualified-human requirements,
   or independent verification.
@@ -259,6 +259,9 @@ specialists:
   privacy-engineer: {template: opus_critical_reasoning}
   functional-safety-engineer: {template: opus_critical_reasoning}
   formal-methods-engineer: {template: opus_critical_reasoning}
+  fraud-forensic-investigation-specialist: {template: opus_critical_reasoning}
+  talent-acquisition-specialist: {template: opus_critical_reasoning}
+  insurance-claims-specialist: {template: opus_critical_reasoning}
   agents-orchestrator: {template: sol_deep_engineering}
   ai-engineer: {template: sol_deep_engineering}
   blockchain-engineer: {template: sol_deep_engineering}

@@ -6,7 +6,7 @@ from typing import Any
 import yaml
 
 from .engine import OrchestrationEngine as BaseOrchestrationEngine, RoutingError
-from .schemas import DispatchRecord, ImplementationChoice, TaskRequest, VerificationPlan
+from .schemas import DispatchRecord, ImplementationChoice, RISK_ORDER, TaskRequest, VerificationPlan
 
 SPECIALIST_MODEL_POLICY = "policy/routing/core/specialist-model-routing.yaml"
 
@@ -151,6 +151,47 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             dispatch.verification.implementation, dispatch.task_type
         )
 
+    def _apply_specialist_consequence_risk(
+        self,
+        dispatch: DispatchRecord,
+        task: TaskRequest,
+    ) -> None:
+        specialist = dispatch.selected_specialist
+        if not specialist:
+            return
+        entry = self.config.specialist_registry.get(specialist, {})
+        escalation = entry.get("risk_escalation", {})
+        if not isinstance(escalation, dict):
+            return
+        patterns = escalation.get("critical_patterns", [])
+        if not isinstance(patterns, list):
+            raise SpecialistRoutingError(
+                f"Specialist {specialist} risk_escalation.critical_patterns must be a list"
+            )
+        text = task.task.lower()
+        matched = next(
+            (
+                str(pattern)
+                for pattern in patterns
+                if str(pattern).strip() and str(pattern).lower() in text
+            ),
+            None,
+        )
+        if not matched or RISK_ORDER[dispatch.risk_level] >= RISK_ORDER["critical"]:
+            return
+
+        dispatch.risk_level = "critical"
+        critical_methods = self.config.routing.get("verification_policy", {}).get(
+            "critical", {}
+        ).get("minimum", [])
+        dispatch.verification.method = list(
+            dict.fromkeys([*dispatch.verification.method, *critical_methods])
+        )
+        dispatch.verification.human_approval_required = True
+        dispatch.routing_explanation.append(
+            f"Specialist {specialist} consequence rule elevated effective risk to critical using trigger {matched!r}."
+        )
+
     def _verification_plan(
         self,
         task_type: str,
@@ -220,6 +261,7 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
         if not specialist:
             return dispatch
 
+        self._apply_specialist_consequence_risk(dispatch, task)
         template_name, template = self._template_for(specialist)
         source = f"{SPECIALIST_MODEL_POLICY}.templates.{template_name}"
         primary = self._specialist_choice(template["primary"], dispatch.risk_level, source + ".primary")
