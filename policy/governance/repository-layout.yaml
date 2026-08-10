@@ -44,6 +44,9 @@ root:
     V1_READINESS.md:
       target: docs/releases/v1-readiness.md
       migration_phase: R2
+    routing.yaml:
+      target: docs/history/activation/initial-routing-draft.yaml
+      migration_phase: R4
     models.yaml:
       target: policy/routing/implementation-defaults.yaml
       migration_phase: R5
