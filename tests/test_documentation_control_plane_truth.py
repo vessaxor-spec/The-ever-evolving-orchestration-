@@ -97,12 +97,9 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "qualified-human approval" in text
     assert "78 active specialists" not in text
 
-
-def test_benchmark_lab_specification_matches_completed_milestone() -> None:
-    text = (
+    benchmark_spec = (
         REPO_ROOT / "docs" / "specification" / "benchmark-outcome-lab.md"
     ).read_text(encoding="utf-8")
-
     for phrase in (
         "completed current milestone",
         "## Multi-verifier disagreement",
@@ -112,10 +109,9 @@ def test_benchmark_lab_specification_matches_completed_milestone() -> None:
         "qualified_human_approval_satisfied: false",
         "Reference Implementation CI #429",
     ):
-        assert phrase in text
-
-    assert "Two material gates remain" not in text
-    assert "does not yet execute or join multiple independent benchmark-verifier observations" not in text
+        assert phrase in benchmark_spec
+    assert "Two material gates remain" not in benchmark_spec
+    assert "does not yet execute or join multiple independent benchmark-verifier observations" not in benchmark_spec
 
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
