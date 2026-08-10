@@ -28,17 +28,21 @@ candidates:
         provider_family: anthropic
         model: claude-sonnet-5
         reasoning_effort: medium
-      fallback:
-        provider_family: openai
-        model: gpt-5.6-sol
+      initial_fallback:
+        provider_family: anthropic
+        model: claude-haiku-4-5
         reasoning_effort: null
       primary_verifier:
         provider_family: openai
         model: gpt-5.6-terra
         reasoning_effort: medium
-      desired_fallback_verifier:
+      failure_redispatch_executor:
         provider_family: google
-        model: gemini-3.6-flash
+        model: gemini-3.5-flash-lite
+        reasoning_effort: null
+      current_failure_redispatch_verifier:
+        provider_family: openai
+        model: gpt-5.6-terra
         reasoning_effort: medium
     evidence:
       candidate_selection: research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md
@@ -46,11 +50,13 @@ candidates:
       shadow_evaluation: null
     activation_requirements:
       - exact_primary_route_matches
-      - exact_fallback_route_matches
+      - exact_initial_fallback_matches
+      - initial_fallback_provider_diverse
       - primary_executor_adapter_supported
-      - fallback_executor_adapter_supported
+      - failure_redispatch_executor_adapter_supported
       - primary_verifier_adapter_supported
-      - fallback_redispatch_has_fresh_provider_diverse_verifier
+      - failure_redispatch_verifier_adapter_supported
+      - fallback_redispatch_verifier_is_fresh
       - controlled_replay_evidence_present
       - route_outcome_evidence_present
       - rollback_and_recovery_proven
