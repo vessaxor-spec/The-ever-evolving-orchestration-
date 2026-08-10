@@ -75,25 +75,47 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 562 tests passed |",
+        "| Latest validated test suite | 574 tests passed |",
         "| Route-outcome evidence | Complete | 100% |",
-        "| Benchmark and Outcome Lab | In progress | 75% |",
+        "| Benchmark and Outcome Lab | Complete | 100% |",
         "## NOW",
-        "### Benchmark and Outcome Lab",
-        "## NEXT",
         "### Source-backed cost attribution",
+        "## NEXT",
         "### Shadow route evaluation",
         "## LATER",
     ):
         assert phrase in text
 
     now_section = text.split("## NOW", 1)[1].split("## NEXT", 1)[0]
-    assert "### Route-Outcome Evidence Contract" not in now_section
-    assert "controlled live replay" in now_section
-    assert "multi-verifier disagreement" in now_section
-    assert "consequential evaluation conclusions" in now_section
+    next_section = text.split("## NEXT", 1)[1].split("## LATER", 1)[0]
+    assert "### Benchmark and Outcome Lab" not in now_section
+    assert "source-backed" in now_section.lower()
+    assert "effective-dated" in now_section
+    assert "### Shadow route evaluation" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
+    assert "multi-verifier disagreement" in text
+    assert "qualified-human approval" in text
     assert "78 active specialists" not in text
+
+
+def test_benchmark_lab_specification_matches_completed_milestone() -> None:
+    text = (
+        REPO_ROOT / "docs" / "specification" / "benchmark-outcome-lab.md"
+    ).read_text(encoding="utf-8")
+
+    for phrase in (
+        "completed current milestone",
+        "## Multi-verifier disagreement",
+        "canonical runtime verifier override: false",
+        "## Consequential evaluation conclusions",
+        "mission_control_or_maintainer_review",
+        "qualified_human_approval_satisfied: false",
+        "Reference Implementation CI #429",
+    ):
+        assert phrase in text
+
+    assert "Two material gates remain" not in text
+    assert "does not yet execute or join multiple independent benchmark-verifier observations" not in text
 
 
 def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> None:
