@@ -18,11 +18,11 @@ def engine() -> SpecialistRoutingEngine:
     return SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
 
 
-def test_specialist_model_policy_covers_all_81_active_specialists_exactly_once() -> None:
+def test_specialist_model_policy_covers_all_82_active_specialists_exactly_once() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     policy = yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8"))
-    assert len(bundle.specialist_registry) == 81
-    assert len(policy["specialists"]) == 81
+    assert len(bundle.specialist_registry) == 82
+    assert len(policy["specialists"]) == 82
     assert set(policy["specialists"]) == set(bundle.specialist_registry)
 
 
@@ -64,6 +64,33 @@ def test_security_specialist_uses_opus_xhigh_with_sol_fallback_and_gemini_verifi
             dispatch.verification.implementation.provider_family,
         }
     ) == 3
+
+
+def test_orchestration_evaluator_uses_sol_xhigh_with_sonnet_fallback_and_gemini_verifier() -> None:
+    dispatch = engine().dispatch(
+        TaskRequest.from_dict(
+            {
+                "task": "Evaluate completed dispatch cohorts and produce a bounded shadow routing recommendation.",
+                "task_type": "specialist_research",
+                "domain": "analytics",
+                "risk_level": "low",
+                "specialist": "orchestration-evaluation-analyst",
+                "constraints": PREVIEW_ACCEPTANCE,
+            }
+        )
+    )
+    assert dispatch.selected_team == "research"
+    assert dispatch.selected_worker == "analytics"
+    assert dispatch.risk_level == "high"
+    assert dispatch.selected_implementation.model == "gpt-5.6-sol"
+    assert dispatch.selected_implementation.reasoning == "xhigh"
+    assert dispatch.fallback_implementation is not None
+    assert dispatch.fallback_implementation.model == "claude-sonnet-5"
+    assert dispatch.fallback_implementation.reasoning == "high"
+    assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.verification.implementation.reasoning == "high"
+    assert dispatch.verification.independent is True
+    assert dispatch.verification.human_approval_required is False
 
 
 def test_backend_specialist_uses_terra_medium_with_flash_fallback_and_sonnet_verifier() -> None:
