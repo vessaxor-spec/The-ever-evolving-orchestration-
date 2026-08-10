@@ -4,7 +4,7 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-REGISTRY_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-expansion.yaml"
+REGISTRY_PATH = REPO_ROOT / "docs" / "history" / "activation" / "principal-engineering-expansion.yaml"
 
 EXPECTED_NEW_TEAMS = {
     "platform_reliability",

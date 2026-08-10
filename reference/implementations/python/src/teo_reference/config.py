@@ -260,20 +260,20 @@ class ConfigBundle:
         bundle = cls(
             root=root_path,
             team_routing=_load_team_routing(
-                root_path / "policy/routing/team-routing.yaml",
+                root_path / "policy/routing/core/team-routing.yaml",
                 (
-                    root_path / "policy/routing/principal-engineering-team-routing.yaml",
-                    root_path / "policy/routing/specialist-spawn-team-routing.yaml",
+                    root_path / "policy/routing/extensions/principal-engineering-team-routing.yaml",
+                    root_path / "policy/routing/extensions/specialist-spawn-team-routing.yaml",
                 ),
             ),
             routing=_load_routing(
-                root_path / "policy/routing/routing.yaml",
+                root_path / "policy/routing/core/routing.yaml",
                 (
-                    root_path / "policy/routing/mission-control-routing.yaml",
-                    root_path / "policy/routing/research-routing.yaml",
-                    root_path / "policy/routing/review-routing.yaml",
-                    root_path / "policy/routing/principal-engineering-routing.yaml",
-                    root_path / "policy/routing/specialist-spawn-routing.yaml",
+                    root_path / "policy/routing/extensions/mission-control-routing.yaml",
+                    root_path / "policy/routing/extensions/research-routing.yaml",
+                    root_path / "policy/routing/extensions/review-routing.yaml",
+                    root_path / "policy/routing/extensions/principal-engineering-routing.yaml",
+                    root_path / "policy/routing/extensions/specialist-spawn-routing.yaml",
                 ),
             ),
             workers=_load_workers(

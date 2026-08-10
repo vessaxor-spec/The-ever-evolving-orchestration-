@@ -38,7 +38,7 @@ Verification concludes with one of:
 
 ## Risk depth
 
-The minimum verification depth is defined in `policy/routing/routing.yaml`.
+The minimum verification depth is defined in `policy/routing/core/routing.yaml`.
 
 ### Low risk
 

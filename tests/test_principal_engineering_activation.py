@@ -15,7 +15,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CONFORMANCE_PATH = (
     REPO_ROOT / "reference" / "datasets" / "principal-engineering-routing-conformance.yaml"
 )
-ACTIVATION_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-activation.yaml"
+ACTIVATION_PATH = REPO_ROOT / "policy" / "routing" / "activation" / "principal-engineering.yaml"
 WARNING_BASELINE_PATH = (
     REPO_ROOT / "reference" / "datasets" / "configuration-warning-baseline.yaml"
 )
@@ -321,8 +321,8 @@ def test_activation_artifacts_do_not_use_em_dashes() -> None:
     artifacts = [
         REPO_ROOT / "community" / "specialists" / "principal-engineering-active.yaml",
         REPO_ROOT / "community" / "workers" / "principal-engineering-active-workers.yaml",
-        REPO_ROOT / "policy" / "routing" / "principal-engineering-team-routing.yaml",
-        REPO_ROOT / "policy" / "routing" / "principal-engineering-routing.yaml",
+        REPO_ROOT / "policy" / "routing" / "extensions" / "principal-engineering-team-routing.yaml",
+        REPO_ROOT / "policy" / "routing" / "extensions" / "principal-engineering-routing.yaml",
         ACTIVATION_PATH,
         CONFORMANCE_PATH,
         REPO_ROOT / "docs" / "history" / "activation" / "principal-engineering-activation-2026-08-06.md",

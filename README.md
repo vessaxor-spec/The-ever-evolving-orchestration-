@@ -316,7 +316,7 @@ Reasoning effort is part of the executable dispatch contract where the selected 
 
 Model freshness is governed by [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml). Newer triggers evaluation; it does not automatically trigger replacement.
 
-The canonical routing source is [`policy/routing/routing.yaml`](policy/routing/routing.yaml). The README summarizes that policy and must not outrank it.
+The canonical routing source is [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml). The README summarizes that policy and must not outrank it.
 
 ## Provider-aware fallback and recovery
 
@@ -523,11 +523,11 @@ Read in this order:
 1. [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md)
 2. [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml)
 3. [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml)
-4. [`policy/routing/team-routing.yaml`](policy/routing/team-routing.yaml)
+4. [`policy/routing/core/team-routing.yaml`](policy/routing/core/team-routing.yaml)
 5. [`community/teams/`](community/teams/)
 6. [`community/workers/`](community/workers/)
 7. [`community/specialists/`](community/specialists/)
-8. [`policy/routing/routing.yaml`](policy/routing/routing.yaml)
+8. [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml)
 9. [`policy/runtime/`](policy/runtime/)
 10. [`policy/verification/`](policy/verification/)
 11. [`models.yaml`](models.yaml)

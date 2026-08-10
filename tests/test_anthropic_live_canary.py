@@ -30,7 +30,7 @@ def dispatch(
         profile="luna",
         provider_family=provider_family,
         availability="generally_available",
-        source="policy/routing/routing.yaml",
+        source="policy/routing/core/routing.yaml",
     )
     verifier = ImplementationChoice(
         agent="agy",
@@ -38,7 +38,7 @@ def dispatch(
         profile="luna",
         provider_family="google",
         availability="stable",
-        source="policy/routing/routing.yaml",
+        source="policy/routing/core/routing.yaml",
     )
     return DispatchRecord(
         task_id="task-canary",

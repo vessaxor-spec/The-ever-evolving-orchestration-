@@ -227,10 +227,10 @@ specialist_resolution:
 
 implementation_resolution:
   sources:
-    - policy/routing/routing.yaml
-    - policy/routing/mission-control-routing.yaml
-    - policy/routing/research-routing.yaml
-    - policy/routing/review-routing.yaml
+    - policy/routing/core/routing.yaml
+    - policy/routing/extensions/mission-control-routing.yaml
+    - policy/routing/extensions/research-routing.yaml
+    - policy/routing/extensions/review-routing.yaml
   model_registry: models.yaml
   rule: >-
     Resolve the selected worker and optional specialist to the best currently

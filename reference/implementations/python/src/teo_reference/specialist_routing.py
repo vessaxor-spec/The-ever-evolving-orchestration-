@@ -8,7 +8,7 @@ import yaml
 from .engine import OrchestrationEngine as BaseOrchestrationEngine, RoutingError
 from .schemas import DispatchRecord, ImplementationChoice, TaskRequest, VerificationPlan
 
-SPECIALIST_MODEL_POLICY = "policy/routing/specialist-model-routing.yaml"
+SPECIALIST_MODEL_POLICY = "policy/routing/core/specialist-model-routing.yaml"
 
 
 class SpecialistRoutingError(RoutingError):

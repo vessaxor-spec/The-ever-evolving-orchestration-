@@ -6,8 +6,8 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-STAGING_PATH = REPO_ROOT / "policy" / "routing" / "systems-engineering-staging.yaml"
-ACTIVE_ROUTING_PATH = REPO_ROOT / "policy" / "routing" / "team-routing.yaml"
+STAGING_PATH = REPO_ROOT / "docs" / "history" / "activation" / "systems-engineering-staging.yaml"
+ACTIVE_ROUTING_PATH = REPO_ROOT / "policy" / "routing" / "core" / "team-routing.yaml"
 ACTIVE_SPECIALISTS_PATH = REPO_ROOT / "community" / "specialists" / "specialists.yaml"
 EVIDENCE_PILOT_PATH = REPO_ROOT / "policy" / "specialists" / "evidence-pilot.yaml"
 
