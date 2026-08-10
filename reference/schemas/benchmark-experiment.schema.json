@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-experiment.schema.json",
+  "title": "TEO Benchmark Lab Experiment Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "experiment_id",
+    "study_type",
+    "claim_scope",
+    "suite_id",
+    "suite_version",
+    "trials_per_fixture",
+    "primary_metric",
+    "stopping_rule",
+    "harness",
+    "candidates",
+    "bindings",
+    "regression_baseline_candidate_id"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_experiment"},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "study_type": {"enum": ["benchmark", "replay", "regression"]},
+    "claim_scope": {"enum": ["system_to_system", "executor_only"]},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_version": {"type": "string", "minLength": 1},
+    "trials_per_fixture": {"type": "integer", "minimum": 2},
+    "primary_metric": {"const": "verified_completion_rate"},
+    "stopping_rule": {"const": "fixed_trials"},
+    "harness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "harness_id",
+        "harness_version",
+        "tool_access_profile",
+        "max_attempts",
+        "max_wall_time_seconds"
+      ],
+      "properties": {
+        "harness_id": {"type": "string", "minLength": 1},
+        "harness_version": {"type": "string", "minLength": 1},
+        "tool_access_profile": {"type": "string", "minLength": 1},
+        "max_attempts": {"type": "integer", "minimum": 1},
+        "max_wall_time_seconds": {"type": ["number", "null"], "exclusiveMinimum": 0}
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "candidate_id",
+          "provider_family",
+          "model",
+          "reasoning_effort",
+          "verifier_provider_family",
+          "verifier_model",
+          "runtime_version",
+          "routing_policy_revision",
+          "registry_revision",
+          "tool_versions"
+        ],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "provider_family": {"type": "string", "minLength": 1},
+          "model": {"type": "string", "minLength": 1},
+          "reasoning_effort": {"type": ["string", "null"]},
+          "verifier_provider_family": {"type": ["string", "null"]},
+          "verifier_model": {"type": "string", "minLength": 1},
+          "runtime_version": {"type": "string", "minLength": 1},
+          "routing_policy_revision": {"type": ["string", "null"]},
+          "registry_revision": {"type": ["string", "null"]},
+          "tool_versions": {
+            "type": "object",
+            "additionalProperties": {"type": ["string", "null"]}
+          }
+        }
+      }
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fixture_id", "candidate_id", "trial_index", "outcome_id"],
+        "properties": {
+          "fixture_id": {"type": "string", "minLength": 1},
+          "candidate_id": {"type": "string", "minLength": 1},
+          "trial_index": {"type": "integer", "minimum": 1},
+          "outcome_id": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "regression_baseline_candidate_id": {"type": ["string", "null"]}
+  }
+}
