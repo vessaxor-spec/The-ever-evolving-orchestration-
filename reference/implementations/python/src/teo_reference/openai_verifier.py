@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from .openai_adapter import _extract_usage
 from .provider_connection import ProviderConnectionRequest, ProviderConnectionError
 from .verification_adapter import (
     LiveVerificationError,
@@ -128,6 +129,7 @@ class OpenAILiveVerifier:
         if not text:
             raise LiveVerificationError("OpenAI verifier returned no structured decision")
         decision = decode_structured_decision(text)
+        usage = _extract_usage(response_payload)
         request_id = response.headers.get("x-request-id") or response.headers.get("request-id")
         evidence: list[str] = ["live_verification:openai_structured_output"]
         response_id = response_payload.get("id")
@@ -140,4 +142,5 @@ class OpenAILiveVerifier:
             provider_family=self.provider_family,
             model=request.verifier_model,
             evidence=tuple(evidence),
+            usage=usage,
         )

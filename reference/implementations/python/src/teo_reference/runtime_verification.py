@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Mapping
 
 from .anthropic_verifier import AnthropicLiveVerifier
 from .google_verifier import GoogleLiveVerifier
 from .openai_verifier import OpenAILiveVerifier
-from .provider_adapter import ProviderExecutionResponse
+from .provider_adapter import ProviderExecutionResponse, ProviderUsage
 from .provider_connection import ProviderConnection
 from .runtime_canary import CanaryRuntimeOutcome
 from .schemas import DispatchRecord, VerificationResult
@@ -17,6 +19,22 @@ from .verification_adapter import (
     read_execution_output,
 )
 from .verification_policy import LiveVerificationPolicy
+
+
+@dataclass(frozen=True, slots=True)
+class LiveVerificationExecution:
+    """Verification result plus normalized provider usage evidence.
+
+    The legacy verification helpers continue to return VerificationResult. Cost and
+    evidence consumers can opt into this richer record without changing verification
+    authority or the canonical VerificationResult contract.
+    """
+
+    result: VerificationResult
+    provider_family: str
+    model: str
+    recorded_at: str
+    usage: ProviderUsage | None
 
 
 def active_execution_from_outcome(
@@ -34,7 +52,7 @@ def active_execution_from_outcome(
     raise LiveVerificationError("Live verification requires a successful active execution")
 
 
-def execute_live_verification(
+def execute_live_verification_with_evidence(
     engine: SpecialistRoutingEngine,
     dispatch: DispatchRecord,
     execution: ProviderExecutionResponse,
@@ -42,8 +60,8 @@ def execute_live_verification(
     *,
     artifact_root: str | Path,
     verification_policy: LiveVerificationPolicy | None = None,
-) -> VerificationResult:
-    """Execute the verifier already assigned by the active TEO dispatch exactly once."""
+) -> LiveVerificationExecution:
+    """Execute the assigned verifier and preserve normalized usage evidence."""
     policy = verification_policy or LiveVerificationPolicy.load(engine.config.root)
     policy.validate()
 
@@ -88,9 +106,56 @@ def execute_live_verification(
         raise LiveVerificationError("Live verifier changed the assigned provider family")
     if response.model != request.verifier_model:
         raise LiveVerificationError("Live verifier changed the assigned model")
-    return response.decision.to_verification_result(
+    result = response.decision.to_verification_result(
         dispatch,
         evidence=list(response.evidence),
+    )
+    return LiveVerificationExecution(
+        result=result,
+        provider_family=response.provider_family,
+        model=response.model,
+        recorded_at=datetime.now(timezone.utc).isoformat(),
+        usage=response.usage,
+    )
+
+
+def execute_live_verification(
+    engine: SpecialistRoutingEngine,
+    dispatch: DispatchRecord,
+    execution: ProviderExecutionResponse,
+    connections: Mapping[str, ProviderConnection],
+    *,
+    artifact_root: str | Path,
+    verification_policy: LiveVerificationPolicy | None = None,
+) -> VerificationResult:
+    """Compatibility wrapper returning the canonical VerificationResult only."""
+    return execute_live_verification_with_evidence(
+        engine,
+        dispatch,
+        execution,
+        connections,
+        artifact_root=artifact_root,
+        verification_policy=verification_policy,
+    ).result
+
+
+def verify_guarded_canary_outcome_with_evidence(
+    engine: SpecialistRoutingEngine,
+    outcome: CanaryRuntimeOutcome,
+    connections: Mapping[str, ProviderConnection],
+    *,
+    artifact_root: str | Path,
+    verification_policy: LiveVerificationPolicy | None = None,
+) -> LiveVerificationExecution:
+    """Run the active dispatch verifier and preserve normalized usage evidence."""
+    dispatch, execution = active_execution_from_outcome(outcome)
+    return execute_live_verification_with_evidence(
+        engine,
+        dispatch,
+        execution,
+        connections,
+        artifact_root=artifact_root,
+        verification_policy=verification_policy,
     )
 
 
@@ -102,13 +167,11 @@ def verify_guarded_canary_outcome(
     artifact_root: str | Path,
     verification_policy: LiveVerificationPolicy | None = None,
 ) -> VerificationResult:
-    """Run the active dispatch's assigned independent verifier after guarded execution."""
-    dispatch, execution = active_execution_from_outcome(outcome)
-    return execute_live_verification(
+    """Compatibility wrapper for the canonical guarded verification result."""
+    return verify_guarded_canary_outcome_with_evidence(
         engine,
-        dispatch,
-        execution,
+        outcome,
         connections,
         artifact_root=artifact_root,
         verification_policy=verification_policy,
-    )
+    ).result

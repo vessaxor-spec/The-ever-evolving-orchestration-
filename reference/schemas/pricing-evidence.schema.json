@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/pricing-evidence.schema.json",
+  "title": "TEO Pricing Evidence Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "cost_attribution_version",
+    "record_type",
+    "pricing_id",
+    "provider_family",
+    "model",
+    "billable_surface",
+    "processing_mode",
+    "currency",
+    "unit_basis",
+    "effective_from",
+    "effective_until",
+    "effective_basis",
+    "source",
+    "rates",
+    "conditions",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "cost_attribution_version": {"const": "1"},
+    "record_type": {"const": "pricing_evidence"},
+    "pricing_id": {"type": "string", "pattern": "^pricing-[a-z0-9][a-z0-9._-]{2,127}$"},
+    "provider_family": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "billable_surface": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{2,127}$"},
+    "processing_mode": {"const": "standard"},
+    "currency": {"const": "USD"},
+    "unit_basis": {"const": "per_1m_tokens"},
+    "effective_from": {"type": "string", "format": "date-time"},
+    "effective_until": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "format": "date-time"}
+      ]
+    },
+    "effective_basis": {
+      "enum": ["provider_explicit", "source_publication", "verified_from"]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publisher",
+        "title",
+        "url",
+        "authority_type",
+        "verified_at",
+        "source_updated_at"
+      ],
+      "properties": {
+        "publisher": {"type": "string", "minLength": 1},
+        "title": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "authority_type": {"const": "first_party"},
+        "verified_at": {"type": "string", "format": "date-time"},
+        "source_updated_at": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "string", "format": "date-time"}
+          ]
+        }
+      }
+    },
+    "rates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uncached_input_per_1m",
+        "cached_input_per_1m",
+        "cache_write_input_per_1m",
+        "output_per_1m"
+      ],
+      "properties": {
+        "uncached_input_per_1m": {"$ref": "#/$defs/decimalOrNull"},
+        "cached_input_per_1m": {"$ref": "#/$defs/decimalOrNull"},
+        "cache_write_input_per_1m": {"$ref": "#/$defs/decimalOrNull"},
+        "output_per_1m": {"$ref": "#/$defs/decimalOrNull"}
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_input_tokens_inclusive",
+        "reasoning_tokens_billing",
+        "tool_tokens_billing",
+        "additional_charges_not_included"
+      ],
+      "properties": {
+        "max_input_tokens_inclusive": {
+          "oneOf": [
+            {"type": "null"},
+            {"type": "integer", "minimum": 0}
+          ]
+        },
+        "reasoning_tokens_billing": {"enum": ["included_in_output", "unmodeled"]},
+        "tool_tokens_billing": {"enum": ["included_in_output", "unmodeled"]},
+        "additional_charges_not_included": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "$defs": {
+    "decimalOrNull": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]+)?$"}
+      ]
+    }
+  }
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from .google_adapter import _extract_usage
 from .provider_connection import ProviderConnectionRequest, ProviderConnectionError
 from .verification_adapter import (
     LiveVerificationError,
@@ -119,6 +120,7 @@ class GoogleLiveVerifier:
         if not text:
             raise LiveVerificationError("Google verifier returned no structured decision")
         decision = decode_structured_decision(text)
+        usage = _extract_usage(response_payload)
         request_id = response.headers.get("x-request-id") or response.headers.get("request-id")
         evidence: list[str] = ["live_verification:google_structured_output"]
         interaction_id = response_payload.get("id")
@@ -131,4 +133,5 @@ class GoogleLiveVerifier:
             provider_family=self.provider_family,
             model=request.verifier_model,
             evidence=tuple(evidence),
+            usage=usage,
         )

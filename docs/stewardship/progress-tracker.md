@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 574 tests passed |
+| Latest validated test suite | 585 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -70,8 +70,8 @@ Rules:
 | Regulated specialist evidence pilot | In progress | 60% | Six-card maintainability pilot | Demonstrate repeated refresh cycles, expiry, provenance, authority resolution, and mutation resistance |
 | Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
-| Source-backed cost attribution | Planned | 10% | Effective-dated pricing and cost contract | Add versioned pricing evidence and route-level cost calculation |
-| Shadow route evaluation | Planned | 5% | Governed recommendation-only evaluation loop | Connect completed Outcome Lab evidence to specialist #82 without live policy-write authority |
+| Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
+| Shadow route evaluation | Planned | 5% | Governed recommendation-only evaluation loop | Connect completed outcome, benchmark, verification, and cost evidence to specialist #82 without live policy-write authority |
 | Qualified-human approval lifecycle | In progress | 40% | Explicit approval record and authority handoff | Integrate identity, role, disposition, evidence, and audit linkage into runtime flow |
 | Live execution expansion | In progress | 30% | Bounded low and medium risk canary | Expand only task-class by task-class after evidence, verification, recovery, and authority gates pass |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
@@ -79,42 +79,38 @@ Rules:
 
 ## NOW
 
-### Source-backed cost attribution
+### Shadow route evaluation
 
-Add effective-dated price evidence and versioned calculations now that route-outcome identity, normalized usage, controlled evaluation, live replay, and evaluation-verification boundaries are stable enough to bind cost correctly.
+Connect the completed evidence chain to `orchestration-evaluation-analyst` without giving the analyst or evaluation runner live routing authority.
+
+The input evidence is now available from:
+
+- canonical Route-Outcome Evidence;
+- completed Benchmark and Outcome Lab reports;
+- multi-verifier disagreement evidence;
+- independently challenged consequential benchmark conclusions;
+- source-backed, effective-dated route-cost attribution.
 
 Completion criteria for the current milestone:
 
-- define a versioned pricing-evidence record with source URL or authoritative source identity, provider, model or billable surface, unit basis, currency, effective date, retrieval or verification date, and provenance;
-- distinguish pricing evidence from measured runtime usage;
-- bind route-level cost only when usage and pricing dimensions are compatible and sufficiently known;
-- keep unknown usage, pricing, currency, or billable dimensions explicitly unknown rather than zero or guessed;
-- preserve primary, retry, and fallback cost separately enough to diagnose route dependence;
-- preserve verifier cost separately enough to avoid hiding verification overhead;
-- support effective-dated price changes without rewriting historical route outcomes;
-- keep provider connection mechanism outside the pricing and routing decision model unless it materially changes an authoritative billable surface;
-- expose calculation inputs and versioning so cost claims are reproducible;
-- validate persisted pricing and cost records deterministically;
-- refuse unsupported monetary totals;
-- keep cost optimization subordinate to capability, risk, verification, provider diversity, human authority, and quality evidence.
+- define a versioned shadow-evaluation input and output contract;
+- consume evidence by immutable IDs and integrity hashes rather than mutable summaries;
+- preserve the declared task, route, model, verifier, runtime, policy, registry, and cost evidence context needed to evaluate a recommendation;
+- evaluate evidence sufficiency before producing any change candidate;
+- emit only the bounded specialist #82 states `NO_CHANGE_JUSTIFIED`, `INSUFFICIENT_EVIDENCE`, `SHADOW_CHANGE_CANDIDATE`, `REGRESSION_INVESTIGATION`, or `POLICY_OR_CONTROL_CONCERN`;
+- keep quality, risk, capability, verification, provider diversity, human authority, reliability, and evidence sufficiency ahead of cost optimization;
+- require independently challenged consequential benchmark conclusions where a shadow recommendation materially depends on them;
+- preserve the distinction between primary success, retry dependence, fallback dependence, verifier disagreement, and cost dependence;
+- make every shadow recommendation reproducible from declared source evidence;
+- prevent analyst output from writing routing policy, widening live scope, accepting preview models, lowering effective risk, changing provider access, or satisfying qualified-human approval;
+- require Mission Control and maintainer review before any later policy change is proposed;
+- add conformance tests that fail if recommendation-only boundaries are weakened.
 
-A pricing table or estimated token multiplier alone is insufficient. The milestone requires source-backed, effective-dated, reproducible route-level attribution.
+A score, ranking, or cheapest-route selection is insufficient. The milestone requires a governed recommendation-only evidence loop with explicit authority boundaries.
 
 ## NEXT
 
-### Shadow route evaluation
-
-Connect completed route-outcome evidence, completed Benchmark and Outcome Lab evidence, and later source-backed cost evidence to `orchestration-evaluation-analyst` and allow bounded outputs such as:
-
-- `NO_CHANGE_JUSTIFIED`
-- `INSUFFICIENT_EVIDENCE`
-- `SHADOW_CHANGE_CANDIDATE`
-- `REGRESSION_INVESTIGATION`
-- `POLICY_OR_CONTROL_CONCERN`
-
-A shadow recommendation is evidence for review. It is not routing authority.
-
-The governed handoff must preserve the completed Benchmark Lab conclusion-verification boundary. Consequential evaluation conclusions require independent challenge before they can advance to Mission Control or maintainer review, and that review handoff still cannot write policy or satisfy qualified-human approval.
+No additional workstream is promoted ahead of the current Shadow Route Evaluation milestone. Existing in-progress portfolio work continues within its declared scopes, and the next sequencing decision should be made from repository evidence after the shadow-evaluation gate is complete.
 
 ## LATER
 
@@ -195,13 +191,25 @@ Reference Implementation CI run #429 validated the completed executable mileston
 
 Compatible maintenance, larger fixture banks, additional observational evidence, and integration into Shadow Route Evaluation may continue without reopening this completed milestone.
 
-### Source-backed cost attribution, 10%
+### Source-backed cost attribution, 100%
 
-The governance doctrine is established: pricing must be effective-dated, source-backed, versioned, and separate from raw usage telemetry. Route-outcome normalized usage is stable enough to begin the executable attribution layer, but that layer has not yet materially started.
+The current milestone is complete.
+
+The executable contract provides strict pricing-evidence and route-cost schemas, integrity-protected first-party pricing records, explicit billable-surface identity, effective-dated price selection, overlap rejection, decimal arithmetic, primary/retry/fallback decomposition, separate verifier cost, and `known`, `partial`, or `unknown` attribution semantics.
+
+The first-party evidence set covers the standard paid API surfaces currently relevant to the reference runtime and verifier paths for OpenAI, Anthropic, and Google. Provider-explicit effective windows are preserved where available. Current-only evidence is marked `verified_from` rather than backdated. Unsupported long-context, cache, tool, storage, regional, processing-tier, or additional-charge dimensions fail closed instead of being guessed.
+
+Provider connection mechanism remains outside routing and is not treated as a billing identity. A subscription, OAuth-backed CLI, connector, or other surface is attributed only when evidence exists for that explicit commercial surface. API list prices are never inferred solely from provider and model identity.
+
+Execution usage remains in canonical Route-Outcome Evidence. The live verification path now preserves normalized verifier usage through an additive evidence helper while keeping the existing `VerificationResult` compatibility API unchanged. Pricing changes do not rewrite historical route outcomes.
+
+Reference Implementation CI run #437 validated the executable milestone with 585 passing tests, 444 tracked-file layout checks, regulated evidence validation, 30 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+Future pricing refreshes, negotiated or subscription billing surfaces, additional provider-native charge dimensions, and downstream use in Shadow Route Evaluation are compatible maintenance or separate governed extensions and do not keep this milestone open.
 
 ### Shadow route evaluation, 5%
 
-Specialist #82 and bounded recommendation states exist. Canonical route-outcome evidence and the full controlled Benchmark Lab milestone now exist, including independent conclusion verification. The continuous governed evidence feed and recommendation runner into specialist #82 are not yet implemented, so this workstream remains planned.
+Specialist #82 and bounded recommendation states exist. Canonical route-outcome evidence, the full controlled Benchmark Lab milestone, independently challenged consequential conclusions, and source-backed route-cost evidence now exist. The governed evidence join and recommendation runner into specialist #82 are not yet implemented, so this workstream remains planned.
 
 ### Qualified-human approval lifecycle, 40%
 
@@ -211,13 +219,13 @@ The Benchmark Lab review-handoff record explicitly does not satisfy qualified-hu
 
 ### Live execution expansion, 30%
 
-Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, and controlled replay exist for a bounded canary. Broader task classes and high or critical execution remain evidence-gated.
+Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, controlled replay, and economic evidence exist for a bounded canary. Broader task classes and high or critical execution remain evidence-gated.
 
-Benchmark Lab completion does not widen live execution scope.
+Benchmark Lab and cost-attribution completion do not widen live execution scope.
 
 ### Distributed runtime hardening, 20%
 
-The reference semantics for recovery, circuit state, telemetry, audit, and execution are proven in the current reference architecture. Distributed coordination, persistence, access control, retention, and streaming remain later work.
+The reference semantics for recovery, circuit state, telemetry, audit, execution, evaluation, and cost evidence are proven in the current reference architecture. Distributed coordination, persistence, access control, retention, and streaming remain later work.
 
 ### Licensing and contribution terms, 10%
 
@@ -250,3 +258,4 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`community/specialists/orchestration-evaluation-analyst.md`](../../community/specialists/orchestration-evaluation-analyst.md): active post-run route evaluator
 - [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
 - [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone
+- [`../specification/source-backed-cost-attribution.md`](../specification/source-backed-cost-attribution.md): completed source-backed cost-attribution contract
