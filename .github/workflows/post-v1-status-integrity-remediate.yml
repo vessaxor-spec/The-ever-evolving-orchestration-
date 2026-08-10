@@ -1,0 +1,331 @@
+name: Post-v1 Status Integrity Remediation
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  remediate:
+    if: github.head_ref == 'agent/post-v1-status-integrity-audit' && github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out audit branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          fetch-depth: 0
+          ref: agent/post-v1-status-integrity-audit
+
+      - name: Apply evidence-backed status remediation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          python - <<'PY'
+          from pathlib import Path
+
+          ROOT = Path('.')
+
+          active_draft_files = [
+              'policy/routing/core/routing.yaml',
+              'policy/routing/core/team-routing.yaml',
+              'policy/routing/core/implementation-defaults.yaml',
+              'policy/routing/extensions/mission-control-routing.yaml',
+              'policy/routing/extensions/research-routing.yaml',
+              'policy/routing/extensions/review-routing.yaml',
+              'community/workers/workers.yaml',
+              'community/workers/extensions/analytics-worker.yaml',
+              'community/workers/extensions/assurance-workers.yaml',
+              'community/workers/extensions/compliance-worker.yaml',
+              'community/workers/extensions/incident-response-worker.yaml',
+              'community/workers/extensions/market-research-worker.yaml',
+              'community/workers/extensions/physical-systems-workers.yaml',
+              'community/workers/extensions/platform-reliability-core-workers.yaml',
+              'community/workers/extensions/platform-reliability-operations-workers.yaml',
+              'community/workers/extensions/research-worker.yaml',
+              'community/workers/extensions/systems-engineering-worker.yaml',
+              'community/workers/extensions/user-research-worker.yaml',
+          ]
+
+          for name in active_draft_files:
+              path = ROOT / name
+              text = path.read_text(encoding='utf-8')
+              count = text.count('status: public-draft')
+              if count != 1:
+                  raise SystemExit(f'{name}: expected exactly one legacy public-draft status, found {count}')
+              path.write_text(text.replace('status: public-draft', 'status: active', 1), encoding='utf-8')
+
+          pyproject = ROOT / 'pyproject.toml'
+          text = pyproject.read_text(encoding='utf-8')
+          old = 'version = "1.0.0"'
+          new = 'version = "1.0.1.dev0"'
+          if text.count(old) != 1:
+              raise SystemExit('pyproject.toml: exact v1.0.0 development-version marker not found once')
+          pyproject.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          registry = ROOT / 'registry/models/models.yaml'
+          text = registry.read_text(encoding='utf-8')
+          if text.count('reviewed_at: 2026-08-09') != 1:
+              raise SystemExit('registry/models/models.yaml: expected reviewed_at 2026-08-09 exactly once')
+          text = text.replace('reviewed_at: 2026-08-09', 'reviewed_at: 2026-08-10', 1)
+          old_note = 'lifecycle_note: retained for compatibility evidence while Gemini 3.5 Flash-Lite is evaluated'
+          new_note = 'lifecycle_note: retained for compatibility evidence after Gemini 3.5 Flash-Lite promotion; Google lists May 7 2027 as the announced shutdown date and Gemini 3.5 Flash-Lite as the recommended replacement'
+          if text.count(old_note) != 1:
+              raise SystemExit('registry/models/models.yaml: stale Gemini 3.1 Flash-Lite lifecycle note not found exactly once')
+          registry.write_text(text.replace(old_note, new_note, 1), encoding='utf-8')
+
+          changelog = '''# Changelog
+
+All notable public changes to TEO are recorded here.
+
+## Unreleased
+
+### Added
+
+- repository layout governance, tracked-path validation, and strategic authority/lifecycle zoning
+- canonical philosophy, specification, stewardship, release, and research-roadmap locations with folder indexes
+- lifecycle-specific activation and audit history indexes
+- post-v1 intelligence-control-plane roadmap research
+- active-authority status conformance for current routing and worker control files
+- durable post-v1 hard-audit record under `docs/history/audits/`
+
+### Changed
+
+- root and research navigation now follow the repository layout contract instead of retaining temporary R2 placement exceptions
+- reusable methodology is now separated from dated staging, activation, refresh, audit, and routing-recalibration history
+- active routing policy is now separated into canonical core, extension, and activation namespaces
+- stable base workers, active worker extensions, and implementation defaults now have separate canonical topology
+- current actively loaded routing and worker authority metadata now reports `active` rather than the legacy `public-draft` state
+- current development builds identify as `1.0.1.dev0` so post-release `main` does not claim the exact immutable `1.0.0` package identity
+- the Gemini 3.1 Flash-Lite compatibility note now reflects completed Gemini 3.5 Flash-Lite promotion and current provider deprecation guidance
+
+### Validation
+
+- repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
+- active-authority integrity tests reject `public-draft` status on current routing and worker control files
+- release-history integrity tests require an explicit `v1.0.0` changelog boundary
+
+### Status
+
+Phases 1 through 5 are complete. Runtime execution remains intentionally guarded to explicit `high_volume_simple` work at low or medium effective risk.
+
+Current work is operational evidence: control integrity, verifier calibration, route-outcome evaluation, source-backed cost attribution, qualified-human approval integration, distributed runtime hardening, and continued observation of the six-card regulated evidence pilot.
+
+Repository information-architecture migration has completed R1 through R5. The planned information-architecture migration is complete.
+
+High and critical live execution remain unauthorized.
+
+## [1.0.0] - 2026-08-09
+
+### Added
+
+- ten-team organizational architecture
+- public roster of 78 preserved specialist role cards
+- principal-engineering specialist and worker activation
+- effort-aware cross-provider specialist model routing
+- provider-neutral execution contract and connection-neutral provider boundary
+- guarded Anthropic, OpenAI, and Google live execution adapters
+- bounded transient retry and provider-directed retry timing
+- canonical model/provider fallback redispatch with fresh verifier assignment
+- persistent provider-family circuit state
+- content-free provider-attempt telemetry with normalized usage
+- provider-diverse live independent verification
+- six-card regulated evidence/freshness pilot with CI source validation and mutation testing
+- explicit preview-model authorization in task constraints
+- deterministic all-78 specialist spawn routes and spawnability conformance
+- strict CLI JSON Schema validation for task, dispatch, execution, verification, and final outcome records
+- repository protection for local `.teo/` runtime artifacts
+
+### Changed
+
+- effective risk preserves the highest content-derived, declared, and specialist risk signal rather than allowing caller input to lower the risk floor
+- active specialist worker bindings are complete rather than retained as known configuration warnings
+- capability resolution rejects unknown or team-incompatible caller-requested capabilities
+- base implementation selection is constrained by worker-authorized implementations
+- preview implementations are ineligible until the concrete preview model is explicitly accepted by the task
+- independent verification requires both model and provider-family separation from execution
+- half-open provider circuits do not treat local connection failure as provider service-health failure
+- live verification confines output artifacts to an authorized runtime root
+- verifier candidate output is explicitly untrusted data
+- verifier status precedence preserves mixed failed and uncertain criterion evidence
+- runtime telemetry does not persist caller-controlled task identifiers and fails closed on required persistence failure
+- regulated evidence provenance for Rule 37(e) and ISO/IEC 9899:2024 was rechecked and corrected or clarified against primary sources
+- `AI_INSTRUCTIONS.md`, roadmap guidance, runtime specifications, and capability guidance describe the active control plane
+
+### Validation
+
+- all active specialists have a deterministic Team -> Worker -> Specialist spawn path
+- known specialist binding warnings are not accepted as a configuration baseline
+- credential-boundary tests cover common token, secret, and private-key field forms
+- circuit tests cover half-open connection-health separation
+- live verification tests cover artifact-root escape and candidate-output prompt injection
+- telemetry tests prove caller identifiers and content remain absent
+- routing tests prove a caller cannot lower content-derived risk and preview models require explicit acceptance
+- CLI tests prove unknown schema fields fail at the external boundary
+
+### Status
+
+TEO v1.0.0 was released in the `reference_operational` state with `teo-reference-router==1.0.0` as the immutable functional-v1 reference package.
+
+Independent human calibration remained an explicit post-v1 evidence program and did not block the functional release. High and critical live execution remained unauthorized.
+'''
+          (ROOT / 'CHANGELOG.md').write_text(changelog, encoding='utf-8')
+
+          test_text = '''from pathlib import Path
+
+import yaml
+
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+LAYOUT_PATH = REPO_ROOT / "policy" / "governance" / "repository-layout.yaml"
+
+
+def load_yaml(path: Path) -> dict:
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def test_all_current_routing_authority_is_active() -> None:
+    policy = load_yaml(LAYOUT_PATH)
+    routing = policy["contracts"]["policy_routing"]
+
+    for subdir, filenames in routing["canonical_subdirectories"].items():
+        for filename in filenames:
+            path = REPO_ROOT / "policy" / "routing" / subdir / filename
+            record = load_yaml(path)
+            assert record.get("status") == "active", f"{path.relative_to(REPO_ROOT)} is current authority but status={record.get('status')!r}"
+
+
+def test_all_current_worker_authority_is_active() -> None:
+    policy = load_yaml(LAYOUT_PATH)
+    workers = policy["contracts"]["community_workers"]
+
+    base = REPO_ROOT / "community" / "workers" / "workers.yaml"
+    assert load_yaml(base).get("status") == "active"
+
+    for filename in workers["canonical_extensions"]:
+        path = REPO_ROOT / "community" / "workers" / "extensions" / filename
+        record = load_yaml(path)
+        assert record.get("status") == "active", f"{path.relative_to(REPO_ROOT)} is loaded worker authority but status={record.get('status')!r}"
+
+
+def test_v1_release_boundary_is_explicit_in_changelog() -> None:
+    changelog = (REPO_ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    assert "## [1.0.0] - 2026-08-09" in changelog
+    assert changelog.index("## Unreleased") < changelog.index("## [1.0.0] - 2026-08-09")
+'''
+          (ROOT / 'tests' / 'test_active_authority_status.py').write_text(test_text, encoding='utf-8')
+
+          audit = '''# Post-v1 Hard Audit - 2026-08-10
+
+## Authority
+
+This record documents a TEO hard audit of the post-v1 control plane after completion of repository information-architecture phases R1 through R5.
+
+It is historical audit evidence. It does not replace current policy, registries, runtime code, release contracts, or the immutable `v1.0.0` tag.
+
+## TEO review lenses
+
+- Mission Control
+- Principal Engineering
+- Architecture
+- Platform and Reliability
+- Assurance
+- Verification
+- Configuration and Governance
+- Model Freshness
+- Repository and CI Integrity
+
+## Executive result
+
+No critical control-plane defect was found in routing order, effective-risk preservation, capability eligibility, provider-diverse fallback, verifier independence, regulated-evidence structure, specialist preservation, current repository topology, or guarded live-execution authority.
+
+The hard audit identified four actionable metadata/process alignment defects and one non-authoritative repository-hygiene debt.
+
+## Actionable findings
+
+### 1. Active authority retained legacy `public-draft` metadata
+
+Eighteen files that are explicitly loaded as current routing or worker authority still declared `status: public-draft` even though the repository is released in `reference_operational` state and the files are part of the active control plane.
+
+Disposition: corrected to `status: active` without changing routing, worker responsibilities, model selection, fallbacks, verification, risk, or specialist role-card content. Regression tests now enforce the active lifecycle state.
+
+### 2. Changelog lacked the immutable v1.0.0 boundary
+
+The changelog still placed both released v1 work and later post-v1 repository restructuring under `Unreleased`.
+
+Disposition: created an explicit `v1.0.0` section dated 2026-08-09 and retained later R1 through R5 work under `Unreleased`.
+
+### 3. Post-release main still built as exact package version 1.0.0
+
+At audit time, `main` was twelve commits ahead of the immutable `v1.0.0` tag while `pyproject.toml` still declared version `1.0.0`.
+
+Disposition: current development source now identifies as `1.0.1.dev0`. The immutable tag and stable release package remain `1.0.0`.
+
+### 4. Gemini 3.1 Flash-Lite compatibility note was stale
+
+The registry still described Gemini 3.1 Flash-Lite as retained while Gemini 3.5 Flash-Lite was being evaluated, although Gemini 3.5 Flash-Lite is already the routed economical throughput implementation.
+
+Current Google documentation also lists May 7, 2027 as the announced Gemini 3.1 Flash-Lite shutdown date and Gemini 3.5 Flash-Lite as the recommended replacement.
+
+Disposition: refreshed the lifecycle note and registry review date. No route change was required.
+
+## Verified aligned areas
+
+- `v1.0.0` remains the immutable `reference_operational` release boundary.
+- Main branch requires pull requests and the `Validate reference router` status check.
+- R1 through R5 repository information-architecture migration is complete.
+- The active reference configuration resolves 10 teams, 84 workers, and 78 preserved specialists.
+- Team -> Worker -> optional Specialist -> Capability -> Implementation ordering remains explicit.
+- Effective risk cannot be lowered by caller declaration.
+- Preview implementations remain subject to explicit acceptance.
+- Routine fallback and independent verification preserve provider diversity where required.
+- Guarded live execution remains restricted to explicit `high_volume_simple` work at low or medium effective risk.
+- High and critical live execution remains unauthorized.
+- The six-card regulated specialist evidence pilot remains bounded and structurally enforced.
+- The weekly authority-resolution workflow remains configured for the regulated pilot.
+- Provisional machine-panel evidence remains explicitly non-human and non-authoritative for scope or route changes.
+- Provider-access mechanism remains separate from model fitness and routing.
+- Current first-party model documentation was rechecked for OpenAI GPT-5.6 Sol, Terra, and Luna; Anthropic Claude Fable 5, Opus 5, Sonnet 5, and Haiku 4.5; and Google Gemini 3.6 Flash, Gemini 3.5 Flash-Lite, and Gemini 3.1 Pro Preview. No current route replacement was required.
+- The Gemini live adapter does not send the sampling parameters deprecated for the current Gemini API behavior.
+- Licensing remains intentionally restrictive until a permanent license is selected.
+
+## Intentionally deferred program
+
+GitHub Issue #75 remains the canonical open program for independent blinded human calibration.
+
+It is not a functional-v1 blocker. It remains required before human-ground-truth verifier-quality claims, policy-governed live-scope expansion, or route changes that require explicit human acceptance.
+
+## Repository hygiene debt
+
+The audit observed 102 retained `agent/*` branches from completed, superseded, or historical workstreams.
+
+These branches are not runtime or policy authority and do not change protected `main`. They should be cleaned through a separate branch-hygiene process after confirming each branch is associated with completed, merged, closed, or superseded work.
+
+## Observability limitation
+
+The audit verified that the weekly regulated-evidence authority-resolution workflow is configured and that normal CI validates evidence structure. The connector used for this audit did not expose general scheduled-run history, so this record does not claim that the latest scheduled network-resolution run completed.
+
+## Final classification
+
+- Architecture and control invariants: aligned
+- Routing and runtime behavior: aligned
+- Specialist and worker responsibility model: aligned after status metadata correction
+- Repository lifecycle topology: aligned
+- Model freshness: aligned after one compatibility-note refresh
+- Release/process metadata: aligned after remediation
+- Human calibration: intentionally incomplete and correctly tracked
+- Branch hygiene: non-blocking cleanup debt
+'''
+          (ROOT / 'docs' / 'history' / 'audits' / 'post-v1-hard-audit-2026-08-10.md').write_text(audit, encoding='utf-8')
+          PY
+
+          git rm .github/workflows/post-v1-status-integrity-remediate.yml
+          git add -A
+          git diff --cached --check
+          git commit -m "Align post-v1 status and release integrity"
+          git push origin agent/post-v1-status-integrity-audit
