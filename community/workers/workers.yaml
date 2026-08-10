@@ -1,5 +1,5 @@
 version: 0.4
-status: public-draft
+status: active
 
 worker_template:
   required_fields:

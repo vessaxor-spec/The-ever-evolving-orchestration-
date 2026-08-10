@@ -1,6 +1,6 @@
 version: 0.3
 status: public
-reviewed_at: 2026-08-09
+reviewed_at: 2026-08-10
 
 registry_rules:
   - provider_claims_are_not_teo_benchmark_results
@@ -196,7 +196,7 @@ models:
     provider_description: cost-efficient high-throughput Flash tier
     teo_routing_role: candidate economical throughput implementation
     routing_status: previous_generation_candidate
-    lifecycle_note: retained for compatibility evidence while Gemini 3.5 Flash-Lite is evaluated
+    lifecycle_note: retained for compatibility evidence after Gemini 3.5 Flash-Lite promotion; Google lists May 7 2027 as the announced shutdown date and Gemini 3.5 Flash-Lite as the recommended replacement
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/models
 
