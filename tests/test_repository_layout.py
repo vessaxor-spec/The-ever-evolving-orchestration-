@@ -126,7 +126,7 @@ def test_r3_history_exceptions_are_closed() -> None:
     policy = validator.load_policy(POLICY_PATH)
     assert policy["contracts"]["docs_methodology"]["temporary_history_exceptions"] == []
     assert policy["contracts"]["docs_history"]["temporary_direct_exceptions"] == []
-    assert policy["migration"]["current_phase"] == "R4"
+    assert policy["migration"]["current_phase"] == "R5"
     assert "R3_documentation_lifecycle_separation" in policy["migration"]["completed_phases"]
 
 
