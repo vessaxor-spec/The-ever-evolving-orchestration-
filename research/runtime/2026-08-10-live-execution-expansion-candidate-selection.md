@@ -30,20 +30,32 @@ The selection was evaluated through:
 
 `documentation` is the smallest currently declared task class that can plausibly reuse the guarded text-execution architecture without requiring repository mutation, external research, multimodal payloads, financial authority, production operations, or tool execution as part of the task itself.
 
-The canonical route currently resolves a low-risk documentation probe to:
+The executable router currently resolves a low-risk documentation probe to:
 
 ```text
 Primary
   Anthropic / claude-sonnet-5 / medium
 
-Routine fallback recorded on initial dispatch
-  OpenAI / gpt-5.6-sol
+Initial fallback recorded on the dispatch
+  Anthropic / claude-haiku-4-5
 
 Primary verifier
   OpenAI / gpt-5.6-terra / medium
 ```
 
-This preserves provider diversity between the primary executor and primary verifier. The current worker and routing configuration already define this responsibility and implementation topology. The live-expansion work must not create a separate documentation router.
+When the primary Sonnet implementation or Anthropic provider is blocked using the guarded runtime's existing redispatch transformation, the current router instead resolves:
+
+```text
+Failure redispatch executor
+  Google / gemini-3.5-flash-lite
+
+Failure redispatch verifier
+  OpenAI / gpt-5.6-terra / medium
+```
+
+The repeated Terra verifier is not fresh relative to the primary dispatch verifier and therefore would fail the existing guarded runtime fallback integrity check.
+
+The live-expansion work must not create a second documentation router to hide these facts.
 
 ### Not selected: daily_coding
 
@@ -82,7 +94,7 @@ Sources:
 - https://platform.claude.com/docs/en/about-claude/models/whats-new-sonnet-5
 - https://platform.claude.com/docs/en/build-with-claude/effort
 
-Implication for TEO: the documentation route already assigns `medium` reasoning effort. Any future live executor support for Sonnet 5 must carry that assignment into the provider request instead of silently using the provider default.
+Implication for TEO: the documentation route assigns `medium` reasoning effort. Any future live executor support for Sonnet 5 must carry that assignment into the provider request instead of silently using the provider default.
 
 ### OpenAI
 
@@ -94,62 +106,77 @@ Sources:
 - https://developers.openai.com/api/docs/models/gpt-5.6-terra
 - https://developers.openai.com/api/docs/guides/latest-model
 
-Implication for TEO: the canonical Sol fallback and Terra verifier are provider-capability-valid targets, but the current guarded execution/verifier adapters do not yet expose the exact support required by this candidate.
+Implication for TEO: Terra is provider-capability-valid for the primary documentation verifier, but the current guarded OpenAI verifier adapter does not yet include Terra in its supported model set.
 
 ### Google
 
-Google documents `gemini-3.6-flash` as generally available and supports structured outputs and thinking. It is therefore a capability-valid candidate for the fresh provider-diverse verifier needed after an OpenAI fallback execution, subject to TEO routing and verification policy explicitly assigning it.
+Google documents `gemini-3.6-flash` and `gemini-3.5-flash-lite` as generally available. The existing TEO guarded Google executor already supports both of those stable models.
 
 Sources:
 
 - https://ai.google.dev/gemini-api/docs/latest-model
 - https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash
 
+Implication for TEO: the measured failure redispatch to Gemini 3.5 Flash-Lite is already within the current Google executor's model support, but that does not repair fallback-lineage or fresh-verifier requirements by itself.
+
 ## Executable preflight findings
 
-The new `live_scope_candidate` preflight uses the normal TEO router and the same redispatch constraint transformation as the guarded runtime. It performs no provider call.
+The `live_scope_candidate` preflight uses the normal TEO router and the same redispatch constraint transformation as the guarded runtime. It performs no provider call.
 
 The current candidate state is intentionally **not ready for activation**.
 
-Passing gates:
+Passing findings:
 
 - active live scope remains only `high_volume_simple`;
 - candidate risk is limited to low and medium;
-- canonical documentation primary route matches Sonnet 5 at medium effort;
-- canonical initial routine fallback matches GPT-5.6 Sol;
-- canonical primary verifier matches GPT-5.6 Terra at medium effort;
-- the desired fresh fallback verifier, Gemini 3.6 Flash, already has a guarded verifier adapter.
+- documentation primary route resolves to Sonnet 5 at medium effort;
+- primary verifier resolves to GPT-5.6 Terra at medium effort;
+- model- and provider-failure redispatch both resolve to Gemini 3.5 Flash-Lite with Terra verification;
+- Gemini 3.5 Flash-Lite already has guarded execution adapter support.
 
 Open blockers:
 
-1. guarded Anthropic execution does not yet support Claude Sonnet 5;
-2. Sonnet 5 medium effort is not yet propagated by the execution adapter;
-3. guarded OpenAI execution does not yet support GPT-5.6 Sol;
-4. guarded OpenAI verification does not yet support GPT-5.6 Terra;
-5. model- and provider-failure redispatch cannot yet prove a fresh provider-diverse verifier for the Sol fallback under current canonical routing;
-6. no controlled documentation replay evidence exists;
-7. no bounded shadow-evaluation record exists for documentation live replay;
-8. rollback and recovery have not yet been proven for this task-class expansion.
+1. the initial documentation dispatch records Claude Haiku 4.5 as fallback, which is the same provider family as the Sonnet 5 primary;
+2. that recorded fallback does not match the executor selected by actual model/provider failure redispatch;
+3. guarded Anthropic execution does not yet support Claude Sonnet 5;
+4. Sonnet 5 medium effort is not yet propagated by the execution adapter;
+5. guarded OpenAI verification does not yet support GPT-5.6 Terra;
+6. failure redispatch reuses the primary dispatch's Terra verifier and therefore fails the guarded runtime's fresh-verifier rule;
+7. no controlled documentation replay evidence exists;
+8. no bounded shadow-evaluation record exists for documentation live replay;
+9. rollback and recovery have not yet been proven for this task-class expansion.
 
-## Important fallback finding
+## Runtime worker override finding
 
-The current documentation route names Gemini 3.1 Pro Preview as its route-level fallback, but preview models remain ineligible without explicit acceptance. Under the current worker fallback path, a normal low-risk documentation dispatch records GPT-5.6 Sol as its eligible routine fallback.
+`community/workers/extensions/runtime-worker-overrides.yaml` is loaded as a worker-level override. Its policy text describes runtime-specific authorization for `high_volume_simple`, but it changes the shared `documentation` worker's `preferred_implementations` and `fallbacks` without a task-type condition.
 
-When the primary Sonnet route is blocked by a model- or provider-scoped failure, the redispatch can reach the OpenAI Sol executor, but current verifier resolution cannot yet guarantee the desired fresh Google Gemini 3.6 Flash verifier. The preflight therefore fails the fallback-redispatch gate.
+That means the override affects ordinary `documentation` routing as well as `high_volume_simple` routing.
 
-This is a control finding, not permission to weaken preview acceptance or provider diversity.
+The observed consequences are:
+
+- the initial documentation fallback is Claude Haiku 4.5, not the route-level Gemini 3.1 Pro Preview and not GPT-5.6 Sol;
+- after Sonnet or Anthropic is blocked, preferred-implementation resolution selects Gemini 3.5 Flash-Lite;
+- the fallback redispatch keeps GPT-5.6 Terra as verifier, which violates the guarded runtime's requirement for a verifier implementation fresh from the primary dispatch.
+
+This is directly relevant to the expansion candidate. It is not being silently corrected in the candidate-selection slice because changing worker override semantics is a separate routing/control decision that requires its own verification.
+
+## Preview boundary
+
+The route-level documentation fallback remains Gemini 3.1 Pro Preview. It is ineligible unless the task explicitly accepts that preview model.
+
+The candidate-selection work does not weaken this rule and does not add preview acceptance to the probe.
 
 ## Activation boundary
 
 Before `documentation` can be added to active live scope, a later implementation must prove all of the following without changing task responsibility:
 
-1. exact primary route preserved;
-2. exact routine fallback preserved;
-3. Sonnet 5 execution support with assigned effort preserved;
-4. Sol fallback execution support;
-5. Terra primary-verifier support;
-6. fresh provider-diverse fallback verifier resolved canonically;
-7. current retry, fallback, circuit, telemetry, Route-Outcome Evidence, and artifact-confinement semantics preserved;
+1. exact primary route remains intentional;
+2. initial fallback and actual redispatch semantics are reconciled;
+3. routine fallback is provider-diverse;
+4. Sonnet 5 execution support preserves assigned medium effort;
+5. Terra primary-verifier support is implemented;
+6. failure redispatch receives a fresh provider-diverse verifier;
+7. current retry, fallback, circuit, telemetry, Route-Outcome Evidence, and artifact-confinement semantics are preserved;
 8. controlled live replay produces canonical evidence;
 9. shadow evaluation finds no policy or control concern;
 10. rollback and recovery behavior is reproducible;
@@ -164,6 +191,6 @@ The Google Interactions API has evolved during 2026. Before any new Google execu
 
 ## Conclusion
 
-`documentation` is the correct first candidate because it minimizes new execution semantics while exposing the exact remaining control gaps that must be closed before TEO widens live authority.
+`documentation` remains the correct first candidate because it minimizes new task semantics while exposing the exact routing and runtime gaps that must be repaired before TEO widens live authority.
 
-The appropriate next step is not activation. It is to close the adapter and fallback-verifier gaps, then run controlled replay and shadow evaluation while the active live scope remains unchanged.
+The appropriate next implementation gate is not activation. It is to reconcile the documentation worker override and fallback/fresh-verifier topology, then add missing Sonnet/Terra adapter support before controlled replay and shadow evaluation.
