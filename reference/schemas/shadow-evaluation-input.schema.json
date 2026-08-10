@@ -81,6 +81,8 @@
           "enum": [
             "benchmark_experiment",
             "benchmark_report",
+            "benchmark_conclusion",
+            "benchmark_conclusion_verification",
             "benchmark_conclusion_handoff",
             "route_outcome",
             "route_cost_attribution"
