@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-verifier-observation.schema.json",
+  "title": "TEO Benchmark Verifier Observation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "observation_id",
+    "experiment_id",
+    "fixture_id",
+    "candidate_id",
+    "trial_index",
+    "outcome_id",
+    "panel_plan_sha256",
+    "observer_id",
+    "provider_family",
+    "model",
+    "reasoning_effort",
+    "observed_at",
+    "decision",
+    "executor_context",
+    "output_sha256",
+    "evidence",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_verifier_observation"},
+    "observation_id": {"type": "string", "pattern": "^observation-[0-9a-f]{20}$"},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "fixture_id": {"type": "string", "minLength": 1},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "trial_index": {"type": "integer", "minimum": 1},
+    "outcome_id": {"type": "string", "minLength": 1},
+    "panel_plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observer_id": {"type": "string", "minLength": 1},
+    "provider_family": {"type": "string", "minLength": 1},
+    "model": {"type": "string", "minLength": 1},
+    "reasoning_effort": {"type": ["string", "null"]},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "checks", "human_reason"],
+      "properties": {
+        "status": {"enum": ["passed", "failed", "needs_human"]},
+        "checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "output_present",
+            "task_adherence",
+            "format_consistency",
+            "unsupported_claims_absent"
+          ],
+          "properties": {
+            "output_present": {"enum": ["pass", "fail", "uncertain"]},
+            "task_adherence": {"enum": ["pass", "fail", "uncertain"]},
+            "format_consistency": {"enum": ["pass", "fail", "uncertain"]},
+            "unsupported_claims_absent": {"enum": ["pass", "fail", "uncertain"]}
+          }
+        },
+        "human_reason": {
+          "enum": [
+            "none",
+            "insufficient_evidence",
+            "ambiguous_task",
+            "unverifiable_output",
+            "conflicting_evidence"
+          ]
+        }
+      }
+    },
+    "executor_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_family",
+        "model",
+        "runtime_verifier_provider_family",
+        "runtime_verifier_model"
+      ],
+      "properties": {
+        "provider_family": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "runtime_verifier_provider_family": {"type": "string", "minLength": 1},
+        "runtime_verifier_model": {"type": "string", "minLength": 1}
+      }
+    },
+    "output_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

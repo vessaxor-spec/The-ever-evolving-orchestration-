@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-conclusion-handoff.schema.json",
+  "title": "TEO Benchmark Conclusion Review Handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "handoff_id",
+    "created_at",
+    "conclusion_id",
+    "conclusion_integrity_sha256",
+    "experiment_id",
+    "consequence_level",
+    "destination",
+    "status",
+    "verification_id",
+    "verification_integrity_sha256",
+    "independent_verification_performed",
+    "policy_write_authority",
+    "qualified_human_approval_satisfied",
+    "notes",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_conclusion_handoff"},
+    "handoff_id": {"type": "string", "pattern": "^conclusion-handoff-[0-9a-f]{20}$"},
+    "created_at": {"type": "string", "format": "date-time"},
+    "conclusion_id": {"type": "string", "pattern": "^conclusion-[0-9a-f]{20}$"},
+    "conclusion_integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "consequence_level": {"enum": ["routine", "consequential"]},
+    "destination": {"const": "mission_control_or_maintainer_review"},
+    "status": {"enum": ["ready_for_review", "rejected", "needs_human"]},
+    "verification_id": {"type": ["string", "null"], "pattern": "^conclusion-verification-[0-9a-f]{20}$"},
+    "verification_integrity_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "independent_verification_performed": {"type": "boolean"},
+    "policy_write_authority": {"const": false},
+    "qualified_human_approval_satisfied": {"const": false},
+    "notes": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

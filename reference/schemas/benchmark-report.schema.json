@@ -112,13 +112,77 @@
       }
     },
     "verifier_disagreement": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["status", "reason"],
-      "properties": {
-        "status": {"const": "not_measured"},
-        "reason": {"type": "string", "minLength": 1}
-      }
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reason"],
+          "properties": {
+            "status": {"const": "not_measured"},
+            "reason": {"type": "string", "minLength": 1}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "issues",
+            "decision_use",
+            "canonical_runtime_verifier_override"
+          ],
+          "properties": {
+            "status": {"const": "insufficient"},
+            "issues": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "minLength": 1},
+              "uniqueItems": true
+            },
+            "decision_use": {"const": "diagnostic_only"},
+            "canonical_runtime_verifier_override": {"const": false}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "panel_plan_id",
+            "panel_plan_version",
+            "observation_count",
+            "verifiable_trials",
+            "unanimous_trials",
+            "disagreement_trials",
+            "disagreement_rate",
+            "status_disagreement_trials",
+            "criterion_disagreement_trials",
+            "human_reason_disagreement_trials",
+            "candidate_summaries",
+            "decision_use",
+            "canonical_runtime_verifier_override"
+          ],
+          "properties": {
+            "status": {"const": "measured"},
+            "panel_plan_id": {"type": "string", "minLength": 1},
+            "panel_plan_version": {"type": "string", "minLength": 1},
+            "observation_count": {"type": "integer", "minimum": 0},
+            "verifiable_trials": {"type": "integer", "minimum": 0},
+            "unanimous_trials": {"type": "integer", "minimum": 0},
+            "disagreement_trials": {"type": "integer", "minimum": 0},
+            "disagreement_rate": {"type": "number", "minimum": 0, "maximum": 1},
+            "status_disagreement_trials": {"type": "integer", "minimum": 0},
+            "criterion_disagreement_trials": {"type": "integer", "minimum": 0},
+            "human_reason_disagreement_trials": {"type": "integer", "minimum": 0},
+            "candidate_summaries": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/disagreement_candidate_summary"}
+            },
+            "decision_use": {"const": "diagnostic_only"},
+            "canonical_runtime_verifier_override": {"const": false}
+          }
+        }
+      ]
     },
     "limitations": {
       "type": "array",
@@ -138,6 +202,12 @@
         "source_outcome_ids": {
           "type": "array",
           "items": {"type": "string", "minLength": 1}
+        },
+        "panel_plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "source_verifier_observation_ids": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^observation-[0-9a-f]{20}$"},
+          "uniqueItems": true
         }
       }
     },
@@ -151,6 +221,34 @@
       "properties": {
         "low": {"type": "number", "minimum": 0, "maximum": 1},
         "high": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "disagreement_candidate_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "panel_size",
+        "verifiable_trials",
+        "observation_count",
+        "unanimous_trials",
+        "disagreement_trials",
+        "disagreement_rate",
+        "status_disagreement_trials",
+        "criterion_disagreement_trials",
+        "human_reason_disagreement_trials"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "minLength": 1},
+        "panel_size": {"type": "integer", "minimum": 2},
+        "verifiable_trials": {"type": "integer", "minimum": 0},
+        "observation_count": {"type": "integer", "minimum": 0},
+        "unanimous_trials": {"type": "integer", "minimum": 0},
+        "disagreement_trials": {"type": "integer", "minimum": 0},
+        "disagreement_rate": {"type": "number", "minimum": 0, "maximum": 1},
+        "status_disagreement_trials": {"type": "integer", "minimum": 0},
+        "criterion_disagreement_trials": {"type": "integer", "minimum": 0},
+        "human_reason_disagreement_trials": {"type": "integer", "minimum": 0}
       }
     }
   }

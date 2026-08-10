@@ -14,7 +14,7 @@ It answers four questions:
 3. What is the current milestone for each workstream?
 4. What evidence or gate must be satisfied before the workstream advances?
 
-This tracker does not create runtime, routing, release, or governance authority. Normative behavior remains defined by the applicable policy, registry, schema, activation, and release artifacts. The strategic direction remains in [`roadmap.md`](roadmap.md) and longer-horizon research remains under [`research/`](../../research/).
+This tracker does not create runtime, routing, release, or governance authority. Normative behavior remains defined by the applicable policy, registry, schema, activation, and release artifacts. Strategic direction remains in [`roadmap.md`](roadmap.md) and longer-horizon research remains under [`research/`](../../research/).
 
 ## Current system snapshot
 
@@ -27,13 +27,13 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 562 tests passed |
+| Latest validated test suite | 574 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | High and critical live execution | not authorized |
 
-The current roster counts above are expected to match the executable `ConfigBundle` composition and are protected by documentation-truth tests.
+The roster counts above are expected to match executable `ConfigBundle` composition and are protected by documentation-truth tests.
 
 ## Progress scoring method
 
@@ -69,9 +69,9 @@ Rules:
 | Verifier calibration evidence | In progress | 70% | Deterministic and empirical verifier evidence | Strengthen repeatability, disagreement, adversarial, and route-specific evidence |
 | Regulated specialist evidence pilot | In progress | 60% | Six-card maintainability pilot | Demonstrate repeated refresh cycles, expiry, provenance, authority resolution, and mutation resistance |
 | Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
-| Benchmark and Outcome Lab | In progress | 75% | Controlled evaluation plus live replay | Add multi-verifier disagreement and consequential-conclusion independent-verification handoff |
+| Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Planned | 10% | Effective-dated pricing and cost contract | Add versioned pricing evidence and route-level cost calculation |
-| Shadow route evaluation | Planned | 5% | Governed recommendation-only evaluation loop | Connect Outcome Lab evidence to specialist #82 without live policy-write authority |
+| Shadow route evaluation | Planned | 5% | Governed recommendation-only evaluation loop | Connect completed Outcome Lab evidence to specialist #82 without live policy-write authority |
 | Qualified-human approval lifecycle | In progress | 40% | Explicit approval record and authority handoff | Integrate identity, role, disposition, evidence, and audit linkage into runtime flow |
 | Live execution expansion | In progress | 30% | Bounded low and medium risk canary | Expand only task-class by task-class after evidence, verification, recovery, and authority gates pass |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
@@ -79,43 +79,32 @@ Rules:
 
 ## NOW
 
-### Benchmark and Outcome Lab
+### Source-backed cost attribution
 
-Build controlled evaluation on top of the completed route-outcome evidence contract.
-
-The current executable foundation now provides fixed synthetic fixtures, declared harness and candidate identity, balanced repeated-trial bindings, strict comparability checks, version-scoped route-outcome joins, primary/retry/fallback separation, descriptive regression signals, uncertainty intervals, explicit missingness, integrity-protected reports, reproducible conformance fixtures, and controlled live replay through normal TEO routing.
-
-Controlled live replay is bounded to the existing `high_volume_simple` low/medium-risk canary. It uses additive isolation constraints, no-network canonical-routing preflight, the active bounded retry policy, isolated per-trial circuit state, content-free runtime telemetry, the verifier assigned by the canonical dispatch, canonical Route-Outcome Evidence, and a standard replay experiment manifest bound to the complete replay-plan digest. It does not create forced-model or policy-write authority.
-
-The remaining material gates for the current milestone are multi-verifier disagreement measurement and an explicit independent-verification handoff for consequential evaluation conclusions.
+Add effective-dated price evidence and versioned calculations now that route-outcome identity, normalized usage, controlled evaluation, live replay, and evaluation-verification boundaries are stable enough to bind cost correctly.
 
 Completion criteria for the current milestone:
 
-- define fixed benchmark fixtures with explicit task class, risk, capability, route, verifier, and version context;
-- support replayable evaluation cases without silently changing task identity or authority boundaries;
-- compare routes and concrete model versions only across sufficiently comparable cohorts;
-- compare reasoning-effort settings where the underlying capability and task remain comparable;
-- preserve primary-route outcomes separately from retry-assisted and fallback-assisted outcomes;
-- measure verifier disagreement without optimizing merely for verifier pass rate;
-- detect regressions across declared runtime, model, verifier, tool, registry, or policy changes;
-- report uncertainty, missingness, evidence sufficiency, and practical limitations rather than forcing a winner;
-- produce reproducible experiment records that can be independently checked;
-- require independent verification for consequential evaluation conclusions;
-- keep all analyst outputs recommendation-only and outside live policy-write authority.
+- define a versioned pricing-evidence record with source URL or authoritative source identity, provider, model or billable surface, unit basis, currency, effective date, retrieval or verification date, and provenance;
+- distinguish pricing evidence from measured runtime usage;
+- bind route-level cost only when usage and pricing dimensions are compatible and sufficiently known;
+- keep unknown usage, pricing, currency, or billable dimensions explicitly unknown rather than zero or guessed;
+- preserve primary, retry, and fallback cost separately enough to diagnose route dependence;
+- preserve verifier cost separately enough to avoid hiding verification overhead;
+- support effective-dated price changes without rewriting historical route outcomes;
+- keep provider connection mechanism outside the pricing and routing decision model unless it materially changes an authoritative billable surface;
+- expose calculation inputs and versioning so cost claims are reproducible;
+- validate persisted pricing and cost records deterministically;
+- refuse unsupported monetary totals;
+- keep cost optimization subordinate to capability, risk, verification, provider diversity, human authority, and quality evidence.
 
-The milestone is complete only when controlled benchmark and replay evidence can be reproduced from declared fixtures and route-outcome records, verifier disagreement is explicitly measured, and consequential conclusions have a governed independent-verification handoff. A dashboard or aggregate score alone is insufficient.
+A pricing table or estimated token multiplier alone is insufficient. The milestone requires source-backed, effective-dated, reproducible route-level attribution.
 
 ## NEXT
 
-### Source-backed cost attribution
-
-Add effective-dated price evidence and versioned calculations only after the route-outcome identity and usage contract is stable enough to bind cost correctly.
-
-Cost optimization must remain subordinate to capability, risk, verification, provider diversity, and human-authority constraints.
-
 ### Shadow route evaluation
 
-Connect completed outcome evidence and controlled evaluation to `orchestration-evaluation-analyst` and allow bounded outputs such as:
+Connect completed route-outcome evidence, completed Benchmark and Outcome Lab evidence, and later source-backed cost evidence to `orchestration-evaluation-analyst` and allow bounded outputs such as:
 
 - `NO_CHANGE_JUSTIFIED`
 - `INSUFFICIENT_EVIDENCE`
@@ -124,6 +113,8 @@ Connect completed outcome evidence and controlled evaluation to `orchestration-e
 - `POLICY_OR_CONTROL_CONCERN`
 
 A shadow recommendation is evidence for review. It is not routing authority.
+
+The governed handoff must preserve the completed Benchmark Lab conclusion-verification boundary. Consequential evaluation conclusions require independent challenge before they can advance to Mission Control or maintainer review, and that review handoff still cannot write policy or satisfy qualified-human approval.
 
 ## LATER
 
@@ -174,7 +165,9 @@ The main invariants are implemented and heavily tested. The remaining ten percen
 
 ### Verifier calibration evidence, 70%
 
-The fixed corpus, deterministic checks, empirical instrumentation, provider-diverse observations, blinded review tooling, and provisional machine-panel path exist. Additional repeatability, route-specific, disagreement, adversarial, and accumulated empirical evidence remains useful. Independent human calibration remains optional research and is not a release or routing gate.
+The fixed corpus, deterministic checks, empirical instrumentation, provider-diverse observations, blinded review tooling, and machine-panel path exist. Additional repeatability, route-specific, adversarial, and accumulated empirical evidence remains useful. Independent human calibration remains optional research and is not a release or routing gate.
+
+Benchmark Lab now measures multi-verifier disagreement for controlled evaluations, but that diagnostic capability does not by itself complete the broader verifier-calibration evidence program.
 
 ### Regulated specialist evidence pilot, 60%
 
@@ -186,29 +179,41 @@ The canonical executable route-outcome join is implemented with strict schema va
 
 Future distributed persistence, continuous evaluation feeds, and source-backed cost calculation are separate declared workstreams and do not keep this milestone open.
 
-### Benchmark and Outcome Lab, 75%
+### Benchmark and Outcome Lab, 100%
 
-The controlled-evaluation foundation and controlled live replay are implemented. The foundation provides fixed synthetic fixtures, a versioned experiment manifest, explicit harness identity, balanced repeated trials, strict cohort comparability, offline executor-only isolation, route/model/reasoning/verifier/runtime/policy/registry/tool binding, primary-versus-fallback and retry dependence, descriptive regression signals, Wilson uncertainty intervals, latency and normalized-usage summaries, explicit missingness, reproducible integrity-protected reports, JSONL persistence, and deterministic conformance coverage.
+The current milestone is complete.
 
-Controlled live replay adds a schema-validated replay plan, system-to-system claim boundary, additive route-isolation constraints, no-network normal-routing preflight, exact candidate and assigned-verifier matching, active retry-budget alignment, isolated per-trial circuit state, guarded canary execution, live assigned verification, canonical route-outcome generation, replay-plan digest binding, and live capability-context comparability without rewriting source fixtures. The first two CI attempts exposed and corrected an invalid exact-capability assumption while preserving canonical routing enrichment. Reference Implementation CI run #423 validated the reconciled implementation with 562 passing tests, 428 tracked-file layout checks, regulated evidence validation, 23 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+The controlled-evaluation foundation provides fixed synthetic fixtures, a versioned experiment manifest, explicit harness identity, balanced repeated trials, strict cohort comparability, offline executor-only isolation, route/model/reasoning/verifier/runtime/policy/registry/tool binding, primary-versus-fallback and retry dependence, descriptive regression signals, Wilson uncertainty intervals, latency and normalized-usage summaries, explicit missingness, reproducible integrity-protected reports, JSONL persistence, and deterministic conformance coverage.
 
-The remaining milestone work is material: measure disagreement using multiple independent benchmark-verifier observations without Goodharting pass rate, and require an explicit independent-verification handoff before consequential evaluation conclusions can advance. Those gaps keep the workstream in progress and prevent a 100% claim.
+Controlled live replay adds a schema-validated replay plan, system-to-system claim boundary, additive route-isolation constraints, no-network normal-routing preflight, exact candidate and assigned-verifier matching, active retry-budget alignment, isolated per-trial circuit state, guarded canary execution, live assigned verification, canonical route-outcome generation, replay-plan digest binding, and live capability-context comparability without rewriting source fixtures. Reference Implementation CI run #423 validated that gate with 562 passing tests, 428 tracked-file layout checks, regulated evidence validation, 23 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+Multi-verifier disagreement adds versioned provider-diverse panel plans, blinded structured observations, exact trial/output/outcome binding, explicit missing-observation insufficiency, status/criterion/human-reason disagreement measurement, and a hard rule that panel voting cannot override the canonical runtime verifier or route-outcome disposition.
+
+Consequential conclusion control adds integrity-protected conclusion, independent-verification, and review-handoff records. Consequential comparative or regression conclusions require measured disagreement and independent challenge. Model-originated conclusions require provider-diverse verification. Review handoffs have no policy-write authority and explicitly do not satisfy qualified-human approval.
+
+Reference Implementation CI run #429 validated the completed executable milestone with 574 passing tests, 437 tracked-file layout checks, regulated evidence validation, 28 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+Compatible maintenance, larger fixture banks, additional observational evidence, and integration into Shadow Route Evaluation may continue without reopening this completed milestone.
 
 ### Source-backed cost attribution, 10%
 
-The governance doctrine is established: pricing must be effective-dated, source-backed, versioned, and separate from raw usage telemetry. The executable attribution layer remains to be built.
+The governance doctrine is established: pricing must be effective-dated, source-backed, versioned, and separate from raw usage telemetry. Route-outcome normalized usage is stable enough to begin the executable attribution layer, but that layer has not yet materially started.
 
 ### Shadow route evaluation, 5%
 
-The analyst and recommendation states exist, canonical route-outcome evidence is available, and controlled evaluation plus live replay now exist. The continuous evidence feed, multi-verifier/independent-challenge handoff, and governed evaluation runner into specialist #82 are not yet implemented, so this workstream remains planned.
+Specialist #82 and bounded recommendation states exist. Canonical route-outcome evidence and the full controlled Benchmark Lab milestone now exist, including independent conclusion verification. The continuous governed evidence feed and recommendation runner into specialist #82 are not yet implemented, so this workstream remains planned.
 
 ### Qualified-human approval lifecycle, 40%
 
 Critical-risk policy already preserves qualified-human requirements, but a complete explicit runtime approval lifecycle with authority identity, disposition, evidence, and audit linkage remains incomplete.
 
+The Benchmark Lab review-handoff record explicitly does not satisfy qualified-human approval and therefore does not advance this percentage.
+
 ### Live execution expansion, 30%
 
 Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, and controlled replay exist for a bounded canary. Broader task classes and high or critical execution remain evidence-gated.
+
+Benchmark Lab completion does not widen live execution scope.
 
 ### Distributed runtime hardening, 20%
 
@@ -244,4 +249,4 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
 - [`community/specialists/orchestration-evaluation-analyst.md`](../../community/specialists/orchestration-evaluation-analyst.md): active post-run route evaluator
 - [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
-- [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): current Benchmark and Outcome Lab contract
+- [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone

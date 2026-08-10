@@ -620,14 +620,14 @@ def evaluate_benchmark(
         "verifier_disagreement": {
             "status": "not_measured",
             "reason": (
-                "Benchmark Lab v1 foundation consumes the canonical runtime verifier disposition "
-                "but does not yet run or join multiple independent benchmark verifier observations."
+                "This report has not been enriched with a declared multi-verifier "
+                "observation set."
             ),
         },
         "limitations": [
             "Metrics are controlled descriptive evidence, not automatic routing authority.",
             "No source-backed monetary cost attribution is performed.",
-            "Multi-verifier disagreement measurement and live replay execution are not yet implemented.",
+            "This base evaluator consumes completed route-outcome evidence. Controlled live replay and multi-verifier observation collection are separate executable layers.",
         ],
         "provenance": {
             "manifest_sha256": manifest.sha256,
