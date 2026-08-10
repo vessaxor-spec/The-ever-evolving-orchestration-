@@ -267,6 +267,7 @@ specialists:
   blockchain-engineer: {template: sol_deep_engineering}
   code-reviewer: {template: sol_deep_engineering}
   data-analyst: {template: sol_deep_engineering}
+  orchestration-evaluation-analyst: {template: sol_deep_engineering}
   data-engineer: {template: sol_deep_engineering}
   devops-engineer: {template: sol_deep_engineering}
   devsecops-engineer: {template: sol_deep_engineering}
