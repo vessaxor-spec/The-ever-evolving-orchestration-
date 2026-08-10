@@ -10,7 +10,7 @@ EXPANSION_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-expan
 ACTIVE_ROUTING_PATH = REPO_ROOT / "policy" / "routing" / "team-routing.yaml"
 ACTIVE_SPECIALISTS_PATH = REPO_ROOT / "community" / "specialists" / "specialists.yaml"
 EVIDENCE_PILOT_PATH = REPO_ROOT / "policy" / "specialists" / "evidence-pilot.yaml"
-METHODOLOGY_PATH = REPO_ROOT / "docs" / "methodology" / "assurance-specialist-staging-2026-08-06.md"
+HISTORY_PATH = REPO_ROOT / "docs" / "history" / "activation" / "assurance-specialist-staging-2026-08-06.md"
 
 EXPECTED_SPECIALISTS = {
     "privacy-engineer": ("privacy_engineering", "critical"),
@@ -144,12 +144,12 @@ def test_standards_checkpoint_distinguishes_published_from_draft() -> None:
     assert checkpoint["application_security"]["latest_stable_verification_standard"] == "OWASP ASVS 5.0.0"
     assert checkpoint["application_security"]["versioned_requirement_references_required"] is True
 
-    methodology = METHODOLOGY_PATH.read_text(encoding="utf-8")
-    assert "nist.gov/itl/applied-cybersecurity/privacy-engineering" in methodology
-    assert "webstore.iec.ch/en/publication/5520" in methodology
-    assert "iso.org/standard/90021" in methodology
-    assert "csrc.nist.gov/projects/automated-combinatorial-testing" in methodology
-    assert "owasp.org/www-project-application-security-verification-standard" in methodology
+    historical_record = HISTORY_PATH.read_text(encoding="utf-8")
+    assert "nist.gov/itl/applied-cybersecurity/privacy-engineering" in historical_record
+    assert "webstore.iec.ch/en/publication/5520" in historical_record
+    assert "iso.org/standard/90021" in historical_record
+    assert "csrc.nist.gov/projects/automated-combinatorial-testing" in historical_record
+    assert "owasp.org/www-project-application-security-verification-standard" in historical_record
 
 
 def test_expansion_registry_contains_the_same_assurance_specialists() -> None:
