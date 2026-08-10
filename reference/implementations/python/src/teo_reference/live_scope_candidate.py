@@ -1,6 +1,6 @@
-"""Compatibility surface for the current live-scope candidate preflight."""
+"""Public surface for the current live-scope candidate preflight."""
 
-from .live_scope_candidate_v2 import (
+from .live_scope_candidate_impl import (
     LIVE_SCOPE_EXPANSION_POLICY_PATH,
     LiveScopeCandidateEvaluation,
     LiveScopeCandidateGate,
