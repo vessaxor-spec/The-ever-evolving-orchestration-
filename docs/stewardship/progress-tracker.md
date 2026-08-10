@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 602 tests passed |
+| Latest validated test suite | 626 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -72,43 +72,36 @@ Rules:
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve evidence and authority boundaries through later reviewed adaptation |
-| Qualified-human approval lifecycle | In progress | 40% | Explicit approval record and authority handoff | Integrate identity, role, disposition, evidence, and audit linkage into runtime flow |
+| Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, and finalization boundaries |
 | Live execution expansion | In progress | 30% | Bounded low and medium risk canary | Expand only task-class by task-class after evidence, verification, recovery, and authority gates pass |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
 ## NOW
 
-### Qualified-human approval lifecycle
+### Evidence-governed live execution expansion
 
-Complete the explicit runtime approval lifecycle for work that already requires qualified-human authority under TEO policy.
+Reconsider live-scope expansion task class by task class using the now-complete route-outcome, Benchmark Lab, source-backed cost, shadow-evaluation, recovery, verification, and qualified-human authority evidence chain.
 
-This workstream is next because TEO now has a complete evidence chain from route outcomes through controlled evaluation, source-backed cost, shadow recommendation, independent challenge, and Mission Control or maintainer review. The remaining authority gap is not another model-evaluation layer. It is the explicit runtime record and handoff for the human authority that policy already requires.
+Completion criteria for the next bounded milestone:
 
-Completion criteria for the current milestone:
+- select one explicitly bounded task class beyond the current `high_volume_simple` canary only when the candidate scope is low or medium effective risk and capability-valid;
+- preserve non-lowerable effective risk and existing task-class authority boundaries;
+- preserve provider-diverse fallback and independent verification;
+- preserve retry, fallback, circuit-state, telemetry, and canonical Route-Outcome Evidence semantics;
+- require explicit rollback or recovery behavior and reproducible evidence before widening scope;
+- use shadow-evaluation evidence and source-backed cost only as supporting evidence, never as sole promotion criteria;
+- prove the qualified-human approval lifecycle remains enforceable wherever policy independently requires it;
+- preserve explicit preview-model acceptance;
+- keep provider access and authentication outside routing decisions;
+- do not authorize high or critical live execution in this milestone;
+- add conformance and mutation tests that fail if live-scope boundaries, rollback, verification, or authority gates are weakened.
 
-- define a versioned qualified-human approval request and disposition contract;
-- bind every approval request to the exact dispatch, effective risk, task identity, required authority reason, execution evidence, verification evidence, and applicable review evidence;
-- record the approving human's qualified role or authority class without turning personal identity into routing authority;
-- distinguish requested, approved, rejected, expired, revoked, and unable-to-determine states where applicable;
-- require evidence that the approving role is authorized for the declared authority requirement;
-- prevent model, specialist, verifier, Mission Control, or maintainer records from impersonating qualified-human approval;
-- prevent a shadow recommendation or review handoff from satisfying qualified-human approval;
-- make approval decisions integrity protected, auditable, and reproducible from declared evidence;
-- preserve explicit refusal when required authority is missing, expired, ambiguous, or outside scope;
-- bind finalization to the exact approval record where policy requires human authority;
-- keep provider access, model selection, and billing identity outside the approval-qualification decision;
-- add conformance and mutation tests that fail if qualified-human requirements can be bypassed or self-satisfied.
-
-The milestone implements authority evidence that existing policy already requires. It does not broaden which tasks require human approval and it does not widen live execution by itself.
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded expansion change satisfies these criteria. High and critical live execution remains unauthorized.
 
 ## NEXT
 
-### Evidence-governed live execution expansion
-
-After the qualified-human approval lifecycle is complete, reconsider task-class-by-task-class live-scope expansion using the now-complete route-outcome, Benchmark Lab, cost-attribution, shadow-evaluation, recovery, verification, and authority evidence chain.
-
-High and critical live execution remains unauthorized unless and until the applicable task class independently satisfies its authority, capability, verification, recovery, evidence, and human-approval gates.
+No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after a bounded live-scope candidate has been evaluated and either accepted or rejected.
 
 ## LATER
 
@@ -217,21 +210,33 @@ Reference Implementation CI run #445 validated the executable milestone with 602
 
 Future policy adaptation remains a separate governed stage requiring Mission Control and maintainer decision, reviewed policy change, CI, deployment, post-change evaluation, and rollback if regression.
 
-### Qualified-human approval lifecycle, 40%
+### Qualified-human approval lifecycle, 100%
 
-Critical-risk policy already preserves qualified-human requirements, but a complete explicit runtime approval lifecycle with authority identity, disposition, evidence, and audit linkage remains incomplete.
+The current milestone is complete.
 
-Benchmark and shadow review handoffs explicitly do not satisfy qualified-human approval. Completion of the evidence and shadow-evaluation layers therefore makes this authority lifecycle the current priority rather than reducing its remaining scope.
+The executable lifecycle provides integrity-protected authority-grant, approval-request, disposition, and human-finalization records. Requests can be created only for dispatches already marked `human_approval_required` and exact Route-Outcome Evidence in the `awaiting_human` disposition. Each request binds the exact dispatch digest, task identity, task type, effective risk, authority requirement, verification evidence, and applicable review evidence.
+
+Human decision records require a separately integrity-protected authority grant that covers the required authority class, authority requirement, effective risk, task type, and decision timestamp. The initial `requested` state and the `approved`, `rejected`, `unable_to_determine`, `expired`, and `revoked` lifecycle states are explicitly represented through the request plus append-only dispositions. An approval cannot outlive its request or authority grant.
+
+Model, specialist, verifier, Mission Control, and maintainer actor types cannot impersonate the human actor contract. A maintainer may act only if independently qualified through a scoped human authority grant. Benchmark, shadow, Mission Control, and maintainer review evidence can support an approval request but cannot satisfy qualified-human approval.
+
+Terminal human finalization revalidates the exact dispatch, Route-Outcome Evidence, approval request, linear disposition chain, authority-grant scope, request validity, approval validity, expiry, and revocation state. It completes only a current valid scoped approval and otherwise blocks with an explicit reason. The original Route-Outcome Evidence remains `awaiting_human` and is not rewritten.
+
+Identity, model selection, provider access, and billing identity remain outside approval qualification and routing. The lifecycle has no policy-write, live-routing, or live-scope-change authority.
+
+Reference Implementation CI run #451 validated the executable milestone with 626 passing tests, 458 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+This milestone implements authority evidence for requirements existing policy already imposes. It does not broaden which tasks require qualified-human approval and does not widen live execution.
 
 ### Live execution expansion, 30%
 
-Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, controlled replay, economic evidence, and governed shadow evaluation exist for a bounded canary. Broader task classes and high or critical execution remain evidence-gated.
+Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, controlled replay, economic evidence, governed shadow evaluation, and the qualified-human approval lifecycle now exist for the reference control plane. Broader live task classes and high or critical execution remain evidence-gated.
 
-Benchmark Lab, cost attribution, and Shadow Route Evaluation completion do not widen live execution scope.
+Completion of the qualified-human lifecycle does not itself widen live execution scope. The current milestone remains a bounded low or medium risk task-class expansion decision under the `NOW` criteria above.
 
 ### Distributed runtime hardening, 20%
 
-The reference semantics for recovery, circuit state, telemetry, audit, execution, evaluation, cost evidence, and shadow recommendation are proven in the current single-process reference architecture. Distributed coordination, persistence, access control, retention, and streaming remain later work.
+The reference semantics for recovery, circuit state, telemetry, audit, execution, evaluation, cost evidence, shadow recommendation, and qualified-human authority evidence are proven in the current single-process reference architecture. Distributed coordination, persistence, access control, retention, and streaming remain later work.
 
 ### Licensing and contribution terms, 10%
 
@@ -266,3 +271,4 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone
 - [`../specification/source-backed-cost-attribution.md`](../specification/source-backed-cost-attribution.md): completed source-backed cost-attribution contract
 - [`../specification/shadow-route-evaluation.md`](../specification/shadow-route-evaluation.md): completed governed Shadow Route Evaluation contract
+- [`../specification/qualified-human-approval-lifecycle.md`](../specification/qualified-human-approval-lifecycle.md): completed qualified-human authority lifecycle contract
