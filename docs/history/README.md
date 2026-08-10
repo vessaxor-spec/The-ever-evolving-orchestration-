@@ -8,7 +8,7 @@ Historical records preserve what TEO believed, staged, activated, audited, or va
 
 - [`activation/`](activation/) preserves staged and activated organizational, team, worker, and specialist topology records.
 - [`audits/`](audits/) preserves dated reviews, specialist refreshes, routing audits, and recalibration records.
-- `validation/` is reserved for completed validation and evidence-result records when such material is migrated or added.
+- [`validation/`](validation/) is the canonical home for completed validation, evidence-result, and conformance records that are historical observations rather than reusable methodology or active policy.
 
 Current normative control remains in active `policy/`, registry, community, and reference surfaces.
 
