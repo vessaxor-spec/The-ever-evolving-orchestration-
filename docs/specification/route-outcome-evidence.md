@@ -225,6 +225,6 @@ The conformance suite proves that:
 
 ## Relationship to the Progress Tracker
 
-This contract implements the current `NOW` Route-Outcome Evidence milestone defined in `docs/stewardship/progress-tracker.md`.
+This contract completes the Route-Outcome Evidence milestone in `docs/stewardship/progress-tracker.md`.
 
-Benchmark comparison, source-backed pricing, and shadow route evaluation remain separate `NEXT` workstreams. Distributed storage and generalized durable execution remain `LATER` work.
+With that executable evidence substrate validated, the tracker advances **Benchmark and Outcome Lab** to `NOW`. Source-backed pricing and shadow route evaluation remain separate `NEXT` workstreams. Distributed storage and generalized durable execution remain `LATER` work.
