@@ -45,6 +45,12 @@ from .cost_attribution import (
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
 from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
 from .google_verifier import GoogleLiveVerifier
+from .live_scope_candidate import (
+    LiveScopeCandidateEvaluation,
+    LiveScopeCandidateGate,
+    LiveScopeExpansionPolicy,
+    evaluate_live_scope_candidate,
+)
 from .openai_adapter import OpenAIResponsesAdapter, execute_openai_canary_once
 from .openai_verifier import OpenAILiveVerifier
 from .provider_adapter import (
@@ -162,6 +168,9 @@ __all__ = [
     "JsonlRouteOutcomeSink",
     "JsonlRuntimeTelemetrySink",
     "JsonlShadowRecommendationSink",
+    "LiveScopeCandidateEvaluation",
+    "LiveScopeCandidateGate",
+    "LiveScopeExpansionPolicy",
     "LiveVerificationDecision",
     "LiveVerificationError",
     "LiveVerificationExecution",
@@ -223,6 +232,7 @@ __all__ = [
     "build_shadow_recommendation_verification",
     "evaluate_benchmark",
     "evaluate_controlled_replay",
+    "evaluate_live_scope_candidate",
     "evaluate_qualified_human_finalization",
     "evaluate_shadow_routes",
     "execute_anthropic_canary_once",
