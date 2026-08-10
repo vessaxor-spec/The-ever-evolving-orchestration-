@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from .anthropic_adapter import _extract_usage
 from .provider_connection import ProviderConnectionRequest, ProviderConnectionError
 from .verification_adapter import (
     LiveVerificationError,
@@ -105,6 +106,7 @@ class AnthropicLiveVerifier:
         if not text:
             raise LiveVerificationError("Anthropic verifier returned no structured decision")
         decision = decode_structured_decision(text)
+        usage = _extract_usage(response_payload)
         request_id = response.headers.get("request-id") or response.headers.get("request_id")
         evidence: list[str] = ["live_verification:anthropic_structured_output"]
         if request_id:
@@ -114,4 +116,5 @@ class AnthropicLiveVerifier:
             provider_family=self.provider_family,
             model=request.verifier_model,
             evidence=tuple(evidence),
+            usage=usage,
         )
