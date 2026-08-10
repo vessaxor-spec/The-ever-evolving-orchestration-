@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/qualified-human-approval-request.schema.json",
+  "title": "TEO Qualified-Human Approval Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "qualified_human_approval_version",
+    "record_type",
+    "approval_request_id",
+    "requested_at",
+    "expires_at",
+    "request_state",
+    "requested_by",
+    "dispatch_id",
+    "dispatch_sha256",
+    "task_id",
+    "task_type",
+    "effective_risk",
+    "authority_requirement",
+    "route_outcome_ref",
+    "verification",
+    "review_evidence_refs",
+    "policy_write_authority",
+    "live_routing_authority",
+    "live_scope_change_authority",
+    "qualified_human_approval_satisfied",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "qualified_human_approval_version": {"const": "1"},
+    "record_type": {"const": "qualified_human_approval_request"},
+    "approval_request_id": {"type": "string", "pattern": "^approval-request-[a-f0-9]{20}$"},
+    "requested_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "request_state": {"const": "requested"},
+    "requested_by": {"const": "teo_control_plane"},
+    "dispatch_id": {"type": "string", "minLength": 1},
+    "dispatch_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "task_id": {"type": "string", "minLength": 1},
+    "task_type": {"type": "string", "minLength": 1},
+    "effective_risk": {"enum": ["low", "medium", "high", "critical"]},
+    "authority_requirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requirement_id", "required_authority_class", "reason", "policy_source"],
+      "properties": {
+        "requirement_id": {"type": "string", "minLength": 1},
+        "required_authority_class": {"type": "string", "minLength": 1},
+        "reason": {"type": "string", "minLength": 1},
+        "policy_source": {"type": "string", "minLength": 1}
+      }
+    },
+    "route_outcome_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome_id", "integrity_sha256"],
+      "properties": {
+        "outcome_id": {"type": "string", "pattern": "^outcome-[a-f0-9]{20}$"},
+        "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dispatch_id", "status"],
+      "properties": {
+        "dispatch_id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["passed", "needs_human"]}
+      }
+    },
+    "review_evidence_refs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["record_type", "record_id", "integrity_sha256"],
+        "properties": {
+          "record_type": {
+            "enum": [
+              "benchmark_conclusion_handoff",
+              "shadow_route_recommendation",
+              "shadow_recommendation_handoff"
+            ]
+          },
+          "record_id": {"type": "string", "minLength": 1},
+          "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "policy_write_authority": {"const": false},
+    "live_routing_authority": {"const": false},
+    "live_scope_change_authority": {"const": false},
+    "qualified_human_approval_satisfied": {"const": false},
+    "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}
