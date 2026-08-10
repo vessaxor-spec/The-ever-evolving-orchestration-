@@ -154,7 +154,7 @@ models:
       - unresolved ambiguity
       - security-sensitive reasoning
       - difficult cross-system decisions
-      - disagreement_resolution
+      - disagreement resolution
     limitations:
       - reserve for cases where added reasoning depth justifies cost and latency
 
