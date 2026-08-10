@@ -2,6 +2,14 @@
 
 from .anthropic_adapter import AnthropicMessagesAdapter, execute_anthropic_canary_once
 from .anthropic_verifier import AnthropicLiveVerifier
+from .benchmark_conclusion import (
+    BenchmarkConclusionHandoffRecord,
+    BenchmarkConclusionRecord,
+    BenchmarkConclusionVerificationRecord,
+    advance_benchmark_conclusion,
+    build_benchmark_conclusion,
+    build_benchmark_conclusion_verification,
+)
 from .benchmark_lab import (
     BenchmarkExperimentManifest,
     BenchmarkExperimentReport,
@@ -16,6 +24,13 @@ from .benchmark_replay import (
     ControlledReplayExecution,
     evaluate_controlled_replay,
     run_controlled_replay,
+)
+from .benchmark_verification import (
+    BenchmarkVerifierObservation,
+    BenchmarkVerifierPanelPlan,
+    JsonlBenchmarkVerifierObservationSink,
+    attach_verifier_disagreement,
+    execute_benchmark_verifier_panel,
 )
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
 from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
@@ -84,10 +99,15 @@ __all__ = [
     "AnthropicLiveVerifier",
     "AnthropicMessagesAdapter",
     "BaseOrchestrationEngine",
+    "BenchmarkConclusionHandoffRecord",
+    "BenchmarkConclusionRecord",
+    "BenchmarkConclusionVerificationRecord",
     "BenchmarkExperimentManifest",
     "BenchmarkExperimentReport",
     "BenchmarkFixtureRecord",
     "BenchmarkReplayPlan",
+    "BenchmarkVerifierObservation",
+    "BenchmarkVerifierPanelPlan",
     "CanaryRuntimeOutcome",
     "CircuitStateStore",
     "ControlledReplayExecution",
@@ -100,6 +120,7 @@ __all__ = [
     "InMemoryRuntimeTelemetrySink",
     "JsonFileCircuitStateStore",
     "JsonlBenchmarkReportSink",
+    "JsonlBenchmarkVerifierObservationSink",
     "JsonlRouteOutcomeSink",
     "JsonlRuntimeTelemetrySink",
     "LiveVerificationDecision",
@@ -135,11 +156,16 @@ __all__ = [
     "TaskRequest",
     "VerificationResult",
     "active_execution_from_outcome",
+    "advance_benchmark_conclusion",
+    "attach_verifier_disagreement",
     "build_abandoned_route_outcome",
+    "build_benchmark_conclusion",
+    "build_benchmark_conclusion_verification",
     "build_guarded_canary_route_outcome",
     "evaluate_benchmark",
     "evaluate_controlled_replay",
     "execute_anthropic_canary_once",
+    "execute_benchmark_verifier_panel",
     "execute_gemini_canary_once",
     "execute_guarded_canary",
     "execute_live_verification",
