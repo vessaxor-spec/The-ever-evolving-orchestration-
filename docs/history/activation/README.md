@@ -25,6 +25,7 @@ These YAML records preserve earlier routing, expansion, and staging state exactl
 - [`principal-engineering-expansion.yaml`](principal-engineering-expansion.yaml)
 - [`assurance-staging.yaml`](assurance-staging.yaml)
 - [`final-specialist-tranche-staging.yaml`](final-specialist-tranche-staging.yaml)
+- [`final-specialist-workers.yaml`](final-specialist-workers.yaml)
 - [`physical-systems-staging.yaml`](physical-systems-staging.yaml)
 - [`platform-reliability-core-staging.yaml`](platform-reliability-core-staging.yaml)
 - [`platform-reliability-operations-staging.yaml`](platform-reliability-operations-staging.yaml)

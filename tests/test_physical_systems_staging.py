@@ -97,7 +97,7 @@ def test_specialist_cards_are_full_preserved_allocations() -> None:
 
 def test_worker_contract_matches_cards_and_human_boundaries() -> None:
     staging = load_yaml(STAGING_PATH)
-    worker_path = REPO_ROOT / staging["worker_contract"]["path"]
+    worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "physical-systems-workers.yaml"
     worker_registry = load_yaml(worker_path)
 
     assert git_blob_sha(worker_path) == staging["worker_contract"]["canonical_blob_sha"]

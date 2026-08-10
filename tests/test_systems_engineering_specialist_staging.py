@@ -37,7 +37,7 @@ def test_staged_specialist_and_worker_match_canonical_blobs() -> None:
     worker = staging["worker"]
 
     specialist_path = REPO_ROOT / specialist["role_card"]
-    worker_path = REPO_ROOT / worker["definition"]
+    worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "systems-engineering-worker.yaml"
 
     assert specialist_path.is_file()
     assert worker_path.is_file()
@@ -50,7 +50,7 @@ def test_systems_engineering_responsibility_surface_is_preserved() -> None:
     role_text = (REPO_ROOT / staging["specialist"]["role_card"]).read_text(
         encoding="utf-8"
     )
-    worker_text = (REPO_ROOT / staging["worker"]["definition"]).read_text(
+    worker_text = (REPO_ROOT / "community" / "workers" / "extensions" / "systems-engineering-worker.yaml").read_text(
         encoding="utf-8"
     )
 

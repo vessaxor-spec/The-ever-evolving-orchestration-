@@ -126,7 +126,6 @@ def test_r3_history_exceptions_are_closed() -> None:
     policy = validator.load_policy(POLICY_PATH)
     assert policy["contracts"]["docs_methodology"]["temporary_history_exceptions"] == []
     assert policy["contracts"]["docs_history"]["temporary_direct_exceptions"] == []
-    assert policy["migration"]["current_phase"] == "R5"
     assert "R3_documentation_lifecycle_separation" in policy["migration"]["completed_phases"]
 
 
@@ -227,7 +226,6 @@ def test_r4_policy_topology_has_no_temporary_exceptions() -> None:
     assert routing["temporary_direct_exceptions"] == []
     assert set(routing["canonical_subdirectories"]) == {"core", "extensions", "activation"}
     assert "R4_policy_topology" in policy["migration"]["completed_phases"]
-    assert policy["migration"]["current_phase"] == "R5"
     assert "routing.yaml" not in policy["root"]["temporary_exceptions"]
 
 def test_undeclared_nested_routing_policy_is_rejected() -> None:
@@ -235,3 +233,58 @@ def test_undeclared_nested_routing_policy_is_rejected() -> None:
     paths = _current_paths() | {"policy/routing/extensions/random-policy.yaml"}
     errors = validator.validate_layout(paths, policy)
     assert any("Undeclared routing file" in error for error in errors)
+
+
+R5_WORKER_FILES = {
+    "analytics-worker.yaml",
+    "assurance-workers.yaml",
+    "compliance-worker.yaml",
+    "incident-response-worker.yaml",
+    "market-research-worker.yaml",
+    "physical-systems-workers.yaml",
+    "platform-reliability-core-workers.yaml",
+    "platform-reliability-operations-workers.yaml",
+    "principal-engineering-active-workers.yaml",
+    "research-worker.yaml",
+    "runtime-worker-overrides.yaml",
+    "specialist-completion-workers.yaml",
+    "systems-engineering-worker.yaml",
+    "user-research-worker.yaml",
+}
+
+R5_OLD_PATHS = {
+    "models.yaml",
+    "community/workers/final-specialist-workers.yaml",
+    *{f"community/workers/{name}" for name in R5_WORKER_FILES},
+}
+
+R5_CANONICAL_PATHS = {
+    "policy/routing/core/implementation-defaults.yaml",
+    "docs/history/activation/final-specialist-workers.yaml",
+    *{f"community/workers/extensions/{name}" for name in R5_WORKER_FILES},
+}
+
+
+def test_r5_worker_and_implementation_paths_are_canonical() -> None:
+    paths = _current_paths()
+    assert R5_OLD_PATHS.isdisjoint(paths)
+    assert R5_CANONICAL_PATHS <= paths
+
+
+def test_r5_closes_layout_exceptions_and_completes_migration() -> None:
+    policy = validator.load_policy(POLICY_PATH)
+    workers = policy["contracts"]["community_workers"]
+    routing = policy["contracts"]["policy_routing"]
+    assert policy["root"]["temporary_exceptions"] == {}
+    assert workers["temporary_direct_extensions"] == []
+    assert set(workers["canonical_extensions"]) == R5_WORKER_FILES
+    assert "implementation-defaults.yaml" in routing["canonical_subdirectories"]["core"]
+    assert "R5_worker_and_implementation_topology" in policy["migration"]["completed_phases"]
+    assert policy["migration"]["current_phase"] == "complete"
+
+
+def test_undeclared_worker_extension_is_rejected() -> None:
+    policy = validator.load_policy(POLICY_PATH)
+    paths = _current_paths() | {"community/workers/extensions/random-worker.yaml"}
+    errors = validator.validate_layout(paths, policy)
+    assert any("Undeclared worker extension" in error for error in errors)

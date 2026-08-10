@@ -15,6 +15,10 @@ Each worker defines:
 
 The stable worker profiles are defined in [`workers.yaml`](workers.yaml).
 
+Active additive worker definitions are under [`extensions/`](extensions/). The reference router loads an explicit governed list of those files; it does not discover arbitrary worker YAML by directory traversal.
+
+Superseded worker staging records belong under [`docs/history/activation/`](../../docs/history/activation/), not in the active worker namespace.
+
 ## Specialist bindings
 
 A specialist narrows a worker to a particular domain without replacing the worker or owning team.

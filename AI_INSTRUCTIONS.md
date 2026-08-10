@@ -11,7 +11,7 @@ Use this repository as the source of truth for TEO orchestration.
 5. Read `community/specialists/specialists.yaml` and the selected specialist role card when applicable.
 6. Read `registry/capabilities/capabilities.yaml` and `registry/capabilities/README.md`.
 7. Read `policy/routing/core/routing.yaml`, `policy/routing/core/specialist-model-routing.yaml`, and active route extensions.
-8. Read `models.yaml` and current provider/model evidence before changing time-sensitive implementation defaults.
+8. Read `policy/routing/core/implementation-defaults.yaml` and current provider/model evidence before changing time-sensitive implementation defaults.
 9. For live execution, read the applicable policies under `policy/runtime/`.
 10. For consequential specialist facts, apply `policy/specialists/freshness.yaml` and the regulated evidence pilot where in scope.
 11. For any model-bearing decision, apply `policy/governance/model-freshness.yaml` before relying on a model identifier, lifecycle state, capability, or routing assumption.

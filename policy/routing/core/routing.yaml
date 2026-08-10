@@ -1,7 +1,7 @@
 version: 0.6
 status: public-draft
 reviewed_at: 2026-08-09
-model_registry: models.yaml
+model_registry: policy/routing/core/implementation-defaults.yaml
 provider_evidence: registry/models/models.yaml
 
 principles:

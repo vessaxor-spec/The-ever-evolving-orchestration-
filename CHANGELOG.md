@@ -44,6 +44,7 @@ All notable public changes to TEO are recorded here.
 - root and research navigation now follow the repository layout contract instead of retaining temporary R2 placement exceptions
 - reusable methodology is now separated from dated staging, activation, refresh, audit, and routing-recalibration history
 - active routing policy is now separated into canonical core, extension, and activation namespaces
+- stable base workers, active worker extensions, and implementation defaults now have separate canonical topology
 
 ### Validation
 
@@ -55,7 +56,7 @@ All notable public changes to TEO are recorded here.
 - telemetry tests prove caller identifiers and content remain absent
 - routing tests prove a caller cannot lower content-derived risk and preview models require explicit acceptance
 - CLI tests prove unknown schema fields fail at the external boundary
-- repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, and retired R4 routing locations
+- repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
 
 ### Status
 
@@ -63,6 +64,6 @@ Phases 1 through 5 are complete. Runtime execution remains intentionally guarded
 
 Current work is operational evidence: control integrity, verifier calibration, route-outcome evaluation, source-backed cost attribution, qualified-human approval integration, distributed runtime hardening, and continued observation of the six-card regulated evidence pilot.
 
-Repository information-architecture migration has completed R1, R2, R3, and R4. R5 worker and implementation topology is next.
+Repository information-architecture migration has completed R1 through R5. The planned information-architecture migration is complete.
 
 High and critical live execution remain unauthorized.

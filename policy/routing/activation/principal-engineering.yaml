@@ -13,15 +13,15 @@ active_extensions:
   team_routes: policy/routing/extensions/principal-engineering-team-routing.yaml
   implementation_routes: policy/routing/extensions/principal-engineering-routing.yaml
   specialist_allocations: community/specialists/principal-engineering-active.yaml
-  active_workers: community/workers/principal-engineering-active-workers.yaml
+  active_workers: community/workers/extensions/principal-engineering-active-workers.yaml
   conformance: reference/datasets/principal-engineering-routing-conformance.yaml
 
 loaded_staged_workers:
-  - community/workers/systems-engineering-worker.yaml
-  - community/workers/platform-reliability-core-workers.yaml
-  - community/workers/platform-reliability-operations-workers.yaml
-  - community/workers/physical-systems-workers.yaml
-  - community/workers/assurance-workers.yaml
+  - community/workers/extensions/systems-engineering-worker.yaml
+  - community/workers/extensions/platform-reliability-core-workers.yaml
+  - community/workers/extensions/platform-reliability-operations-workers.yaml
+  - community/workers/extensions/physical-systems-workers.yaml
+  - community/workers/extensions/assurance-workers.yaml
 
 activated_new_teams:
   - platform_reliability

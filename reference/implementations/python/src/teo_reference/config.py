@@ -279,27 +279,27 @@ class ConfigBundle:
             workers=_load_workers(
                 root_path / "community/workers/workers.yaml",
                 (
-                    root_path / "community/workers/incident-response-worker.yaml",
-                    root_path / "community/workers/research-worker.yaml",
-                    root_path / "community/workers/market-research-worker.yaml",
-                    root_path / "community/workers/analytics-worker.yaml",
-                    root_path / "community/workers/user-research-worker.yaml",
-                    root_path / "community/workers/compliance-worker.yaml",
-                    root_path / "community/workers/systems-engineering-worker.yaml",
-                    root_path / "community/workers/platform-reliability-core-workers.yaml",
-                    root_path / "community/workers/platform-reliability-operations-workers.yaml",
-                    root_path / "community/workers/physical-systems-workers.yaml",
-                    root_path / "community/workers/assurance-workers.yaml",
-                    root_path / "community/workers/principal-engineering-active-workers.yaml",
-                    root_path / "community/workers/specialist-completion-workers.yaml",
-                    root_path / "community/workers/runtime-worker-overrides.yaml",
+                    root_path / "community/workers/extensions/incident-response-worker.yaml",
+                    root_path / "community/workers/extensions/research-worker.yaml",
+                    root_path / "community/workers/extensions/market-research-worker.yaml",
+                    root_path / "community/workers/extensions/analytics-worker.yaml",
+                    root_path / "community/workers/extensions/user-research-worker.yaml",
+                    root_path / "community/workers/extensions/compliance-worker.yaml",
+                    root_path / "community/workers/extensions/systems-engineering-worker.yaml",
+                    root_path / "community/workers/extensions/platform-reliability-core-workers.yaml",
+                    root_path / "community/workers/extensions/platform-reliability-operations-workers.yaml",
+                    root_path / "community/workers/extensions/physical-systems-workers.yaml",
+                    root_path / "community/workers/extensions/assurance-workers.yaml",
+                    root_path / "community/workers/extensions/principal-engineering-active-workers.yaml",
+                    root_path / "community/workers/extensions/specialist-completion-workers.yaml",
+                    root_path / "community/workers/extensions/runtime-worker-overrides.yaml",
                 ),
             ),
             specialists=_load_specialists(
                 root_path / "community/specialists/specialists.yaml",
                 (root_path / "community/specialists/principal-engineering-active.yaml",),
             ),
-            models=_load_yaml(root_path / "models.yaml"),
+            models=_load_yaml(root_path / "policy/routing/core/implementation-defaults.yaml"),
             capabilities=_load_yaml(root_path / "registry/capabilities/capabilities.yaml"),
             model_evidence=_load_yaml(root_path / "registry/models/models.yaml"),
         )
@@ -441,7 +441,7 @@ class ConfigBundle:
             evidence_provider = str(evidence.get("provider") or "")
             if configured_provider != evidence_provider:
                 issues.append(
-                    f"ERROR: model {concrete} provider mismatch: models.yaml={configured_provider}, registry={evidence_provider}"
+                    f"ERROR: model {concrete} provider mismatch: policy/routing/core/implementation-defaults.yaml={configured_provider}, registry={evidence_provider}"
                 )
 
         for path, candidate in _iter_model_candidates(self.routing):

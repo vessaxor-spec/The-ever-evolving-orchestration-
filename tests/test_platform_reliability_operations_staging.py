@@ -50,7 +50,7 @@ def test_operations_specialists_and_workers_match_canonical_blobs() -> None:
         assert git_blob_sha(role_path) == record["canonical_git_blob_sha"]
 
     worker_record = staging["worker_definition"]
-    worker_path = REPO_ROOT / worker_record["path"]
+    worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "platform-reliability-operations-workers.yaml"
     assert worker_path.is_file()
     assert git_blob_sha(worker_path) == worker_record["canonical_git_blob_sha"]
 

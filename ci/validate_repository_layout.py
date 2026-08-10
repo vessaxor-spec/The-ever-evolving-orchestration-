@@ -189,10 +189,24 @@ def validate_layout(tracked_files: Iterable[str], policy: dict[str, Any]) -> lis
     worker_subdirs = set(
         _string_list(workers["approved_subdirectories"], "community_workers.approved_subdirectories")
     )
+    worker_extensions = set(
+        _string_list(workers["canonical_extensions"], "community_workers.canonical_extensions")
+    )
+    if worker_subdirs != {"extensions"}:
+        raise LayoutPolicyError("community_workers.approved_subdirectories must be exactly extensions")
     for path in sorted(paths, key=str):
         if len(path.parts) >= 4 and path.parts[:2] == ("community", "workers"):
             if path.parts[2] not in worker_subdirs:
                 errors.append(f"Unknown worker subdirectory {path.parts[2]} from {path}")
+                continue
+            if len(path.parts) != 4:
+                errors.append(f"Nested worker path is not allowed below {path.parts[2]}: {path}")
+                continue
+            if path.name not in worker_extensions:
+                errors.append(
+                    f"Undeclared worker extension community/workers/extensions/{path.name}; "
+                    "update worker topology governance intentionally before adding active worker policy"
+                )
 
     methodology = _mapping(contracts["docs_methodology"], "contracts.docs_methodology")
     methodology_path = str(methodology["path"])
