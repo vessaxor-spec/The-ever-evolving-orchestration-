@@ -83,6 +83,8 @@ Rules:
 
 Connect the completed evidence chain to `orchestration-evaluation-analyst` without giving the analyst or evaluation runner live routing authority.
 
+**Execution authorization:** maintainer-approved on 2026-08-10. Implementation may begin, but the workstream remains `Planned / 5%` until executable shadow-evaluation contracts, evidence joins, and recommendation-boundary tests materially land and pass validation.
+
 The input evidence is now available from:
 
 - canonical Route-Outcome Evidence;
@@ -209,7 +211,7 @@ Future pricing refreshes, negotiated or subscription billing surfaces, additiona
 
 ### Shadow route evaluation, 5%
 
-Specialist #82 and bounded recommendation states exist. Canonical route-outcome evidence, the full controlled Benchmark Lab milestone, independently challenged consequential conclusions, and source-backed route-cost evidence now exist. The governed evidence join and recommendation runner into specialist #82 are not yet implemented, so this workstream remains planned.
+Specialist #82 and bounded recommendation states exist. Canonical route-outcome evidence, the full controlled Benchmark Lab milestone, independently challenged consequential conclusions, and source-backed route-cost evidence now exist. Maintainer execution authorization was recorded on 2026-08-10, but the governed evidence join and recommendation runner into specialist #82 are not yet implemented, so this workstream remains planned.
 
 ### Qualified-human approval lifecycle, 40%
 
