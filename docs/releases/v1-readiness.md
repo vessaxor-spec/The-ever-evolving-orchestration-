@@ -17,7 +17,7 @@ The v1 reference system is expected to include:
 - reproducible CI and linked-configuration validation, and
 - an executable provisional machine-panel evidence path.
 
-Independent human calibration is intentionally tracked as a stronger post-v1 stewardship tier. Its absence must remain visible and it continues to block human-ground-truth quality claims and any authority expansion that policy requires humans to approve.
+Independent human calibration is an optional post-v1 evidence-enhancement study. Its absence must remain visible whenever a claim could otherwise be mistaken for independently human-validated verifier evidence, but it does not block releases, routing changes, model selection, live-scope decisions, or architectural evolution. Qualified human approval remains mandatory wherever the underlying task or effective-risk policy independently requires it.
 
 ## Provider access boundary
 
@@ -51,11 +51,11 @@ It cannot establish human ground truth, authorize verifier-quality claims, broad
 
 The repository-hosted workflow currently provides an optional API-key convenience harness for this study because GitHub Actions does not inherit an end user's interactive provider session. Other runtimes may execute the same collectors through another injected provider connection.
 
-### Human stewardship path
+### Optional independent human calibration path
 
-The stronger independent-human path remains active and is tracked through GitHub Issue #75 and `docs/stewardship/community-human-verification.md`.
+The independent-human study is available as optional research and is tracked through GitHub Issue #75 and `docs/stewardship/community-human-verification.md`.
 
-Community stewardship can complete that layer after v1 without blocking the functional reference release.
+Maintainers may run that study when independently human-labeled comparison would materially strengthen a specific published claim. Participation does not confer approval authority over TEO releases, routing, architecture, or maintainer decisions.
 
 ## Later runtime work
 
@@ -76,10 +76,10 @@ Provider-specific account provisioning and authentication-product development ar
 
 `reference_operational` means the architecture, runnable control plane, guarded live paths, verification, CI, and provisional evidence machinery are operational. Access to selected models is supplied by the caller or integrating runtime.
 
-`human_calibrated` is a stronger later state reached only after independent blinded human review, empirical collection, residual-risk review, and explicit human acceptance are complete.
+`human_calibrated` is an optional stronger evidence state used only when an independent blinded human calibration study has actually been completed and can support specifically scoped human-validation claims.
 
 ## v1.0.0 release contract
 
 The normative human-readable release contract for the first functional-v1 tag is `docs/releases/v1.0.0.md`.
 
-That contract defines the claims, explicit non-claims, authority boundary, release acceptance gates, tag immutability rule, and semantic-version intent for `v1.0.0` and later v1 releases. The `v1.0.0` tag must not be created unless its acceptance gates are satisfied for the exact release candidate.
+That contract defines the claims, explicit non-claims, authority boundary, release acceptance gates, tag immutability rule, and semantic-version intent for `v1.0.0` and later v1 releases. The historical `v1.0.0` tag remains immutable; current governance may evolve through reviewed post-release changes without rewriting that tagged source state.
