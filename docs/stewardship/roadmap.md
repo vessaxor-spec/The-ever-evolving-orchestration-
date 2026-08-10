@@ -82,6 +82,18 @@ Completion of this lifecycle does not broaden which tasks require human approval
 
 The current operational priority is to evaluate one bounded live task-class expansion at a time beyond the existing low or medium risk `high_volume_simple` canary.
 
+`documentation` is the first staged candidate. Candidate selection and an executable no-network preflight are complete, but **live activation is not authorized**. The preflight records actual routing and adapter readiness rather than creating a separate execution path.
+
+Current blockers that must be resolved before documentation replay or activation include:
+
+- the initial documentation fallback currently remains Anthropic-family rather than provider-diverse;
+- failure redispatch resolves to Gemini 3.5 Flash-Lite but reuses the primary GPT-5.6 Terra verifier, violating the fresh-verifier requirement;
+- guarded Claude Sonnet 5 execution support is not yet implemented;
+- guarded GPT-5.6 Terra verification support is not yet implemented;
+- controlled documentation replay, shadow evaluation, and rollback/recovery evidence remain outstanding.
+
+The worker-level runtime override that contributes to the fallback mismatch must be reconciled as an explicit routing/control decision rather than silently bypassed by the candidate evaluator.
+
 Any candidate expansion must preserve:
 
 - non-lowerable effective risk;
@@ -118,7 +130,7 @@ A broader regulated evidence registry is not authorized merely because the pilot
 
 Broaden live execution by task class only when the applicable authority, capability, verification, telemetry, recovery, evidence, and human-approval controls have demonstrated reliable behavior.
 
-The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate candidate passes the current Progress Tracker gate.
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope. `documentation` is staged for evaluation and cannot enter active telemetry, verification, or guarded execution scope until its fallback, adapter, replay, shadow, recovery, and independent-review gates pass.
 
 High and critical live execution remains outside the current guarded runtime.
 

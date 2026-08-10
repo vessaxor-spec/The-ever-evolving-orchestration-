@@ -1,0 +1,73 @@
+version: 1.0
+status: active
+reviewed_at: 2026-08-10
+
+active_scope:
+  task_types:
+    - high_volume_simple
+  risk_levels:
+    - low
+    - medium
+
+candidates:
+  documentation:
+    state: staged
+    activation_authorized: false
+    task_type: documentation
+    risk_levels:
+      - low
+      - medium
+    probe:
+      task_id: live-scope-documentation-probe-v1
+      task: >-
+        Draft a short technical note from the bounded facts supplied in this task.
+        Do not use external sources, tools, credentials, or side effects.
+      risk_level: low
+    expected_route:
+      primary:
+        provider_family: anthropic
+        model: claude-sonnet-5
+        reasoning_effort: medium
+      initial_fallback:
+        provider_family: anthropic
+        model: claude-haiku-4-5
+        reasoning_effort: null
+      primary_verifier:
+        provider_family: openai
+        model: gpt-5.6-terra
+        reasoning_effort: medium
+      failure_redispatch_executor:
+        provider_family: google
+        model: gemini-3.5-flash-lite
+        reasoning_effort: null
+      current_failure_redispatch_verifier:
+        provider_family: openai
+        model: gpt-5.6-terra
+        reasoning_effort: medium
+    evidence:
+      candidate_selection: research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md
+      controlled_replay: null
+      shadow_evaluation: null
+    activation_requirements:
+      - exact_primary_route_matches
+      - exact_initial_fallback_matches
+      - initial_fallback_provider_diverse
+      - primary_executor_adapter_supported
+      - failure_redispatch_executor_adapter_supported
+      - primary_verifier_adapter_supported
+      - failure_redispatch_verifier_adapter_supported
+      - fallback_redispatch_verifier_is_fresh
+      - controlled_replay_evidence_present
+      - route_outcome_evidence_present
+      - rollback_and_recovery_proven
+      - high_and_critical_risk_refusal_proven
+      - active_scope_change_independently_reviewed
+
+policy: >-
+  Live-scope candidates are evaluation records, not execution authority. A staged
+  candidate may identify the expected canonical route and its remaining gates, but
+  it must not be added to active runtime telemetry, live verification, or guarded
+  execution scope until every activation requirement is satisfied by reproducible
+  evidence and an independently reviewed policy change. Candidate evaluation cannot
+  lower effective risk, accept a preview model, change provider access, bypass
+  capabilities or verification, or satisfy qualified-human approval.
