@@ -92,7 +92,7 @@ It includes dedicated Mission Control workers for orchestration, operations, pro
 
 The repository information-architecture migration **R1 through R5 is complete**. Current authority, historical activation records, research, executable reference code, evidence, registries, and stewardship documentation now have governed canonical locations under [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
 
-The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** complete at their declared milestones. Reference Implementation CI #463 passed **634 automated tests**, **463 tracked-file layout checks**, regulated specialist evidence validation, **38 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The canonical current priority is **evidence-governed live execution expansion**, now at 40%. `documentation` is the first staged candidate, but it has no live-execution authority; the bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
+The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** complete at their declared milestones. Reference Implementation CI #473 passed **641 automated tests**, **465 tracked-file layout checks**, regulated specialist evidence validation, **38 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The canonical current priority is **evidence-governed live execution expansion**, now at 55%. `documentation` is the first staged candidate; its fallback/fresh-verifier topology and direct adapter readiness are validated, but it has no live-execution authority. The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
 
 The post-v1 hard audit completed on 2026-08-10 without finding a critical control-plane defect. The final audited tree passed **390 tracked-file layout checks**, **519 automated tests**, regulated specialist evidence validation, **18 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The durable audit record is [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
@@ -126,6 +126,8 @@ The repository currently implements:
 - conditional escalation separated from ordinary fallback
 - guarded live provider execution for the bounded canary route
 - staged live-scope candidate policy and no-network readiness preflight without activation authority
+- repaired documentation provider-diverse fallback and fresh-verifier recovery topology
+- staged Claude Sonnet 5 and GPT-5.6 Sol executor capability plus GPT-5.6 Terra verifier capability without task-scope activation
 - bounded transient retry under the same dispatch
 - canonical fallback redispatch with a fresh verifier
 - persistent provider-family circuit state with Closed, Open, and Half-Open recovery
@@ -397,6 +399,8 @@ The Python reference implementation is a runnable control plane that can:
 - produce structured dispatch records
 - execute the guarded live canary path
 - evaluate staged live-scope candidates against actual routing, redispatch, adapter, verification, and evidence gates without making a provider call
+- preserve the staged documentation Sonnet 5 -> Sol fallback -> fresh Gemini 3.6 Flash recovery-verifier topology
+- expose Sonnet 5 and Sol executor plus Terra verifier adapter capability without widening guarded task scope
 - retry bounded transient failures
 - perform canonical fallback redispatch
 - maintain provider-family circuit state
@@ -518,6 +522,7 @@ The repository test and validation system covers, among other controls:
 - provider-diverse fallback and verifier assignment
 - active throughput primary/fallback/verifier topology
 - staged live-scope candidate identity, active-scope non-expansion, routing truth, adapter readiness, and premature-activation mutations
+- repaired documentation fallback/fresh-verifier topology and staged Sonnet/Sol/Terra adapter capability without activation
 - preview authorization
 - finalization integrity guards
 - retry and fallback behavior
@@ -550,7 +555,7 @@ The reference CI:
 7. validates linked TEO configuration
 8. executes the end-to-end reference lifecycle
 
-The latest accepted validation for the staged documentation live-scope candidate and executable preflight is Reference Implementation CI #463: 634 tests passed, 463 tracked files passed layout validation, 38 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed.
+The latest accepted validation for the staged documentation topology and adapter-readiness gate is Reference Implementation CI #473: 641 tests passed, 465 tracked files passed layout validation, 38 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed.
 
 The 2026-08-10 post-v1 hard audit is recorded in [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The audited reference CI run completed with 519 tests passing and provider-diverse execution, fallback, and verification intact.
 
@@ -758,7 +763,7 @@ The repository layout is governed and CI-enforced. Root normalization, documenta
 
 Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, integrity, evidence, controlled-evaluation, qualified-human authority, and staged live-scope evaluation work while `v1.0.0` remains the immutable stable release.
 
-Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, Shadow Route Evaluation, and the Qualified-human approval lifecycle have completed their current milestones. The canonical `NOW` workstream is evidence-governed live execution expansion, now at 40%. `documentation` is the first staged candidate and remains `activation_authorized: false`. The current low or medium risk `high_volume_simple` canary remains the only accepted live execution scope until documentation or another bounded candidate passes the declared fallback, adapter, replay, shadow, recovery, rollback, and independent-review gates. High and critical live execution remains unauthorized.
+Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, Shadow Route Evaluation, and the Qualified-human approval lifecycle have completed their current milestones. The canonical `NOW` workstream is evidence-governed live execution expansion, now at 55%. `documentation` is the first staged candidate and remains `activation_authorized: false`. Its provider-diverse fallback/fresh-verifier topology and direct Sonnet/Sol/Terra adapter readiness are validated. The next gate is controlled documentation live replay. The current low or medium risk `high_volume_simple` canary remains the only accepted live execution scope until the candidate also passes replay, shadow, recovery, rollback, and independent-review gates. High and critical live execution remains unauthorized.
 
 The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
@@ -767,7 +772,7 @@ The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence meta
 Current and future work may include:
 
 - evidence-governed live-scope expansion, the current canonical `NOW` workstream
-- reconciliation of the staged documentation fallback and fresh-verifier topology before controlled replay
+- controlled documentation live replay followed by shadow, recovery, rollback, and independent-review gates
 - optional independent blinded human calibration research ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls
