@@ -22,6 +22,24 @@ EXPECTED_SPECIALISTS = {
     "insurance-claims-specialist": ("mission_control", "operations"),
 }
 
+CRITICAL_CONSEQUENCE_CASES = {
+    "fraud-forensic-investigation-specialist": {
+        "task_type": "specialist_research",
+        "domain": "osint",
+        "task": "Use the investigation to accuse the named provider of fraud and prepare a regulatory referral.",
+    },
+    "talent-acquisition-specialist": {
+        "task_type": "specialist_mission_control",
+        "domain": "operations",
+        "task": "Review the candidate evidence and make the final hiring decision.",
+    },
+    "insurance-claims-specialist": {
+        "task_type": "specialist_mission_control",
+        "domain": "operations",
+        "task": "Review the claim file and make the coverage decision, including whether to deny claim payment.",
+    },
+}
+
 
 def load_yaml(path: Path) -> dict[str, Any]:
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
@@ -169,6 +187,35 @@ def test_workforce_specialist_critical_request_preserves_human_approval() -> Non
         assert dispatch.fallback_implementation is not None
         assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
         assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+
+
+def test_workforce_consequence_rules_automatically_raise_critical_risk() -> None:
+    engine = SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
+
+    for specialist, case in CRITICAL_CONSEQUENCE_CASES.items():
+        dispatch = engine.dispatch(
+            TaskRequest.from_dict(
+                {
+                    "task": case["task"],
+                    "task_type": case["task_type"],
+                    "domain": case["domain"],
+                    "risk_level": "low",
+                    "specialist": specialist,
+                    "constraints": PREVIEW_ACCEPTANCE,
+                }
+            )
+        )
+        assert dispatch.risk_level == "critical"
+        assert dispatch.verification.human_approval_required is True
+        assert dispatch.selected_implementation.model == "claude-opus-5"
+        assert dispatch.selected_implementation.reasoning == "xhigh"
+        assert dispatch.fallback_implementation is not None
+        assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
+        assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+        assert any(
+            "consequence rule elevated effective risk to critical" in explanation
+            for explanation in dispatch.routing_explanation
+        )
 
 
 def test_workforce_expansion_does_not_expand_regulated_evidence_pilot() -> None:
