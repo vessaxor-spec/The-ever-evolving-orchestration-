@@ -141,10 +141,32 @@ def validate_layout(tracked_files: Iterable[str], policy: dict[str, Any]) -> lis
     routing_subdirs = set(
         _string_list(routing["approved_subdirectories"], "policy_routing.approved_subdirectories")
     )
+    routing_contents = _mapping(
+        routing.get("canonical_subdirectories"),
+        "policy_routing.canonical_subdirectories",
+    )
+    if set(routing_contents) != routing_subdirs:
+        raise LayoutPolicyError(
+            "policy_routing.canonical_subdirectories must exactly match approved_subdirectories"
+        )
+    allowed_routing_files = {
+        subdir: set(_string_list(filenames, f"policy_routing.canonical_subdirectories.{subdir}"))
+        for subdir, filenames in routing_contents.items()
+    }
     for path in sorted(paths, key=str):
         if len(path.parts) >= 4 and path.parts[:2] == ("policy", "routing"):
-            if path.parts[2] not in routing_subdirs:
-                errors.append(f"Unknown routing subdirectory {path.parts[2]} from {path}")
+            subdir = path.parts[2]
+            if subdir not in routing_subdirs:
+                errors.append(f"Unknown routing subdirectory {subdir} from {path}")
+                continue
+            if len(path.parts) != 4:
+                errors.append(f"Nested routing path is not allowed below {subdir}: {path}")
+                continue
+            if path.name not in allowed_routing_files[subdir]:
+                errors.append(
+                    f"Undeclared routing file policy/routing/{subdir}/{path.name}; "
+                    "update routing topology governance intentionally before adding policy"
+                )
 
     workers = _mapping(contracts["community_workers"], "contracts.community_workers")
     worker_path = str(workers["path"])

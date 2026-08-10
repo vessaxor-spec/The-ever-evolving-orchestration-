@@ -4,8 +4,8 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-EXPANSION_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-expansion.yaml"
-ACTIVATION_PATH = REPO_ROOT / "policy" / "routing" / "principal-engineering-activation.yaml"
+EXPANSION_PATH = REPO_ROOT / "docs" / "history" / "activation" / "principal-engineering-expansion.yaml"
+ACTIVATION_PATH = REPO_ROOT / "policy" / "routing" / "activation" / "principal-engineering.yaml"
 CANONICAL_SPECIALISTS_PATH = REPO_ROOT / "community" / "specialists" / "specialists.yaml"
 ACTIVE_EXTENSION_PATH = (
     REPO_ROOT / "community" / "specialists" / "principal-engineering-active.yaml"

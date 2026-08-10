@@ -29,9 +29,6 @@ root:
     - pyproject.toml
     - .gitignore
   temporary_exceptions:
-    routing.yaml:
-      target: docs/history/activation/initial-routing-draft.yaml
-      migration_phase: R4
     models.yaml:
       target: policy/routing/implementation-defaults.yaml
       migration_phase: R5
@@ -73,34 +70,31 @@ zones:
 contracts:
   policy_routing:
     path: policy/routing
-    active_direct_files:
-      - routing.yaml
-      - team-routing.yaml
-      - mission-control-routing.yaml
-      - research-routing.yaml
-      - review-routing.yaml
-      - principal-engineering-routing.yaml
-      - principal-engineering-team-routing.yaml
-      - specialist-spawn-routing.yaml
-      - specialist-spawn-team-routing.yaml
-      - specialist-model-routing.yaml
-    temporary_direct_exceptions:
-      - assurance-staging.yaml
-      - final-specialist-tranche-staging.yaml
-      - physical-systems-staging.yaml
-      - platform-reliability-core-staging.yaml
-      - platform-reliability-operations-staging.yaml
-      - principal-engineering-activation.yaml
-      - principal-engineering-expansion.yaml
-      - systems-engineering-staging.yaml
+    active_direct_files: []
+    temporary_direct_exceptions: []
     approved_subdirectories:
       - core
       - extensions
       - activation
+    canonical_subdirectories:
+      core:
+        - routing.yaml
+        - specialist-model-routing.yaml
+        - team-routing.yaml
+      extensions:
+        - mission-control-routing.yaml
+        - principal-engineering-routing.yaml
+        - principal-engineering-team-routing.yaml
+        - research-routing.yaml
+        - review-routing.yaml
+        - specialist-spawn-routing.yaml
+        - specialist-spawn-team-routing.yaml
+      activation:
+        - principal-engineering.yaml
     future_rule: >-
-      A new direct YAML file is prohibited unless this policy is intentionally updated.
-      New durable routing policy should converge on core or extensions. Historical
-      activation state belongs under docs/history after its live dependencies are migrated.
+      Direct routing YAML is prohibited. Canonical base policy belongs in core, additive
+      active routes belong in extensions, and current activation manifests belong in
+      activation. Superseded staging and activation state belongs under docs/history.
 
   community_workers:
     path: community/workers
@@ -205,7 +199,8 @@ migration:
     - R1_layout_constitution
     - R2_root_and_research_normalization
     - R3_documentation_lifecycle_separation
-  current_phase: R4
+    - R4_policy_topology
+  current_phase: R5
   sequence:
     - R1_layout_constitution
     - R2_root_and_research_normalization

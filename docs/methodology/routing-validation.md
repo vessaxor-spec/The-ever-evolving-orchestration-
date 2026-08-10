@@ -10,8 +10,8 @@ It evaluates routing policy. It does not claim to benchmark the quality of any p
 
 Each validation run uses:
 
-- `policy/routing/team-routing.yaml` for team and worker dispatch
-- `policy/routing/routing.yaml` for implementation resolution, fallback, risk, and verification rules
+- `policy/routing/core/team-routing.yaml` for team and worker dispatch
+- `policy/routing/core/routing.yaml` for implementation resolution, fallback, risk, and verification rules
 - `community/workers/workers.yaml` for worker ownership and required capabilities
 - `community/teams/` for team inputs, outputs, boundaries, success criteria, and independence rules
 

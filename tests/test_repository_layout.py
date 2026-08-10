@@ -126,7 +126,7 @@ def test_r3_history_exceptions_are_closed() -> None:
     policy = validator.load_policy(POLICY_PATH)
     assert policy["contracts"]["docs_methodology"]["temporary_history_exceptions"] == []
     assert policy["contracts"]["docs_history"]["temporary_direct_exceptions"] == []
-    assert policy["migration"]["current_phase"] == "R4"
+    assert policy["migration"]["current_phase"] == "R5"
     assert "R3_documentation_lifecycle_separation" in policy["migration"]["completed_phases"]
 
 
@@ -169,3 +169,69 @@ def test_bad_capsule_name_is_rejected() -> None:
     paths = _current_paths() | {"community/capsules/latest-state.md"}
     errors = validator.validate_layout(paths, policy)
     assert any("Capsule filename violates naming contract" in error for error in errors)
+
+
+R4_OLD_PATHS = {
+    "routing.yaml",
+    "policy/routing/routing.yaml",
+    "policy/routing/team-routing.yaml",
+    "policy/routing/specialist-model-routing.yaml",
+    "policy/routing/mission-control-routing.yaml",
+    "policy/routing/research-routing.yaml",
+    "policy/routing/review-routing.yaml",
+    "policy/routing/principal-engineering-routing.yaml",
+    "policy/routing/principal-engineering-team-routing.yaml",
+    "policy/routing/specialist-spawn-routing.yaml",
+    "policy/routing/specialist-spawn-team-routing.yaml",
+    "policy/routing/principal-engineering-activation.yaml",
+    "policy/routing/principal-engineering-expansion.yaml",
+    "policy/routing/assurance-staging.yaml",
+    "policy/routing/final-specialist-tranche-staging.yaml",
+    "policy/routing/physical-systems-staging.yaml",
+    "policy/routing/platform-reliability-core-staging.yaml",
+    "policy/routing/platform-reliability-operations-staging.yaml",
+    "policy/routing/systems-engineering-staging.yaml",
+}
+
+R4_CANONICAL_PATHS = {
+    "policy/routing/core/routing.yaml",
+    "policy/routing/core/team-routing.yaml",
+    "policy/routing/core/specialist-model-routing.yaml",
+    "policy/routing/extensions/mission-control-routing.yaml",
+    "policy/routing/extensions/research-routing.yaml",
+    "policy/routing/extensions/review-routing.yaml",
+    "policy/routing/extensions/principal-engineering-routing.yaml",
+    "policy/routing/extensions/principal-engineering-team-routing.yaml",
+    "policy/routing/extensions/specialist-spawn-routing.yaml",
+    "policy/routing/extensions/specialist-spawn-team-routing.yaml",
+    "policy/routing/activation/principal-engineering.yaml",
+    "docs/history/activation/initial-routing-draft.yaml",
+    "docs/history/activation/principal-engineering-expansion.yaml",
+    "docs/history/activation/assurance-staging.yaml",
+    "docs/history/activation/final-specialist-tranche-staging.yaml",
+    "docs/history/activation/physical-systems-staging.yaml",
+    "docs/history/activation/platform-reliability-core-staging.yaml",
+    "docs/history/activation/platform-reliability-operations-staging.yaml",
+    "docs/history/activation/systems-engineering-staging.yaml",
+}
+
+def test_r4_policy_topology_paths_are_canonical() -> None:
+    paths = _current_paths()
+    assert R4_OLD_PATHS.isdisjoint(paths)
+    assert R4_CANONICAL_PATHS <= paths
+
+def test_r4_policy_topology_has_no_temporary_exceptions() -> None:
+    policy = validator.load_policy(POLICY_PATH)
+    routing = policy["contracts"]["policy_routing"]
+    assert routing["active_direct_files"] == []
+    assert routing["temporary_direct_exceptions"] == []
+    assert set(routing["canonical_subdirectories"]) == {"core", "extensions", "activation"}
+    assert "R4_policy_topology" in policy["migration"]["completed_phases"]
+    assert policy["migration"]["current_phase"] == "R5"
+    assert "routing.yaml" not in policy["root"]["temporary_exceptions"]
+
+def test_undeclared_nested_routing_policy_is_rejected() -> None:
+    policy = validator.load_policy(POLICY_PATH)
+    paths = _current_paths() | {"policy/routing/extensions/random-policy.yaml"}
+    errors = validator.validate_layout(paths, policy)
+    assert any("Undeclared routing file" in error for error in errors)

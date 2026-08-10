@@ -10,8 +10,8 @@ scope:
   explicit_route_count: 27
 
 active_extensions:
-  team_routes: policy/routing/principal-engineering-team-routing.yaml
-  implementation_routes: policy/routing/principal-engineering-routing.yaml
+  team_routes: policy/routing/extensions/principal-engineering-team-routing.yaml
+  implementation_routes: policy/routing/extensions/principal-engineering-routing.yaml
   specialist_allocations: community/specialists/principal-engineering-active.yaml
   active_workers: community/workers/principal-engineering-active-workers.yaml
   conformance: reference/datasets/principal-engineering-routing-conformance.yaml

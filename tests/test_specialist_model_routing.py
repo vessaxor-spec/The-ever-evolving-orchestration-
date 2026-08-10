@@ -10,7 +10,7 @@ from teo_reference.specialist_routing import SpecialistRoutingEngine
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-POLICY_PATH = REPO_ROOT / "policy/routing/specialist-model-routing.yaml"
+POLICY_PATH = REPO_ROOT / "policy/routing/core/specialist-model-routing.yaml"
 PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro-preview"]}
 
 

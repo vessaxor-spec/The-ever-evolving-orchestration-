@@ -54,7 +54,7 @@ Own task intake, orchestration planning, dispatch, coordination, verification as
 - Implementation selection follows capability and risk resolution
 - Fallback and verification paths are defined before consequential execution
 - The final result states what was completed, what failed, and what remains uncertain
-- The dispatch record contains the fields required by `policy/routing/team-routing.yaml`
+- The dispatch record contains the fields required by `policy/routing/core/team-routing.yaml`
 
 ## Escalation triggers
 

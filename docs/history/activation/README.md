@@ -16,3 +16,16 @@ Current authority remains in active `policy/`, `community/`, registry, and refer
 - [`principal-engineering-activation-2026-08-06.md`](principal-engineering-activation-2026-08-06.md)
 - [`principal-engineering-team-expansion-2026-08-06.md`](principal-engineering-team-expansion-2026-08-06.md)
 - [`systems-engineering-specialist-staging-2026-08-06.md`](systems-engineering-specialist-staging-2026-08-06.md)
+
+## Machine-readable records
+
+These YAML records preserve earlier routing, expansion, and staging state exactly as recorded. Their statuses and model assumptions may be obsolete and must not be treated as current routing policy.
+
+- [`initial-routing-draft.yaml`](initial-routing-draft.yaml)
+- [`principal-engineering-expansion.yaml`](principal-engineering-expansion.yaml)
+- [`assurance-staging.yaml`](assurance-staging.yaml)
+- [`final-specialist-tranche-staging.yaml`](final-specialist-tranche-staging.yaml)
+- [`physical-systems-staging.yaml`](physical-systems-staging.yaml)
+- [`platform-reliability-core-staging.yaml`](platform-reliability-core-staging.yaml)
+- [`platform-reliability-operations-staging.yaml`](platform-reliability-operations-staging.yaml)
+- [`systems-engineering-staging.yaml`](systems-engineering-staging.yaml)

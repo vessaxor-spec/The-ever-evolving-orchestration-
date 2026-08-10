@@ -19,7 +19,7 @@ def write_yaml(path: Path, data: dict) -> None:
 
 def build_repo(root: Path) -> Path:
     write_yaml(
-        root / "policy/routing/team-routing.yaml",
+        root / "policy/routing/core/team-routing.yaml",
         {
             "team_routes": {
                 "daily_coding": {
@@ -42,7 +42,7 @@ def build_repo(root: Path) -> Path:
         },
     )
     write_yaml(
-        root / "policy/routing/routing.yaml",
+        root / "policy/routing/core/routing.yaml",
         {
             "routing": {
                 "daily_coding": {

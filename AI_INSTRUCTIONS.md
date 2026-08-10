@@ -6,11 +6,11 @@ Use this repository as the source of truth for TEO orchestration.
 
 1. Read `CONSTITUTION.md` and `docs/specification/lexicon.md` for enduring principles and terminology.
 2. Read `community/teams/README.md` and `community/teams/mission-control.md`.
-3. Read `policy/routing/team-routing.yaml` plus active routing extensions.
+3. Read `policy/routing/core/team-routing.yaml` plus active routing extensions.
 4. Read `community/workers/workers.yaml` plus active worker extensions.
 5. Read `community/specialists/specialists.yaml` and the selected specialist role card when applicable.
 6. Read `registry/capabilities/capabilities.yaml` and `registry/capabilities/README.md`.
-7. Read `policy/routing/routing.yaml`, `policy/routing/specialist-model-routing.yaml`, and active route extensions.
+7. Read `policy/routing/core/routing.yaml`, `policy/routing/core/specialist-model-routing.yaml`, and active route extensions.
 8. Read `models.yaml` and current provider/model evidence before changing time-sensitive implementation defaults.
 9. For live execution, read the applicable policies under `policy/runtime/`.
 10. For consequential specialist facts, apply `policy/specialists/freshness.yaml` and the regulated evidence pilot where in scope.
