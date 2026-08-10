@@ -1,5 +1,5 @@
 version: 1.1
-status: public-draft
+status: active
 
 routing_order:
   - mission_control
