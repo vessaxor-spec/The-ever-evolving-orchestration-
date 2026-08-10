@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/benchmark-fixture.schema.json",
+  "title": "TEO Benchmark Lab Fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "benchmark_lab_version",
+    "record_type",
+    "fixture_id",
+    "suite_id",
+    "suite_version",
+    "case_kind",
+    "task_type",
+    "risk_level",
+    "required_capabilities",
+    "controlled_input",
+    "success_criteria",
+    "tags",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "benchmark_lab_version": {"const": "1"},
+    "record_type": {"const": "benchmark_fixture"},
+    "fixture_id": {"type": "string", "minLength": 1},
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_version": {"type": "string", "minLength": 1},
+    "case_kind": {"enum": ["capability", "regression"]},
+    "task_type": {"type": "string", "minLength": 1},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "required_capabilities": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "controlled_input": {"type": "string", "minLength": 1},
+    "success_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}
