@@ -137,7 +137,9 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "A model identity is not a bill.",
         "explicit billable surface",
         "Pricing records are append-only evidence.",
-        "primary, retry, fallback",
+        "every primary attempt;",
+        "every retry attempt;",
+        "every fallback attempt;",
         "An unperformed verifier is the only case where zero is semantically asserted",
         "Cost is one evaluation dimension",
     ):
