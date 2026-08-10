@@ -89,6 +89,7 @@ contracts:
         - specialist-spawn-team-routing.yaml
       activation:
         - principal-engineering.yaml
+        - workforce-expansion.yaml
     future_rule: >-
       Direct routing YAML is prohibited. Canonical base policy belongs in core, additive
       active routes belong in extensions, and current activation manifests belong in
@@ -172,6 +173,7 @@ contracts:
       - PRESERVATION.md
       - specialists.yaml
       - principal-engineering-active.yaml
+      - workforce-expansion-active.yaml
     future_rule: >-
       Specialist role cards remain in one flat identity namespace. Do not create
       team-based specialist subdirectories because allocation may change without
