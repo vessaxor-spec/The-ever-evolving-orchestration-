@@ -27,10 +27,11 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 626 tests passed |
+| Latest validated test suite | 634 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
+| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
 
 The roster counts above are expected to match executable `ConfigBundle` composition and are protected by documentation-truth tests.
@@ -73,7 +74,7 @@ Rules:
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve evidence and authority boundaries through later reviewed adaptation |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, and finalization boundaries |
-| Live execution expansion | In progress | 30% | Bounded low and medium risk canary | Expand only task-class by task-class after evidence, verification, recovery, and authority gates pass |
+| Live execution expansion | In progress | 40% | `documentation` staged candidate selected and executable preflight validated | Reconcile documentation fallback and fresh-verifier topology, then add missing adapter support before controlled replay |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
@@ -83,7 +84,13 @@ Rules:
 
 Reconsider live-scope expansion task class by task class using the now-complete route-outcome, Benchmark Lab, source-backed cost, shadow-evaluation, recovery, verification, and qualified-human authority evidence chain.
 
-Completion criteria for the next bounded milestone:
+`documentation` is the first bounded candidate. It is **staged only** and has no live-execution authority. The active guarded runtime remains limited to `high_volume_simple` at low or medium effective risk.
+
+Reference Implementation CI run #463 validated the candidate-selection and executable-preflight slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+The no-network preflight preserved current routing truth and exposed material blockers before activation: the initial documentation fallback is same-provider Claude Haiku 4.5, model/provider failure redispatch resolves to Gemini 3.5 Flash-Lite but reuses the primary Terra verifier, guarded Sonnet 5 execution support is missing, guarded Terra verification support is missing, and no documentation replay or shadow-evaluation evidence exists yet. These findings are activation blockers, not reasons to weaken provider diversity or preview controls.
+
+Completion criteria for the current bounded milestone:
 
 - select one explicitly bounded task class beyond the current `high_volume_simple` canary only when the candidate scope is low or medium effective risk and capability-valid;
 - preserve non-lowerable effective risk and existing task-class authority boundaries;
@@ -97,11 +104,13 @@ Completion criteria for the next bounded milestone:
 - do not authorize high or critical live execution in this milestone;
 - add conformance and mutation tests that fail if live-scope boundaries, rollback, verification, or authority gates are weakened.
 
-The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded expansion change satisfies these criteria. High and critical live execution remains unauthorized.
+The candidate-selection criterion is now satisfied for `documentation`. The next material gate is to reconcile the documentation worker override and fallback/fresh-verifier topology, then add the missing Sonnet executor and Terra verifier support. Controlled replay and shadow evaluation come only after those control gaps are closed.
+
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded activation change satisfies every applicable criterion. High and critical live execution remains unauthorized.
 
 ## NEXT
 
-No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after a bounded live-scope candidate has been evaluated and either accepted or rejected.
+No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after the staged `documentation` candidate has completed adapter, fallback, replay, shadow, recovery, and independent-review gates and has either been accepted or rejected for activation.
 
 ## LATER
 
@@ -228,11 +237,17 @@ Reference Implementation CI run #451 validated the executable milestone with 626
 
 This milestone implements authority evidence for requirements existing policy already imposes. It does not broaden which tasks require qualified-human approval and does not widen live execution.
 
-### Live execution expansion, 30%
+### Live execution expansion, 40%
 
-Guarded live execution, retry, fallback redispatch, verification, circuit state, telemetry, controlled replay, economic evidence, governed shadow evaluation, and the qualified-human approval lifecycle now exist for the reference control plane. Broader live task classes and high or critical execution remain evidence-gated.
+The first bounded expansion candidate is now selected: `documentation`, low or medium effective risk only. A machine-readable staged-candidate policy and executable no-network preflight preserve the current active scope while measuring actual primary, fallback, verifier, redispatch, adapter, replay, and shadow-evidence gates.
 
-Completion of the qualified-human lifecycle does not itself widen live execution scope. The current milestone remains a bounded low or medium risk task-class expansion decision under the `NOW` criteria above.
+The preflight exposed a routing-control mismatch that must be resolved before activation. `runtime-worker-overrides.yaml` changes the shared documentation worker's implementation ordering, causing the initial documentation dispatch to record same-provider Claude Haiku 4.5 as fallback. When Sonnet or Anthropic is blocked, redispatch instead selects Gemini 3.5 Flash-Lite but retains GPT-5.6 Terra as verifier, reusing the primary verifier implementation and violating the guarded runtime's fresh-verifier requirement.
+
+Guarded Sonnet 5 execution and Terra verification also remain unsupported by the current adapter allowlists. Controlled documentation replay, shadow evaluation, and rollback/recovery evidence do not yet exist.
+
+Reference Implementation CI run #463 validated the staged-candidate slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+
+No live scope has widened. `documentation` remains `activation_authorized: false`; `high_volume_simple` at low or medium effective risk remains the only accepted guarded live execution class, and high or critical live execution remains unauthorized.
 
 ### Distributed runtime hardening, 20%
 
@@ -263,6 +278,8 @@ When parallel sessions are active, reconcile against current `main` before editi
 
 - [`roadmap.md`](roadmap.md): canonical stewardship roadmap
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
+- [`../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md`](../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md): staged `documentation` live-scope candidate research and blockers
+- [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate
 - [`docs/releases/v1.0.0.md`](../releases/v1.0.0.md): immutable functional-v1 release contract
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
