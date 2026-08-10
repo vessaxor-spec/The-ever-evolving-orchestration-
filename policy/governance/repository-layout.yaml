@@ -1,0 +1,244 @@
+version: 1.0
+status: active
+effective_at: 2026-08-10
+
+purpose: >-
+  Define the canonical repository placement contract for TEO so current authority,
+  historical state, research, evidence, runtime implementation, and community artifacts
+  remain distinguishable as the project evolves.
+
+principles:
+  - authority_before_convenience
+  - lifecycle_before_subject_detail
+  - stable_doctrine_separate_from_volatile_evidence
+  - active_policy_separate_from_historical_activation_state
+  - research_separate_from_normative_assertions
+  - implementation_separate_from_policy
+  - specialist_identity_separate_from_current_team_allocation
+  - accepted_capsules_remain_immutable_history
+  - temporary_exceptions_do_not_create_new_precedent
+
+root:
+  allowed_files:
+    - README.md
+    - AI_INSTRUCTIONS.md
+    - CONSTITUTION.md
+    - CHANGELOG.md
+    - CODE_OF_CONDUCT.md
+    - LICENSE
+    - pyproject.toml
+    - .gitignore
+  temporary_exceptions:
+    MANIFESTO.md:
+      target: docs/philosophy/manifesto.md
+      migration_phase: R2
+    LEXICON.md:
+      target: docs/specification/lexicon.md
+      migration_phase: R2
+    STEWARDSHIP.md:
+      target: docs/stewardship/stewardship.md
+      migration_phase: R2
+    ROADMAP.md:
+      target: docs/stewardship/roadmap.md
+      migration_phase: R2
+    V1_READINESS.md:
+      target: docs/releases/v1-readiness.md
+      migration_phase: R2
+    routing.yaml:
+      target: docs/history/activation/initial-routing-draft.yaml
+      migration_phase: R4
+    models.yaml:
+      target: policy/routing/implementation-defaults.yaml
+      migration_phase: R5
+  allowed_directories:
+    - .github
+    - assets
+    - ci
+    - community
+    - docs
+    - policy
+    - reference
+    - registry
+    - research
+    - tests
+
+zones:
+  community:
+    authority: role_and_participation_definitions
+    lifecycle: mixed_with_explicit_immutable_history
+  docs:
+    authority: informative_unless_a_document_explicitly_states_normative_status
+    lifecycle: stable_methods_and_versioned_history_must_be_separated
+  policy:
+    authority: normative_machine_readable_control
+    lifecycle: active_policy_only_except_declared_temporary_exceptions
+  registry:
+    authority: versioned_current_ecosystem_evidence
+    lifecycle: current_and_effective_dated
+  reference:
+    authority: executable_reference_and_conformance_artifacts
+    lifecycle: current_reference_behavior
+  research:
+    authority: non_normative_evidence_and_exploration
+    lifecycle: dated_or_topic_scoped
+  tests:
+    authority: executable_conformance_and_regression_controls
+    lifecycle: current
+
+contracts:
+  policy_routing:
+    path: policy/routing
+    active_direct_files:
+      - routing.yaml
+      - team-routing.yaml
+      - mission-control-routing.yaml
+      - research-routing.yaml
+      - review-routing.yaml
+      - principal-engineering-routing.yaml
+      - principal-engineering-team-routing.yaml
+      - specialist-spawn-routing.yaml
+      - specialist-spawn-team-routing.yaml
+      - specialist-model-routing.yaml
+    temporary_direct_exceptions:
+      - assurance-staging.yaml
+      - final-specialist-tranche-staging.yaml
+      - physical-systems-staging.yaml
+      - platform-reliability-core-staging.yaml
+      - platform-reliability-operations-staging.yaml
+      - principal-engineering-activation.yaml
+      - principal-engineering-expansion.yaml
+      - systems-engineering-staging.yaml
+    approved_subdirectories:
+      - core
+      - extensions
+      - activation
+    future_rule: >-
+      A new direct YAML file is prohibited unless this policy is intentionally updated.
+      New durable routing policy should converge on core or extensions. Historical
+      activation state belongs under docs/history after its live dependencies are migrated.
+
+  community_workers:
+    path: community/workers
+    canonical_direct_files:
+      - README.md
+      - workers.yaml
+    temporary_direct_extensions:
+      - analytics-worker.yaml
+      - assurance-workers.yaml
+      - compliance-worker.yaml
+      - final-specialist-workers.yaml
+      - incident-response-worker.yaml
+      - market-research-worker.yaml
+      - physical-systems-workers.yaml
+      - platform-reliability-core-workers.yaml
+      - platform-reliability-operations-workers.yaml
+      - principal-engineering-active-workers.yaml
+      - research-worker.yaml
+      - runtime-worker-overrides.yaml
+      - specialist-completion-workers.yaml
+      - systems-engineering-worker.yaml
+      - user-research-worker.yaml
+    approved_subdirectories:
+      - extensions
+    future_rule: >-
+      New worker extension files should be placed under community/workers/extensions
+      after the loader migration is complete. Until then, any additional direct extension
+      requires an explicit repository-layout policy change.
+
+  docs_methodology:
+    path: docs/methodology
+    evergreen_direct_files:
+      - README.md
+      - community-conversations.md
+      - main-branch-protection.md
+      - provider-aware-fallbacks.md
+      - regulated-specialist-evidence-pilot-2026-08-06.md
+      - routing-validation.md
+      - specialist-allocation.md
+      - specialist-freshness.md
+    temporary_history_exceptions:
+      - ai-mediated-discovery-refresh-2026-08-05.md
+      - assurance-specialist-staging-2026-08-06.md
+      - final-specialist-tranche-staging-2026-08-06.md
+      - model-routing-audit-2026-08-07.md
+      - native-operations-refresh-2026-08-05.md
+      - physical-systems-staging-2026-08-06.md
+      - platform-reliability-core-staging-2026-08-06.md
+      - platform-reliability-operations-staging-2026-08-06.md
+      - principal-engineering-activation-2026-08-06.md
+      - principal-engineering-team-expansion-2026-08-06.md
+      - regulated-specialist-refresh-2026-08-05.md
+      - research-analytics-security-assurance-2026-08-05.md
+      - systems-engineering-specialist-staging-2026-08-06.md
+    future_history_location: docs/history
+    future_rule: >-
+      Methodology contains reusable methods. Dated records of staging, activation,
+      remediation, validation, or audit execution belong in history unless they remain
+      an explicitly active methodology artifact.
+
+  docs_history:
+    path: docs/history
+    canonical_direct_files:
+      - README.md
+    temporary_direct_exceptions:
+      - mission-control-routing-recalibration-2026-08-09.md
+    approved_subdirectories:
+      - activation
+      - audits
+      - validation
+    future_rule: >-
+      New historical records should be placed in the applicable lifecycle subdirectory
+      rather than directly under docs/history.
+
+  research:
+    path: research
+    temporary_direct_exceptions:
+      - ROADMAP_RESEARCH.md
+    approved_subdirectories:
+      - roadmaps
+      - models
+      - runtime
+    future_rule: >-
+      New research must be topic-scoped. Direct research files require an explicit
+      exception and do not become normative by location or age.
+
+  specialists:
+    path: community/specialists
+    flat_identity_namespace: true
+    allowed_metadata_files:
+      - README.md
+      - PRESERVATION.md
+      - specialists.yaml
+      - principal-engineering-active.yaml
+    future_rule: >-
+      Specialist role cards remain in one flat identity namespace. Do not create
+      team-based specialist subdirectories because allocation may change without
+      changing specialist identity.
+
+  capsules:
+    path: community/capsules
+    flat_namespace: true
+    index_file: README.md
+    filename_pattern: '^[0-9]{4}-[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+\.md$'
+    immutable_after_acceptance: true
+
+  reference_datasets:
+    path: reference/datasets
+    disposition: retain
+    rationale: >-
+      The directory already coherently contains public fixtures and datasets used for
+      examples, evaluation, and conformance. Renaming it would add churn without
+      improving authority clarity.
+
+migration:
+  current_phase: R1
+  sequence:
+    - R1_layout_constitution
+    - R2_root_and_research_normalization
+    - R3_documentation_lifecycle_separation
+    - R4_policy_topology
+    - R5_worker_and_implementation_topology
+  rule: >-
+    Each migration phase must update path consumers, tests, documentation, and CI
+    atomically. Existing v1 paths remain valid only where this file declares a temporary
+    exception.

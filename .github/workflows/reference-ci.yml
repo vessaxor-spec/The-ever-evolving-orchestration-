@@ -5,21 +5,11 @@ on:
   # including documentation-only and capsule-only changes.
   pull_request:
 
-  # Keep push validation scoped to control-plane-relevant paths on main.
+  # Run for every main push so repository placement governance cannot be bypassed
+  # by adding a new path that is not already named in a path filter.
   push:
     branches:
       - main
-    paths:
-      - "pyproject.toml"
-      - "ci/**"
-      - "models.yaml"
-      - "reference/**"
-      - "tests/**"
-      - "policy/**"
-      - "community/workers/**"
-      - "community/specialists/**"
-      - ".github/workflows/reference-ci.yml"
-      - ".github/workflows/specialist-evidence-resolution.yml"
   workflow_dispatch:
 
 permissions:
@@ -54,8 +44,11 @@ jobs:
           python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
           python -m pip install --disable-pip-version-check --no-build-isolation --no-deps -e .
 
+      - name: Validate repository layout
+        run: python ci/validate_repository_layout.py --repo-root .
+
       - name: Compile Python sources
-        run: python -m compileall -q reference/implementations/python/src reference/examples tests
+        run: python -m compileall -q ci reference/implementations/python/src reference/examples tests
 
       - name: Run automated tests
         run: pytest -q
