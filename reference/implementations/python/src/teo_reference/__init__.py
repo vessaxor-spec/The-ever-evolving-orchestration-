@@ -32,6 +32,16 @@ from .benchmark_verification import (
     attach_verifier_disagreement,
     execute_benchmark_verifier_panel,
 )
+from .cost_attribution import (
+    BillingSurfaceContext,
+    JsonlRouteCostAttributionSink,
+    PricingCatalog,
+    PricingEvidenceRecord,
+    RouteCostAttributionRecord,
+    VerificationUsageEvidence,
+    attribute_route_cost,
+    load_pricing_evidence,
+)
 from .engine import OrchestrationEngine as BaseOrchestrationEngine
 from .google_adapter import GeminiInteractionsAdapter, execute_gemini_canary_once
 from .google_verifier import GoogleLiveVerifier
@@ -79,9 +89,12 @@ from .runtime_telemetry import (
     RuntimeTelemetrySink,
 )
 from .runtime_verification import (
+    LiveVerificationExecution,
     active_execution_from_outcome,
     execute_live_verification,
+    execute_live_verification_with_evidence,
     verify_guarded_canary_outcome,
+    verify_guarded_canary_outcome_with_evidence,
 )
 from .schemas import DispatchRecord, FinalOutcome, TaskRequest, VerificationResult
 from .specialist_routing import SpecialistRoutingEngine
@@ -108,6 +121,7 @@ __all__ = [
     "BenchmarkReplayPlan",
     "BenchmarkVerifierObservation",
     "BenchmarkVerifierPanelPlan",
+    "BillingSurfaceContext",
     "CanaryRuntimeOutcome",
     "CircuitStateStore",
     "ControlledReplayExecution",
@@ -121,16 +135,20 @@ __all__ = [
     "JsonFileCircuitStateStore",
     "JsonlBenchmarkReportSink",
     "JsonlBenchmarkVerifierObservationSink",
+    "JsonlRouteCostAttributionSink",
     "JsonlRouteOutcomeSink",
     "JsonlRuntimeTelemetrySink",
     "LiveVerificationDecision",
     "LiveVerificationError",
+    "LiveVerificationExecution",
     "LiveVerificationPolicy",
     "LiveVerificationRequest",
     "LiveVerificationResponse",
     "OpenAILiveVerifier",
     "OpenAIResponsesAdapter",
     "OrchestrationEngine",
+    "PricingCatalog",
+    "PricingEvidenceRecord",
     "ProviderAdapter",
     "ProviderAdapterContractError",
     "ProviderCircuitBreaker",
@@ -147,6 +165,7 @@ __all__ = [
     "ReasoningEffort",
     "RetryExecution",
     "RetryPolicy",
+    "RouteCostAttributionRecord",
     "RouteOutcomeRecord",
     "RouteOutcomeVersionContext",
     "RuntimeTelemetryEvent",
@@ -155,9 +174,11 @@ __all__ = [
     "SpecialistRoutingEngine",
     "TaskRequest",
     "VerificationResult",
+    "VerificationUsageEvidence",
     "active_execution_from_outcome",
     "advance_benchmark_conclusion",
     "attach_verifier_disagreement",
+    "attribute_route_cost",
     "build_abandoned_route_outcome",
     "build_benchmark_conclusion",
     "build_benchmark_conclusion_verification",
@@ -169,11 +190,14 @@ __all__ = [
     "execute_gemini_canary_once",
     "execute_guarded_canary",
     "execute_live_verification",
+    "execute_live_verification_with_evidence",
     "execute_openai_canary_once",
     "execute_provider_once",
     "execute_with_transient_retry",
     "load_benchmark_fixtures",
+    "load_pricing_evidence",
     "load_route_outcomes",
     "run_controlled_replay",
     "verify_guarded_canary_outcome",
+    "verify_guarded_canary_outcome_with_evidence",
 ]
