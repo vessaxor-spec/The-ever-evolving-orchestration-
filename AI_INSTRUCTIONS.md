@@ -4,7 +4,7 @@ Use this repository as the source of truth for TEO orchestration.
 
 ## Required read order
 
-1. Read `CONSTITUTION.md` and `LEXICON.md` for enduring principles and terminology.
+1. Read `CONSTITUTION.md` and `docs/specification/lexicon.md` for enduring principles and terminology.
 2. Read `community/teams/README.md` and `community/teams/mission-control.md`.
 3. Read `policy/routing/team-routing.yaml` plus active routing extensions.
 4. Read `community/workers/workers.yaml` plus active worker extensions.

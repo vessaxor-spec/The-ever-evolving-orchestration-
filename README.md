@@ -80,7 +80,7 @@ The normative boundary is defined in [`policy/governance/provider-access-separat
 
 The `v1.0.0` tag is governed as an immutable historical reference to the exact repository state accepted as the first functional release. The GitHub Release is published in the `reference_operational` state and aligns with `teo-reference-router==1.0.0`.
 
-The normative release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md), with the canonical readiness boundary in [`V1_READINESS.md`](V1_READINESS.md) and [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
+The normative release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md), with the canonical readiness boundary in [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) and [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
 
 The current control plane has **ten active organizational teams**, **84 workers**, and **78 preserved specialist role cards** with deterministic Team -> Worker -> Specialist spawn paths.
 
@@ -502,18 +502,19 @@ CI validates the control plane. It does not convert provisional evidence into hu
 
 ### For humans
 
-1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`MANIFESTO.md`](MANIFESTO.md), and [`LEXICON.md`](LEXICON.md).
-2. Read [`V1_READINESS.md`](V1_READINESS.md) and the [`v1.0.0 release contract`](docs/releases/v1.0.0.md).
+1. Read [`CONSTITUTION.md`](CONSTITUTION.md), [`docs/philosophy/manifesto.md`](docs/philosophy/manifesto.md), and [`docs/specification/lexicon.md`](docs/specification/lexicon.md).
+2. Read [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) and the [`v1.0.0 release contract`](docs/releases/v1.0.0.md).
 3. Read [`policy/governance/v1-readiness.yaml`](policy/governance/v1-readiness.yaml).
 4. Read [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
 5. Read [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
-6. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
-7. Review canonical routing under [`policy/routing/`](policy/routing/).
-8. Review runtime controls under [`policy/runtime/`](policy/runtime/).
-9. Review verification policy under [`policy/verification/`](policy/verification/).
-10. Review specialists under [`community/specialists/`](community/specialists/).
-11. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
-12. Run validation and tests.
+6. Read [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
+7. Review [`community/teams/mission-control.md`](community/teams/mission-control.md).
+8. Review canonical routing under [`policy/routing/`](policy/routing/).
+9. Review runtime controls under [`policy/runtime/`](policy/runtime/).
+10. Review verification policy under [`policy/verification/`](policy/verification/).
+11. Review specialists under [`community/specialists/`](community/specialists/).
+12. Review current model and provider evidence under [`models.yaml`](models.yaml) and [`registry/`](registry/).
+13. Run validation and tests.
 
 ### For AI agents
 
@@ -596,12 +597,11 @@ The final outcome contract supports:
 .
 ├── README.md
 ├── CONSTITUTION.md
-├── MANIFESTO.md
-├── LEXICON.md
 ├── AI_INSTRUCTIONS.md
-├── STEWARDSHIP.md
-├── ROADMAP.md
 ├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+├── LICENSE
+├── pyproject.toml
 ├── models.yaml
 │
 ├── policy/
@@ -637,14 +637,22 @@ The final outcome contract supports:
 │   ├── specification/
 │   ├── architecture/
 │   ├── methodology/
+│   ├── stewardship/
+│   ├── releases/
 │   ├── examples/
 │   └── history/
 │
 ├── research/
+│   ├── roadmaps/
+│   ├── models/
+│   └── runtime/
+│
 ├── tests/
 ├── ci/
 └── assets/
 ```
+
+Repository placement is governed by [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml) and explained in [`docs/stewardship/repository-layout.md`](docs/stewardship/repository-layout.md).
 
 ## Roadmap state
 

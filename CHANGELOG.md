@@ -22,6 +22,8 @@ All notable public changes to TEO are recorded here.
 - deterministic all-78 specialist spawn routes and spawnability conformance
 - strict CLI JSON Schema validation for task, dispatch, execution, verification, and final outcome records
 - repository protection for local `.teo/` runtime artifacts
+- repository layout governance, tracked-path validation, and strategic authority/lifecycle zoning
+- canonical philosophy, specification, stewardship, release, and research-roadmap locations with folder indexes
 
 ### Changed
 
@@ -37,7 +39,8 @@ All notable public changes to TEO are recorded here.
 - verifier status precedence now preserves mixed failed and uncertain criterion evidence
 - runtime telemetry no longer persists caller-controlled task identifiers and explicitly fails closed on required persistence failure
 - regulated evidence provenance for Rule 37(e) and ISO/IEC 9899:2024 was rechecked and corrected or clarified against primary sources
-- `AI_INSTRUCTIONS.md`, `ROADMAP.md`, runtime specifications, and capability guidance now describe the active control plane
+- `AI_INSTRUCTIONS.md`, `docs/stewardship/roadmap.md`, runtime specifications, and capability guidance now describe the active control plane
+- root and research navigation now follow the repository layout contract instead of retaining temporary R2 placement exceptions
 
 ### Validation
 
@@ -49,11 +52,14 @@ All notable public changes to TEO are recorded here.
 - telemetry tests prove caller identifiers and content remain absent
 - routing tests prove a caller cannot lower content-derived risk and preview models require explicit acceptance
 - CLI tests prove unknown schema fields fail at the external boundary
+- repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, and regression to retired R2 paths
 
 ### Status
 
 Phases 1 through 5 are complete. Runtime execution remains intentionally guarded to explicit `high_volume_simple` work at low or medium effective risk.
 
 Current work is operational evidence: control integrity, verifier calibration, route-outcome evaluation, source-backed cost attribution, qualified-human approval integration, distributed runtime hardening, and continued observation of the six-card regulated evidence pilot.
+
+Repository information-architecture migration has completed R1 and R2. R3 documentation lifecycle separation is next.
 
 High and critical live execution remain unauthorized.
