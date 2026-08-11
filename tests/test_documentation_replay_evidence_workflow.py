@@ -34,7 +34,8 @@ def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() ->
         '"record_type": "live_scope_replay_audit_start"',
         '"record_type": "live_scope_replay_audit_result"',
         '"provider_backed_evidence_accepted": accepted',
-        ".teo/runtime/live-scope-replay/audit/start.json",
+        'audit_dir = Path(".teo/runtime/live-scope-replay/audit")',
+        '(audit_dir / "start.json")',
         ".teo/runtime/live-scope-replay/audit/",
     ):
         assert phrase in text
