@@ -121,13 +121,13 @@ def anthropic_connection(
             )
         if fail_mode == "transient_once" and state["count"] == 1:
             return (
-                529,
+                503,
                 {"request-id": "req-sonnet-transient"},
                 json.dumps(
                     {
                         "type": "error",
                         "error": {
-                            "type": "overloaded_error",
+                            "type": "api_error",
                             "message": "controlled transient failure",
                         },
                     }
