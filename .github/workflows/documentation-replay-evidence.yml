@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   replay:
@@ -141,4 +142,67 @@ jobs:
           if record["live_scope_widened"] is not False:
               raise SystemExit("Replay evidence unexpectedly widened live scope")
           print(json.dumps(summary, indent=2, sort_keys=True))
+          PY
+
+      - name: Report sanitized result to PR 121
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          JOB_STATUS: ${{ job.status }}
+          RUN_ID: ${{ github.run_id }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+          from pathlib import Path
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          run_id = os.environ["RUN_ID"]
+          status = os.environ["JOB_STATUS"]
+          record_path = Path("/tmp/documentation-replay-evidence/replay-record.json")
+          lines = [
+              "### Controlled documentation replay workflow result",
+              "",
+              f"- workflow run: `{run_id}`",
+              f"- job status: **{status}**",
+          ]
+          if record_path.is_file():
+              record = json.loads(record_path.read_text(encoding="utf-8"))
+              summary = record["summary"]
+              lines.extend(
+                  [
+                      f"- replay ID: `{record['replay_id']}`",
+                      f"- plan SHA-256: `{record['plan_sha256']}`",
+                      f"- total trials: **{summary['total_trials']}**",
+                      f"- completed: **{summary['completed']}**",
+                      f"- execution failed: **{summary['execution_failed']}**",
+                      f"- verification failed: **{summary['verification_failed']}**",
+                      f"- activation authorized: **{str(record['activation_authorized']).lower()}**",
+                      f"- live scope widened: **{str(record['live_scope_widened']).lower()}**",
+                  ]
+              )
+          else:
+              lines.append("- replay record: **not produced**")
+          lines.extend(
+              [
+                  "",
+                  "This comment is content-minimized and contains no prompts, outputs, credentials, provider-native payloads, or request identifiers.",
+              ]
+          )
+          body = "\n".join(lines)
+          request = urllib.request.Request(
+              f"https://api.github.com/repos/{repo}/issues/121/comments",
+              data=json.dumps({"body": body}).encode("utf-8"),
+              headers={
+                  "Authorization": f"Bearer {os.environ['GITHUB_TOKEN']}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+                  "User-Agent": "teo-documentation-replay",
+              },
+              method="POST",
+          )
+          with urllib.request.urlopen(request, timeout=30) as response:
+              if response.status >= 300:
+                  raise SystemExit(f"PR result comment failed with HTTP {response.status}")
           PY
