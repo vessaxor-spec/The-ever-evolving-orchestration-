@@ -2,7 +2,7 @@
 
 ## Status
 
-Validated staged replay harness. Empirical provider-backed replay evidence remains pending.
+Validated staged replay harness and auditable provider-execution path. Empirical provider-backed replay evidence remains pending on operator provider access.
 
 This record documents the controlled replay gate for the staged `documentation` live-scope candidate. It does not activate `documentation`, change the active guarded runtime, widen live verification, or authorize high or critical live execution.
 
@@ -95,6 +95,8 @@ python -m teo_reference.live_scope_replay_cli --repo-root . run \
 
 The convenience environment bridge recognizes `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` because the staged primary route and assigned verifier use those providers. This bridge is only an operator convenience. The replay library accepts provider-neutral `ProviderConnection` objects, and connection method is not part of routing identity.
 
+A legitimate API-key, OAuth/subscription-backed, delegated, connector, local runtime, or other provider-supported connection may be used when it implements the same authorized provider-neutral connection contract. Changing the connection method must not change the selected model, reasoning effort, fallback, verifier, risk, capability, or authority decision.
+
 ## Evidence separation
 
 CI uses deterministic fake provider transports to prove contracts and control behavior. Those calls are not empirical provider-backed replay observations.
@@ -104,16 +106,15 @@ This follows TEO's existing empirical verifier-calibration precedent: operator-r
 Therefore this gate distinguishes:
 
 - **implemented and CI-validated replay harness:** complete;
+- **auditable provider-execution workflow:** complete;
 - **provider-backed empirical documentation replay evidence:** pending;
 - **active-scope authorization:** false.
 
 No `controlled_replay` evidence pointer should be populated in `policy/runtime/live-execution-expansion.yaml` until a real operator execution produces the exact integrity-protected replay record and Route-Outcome Evidence set.
 
-A one-time branch workflow was explored to collect provider-backed evidence from repository secrets. Its push-triggered result was not available through the connected evidence surface and it did not produce an auditable content-minimized PR result. It was therefore not counted as evidence and was removed from the final branch. TEO does not treat an unobservable execution attempt as empirical evidence.
-
 ## Corrective CI findings
 
-The implementation benefited from three legitimate CI findings before the harness became green.
+The replay implementation benefited from three legitimate CI findings before the harness became green.
 
 ### CI #479: task capability floor
 
@@ -160,7 +161,7 @@ Reference Implementation CI #482 validated the replay harness after the three co
 - linked TEO configuration reported zero issues;
 - the provider-diverse end-to-end reference lifecycle passed.
 
-After the operator CLI, CLI boundary tests, research record, and removal of the non-auditable one-time workflow were included, clean-head Reference Implementation CI #488 validated the durable branch state:
+After the operator CLI, CLI boundary tests, research record, and removal of the non-auditable one-time workflow were included, clean-head Reference Implementation CI #488 validated the durable replay-harness branch state:
 
 - 651 tests passed;
 - 472 tracked files passed repository-layout validation;
@@ -169,11 +170,92 @@ After the operator CLI, CLI boundary tests, research record, and removal of the 
 - linked TEO configuration reported zero issues;
 - the provider-diverse end-to-end reference lifecycle passed.
 
-CI #488 proves the replay contracts, preflight, retry semantics, evidence construction, operator acknowledgement boundary, and active-scope refusal behavior. It does not prove a provider-backed documentation replay was executed.
+The auditable GitHub-hosted execution path was then added and hardened through PRs #122, #123, #125, and #127. The final Actions-native audit design removed dependency on GitHub issue or pull-request write permission and uses only `contents: read`. It records the exact trusted base revision and run identity in the Actions log and step summary and always uploads a content-minimized audit artifact.
+
+Reference Implementation CI #503 validated that final workflow design:
+
+- 653 tests passed;
+- 474 tracked files passed repository-layout validation;
+- regulated specialist evidence passed structural validation;
+- 40 JSON Schemas parsed;
+- linked TEO configuration reported zero issues;
+- the provider-diverse end-to-end reference lifecycle passed.
+
+CI proves the replay contracts, preflight, retry semantics, evidence construction, operator acknowledgement boundary, trusted-base execution, audit path, and active-scope refusal behavior. It does not prove a provider-backed documentation replay was executed.
+
+## Provider-backed execution attempts
+
+### Runs #5 and #8: audit sink failures, no provider calls
+
+The first two reserved trigger attempts reached the trusted-base workflow but failed at the external pull-request audit-comment sink.
+
+- run #5 used the GitHub CLI issue-comment path and was refused by the workflow token;
+- run #8 used the REST issue-comment endpoint and was also refused by the repository's effective workflow-token permissions;
+- both attempts stopped before replay environment installation or live provider execution;
+- neither attempt is empirical replay evidence.
+
+The correction was to remove GitHub commenting as an execution dependency, not to broaden workflow permissions. The final workflow uses Actions-native logs, step summaries, and artifacts and requires only repository-content read permission.
+
+### Run #11: provider-access blocker
+
+The first attempt that reached the actual provider-access gate was Controlled Documentation Replay Evidence run:
+
+`31462300962`
+
+It executed from trusted repository revision:
+
+`e93e25110e9b8256a119b6d472128a74b3ef857e`
+
+The Actions-native start record confirmed:
+
+- trigger: same-repository pull request #128;
+- task type: `documentation`;
+- candidate state: `staged`;
+- `activation_authorized: false`;
+- evidence status: pending provider-backed execution.
+
+The exact replay plan validated before provider access with:
+
+- `provider_calls: 0`;
+- replay ID `documentation-provider-backed-replay-v1-31462300962`;
+- plan SHA-256 `6b895c3d3823eb2572e09b9b0b9e2845f77a64293a2d45e2b7a1681b2886f6ef`.
+
+The live step then failed before calling either provider because the GitHub-hosted runner had no usable values for the required convenience connection variables. The first explicit refusal was:
+
+`Missing required repository secret: ANTHROPIC_API_KEY`
+
+The run environment also showed the OpenAI convenience variable unset. The replay CLI therefore did not make a provider request.
+
+The run emitted no canonical provider-backed replay artifact and no Route-Outcome Evidence set. It did upload the audit artifact:
+
+- name: `teo-documentation-replay-audit-31462300962`;
+- artifact ID: `9090226379`;
+- artifact SHA-256: `30dc43b49836a0092ef75af0b88c5a660e11867dd68c06a9f0a86030d5c2dc08`;
+- retention expiry: 2026-09-10.
+
+Independent inspection of that artifact confirmed:
+
+- trusted base revision exactly matched the workflow checkout;
+- replay plan and audit start identity matched run #11;
+- provider-backed evidence accepted was `false`;
+- the result explicitly states that no empirical success is claimed.
+
+### Diagnosis
+
+Run #11 is an **operator provider-access blocker**, not a routing, risk, verifier, replay-contract, or activation failure.
+
+The exact route remains:
+
+- primary: Anthropic Claude Sonnet 5 at medium effort;
+- verifier: OpenAI GPT-5.6 Terra at medium effort.
+
+TEO must not change this route merely because the GitHub-hosted convenience bridge lacks credentials. Provider access remains downstream of routing. The next empirical attempt may use the existing API-key convenience variables or another legitimate provider-supported `ProviderConnection`, including an OAuth/subscription-backed or delegated connection, provided that the exact selected route and all evidence and authority invariants remain unchanged.
+
+No connected service available during this run could supply the missing Anthropic execution path, so no substitute provider was used.
 
 ## Remaining evidence gate
 
-The next replay step is a real provider-backed operator execution using the exact staged plan and current repository revision.
+The next replay step remains a real provider-backed operator execution using the exact staged plan and a current repository revision after legitimate provider access is available.
 
 That execution must produce:
 
@@ -188,5 +270,7 @@ That execution must produce:
 - explicit limitations and provenance.
 
 Only after that provider-backed evidence exists may `controlled_replay` be marked present for the staged candidate.
+
+The live-execution-expansion milestone therefore remains at 65%. `documentation` remains `activation_authorized: false`, the active guarded scope remains `high_volume_simple` at low or medium effective risk, and high or critical live execution remains unauthorized.
 
 Rollback/recovery evidence, governed Shadow Route Evaluation, and independent review of any eventual active-scope change remain later gates.
