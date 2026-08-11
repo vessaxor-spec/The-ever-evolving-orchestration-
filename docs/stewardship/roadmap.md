@@ -82,7 +82,7 @@ Completion of this lifecycle does not broaden which tasks require human approval
 
 The current operational priority is to evaluate one bounded live task-class expansion at a time beyond the existing low or medium risk `high_volume_simple` canary.
 
-`documentation` is the first staged candidate. Candidate selection, executable no-network preflight, fallback/fresh-verifier repair, and direct provider-adapter readiness are complete, but **live activation is not authorized**.
+`documentation` is the first staged candidate. Candidate selection, executable no-network preflight, fallback/fresh-verifier repair, direct provider-adapter readiness, and the staged replay harness are complete, but **live activation is not authorized** and provider-backed replay evidence is still pending.
 
 The repaired staged route is:
 
@@ -96,7 +96,11 @@ The previous runtime worker override no longer mutates the shared documentation 
 
 Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the adapter layer without widening the active canary wrappers or live-verification task scope. Implemented capability is not live-execution authority.
 
-The next evidence gate is controlled documentation live replay. Replay must exercise the exact staged topology and produce canonical evidence while leaving `documentation` outside active telemetry, live-verification, and guarded-execution scope. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates.
+The staged replay harness now provides strict replay-plan and replay-record schemas, full-plan no-network preflight, isolated per-trial circuit state, exact active retry-policy reuse, assigned Terra verification, in-memory replay telemetry, canonical Route-Outcome Evidence construction, and an operator CLI with an explicit live-execution acknowledgement. Automatic fallback is intentionally disabled in this replay milestone so the harness cannot become a hidden alternate live runtime.
+
+The next evidence gate is **provider-backed controlled documentation replay** using the operator replay path. CI conformance with deterministic fake transports does not count as empirical provider-backed evidence. The candidate's `controlled_replay` evidence pointer must remain empty until a real integrity-protected replay record and its canonical Route-Outcome Evidence set exist.
+
+Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates.
 
 Any candidate expansion must preserve:
 
@@ -134,7 +138,7 @@ A broader regulated evidence registry is not authorized merely because the pilot
 
 Broaden live execution by task class only when the applicable authority, capability, verification, telemetry, recovery, evidence, and human-approval controls have demonstrated reliable behavior.
 
-The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope. `documentation` is staged for controlled replay and cannot enter active telemetry, verification, or guarded execution scope until replay, shadow, recovery, and independent-review gates pass.
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope. `documentation` has a validated staged replay harness but cannot enter active telemetry, verification, or guarded execution scope until provider-backed replay, shadow, recovery, and independent-review gates pass.
 
 High and critical live execution remains outside the current guarded runtime.
 
