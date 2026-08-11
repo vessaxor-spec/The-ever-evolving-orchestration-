@@ -2,6 +2,7 @@
 
 Date: 2026-08-06
 Status: pilot
+Updated: 2026-08-11
 
 ## Decision
 
@@ -56,7 +57,8 @@ Every consequential pilot claim must include:
 6. non-expiry for consequential use;
 7. verification independence;
 8. mandatory refusal and conflict behavior;
-9. targeted mutation-kill tests.
+9. targeted mutation-kill tests;
+10. refresh-cycle history structure, sequencing, active-registry binding, claim coverage, maintenance counters, and expansion-gate honesty.
 
 ### Scheduled authority resolution
 
@@ -66,12 +68,15 @@ Network-dependent resolution is separated from pull-request CI so temporary auth
 
 ## Mutation Contract
 
-The test suite creates controlled weakened copies of the registry. CI must fail when a mutation:
+The test suite creates controlled weakened copies of the registry and refresh history. CI must fail when a mutation:
 
 - makes consequential evidence expired;
 - removes verification independence or makes the verifier equal the preparer;
 - replaces refusal-on-stale behavior with warning-and-continue;
-- extends evidence lifetime beyond its volatility-class limit.
+- extends evidence lifetime beyond its volatility-class limit;
+- forges the latest refresh record's active-registry blob binding;
+- omits an active claim from the latest completed refresh cycle;
+- asserts evidence-registry expansion before the declared refresh-cycle and authority-resolution gates are satisfied.
 
 These tests prove that the controls are enforced rather than merely documented.
 
@@ -84,20 +89,43 @@ Before a claim expires:
 3. update the claim only when the authoritative basis still supports it;
 4. record a new verification date and policy-compliant expiry date;
 5. use a verifier role distinct from the preparer;
-6. run structural, mutation, and authority-resolution validation;
-7. submit the refresh through a pull request.
+6. run structural, mutation, refresh-history, and authority-resolution validation;
+7. preserve a completed refresh-cycle record under `docs/history/validation/`;
+8. submit the refresh through a pull request.
 
 If the authority has moved, replace the URL only after confirming the same authority and provision. If the claim changed, amend the statement and applicability. If support is unavailable or conflicting, preserve refusal or escalation behavior rather than extending the date.
+
+## Refresh-Cycle History
+
+The active registry represents the current evidence state. It must not be used as the sole proof that repeated refreshes occurred because updating `verified_at` and `expires_at` replaces the previous active values.
+
+Every completed formal refresh therefore creates an append-only machine-readable record conforming to `reference/schemas/specialist-evidence-refresh-cycle.schema.json` under `docs/history/validation/`.
+
+A refresh-cycle record must preserve:
+
+- a contiguous cycle sequence and date;
+- the repository revision used as the refresh baseline;
+- the active registry blob before and after the refresh;
+- exact six-card pilot coverage;
+- every active claim reviewed during the cycle;
+- authority, source-date, resolution, and ownership evidence for each reviewed claim;
+- whether a claim was reaffirmed, amended, moved to a new authority, or accompanied by an intentional canonical-card change;
+- maintenance counts and conflict outcomes;
+- the state of every expansion prerequisite without converting evidence into authority.
+
+The initial creation of the pilot registry is the evidence seed, not a completed refresh cycle. A pre-pilot specialist-content review is also not a refresh cycle. Cycle numbers may advance only when a post-seed refresh follows the procedure above and its completed record passes CI.
+
+Historical refresh records are evidence observations, not active policy. The latest completed record must bind to the current active registry blob and `reviewed_at` date so current evidence cannot silently diverge from the recorded refresh history.
 
 ## Expansion Gate
 
 Expansion beyond the six-card pilot requires a separate reviewed decision. At minimum, the pilot must demonstrate:
 
 - two completed evidence-refresh cycles without weakening specialist cards;
-- no surviving expiry, independence, or refusal mutations;
+- no surviving expiry, independence, refusal, or refresh-history mutations;
 - stable scheduled authority resolution for at least 30 days;
 - documented maintenance effort and ownership for each claim;
 - successful handling of at least one authority move, claim amendment, or intentional canonical-card change;
 - explicit approval of the next risk-tier batch.
 
-Passing the initial CI run proves implementation correctness only. It does not prove maintainability and does not authorize a 56-card registry rollout.
+Passing the initial CI run or a single completed refresh cycle proves only bounded implementation and maintenance evidence. It does not prove repeated-cycle maintainability and does not authorize registry expansion.
