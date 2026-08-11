@@ -130,23 +130,36 @@ Replace single-process reference persistence where production deployment require
 
 ### Host integration contract research
 
-External-host integration evidence has exposed a distinct embedding boundary that is not equivalent to missing core orchestration architecture. A pre-existing AI host can misintegrate TEO by loading the entire specialist corpus into prompt context, replacing host identity with specialist personas, over-applying human-approval semantics, failing to bind host-native tools to TEO capabilities, or simulating independent verification inside one model session.
+External-host integration evidence has exposed a distinct embedding boundary that is not equivalent to missing core orchestration architecture. A pre-existing AI host can misintegrate TEO by loading the entire specialist corpus into prompt context, replacing host identity with specialist personas, over-applying human-approval semantics, failing to bind host-native tools to TEO capabilities, simulating independent verification inside one model session, or silently expanding TEO orchestration authority into unrelated host authority.
 
-The non-normative research path is recorded in [`../../research/runtime/2026-08-12-host-agent-integration-premortem.md`](../../research/runtime/2026-08-12-host-agent-integration-premortem.md) and [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md).
+The non-normative research path is recorded in:
+
+- [`../../research/runtime/2026-08-12-host-agent-integration-premortem.md`](../../research/runtime/2026-08-12-host-agent-integration-premortem.md);
+- [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md);
+- [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md);
+- [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md).
 
 The candidate Host Integration Contract should preserve:
 
-- host identity, safety floor, permissions, and product constraints separately from canonical specialist identity;
-- executable TEO version and registry binding rather than file-count inference;
+- host identity, safety floor, permissions, product constraints, and host/user portfolio authority separately from TEO orchestration authority;
+- executable TEO version, registry, revision, and freshness binding rather than file-count or copied-policy inference;
 - bounded context projection and deterministic specialist narrowing before semantic retrieval;
 - host-native capability adapters rather than host-specific edits to specialist cards;
 - explicit autonomy semantics without creating universal human-approval gates;
-- truthful independent-verification capability declarations;
+- restrictive host/TEO authority intersection, with deny-wins and more-restrictive-control-wins semantics;
+- dispatch-bound executable capability authorization and protected adapter authority surfaces;
+- truthful independent-verification capability declarations with purpose-built verifier context rather than executor-role mirroring;
+- artifact/change-set binding so stale PASS evidence cannot authorize later or unrelated mutations;
+- runtime-derived or reconciled inventories of authority-bearing integration surfaces;
 - bounded orchestration re-entry, specialist spawning, attempts, and parallelism;
 - explicit conformance declarations for supported, partial, and unsupported TEO surfaces;
 - shadow-first validation before governed activation in an external host.
 
-This research does not alter current runtime policy, active specialist count, live-execution scope, verifier independence, human authority, or Progress Tracker sequencing. Before normative promotion, validate the candidate contract against at least two structurally different host architectures and independently review whether it creates any parallel routing or authority plane.
+The **two-host architecture-diversity research gate is satisfied** by two materially different integration patterns: a host-local vendorized/capability-adapter architecture and a separate revision-pinned upstream-dispatch/downstream-execution-adapter architecture. Supporting ancestor experiments add further assurance and proportional-governance evidence but are not needed to inflate the host count.
+
+This gate completion does not certify either host, make the contract normative, or authorize a schema/runtime implementation. Remaining pre-normative evidence includes context economics, dispatch-authorization mutation resistance, adapter integrity, restrictive authority-intersection tests, risk-lowering resistance, verifier-context independence, artifact-bound verification, revision freshness behavior, portfolio-authority separation, authority-surface drift detection, recursion/recovery failure paths, and independent review of any possible parallel routing or authority plane.
+
+This research does not alter current runtime policy, active specialist count, live-execution scope, verifier independence, human authority, or Progress Tracker sequencing.
 
 ## Regulated specialist pilot
 

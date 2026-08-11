@@ -15,6 +15,8 @@ It is motivated by [`../runtime/2026-08-12-host-agent-integration-premortem.md`]
 
 The first implementation-backed validation round is recorded in [`../runtime/2026-08-12-host-integration-validation-round-1.md`](../runtime/2026-08-12-host-integration-validation-round-1.md). It validates the capability-adapter direction while exposing additional requirements around capability classification, restrictive authority intersection, dispatch-bound execution, adapter immutability, exact routing structure, and anti-fork version binding.
 
+The second implementation-backed validation round is recorded in [`../runtime/2026-08-12-host-integration-validation-round-2.md`](../runtime/2026-08-12-host-integration-validation-round-2.md). It validates the candidate against a structurally different revision-pinned upstream-dispatch architecture and adds evidence around portfolio authority, verifier-context asymmetry, artifact-bound verification, runtime-derived authority surfaces, and integration freshness states.
+
 This document does not change current routing, runtime, specialist, verification, approval, or release authority.
 
 ## Core design principle
@@ -28,9 +30,13 @@ HOST AGENT / RUNTIME
 identity, mandate, native safety, tools, permissions, execution environment
                 |
                 v
+HOST TASK ADMISSION / PORTFOLIO AUTHORITY
+host or user chooses which work enters TEO
+                |
+                v
 HOST INTEGRATION CONTRACT
 identity preservation
-version binding
+version and freshness binding
 bounded context projection
 capability classification and adapters
 autonomy and authority profile
@@ -52,7 +58,7 @@ TEO authorization intersected with host authorization
 HOST-NATIVE CAPABILITY EXECUTION
                 |
                 v
-INDEPENDENT VERIFICATION / EVIDENCE
+ARTIFACT-BOUND INDEPENDENT VERIFICATION / EVIDENCE
 ```
 
 Some host controls may operate before or beside Mission Control. Examples include untrusted-input screening, host runtime continuity, native credential boundaries, and system health mechanisms. The integration contract must classify those surfaces rather than forcing every host-native action behind a specialist dispatch.
@@ -94,11 +100,15 @@ teo_binding:
   capability_registry_version: <resolved-version>
   executable_composition_id: <resolved-configbundle-or-equivalent>
   integration_contract_version: <candidate-version>
+  pinned_revision: <optional-host-pin>
+  freshness_state: <PINNED_CURRENT|PINNED_COMPATIBLE|UPDATE_AVAILABLE|STALE_UNSUPPORTED|MISMATCHED>
 ```
 
 The active executable `ConfigBundle` remains authoritative for active teams, workers, specialists, and routing composition.
 
 A copied Mission Control file, specialist count, Markdown inventory, or base registry alone is not sufficient version binding. Hosts that vendor or cache TEO artifacts should detect stale or mismatched copies against the declared executable composition and fail closed or explicitly degrade conformance rather than silently fork TEO authority.
+
+A revision pin and a freshness judgment are separate claims. A host may intentionally remain on a reproducible compatible revision while a newer TEO revision exists. The integration should state that condition explicitly rather than calling every valid pin current.
 
 ### 3. Project only bounded context
 
@@ -223,6 +233,13 @@ verification_profile:
   independent_model_verification:
     available: true
     provider_diverse: true
+  verifier_context:
+    fresh_context: true
+    executor_reasoning_inherited: false
+    purpose_built_challenge_prompt: true
+  artifact_binding:
+    exact_change_identity: true
+    stale_pass_rejected: true
   qualified_human_authority:
     integration_supported: false
 ```
@@ -230,6 +247,10 @@ verification_profile:
 A same-session persona shift must never be represented as independent model verification.
 
 A distinct subagent also does not automatically prove independence. When provider-diverse verification is required, the verifier must satisfy the applicable TEO independence contract.
+
+Independent verification should use a purpose-built challenge context. Relevant domain constraints may be shared, but the verifier should not automatically inherit the executor's complete specialist role, implementation framing, scratchpad, or reasoning context.
+
+Verification authority should bind to the artifact, change-set, version, or integrity identity actually examined. A PASS that predates a later material mutation must not authorize the later state.
 
 If a required verification or authority path is unavailable, the host should record the missing condition and stop, escalate, or defer according to policy rather than fabricate conformance.
 
@@ -254,6 +275,8 @@ orchestration_budget:
 
 Resource limits may refuse or constrain execution. They must never lower effective risk, waive required capabilities, or weaken verification.
 
+Already-dispatched executor contexts should not recursively re-enter Mission Control unless a new bounded dispatch is explicitly required by policy or delegation semantics.
+
 ### 9. Preserve authority boundaries
 
 The contract should state which layer owns which decision.
@@ -261,8 +284,9 @@ The contract should state which layer owns which decision.
 | Decision | Authority |
 |---|---|
 | Host identity and native product constraints | Host |
+| Host backlog, product priority, and task admission | Host / user unless explicitly delegated |
 | User permissions granted to the host | Host / user |
-| TEO Team, Worker, Specialist, capability and model routing | TEO control plane |
+| TEO Team, Worker, Specialist, capability and model routing for an admitted task | TEO control plane |
 | Concrete host-tool implementation for an authorized capability | Host capability adapter |
 | Effective risk | TEO policy; non-lowerable |
 | Qualified-human requirement | TEO policy / applicable authority contract |
@@ -277,9 +301,20 @@ Authority conflict semantics should be explicit:
 - the more restrictive control wins;
 - host permissions cannot lower TEO risk, verification, or qualified-human requirements;
 - TEO authorization cannot weaken stricter host safety, permission, environment, or operator controls;
+- TEO orchestration authority does not automatically become host portfolio, backlog, or task-admission authority;
 - unresolved authority conflicts stop, escalate, or degrade conformance rather than being silently resolved by prompt order.
 
 Neither side should silently widen the other's authority.
+
+### 10. Derive and protect authority surfaces
+
+Host integrations should identify the files, manifests, hooks, scripts, registries, runtime loaders, and other surfaces that can alter routing, authorization, capability binding, verification, approval, or finalization behavior.
+
+Where runtime wiring can identify those surfaces, the integration should derive the inventory from executable configuration rather than maintain a second hand-written list.
+
+Where a manual authority inventory remains necessary, conformance should reconcile it against runtime discovery and fail on omissions or stale entries.
+
+Protecting authority configuration is not sufficient by itself. Finalization and action paths must still prove that the governed decision was actually enforced.
 
 ## Candidate contract shape
 
@@ -294,6 +329,7 @@ host_integration:
     architecture_class: <single-agent|multi-agent|runtime>
     identity_policy_ref: <host-owned-ref>
     safety_policy_ref: <host-owned-ref>
+    portfolio_authority: host_or_user
 
   teo_binding:
     release: <release>
@@ -302,6 +338,8 @@ host_integration:
     specialist_registry_version: <registry>
     capability_registry_version: <registry>
     executable_composition_id: <configbundle-or-equivalent>
+    pinned_revision: <optional-revision>
+    freshness_state: <state>
 
   context_projection:
     maximum_specialist_cards_per_dispatch: 1
@@ -336,6 +374,7 @@ host_integration:
   authority_resolution:
     mode: restrictive_intersection
     deny_wins: true
+    portfolio_authority_is_separate: true
     unresolved_conflict: escalate_or_refuse
 
   autonomy_profile:
@@ -350,6 +389,16 @@ host_integration:
       provider_diverse: <bool>
     deterministic_verification:
       available: <bool>
+    context_asymmetry:
+      fresh_context: <bool>
+      executor_reasoning_inherited: false
+    artifact_binding:
+      exact_change_identity: <bool>
+      stale_pass_rejected: <bool>
+
+  authority_surfaces:
+    discovery: <runtime_derived|declared_and_reconciled>
+    protected: true
 
   orchestration_budget:
     maximum_teo_reentry_depth: 1
@@ -365,10 +414,13 @@ host_integration:
     dispatch_bound_execution: <supported|partial|unsupported>
     non_lowerable_risk: <supported|partial|unsupported>
     authority_intersection: <supported|partial|unsupported>
+    portfolio_authority_separation: <supported|partial|unsupported>
     independent_verification: <supported|partial|unsupported>
+    verification_artifact_binding: <supported|partial|unsupported>
     route_outcome_evidence: <supported|partial|unsupported>
     qualified_human_authority: <supported|partial|unsupported>
     upstream_freshness_binding: <supported|partial|unsupported>
+    authority_surface_reconciliation: <supported|partial|unsupported>
 ```
 
 This is illustrative only. Field names and schema are not approved.
@@ -410,6 +462,25 @@ The following refinements govern interpretation of the illustrative structures a
 
 See [`../runtime/2026-08-12-host-integration-validation-round-1.md`](../runtime/2026-08-12-host-integration-validation-round-1.md) for the implementation evidence and unresolved gaps.
 
+## Round 2 implementation refinements
+
+A second, structurally different external-host architecture validates the candidate against a revision-pinned upstream TEO dispatch model rather than a host-local copied control plane.
+
+The round also incorporates supporting evidence from earlier TEO-derived host experiments.
+
+The following refinements now have implementation evidence behind them:
+
+1. **Portfolio authority remains separate.** TEO orchestration authority for an admitted task does not automatically confer host backlog, product-priority, or task-admission authority.
+2. **Revision identity needs freshness semantics.** A valid pin can be current, compatible but behind, update-available, stale/unsupported, or mismatched.
+3. **Verifier context should be asymmetric.** The verifier may receive relevant domain constraints, but should not automatically inherit the executor's complete specialist role, implementation frame, or reasoning context.
+4. **Verification must bind to the exact change.** A PASS cannot discharge later material mutations or unrelated targets.
+5. **Authority surfaces should be runtime-derived where possible.** Manual protected-surface lists require reconciliation against executable wiring so omissions do not silently weaken control.
+6. **Policy-file protection is not policy enforcement.** Action and finalization paths need independent evidence that the governing decision controlled the result.
+7. **Bounded upstream dispatch can preserve host privacy.** Content-minimized task envelopes and content-free receipts can coexist with separate host-local context.
+8. **Already-dispatched execution should not recursively re-enter Mission Control.** Re-entry must be an explicit bounded orchestration decision, not an automatic consequence of delegation.
+
+See [`../runtime/2026-08-12-host-integration-validation-round-2.md`](../runtime/2026-08-12-host-integration-validation-round-2.md) for the evidence and gate decision.
+
 ## Anti-patterns
 
 The following should be treated as integration failures:
@@ -428,14 +499,20 @@ The following should be treated as integration failures:
 - claiming a hard execution lock when a router validates only a capability name;
 - letting an active executor rewrite its own capability authority surface;
 - treating a copied TEO file set or specialist count as executable registry truth;
-- collapsing Team, Worker, and Specialist into host-local labels while emitting a TEO dispatch record.
+- collapsing Team, Worker, and Specialist into host-local labels while emitting a TEO dispatch record;
+- treating TEO orchestration authority as automatic host backlog or portfolio authority;
+- claiming a revision pin is current without a freshness/compatibility judgment;
+- giving executor and verifier identical reasoning context by default and calling the result independent;
+- allowing stale verification evidence to authorize later or unrelated mutations;
+- protecting a hand-maintained authority-file list without reconciling it to actual runtime wiring;
+- protecting policy text while leaving the action or finalization path able to ignore it.
 
 ## Evidence required before normative promotion
 
 The Host Integration Contract should remain research until at least the following evidence exists:
 
 1. **Premortem replay:** demonstrate that the contract directly prevents or truthfully detects all five original failure paths.
-2. **Two-host validation:** test against at least two structurally different host architectures so one agent's design does not become the universal contract by accident.
+2. **Two-host validation:** test against at least two structurally different host architectures so one agent's design does not become the universal contract by accident. **Satisfied for research architecture diversity by validation rounds 1 and 2.**
 3. **Context economics:** compare bounded projection against naive corpus loading for prompt size, normalized usage, latency, and task adherence.
 4. **Identity preservation:** verify that host invariants remain intact while selected specialists still retain their canonical capability definitions.
 5. **Capability correctness:** prove required capabilities resolve to real host implementations and unknown capabilities fail closed.
@@ -448,15 +525,20 @@ The Host Integration Contract should remain research until at least the followin
 12. **Recursion resistance:** mutation-test delegation-depth and spawn-budget boundaries.
 13. **Registry freshness:** prove stale or mismatched TEO release, policy, registry, overlay, or executable-composition bindings are detected.
 14. **Routing conformance:** prove host-local taxonomies cannot collapse required Team, Worker, Specialist, Capability, Implementation, or Verification fields.
-15. **Independent review:** challenge whether the integration layer creates a second routing authority or weakens existing TEO invariants.
+15. **Portfolio-authority separation:** prove TEO routing cannot silently seize host backlog, product-priority, or task-admission authority unless that authority is explicitly delegated.
+16. **Verifier-context independence:** prove independent verification can preserve required domain constraints without inheriting executor reasoning or implementation framing by default.
+17. **Artifact-bound verification:** prove stale, mismatched, or wrong-target PASS evidence cannot finalize a later or unrelated artifact/change-set.
+18. **Authority-surface reconciliation:** prove integration authority surfaces are derived from or reconciled against executable runtime wiring and that omissions fail closed.
+19. **Integration freshness state:** prove pinned/vendorized hosts distinguish current, compatible, update-available, unsupported, and mismatched TEO states appropriately.
+20. **Independent review:** challenge whether the integration layer creates a second routing authority or weakens existing TEO invariants.
 
 ## Relationship to existing TEO research
 
 This work extends, rather than replaces, the existing research concepts in `research/runtime/orchestration-landscape-gap-analysis-2026-08-10.md`:
 
-- **Specialist Execution Envelope:** now has concrete host-embedding evidence for scoped context, dispatch authorization, and allowed tool/action declarations.
-- **Resource Budget and Admission Contract:** delegation depth, spawn count, context/token budgets, and parallelism become directly relevant for external-host recursion control.
-- **Action Authority Plane:** host tool authorization remains distinct from provider access and from TEO model routing. Round 1 strengthens the need for restrictive intersection semantics.
+- **Specialist Execution Envelope:** now has concrete host-embedding evidence for scoped context, dispatch authorization, allowed tool/action declarations, and verifier-context separation.
+- **Resource Budget and Admission Contract:** delegation depth, spawn count, context/token budgets, parallelism, and the distinction between host task admission and TEO task routing become directly relevant for external-host recursion control.
+- **Action Authority Plane:** host tool authorization remains distinct from provider access and from TEO model routing. Round 1 strengthens restrictive intersection semantics; round 2 adds exact artifact/freshness binding and authority-surface reconciliation.
 - **Context and Memory Systems Engineer candidate:** this integration evidence strengthens the identified context-scoping responsibility gap, but does not by itself justify specialist activation.
 
 No new specialist is proposed by this document.
@@ -464,7 +546,8 @@ No new specialist is proposed by this document.
 ## Current disposition
 
 - Record the contract as non-normative research.
-- Treat external-host validation round 1 as implementation evidence, not normative authority.
+- Treat external-host validation rounds 1 and 2 as implementation evidence, not normative authority or host certification.
+- Mark the two-host architecture-diversity research gate satisfied.
 - Do not change current Mission Control policy, specialist cards, active roster, verifier rules, or live-execution scope.
-- Validate the contract against at least one structurally different external host before proposing schemas or reference-runtime code.
+- Continue the remaining evidence gates before proposing a normative schema or reference-runtime implementation, especially context economics, dispatch-authorization mutation resistance, adapter integrity, restrictive authority intersection, artifact-bound verification, freshness semantics, authority-surface reconciliation, and independent review.
 - Preserve the current Progress Tracker sequencing. This research is not promoted ahead of the provider-backed `documentation` replay gate.
