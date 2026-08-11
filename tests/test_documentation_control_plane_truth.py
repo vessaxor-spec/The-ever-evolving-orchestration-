@@ -7,9 +7,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_TEAM_COUNT = 10
 EXPECTED_WORKER_COUNT = 84
 EXPECTED_SPECIALIST_COUNT = 82
-EXPECTED_LATEST_VALIDATED_TESTS = 653
-EXPECTED_LATEST_TRACKED_FILES = 474
-EXPECTED_LATEST_CI_RUN = 506
+EXPECTED_LATEST_VALIDATED_TESTS = 657
+EXPECTED_LATEST_TRACKED_FILES = 477
+EXPECTED_LATEST_CI_RUN = 514
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -99,6 +99,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "provider-backed replay evidence is still pending",
         "no live-execution authority",
         "The next gate is provider-backed controlled documentation replay evidence",
+        "control-integrity audit",
+        "temporal-causality",
+        "Control Integrity remains intentionally scored at 90%",
         "Issue #100",
         "is complete",
     ):
@@ -124,6 +127,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Mission Control workers | 4 |",
         f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
+        "| Control integrity | Operational | 90% |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
@@ -138,6 +142,10 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "staged only",
         "The staged documentation replay harness is now implemented",
         "The next material gate is a real provider-backed controlled replay",
+        "provider-backed `documentation` replay is intentionally deferred as an open action item",
+        "control-integrity audit",
+        "temporal-causality",
+        "Control integrity remains intentionally scored at 90%",
         "## NEXT",
         "No additional workstream is promoted",
         "## LATER",
@@ -234,6 +242,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "actor_type: human",
         "Maintainer status by itself is not approval authority.",
         "The original Route-Outcome Evidence remains immutable.",
+        "request -> disposition -> finalization temporal causality",
         "model selection;",
         "provider access or authentication method;",
         "billing identity;",
