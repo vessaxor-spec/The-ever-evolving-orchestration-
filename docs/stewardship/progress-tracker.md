@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 653 tests passed |
+| Latest validated test suite | 657 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -73,7 +73,7 @@ Rules:
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve evidence and authority boundaries through later reviewed adaptation |
-| Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, and finalization boundaries |
+| Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, temporal causality, and finalization boundaries |
 | Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
@@ -98,7 +98,9 @@ The staged documentation replay harness is now implemented. It provides strict r
 
 Reference Implementation CI run #488 validated the clean replay-harness and operator-path state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. CI uses deterministic fake provider transports for conformance and therefore does not constitute empirical provider-backed documentation replay evidence.
 
-Reference Implementation CI run #506 is the current accepted repository-validation baseline after the Actions-native replay path and provider-access blocker record: 653 passing tests, 474 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. That newer validation does not create empirical provider-backed replay evidence or widen live authority.
+Reference Implementation CI run #506 validated the Actions-native replay path and provider-access blocker record with 653 passing tests, 474 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. That validation does not create empirical provider-backed replay evidence or widen live authority.
+
+Reference Implementation CI run #514 is the current accepted substantive repository-validation baseline after the targeted finalization -> authority -> recovery control-integrity audit: 657 passing tests, 477 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. The audit closed a proven qualified-human temporal-causality gap and added recovery-authority regression coverage without changing live scope, routing, risk, provider access, or approval authority. Control integrity remains intentionally scored at 90% because continuing mutation depth and newly discovered failure modes remain an ongoing adversarial discipline.
 
 Completion criteria for the current bounded milestone:
 
@@ -116,11 +118,13 @@ Completion criteria for the current bounded milestone:
 
 Candidate selection, fallback/fresh-verifier topology, direct adapter readiness, and the staged replay harness are now satisfied for `documentation`. The next material gate is a real provider-backed controlled replay using the exact staged plan and current repository revision. That execution must produce the integrity-protected replay record and canonical Route-Outcome Evidence set before the candidate's `controlled_replay` evidence pointer can be populated. Green CI alone must not be mislabeled as empirical replay evidence.
 
+The provider-backed `documentation` replay is intentionally deferred as an open action item until legitimate provider access is supplied through an appropriate execution boundary. Deferral does not close, bypass, or downgrade the evidence gate.
+
 The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded activation change satisfies every applicable criterion. `documentation` remains `activation_authorized: false`. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates. High and critical live execution remains unauthorized.
 
 ## NEXT
 
-No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
+No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. While its provider-backed replay gate is deferred, provider-independent control-integrity and evidence-maintenance work may continue without changing the sequencing or live-authority boundary. The next live-expansion sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
 
 ## LATER
 
@@ -163,7 +167,9 @@ The current target roster is active and deterministically spawnable. Future spec
 
 ### Control integrity, 90%
 
-The main invariants are implemented and heavily tested. The remaining ten percent represents continuing mutation depth, finalization-path resistance, authority-leakage checks, and new failure modes uncovered by future audits. It is intentionally not scored as permanently complete because control integrity is an ongoing adversarial discipline.
+The main invariants are implemented and heavily tested. The 2026-08-11 targeted finalization -> authority -> recovery audit proved and remediated two qualified-human temporal-causality gaps: a disposition can no longer predate its approval request, and finalization can no longer predate the current disposition it relies on. The same audit verified that bounded recovery preparation preserves effective risk and human-approval requirements and added regression guards against future recovery-based authority leakage. See [`../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
+
+The remaining ten percent represents continuing mutation depth, finalization-path resistance, authority-leakage checks, recovery gaps, and new failure modes uncovered by future audits. It is intentionally not scored as permanently complete because control integrity is an ongoing adversarial discipline.
 
 ### Verifier calibration evidence, 70%
 
@@ -235,15 +241,15 @@ The current milestone is complete.
 
 The executable lifecycle provides integrity-protected authority-grant, approval-request, disposition, and human-finalization records. Requests can be created only for dispatches already marked `human_approval_required` and exact Route-Outcome Evidence in the `awaiting_human` disposition. Each request binds the exact dispatch digest, task identity, task type, effective risk, authority requirement, verification evidence, and applicable review evidence.
 
-Human decision records require a separately integrity-protected authority grant that covers the required authority class, authority requirement, effective risk, task type, and decision timestamp. The initial `requested` state and the `approved`, `rejected`, `unable_to_determine`, `expired`, and `revoked` lifecycle states are explicitly represented through the request plus append-only dispositions. An approval cannot outlive its request or authority grant.
+Human decision records require a separately integrity-protected authority grant that covers the required authority class, authority requirement, effective risk, task type, and decision timestamp. The initial `requested` state and the `approved`, `rejected`, `unable_to_determine`, `expired`, and `revoked` lifecycle states are explicitly represented through the request plus append-only dispositions. A disposition cannot become effective before the bound request exists; subsequent dispositions cannot move backwards in time. An approval cannot outlive its request or authority grant.
 
 Model, specialist, verifier, Mission Control, and maintainer actor types cannot impersonate the human actor contract. A maintainer may act only if independently qualified through a scoped human authority grant. Benchmark, shadow, Mission Control, and maintainer review evidence can support an approval request but cannot satisfy qualified-human approval.
 
-Terminal human finalization revalidates the exact dispatch, Route-Outcome Evidence, approval request, linear disposition chain, authority-grant scope, request validity, approval validity, expiry, and revocation state. It completes only a current valid scoped approval and otherwise blocks with an explicit reason. The original Route-Outcome Evidence remains `awaiting_human` and is not rewritten.
+Terminal human finalization revalidates the exact dispatch, Route-Outcome Evidence, approval request, linear disposition chain, authority-grant scope, request validity, approval validity, temporal causality, expiry, and revocation state. It cannot predate the request or the current disposition it relies on. It completes only a current valid scoped approval and otherwise blocks with an explicit reason. The original Route-Outcome Evidence remains `awaiting_human` and is not rewritten.
 
 Identity, model selection, provider access, and billing identity remain outside approval qualification and routing. The lifecycle has no policy-write, live-routing, or live-scope-change authority.
 
-Reference Implementation CI run #451 validated the executable milestone with 626 passing tests, 458 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
+Reference Implementation CI run #451 validated the original executable milestone with 626 passing tests, 458 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The later control-integrity hardening described above adds temporal-causality protection without reopening or widening the lifecycle's declared authority milestone.
 
 This milestone implements authority evidence for requirements existing policy already imposes. It does not broaden which tasks require qualified-human approval and does not widen live execution.
 
@@ -301,6 +307,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`docs/releases/v1.0.0.md`](../releases/v1.0.0.md): immutable functional-v1 release contract
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
+- [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md): targeted finalization, qualified-human authority, and recovery control-integrity audit
 - [`community/specialists/orchestration-evaluation-analyst.md`](../../community/specialists/orchestration-evaluation-analyst.md): active post-run route evaluator
 - [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
 - [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone
