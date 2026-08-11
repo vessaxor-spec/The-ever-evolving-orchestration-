@@ -1,0 +1,144 @@
+name: Controlled Documentation Replay Evidence
+
+on:
+  push:
+    branches:
+      - agent/documentation-controlled-replay
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    if: contains(github.event.head_commit.message, '[run-documentation-replay]')
+    name: Run staged documentation replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+    steps:
+      - name: Check out repository
+        # actions/checkout v6.1.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Set up Python
+        # actions/setup-python v6.3.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11.15"
+          cache: pip
+          cache-dependency-path: ci/requirements-ci.lock
+
+      - name: Require operator provider credentials
+        shell: bash
+        run: |
+          if [ -z "${ANTHROPIC_API_KEY}" ]; then
+            echo "ANTHROPIC_API_KEY repository secret is unavailable"
+            exit 1
+          fi
+          if [ -z "${OPENAI_API_KEY}" ]; then
+            echo "OPENAI_API_KEY repository secret is unavailable"
+            exit 1
+          fi
+
+      - name: Install pinned replay environment
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
+          python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
+          python -m pip install --disable-pip-version-check --no-build-isolation --no-deps -e .
+
+      - name: Build exact staged replay plan
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          payload = {
+              "replay_version": "1",
+              "record_type": "live_scope_replay_plan",
+              "replay_id": "documentation-provider-backed-replay-v1",
+              "task_type": "documentation",
+              "suite_id": "documentation-bounded-v1",
+              "suite_version": "1",
+              "trials_per_fixture": 2,
+              "fixtures": [
+                  {
+                      "fixture_id": "bounded-note",
+                      "risk_level": "low",
+                      "task": "Rewrite in two concise sentences: Alpha follows Beta. The color is blue.",
+                      "required_capabilities": ["transformation"],
+                  },
+                  {
+                      "fixture_id": "bounded-summary",
+                      "risk_level": "medium",
+                      "task": "Summarize these supplied facts in three bullets without adding claims: the route is staged; live activation is false; the current active task class is high_volume_simple.",
+                      "required_capabilities": ["transformation"],
+                  },
+              ],
+              "harness": {
+                  "harness_id": "teo-staged-live-scope-replay",
+                  "harness_version": "1",
+                  "tool_access_profile": "none",
+                  "max_attempts": 2,
+                  "selection_mode": "canonical_candidate_route",
+                  "circuit_state_profile": "isolated_per_trial",
+                  "verification_mode": "assigned_candidate_verifier",
+                  "authority_mode": "staged_evidence_only",
+                  "fallback_mode": "disabled_until_recovery_gate",
+              },
+              "versions": {
+                  "runtime_version": "1.0.1.dev0",
+                  "repository_revision": os.environ["GITHUB_SHA"],
+                  "routing_policy_revision": "policy/runtime/live-execution-expansion.yaml@1.1",
+                  "registry_revision": os.environ["GITHUB_SHA"],
+                  "tool_versions": {"live-scope-replay-harness": "1"},
+              },
+          }
+          Path("/tmp/documentation-replay-plan.json").write_text(
+              json.dumps(payload, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Validate staged replay plan without provider calls
+        run: |
+          python -m teo_reference.live_scope_replay_cli --repo-root . validate \
+            --plan /tmp/documentation-replay-plan.json
+
+      - name: Execute provider-backed staged replay
+        run: |
+          python -m teo_reference.live_scope_replay_cli --repo-root . run \
+            --plan /tmp/documentation-replay-plan.json \
+            --output-dir /tmp/documentation-replay-evidence \
+            --execute-live
+
+      - name: Print content-minimized replay evidence
+        run: |
+          echo '--- replay-record.json ---'
+          cat /tmp/documentation-replay-evidence/replay-record.json
+          echo '--- route-outcomes.jsonl ---'
+          cat /tmp/documentation-replay-evidence/route-outcomes.jsonl
+
+      - name: Require completed bounded trials
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          record = json.loads(
+              Path("/tmp/documentation-replay-evidence/replay-record.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          summary = record["summary"]
+          if summary["total_trials"] != 4 or summary["completed"] != 4:
+              raise SystemExit(json.dumps(summary, indent=2, sort_keys=True))
+          if record["activation_authorized"] is not False:
+              raise SystemExit("Replay evidence unexpectedly authorized activation")
+          if record["live_scope_widened"] is not False:
+              raise SystemExit("Replay evidence unexpectedly widened live scope")
+          print(json.dumps(summary, indent=2, sort_keys=True))
+          PY
