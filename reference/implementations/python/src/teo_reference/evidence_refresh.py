@@ -79,6 +79,7 @@ def validate_refresh_history(root: Path) -> list[str]:
         return ["regulated evidence pilot has no completed refresh-cycle history"]
 
     previous_date: dt.date | None = None
+    previous_registry_after: str | None = None
     for expected_sequence, (path, record) in enumerate(records, start=1):
         label = path.relative_to(root).as_posix()
         errors.extend(_schema_errors(record, schema, label))
@@ -94,6 +95,17 @@ def validate_refresh_history(root: Path) -> list[str]:
                 f"{label}: cycle_id must match sequence {expected_sequence}: {expected_cycle_id}"
             )
 
+        if (
+            previous_registry_after is not None
+            and record.get("registry_before_blob_sha") != previous_registry_after
+        ):
+            errors.append(
+                f"{label}: registry_before_blob_sha must equal the prior cycle registry_after_blob_sha"
+            )
+        registry_after = record.get("registry_after_blob_sha")
+        if isinstance(registry_after, str):
+            previous_registry_after = registry_after
+
         try:
             performed_at = parse_date(record.get("performed_at"), f"{label}.performed_at")
         except ValueError as exc:
@@ -105,8 +117,12 @@ def validate_refresh_history(root: Path) -> list[str]:
             previous_date = performed_at
 
         specialists = record.get("pilot_specialists")
-        if isinstance(specialists, list) and set(specialists) != EXPECTED_PILOT:
-            errors.append(f"{label}: refresh cycle must cover the exact six-card pilot")
+        if isinstance(specialists, list):
+            normalized_specialists = {
+                specialist for specialist in specialists if isinstance(specialist, str)
+            }
+            if normalized_specialists != EXPECTED_PILOT or len(specialists) != len(EXPECTED_PILOT):
+                errors.append(f"{label}: refresh cycle must cover the exact six-card pilot")
 
         reviews = record.get("claims_reviewed")
         if not isinstance(reviews, list):
@@ -178,7 +194,7 @@ def validate_refresh_history(root: Path) -> list[str]:
                 )
             controlled_type = gate.get("controlled_change_type")
             controlled_handled = gate.get("controlled_change_handled")
-            if controlled_handled is not (controlled_type != "none"):
+            if controlled_handled != (controlled_type != "none"):
                 errors.append(
                     f"{label}: controlled_change_handled must match controlled_change_type"
                 )
