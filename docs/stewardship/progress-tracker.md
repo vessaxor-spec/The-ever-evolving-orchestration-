@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 657 tests passed |
+| Latest validated test suite | 671 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -102,6 +102,8 @@ Reference Implementation CI run #506 validated the Actions-native replay path an
 
 Reference Implementation CI run #514 is the current accepted substantive repository-validation baseline after the targeted finalization -> authority -> recovery control-integrity audit: 657 passing tests, 477 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. The audit closed a proven qualified-human temporal-causality gap and added recovery-authority regression coverage without changing live scope, routing, risk, provider access, or approval authority. Control integrity remains intentionally scored at 90% because continuing mutation depth and newly discovered failure modes remain an ongoing adversarial discipline.
 
+A follow-on targeted mutation audit then weakened ten finalization, authority, expiry, and recovery invariants one at a time. Reference Implementation CI run #519 intentionally exposed four surviving mutants, proving four test-evidence gaps rather than production-control defects. Exact approval, request, and authority-grant expiry boundaries plus caller-risk versus dispatch-effective-risk fallback preservation were then covered explicitly. Reference Implementation CI run #521 killed **10 of 10 targeted mutants** and passed 671 tests, 479 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. This is control-integrity evidence hardening and does not replace CI #514 as the accepted substantive runtime baseline or change live authority.
+
 Completion criteria for the current bounded milestone:
 
 - select one explicitly bounded task class beyond the current `high_volume_simple` canary only when the candidate scope is low or medium effective risk and capability-valid;
@@ -168,6 +170,8 @@ The current target roster is active and deterministically spawnable. Future spec
 ### Control integrity, 90%
 
 The main invariants are implemented and heavily tested. The 2026-08-11 targeted finalization -> authority -> recovery audit proved and remediated two qualified-human temporal-causality gaps: a disposition can no longer predate its approval request, and finalization can no longer predate the current disposition it relies on. The same audit verified that bounded recovery preparation preserves effective risk and human-approval requirements and added regression guards against future recovery-based authority leakage. See [`../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
+
+The follow-on targeted mutation audit tested ten materially distinct weaknesses across chronology, exact authority binding, expiry equality boundaries, effective-risk preservation, and human-approval preservation. Four mutants initially survived because existing tests did not distinguish exact expiry boundaries or caller-declared risk from dispatch-elevated effective risk. Production behavior was already correct, so remediation added focused evidence rather than changing runtime code. CI #521 killed 10 of 10 targeted mutants after remediation. See [`../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md`](../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md).
 
 The remaining ten percent represents continuing mutation depth, finalization-path resistance, authority-leakage checks, recovery gaps, and new failure modes uncovered by future audits. It is intentionally not scored as permanently complete because control integrity is an ongoing adversarial discipline.
 
@@ -308,6 +312,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
 - [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md): targeted finalization, qualified-human authority, and recovery control-integrity audit
+- [`docs/history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md`](../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md): targeted mutation audit and boundary/effective-risk regression evidence
 - [`community/specialists/orchestration-evaluation-analyst.md`](../../community/specialists/orchestration-evaluation-analyst.md): active post-run route evaluator
 - [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
 - [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone
