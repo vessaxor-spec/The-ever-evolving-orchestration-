@@ -92,9 +92,11 @@ It includes dedicated Mission Control workers for orchestration, operations, pro
 
 The repository information-architecture migration **R1 through R5 is complete**. Current authority, historical activation records, research, executable reference code, evidence, registries, and stewardship documentation now have governed canonical locations under [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
 
-The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** complete at their declared milestones. Reference Implementation CI #506 passed **653 automated tests**, **474 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The canonical current priority is **evidence-governed live execution expansion**, now at 65%. `documentation` is the first staged candidate; its fallback/fresh-verifier topology, direct adapter readiness, and staged replay harness are validated, but provider-backed replay evidence is still pending and it has no live-execution authority. The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
+The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** complete at their declared milestones. Reference Implementation CI #514 passed **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The targeted 2026-08-11 finalization -> authority -> recovery audit closed a proven qualified-human temporal-causality gap and added recovery-authority regression protection without widening routing or execution authority. The canonical current priority remains **evidence-governed live execution expansion**, now at 65%. `documentation` is the first staged candidate; its fallback/fresh-verifier topology, direct adapter readiness, and staged replay harness are validated, but provider-backed replay evidence is still pending and it has no live-execution authority. The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
 
 The post-v1 hard audit completed on 2026-08-10 without finding a critical control-plane defect. The final audited tree passed **390 tracked-file layout checks**, **519 automated tests**, regulated specialist evidence validation, **18 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The durable audit record is [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
+
+The targeted control-integrity audit completed on 2026-08-11 and is preserved at [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md). It proved and remediated request -> disposition -> finalization temporal-causality gaps and verified that bounded recovery preparation preserves effective risk and human-approval requirements. Control Integrity remains intentionally scored at 90% because adversarial mutation depth is an ongoing discipline rather than a permanently finishable state.
 
 ### Current authority and preserved staged artifacts
 
@@ -139,7 +141,8 @@ The repository currently implements:
 - controlled Benchmark and Outcome Lab replay, disagreement measurement, and consequential conclusion handoff
 - source-backed effective-dated route-cost attribution with explicit unknown semantics
 - governed Shadow Route Evaluation with exact evidence binding, bounded specialist #82 dispositions, independent challenge, and Mission Control or maintainer review handoff
-- scoped qualified-human authority grants, evidence-bound approval requests, append-only disposition states, expiry and revocation, and terminal human finalization
+- scoped qualified-human authority grants, evidence-bound approval requests, append-only disposition states, expiry and revocation, temporal-causality enforcement, and terminal human finalization
+- recovery-authority regression guards that preserve effective risk and human-approval requirements across fallback and circuit preparation
 - strict external JSON Schema boundaries
 - verifier-calibration instrumentation
 - blinded independent-human review tooling
@@ -420,7 +423,7 @@ The Python reference implementation is a runnable control plane that can:
 - hand verified shadow recommendations only to Mission Control or maintainer review without policy-write authority
 - build scoped qualified-human authority grants and exact approval requests for existing human-required outcomes
 - record approved, rejected, unable-to-determine, expired, and revoked qualified-human dispositions
-- finalize a human-required outcome only when the exact scoped approval remains current and valid
+- finalize a human-required outcome only when the exact scoped approval remains current, valid, and temporally causal
 - finalize evidence-bearing outcomes
 - preserve audit records
 
@@ -530,6 +533,8 @@ The repository test and validation system covers, among other controls:
 - staged documentation replay plan/record integrity, whole-plan preflight, retry/circuit semantics, assigned verification, operator acknowledgement, and continued active-runtime refusal
 - preview authorization
 - finalization integrity guards
+- qualified-human request -> disposition -> finalization temporal causality
+- recovery preparation preserving effective risk and human-approval requirements
 - retry and fallback behavior
 - circuit recovery and abandoned half-open probe handling
 - content-free telemetry
@@ -560,9 +565,11 @@ The reference CI:
 7. validates linked TEO configuration
 8. executes the end-to-end reference lifecycle
 
-The latest accepted validation for the staged documentation replay-harness and operator-evidence path is Reference Implementation CI #488: 651 tests passed, 472 tracked files passed layout validation, 40 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed. This is conformance evidence using controlled fake provider transports, not empirical provider-backed documentation replay evidence.
+The latest accepted substantive repository validation is Reference Implementation CI #514: 657 tests passed, 477 tracked files passed layout validation, 40 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed. It includes the targeted temporal-authority remediation, recovery-authority regression coverage, and durable audit record. It does not create empirical provider-backed documentation replay evidence or widen live execution authority.
 
-The 2026-08-10 post-v1 hard audit is recorded in [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The audited reference CI run completed with 519 tests passing and provider-diverse execution, fallback, and verification intact.
+The staged documentation replay harness itself was validated earlier in Reference Implementation CI #488 with controlled fake provider transports. Provider-backed replay remains a separate empirical evidence gate.
+
+The 2026-08-10 post-v1 hard audit is recorded in [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The 2026-08-11 authority/recovery control-integrity audit is recorded in [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
 
 CI validates the control plane. It does not convert provisional or simulated evidence into empirical provider-backed claims.
 
@@ -768,9 +775,9 @@ The repository layout is governed and CI-enforced. Root normalization, documenta
 
 Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, integrity, evidence, controlled-evaluation, qualified-human authority, and staged live-scope evaluation work while `v1.0.0` remains the immutable stable release.
 
-Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, Shadow Route Evaluation, and the Qualified-human approval lifecycle have completed their current milestones. The canonical `NOW` workstream is evidence-governed live execution expansion, now at 65%. `documentation` is the first staged candidate and remains `activation_authorized: false`. Its provider-diverse fallback/fresh-verifier topology, direct Sonnet/Sol/Terra adapter readiness, and staged replay harness are validated. The next gate is provider-backed controlled documentation replay evidence. The current low or medium risk `high_volume_simple` canary remains the only accepted live execution scope until the candidate also passes provider-backed replay, shadow, recovery, rollback, and independent-review gates. High and critical live execution remains unauthorized.
+Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, Shadow Route Evaluation, and the Qualified-human approval lifecycle have completed their current milestones. The canonical `NOW` workstream is evidence-governed live execution expansion, now at 65%. `documentation` is the first staged candidate and remains `activation_authorized: false`. Its provider-diverse fallback/fresh-verifier topology, direct Sonnet/Sol/Terra adapter readiness, and staged replay harness are validated. The next gate is provider-backed controlled documentation replay evidence. That gate is currently deferred as an open action item, not removed or bypassed. The current low or medium risk `high_volume_simple` canary remains the only accepted live execution scope until the candidate also passes provider-backed replay, shadow, recovery, rollback, and independent-review gates. High and critical live execution remains unauthorized.
 
-The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
+The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The 2026-08-11 targeted authority/recovery audit is preserved at [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
 
 ### Post-v1 stewardship and hardening
 
@@ -778,6 +785,7 @@ Current and future work may include:
 
 - evidence-governed live-scope expansion, the current canonical `NOW` workstream
 - provider-backed controlled documentation replay followed by shadow, recovery, rollback, and independent-review gates
+- continuing adversarial control-integrity hardening and mutation coverage
 - optional independent blinded human calibration research ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls

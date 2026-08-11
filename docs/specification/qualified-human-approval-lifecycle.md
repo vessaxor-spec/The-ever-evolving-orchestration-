@@ -90,6 +90,8 @@ The initial `requested` state belongs to the approval-request record.
 
 Human decisions and revocations require `actor_type: human` and an exact authority-grant reference. The referenced grant must cover the request's required authority class, authority requirement, effective risk, task type, and decision timestamp.
 
+A disposition cannot become effective before the approval request exists. Subsequent disposition timestamps cannot move backwards relative to the preceding disposition. This chronology is enforced as a cross-record authority invariant rather than inferred from record order alone.
+
 `expired` is system-generated from an already declared request or approval expiry. It cannot carry a human authority grant.
 
 An approval must declare `approval_expires_at`. It cannot outlive the request or the authority grant that supported it.
@@ -115,6 +117,8 @@ The result is either:
 
 - `completed`, when the current state is a still-valid scoped approval; or
 - `blocked`, with an explicit reason of `missing_approval`, `rejected`, `unable_to_determine`, `expired`, or `revoked`.
+
+Finalization cannot predate the approval request or the current disposition it relies on. A future-dated disposition therefore cannot be used to complete an earlier finalization.
 
 A completed human finalization records the approving opaque subject reference and authority class for auditability. These values are evidence of who exercised already-required authority. They do not become model-routing inputs.
 
@@ -154,6 +158,7 @@ The finalization path rechecks:
 - authority-grant hash and scope;
 - request validity;
 - approval validity;
+- request -> disposition -> finalization temporal causality;
 - revocation and expiry state.
 
 ## Authority boundaries
@@ -189,7 +194,8 @@ Schemas are:
 Conformance coverage is in:
 
 - `tests/test_qualified_human_approval.py`
+- `tests/test_qualified_human_temporal_integrity.py`
 
 Reference Implementation CI #451 validated the completed executable milestone with 626 passing tests, 458 tracked-file layout checks, regulated specialist evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
 
-The validated milestone proves request binding, authority scope, lifecycle transitions, impersonation refusal, expiry, revocation, mutation resistance, append-only ledger behavior, and terminal finalization without weakening existing routing, verification, or live-execution boundaries.
+The validated milestone proves request binding, authority scope, lifecycle transitions, impersonation refusal, expiry, revocation, mutation resistance, append-only ledger behavior, and terminal finalization without weakening existing routing, verification, or live-execution boundaries. Subsequent control-integrity hardening additionally enforces temporal causality across request, disposition, and finalization records.
