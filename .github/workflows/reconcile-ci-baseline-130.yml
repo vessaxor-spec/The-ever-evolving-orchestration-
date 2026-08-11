@@ -1,0 +1,82 @@
+name: One-shot Issue 130 reconciliation
+
+on:
+  push:
+    branches:
+      - agent/reconcile-ci-baseline-130
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.actor == 'vessaxor-spec'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out reconciliation branch
+        # actions/checkout v6.1.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/reconcile-ci-baseline-130
+          fetch-depth: 1
+
+      - name: Reconcile canonical validation baseline
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              Path("README.md"): [
+                  (
+                      "Reference Implementation CI #488 passed **651 automated tests**, **472 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle.",
+                      "Reference Implementation CI #506 passed **653 automated tests**, **474 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle.",
+                  ),
+              ],
+              Path("docs/stewardship/progress-tracker.md"): [
+                  (
+                      "| Latest validated test suite | 651 tests passed |",
+                      "| Latest validated test suite | 653 tests passed |",
+                  ),
+                  (
+                      "Reference Implementation CI run #488 validated the clean replay-harness and operator-path state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. CI uses deterministic fake provider transports for conformance and therefore does not constitute empirical provider-backed documentation replay evidence.",
+                      "Reference Implementation CI run #488 validated the clean replay-harness and operator-path state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. CI uses deterministic fake provider transports for conformance and therefore does not constitute empirical provider-backed documentation replay evidence.\n\nReference Implementation CI run #506 is the current accepted repository-validation baseline after the Actions-native replay path and provider-access blocker record: 653 passing tests, 474 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. That newer validation does not create empirical provider-backed replay evidence or widen live authority.",
+                  ),
+              ],
+              Path("tests/test_documentation_control_plane_truth.py"): [
+                  (
+                      'EXPECTED_SPECIALIST_COUNT = 82\n',
+                      'EXPECTED_SPECIALIST_COUNT = 82\nEXPECTED_LATEST_VALIDATED_TESTS = 653\nEXPECTED_LATEST_TRACKED_FILES = 474\nEXPECTED_LATEST_CI_RUN = 506\n',
+                  ),
+                  (
+                      '        "651 automated tests",\n        "472 tracked-file layout checks",',
+                      '        f"{EXPECTED_LATEST_VALIDATED_TESTS} automated tests",\n        f"{EXPECTED_LATEST_TRACKED_FILES} tracked-file layout checks",\n        f"Reference Implementation CI #{EXPECTED_LATEST_CI_RUN}",',
+                  ),
+                  (
+                      '        "| Latest validated test suite | 651 tests passed |",',
+                      '        f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",',
+                  ),
+                  (
+                      '    assert "Reference Implementation CI run #488" in text\n',
+                      '    assert "Reference Implementation CI run #488" in text\n    assert f"Reference Implementation CI run #{EXPECTED_LATEST_CI_RUN}" in text\n    assert f"{EXPECTED_LATEST_TRACKED_FILES} tracked-file layout checks" in text\n',
+                  ),
+              ],
+          }
+
+          for path, edits in replacements.items():
+              text = path.read_text(encoding="utf-8")
+              for old, new in edits:
+                  count = text.count(old)
+                  if count != 1:
+                      raise SystemExit(f"Expected exactly one match in {path} for {old!r}; found {count}")
+                  text = text.replace(old, new, 1)
+              path.write_text(text, encoding="utf-8")
+          PY
+
+          python -m compileall -q tests
+          git config user.name "TEO Mission Control"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/reconcile-ci-baseline-130.yml
+          git add README.md docs/stewardship/progress-tracker.md tests/test_documentation_control_plane_truth.py
+          git commit -m "Reconcile latest CI baseline in stewardship docs"
+          git push origin HEAD:agent/reconcile-ci-baseline-130
