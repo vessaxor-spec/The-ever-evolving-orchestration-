@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
 
 concurrency:
   group: controlled-documentation-replay-evidence
@@ -50,36 +49,58 @@ jobs:
           cache: pip
           cache-dependency-path: ci/requirements-ci.lock
 
-      - name: Announce auditable replay run
+      - name: Record auditable replay start
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TARGET_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
           TRIGGER_KIND: ${{ github.event_name }}
+          TRIGGER_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
         run: |
-          revision="$(git rev-parse HEAD)"
-          printf '%s\n' \
-            '<!-- teo-documentation-replay-start -->' \
-            '### Controlled documentation replay started' \
-            '' \
-            "- Actions run ID: \`${GITHUB_RUN_ID}\`" \
-            "- Trusted base revision: \`${revision}\`" \
-            "- Trigger event: \`${TRIGGER_KIND}\`" \
-            '- Evidence status: pending provider-backed execution' \
-            > /tmp/documentation-replay-start.md
+          set -euo pipefail
+          export TRUSTED_REVISION="$(git rev-parse HEAD)"
+          audit_dir=".teo/runtime/live-scope-replay/audit"
+          mkdir -p "$audit_dir"
           python - <<'PY'
           import json
+          import os
           from pathlib import Path
 
-          body = Path("/tmp/documentation-replay-start.md").read_text(encoding="utf-8")
-          Path("/tmp/documentation-replay-start.json").write_text(
-              json.dumps({"body": body}) + "\n", encoding="utf-8"
+          audit_dir = Path(".teo/runtime/live-scope-replay/audit")
+          record = {
+              "record_type": "live_scope_replay_audit_start",
+              "audit_version": "1",
+              "actions_run_id": os.environ["GITHUB_RUN_ID"],
+              "actions_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "repository": os.environ["GITHUB_REPOSITORY"],
+              "trusted_base_revision": os.environ["TRUSTED_REVISION"],
+              "trigger_event": os.environ["TRIGGER_KIND"],
+              "trigger_number": os.environ["TRIGGER_NUMBER"],
+              "task_type": "documentation",
+              "candidate_state": "staged",
+              "activation_authorized": False,
+              "evidence_status": "pending_provider_backed_execution",
+          }
+          (audit_dir / "start.json").write_text(
+              json.dumps(record, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
           )
+          markdown = "\n".join(
+              [
+                  "### Controlled documentation replay started",
+                  "",
+                  f"- Actions run ID: `{record['actions_run_id']}`",
+                  f"- Trusted base revision: `{record['trusted_base_revision']}`",
+                  f"- Trigger event: `{record['trigger_event']}`",
+                  f"- Trigger number: `{record['trigger_number']}`",
+                  "- Candidate state: `staged`",
+                  "- Activation authorized: `false`",
+                  "- Evidence status: `pending_provider_backed_execution`",
+                  "",
+              ]
+          )
+          (audit_dir / "start.md").write_text(markdown, encoding="utf-8")
+          print(json.dumps(record, indent=2, sort_keys=True))
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as stream:
+              stream.write(markdown)
           PY
-          gh api --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2026-03-10" \
-            "repos/${GITHUB_REPOSITORY}/issues/${TARGET_NUMBER}/comments" \
-            --input /tmp/documentation-replay-start.json
 
       - name: Install pinned replay environment
         run: |
@@ -139,13 +160,16 @@ jobs:
                   "tool_versions": {"live-scope-replay-harness": "1"},
               },
           }
-          Path("/tmp/documentation-replay-plan.json").write_text(
+          plan_path = Path("/tmp/documentation-replay-plan.json")
+          plan_path.write_text(
               json.dumps(payload, indent=2, sort_keys=True) + "\n",
               encoding="utf-8",
           )
           Path("/tmp/documentation-replay-revision.txt").write_text(
               revision + "\n", encoding="utf-8"
           )
+          audit_plan = Path(".teo/runtime/live-scope-replay/audit/replay-plan.json")
+          audit_plan.write_bytes(plan_path.read_bytes())
           PY
 
       - name: Validate staged plan without provider calls
@@ -245,6 +269,80 @@ jobs:
           )
           PY
 
+      - name: Record sanitized replay result
+        if: ${{ always() }}
+        env:
+          REPLAY_OUTCOME: ${{ steps.replay.outcome }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          audit_dir = Path(".teo/runtime/live-scope-replay/audit")
+          audit_dir.mkdir(parents=True, exist_ok=True)
+          start_path = audit_dir / "start.json"
+          start = json.loads(start_path.read_text(encoding="utf-8")) if start_path.exists() else {}
+          summary_path = Path("/tmp/documentation-replay-summary.json")
+          accepted = os.environ["REPLAY_OUTCOME"] == "success" and summary_path.exists()
+          result = {
+              "record_type": "live_scope_replay_audit_result",
+              "audit_version": "1",
+              "actions_run_id": os.environ["GITHUB_RUN_ID"],
+              "actions_run_attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+              "trusted_base_revision": start.get("trusted_base_revision", "unknown"),
+              "replay_step_outcome": os.environ["REPLAY_OUTCOME"],
+              "provider_backed_evidence_accepted": accepted,
+          }
+          if accepted:
+              result["replay"] = json.loads(summary_path.read_text(encoding="utf-8"))
+          else:
+              result["limitation"] = "No empirical success is claimed from this run."
+          (audit_dir / "result.json").write_text(
+              json.dumps(result, indent=2, sort_keys=True) + "\n",
+              encoding="utf-8",
+          )
+          lines = [
+              "### Controlled documentation replay result",
+              "",
+              f"- Actions run ID: `{result['actions_run_id']}`",
+              f"- Trusted base revision: `{result['trusted_base_revision']}`",
+              f"- Replay step outcome: `{result['replay_step_outcome']}`",
+              f"- Provider-backed evidence accepted: `{str(result['provider_backed_evidence_accepted']).lower()}`",
+          ]
+          if accepted:
+              replay = result["replay"]
+              counts = replay["summary"]
+              lines.extend(
+                  [
+                      f"- Trials: `{counts['completed']}/{counts['total_trials']}` completed",
+                      f"- Primary: `{replay['primary']['provider_family']}/{replay['primary']['model']}`",
+                      f"- Verifier: `{replay['primary_verifier']['provider_family']}/{replay['primary_verifier']['model']}`",
+                      f"- Replay record integrity: `{replay['record_integrity_sha256']}`",
+                      f"- Activation authorized: `{str(replay['activation_authorized']).lower()}`",
+                      f"- Live scope widened: `{str(replay['live_scope_widened']).lower()}`",
+                  ]
+              )
+          else:
+              lines.append("- No empirical success is claimed from this run.")
+          markdown = "\n".join(lines) + "\n"
+          (audit_dir / "result.md").write_text(markdown, encoding="utf-8")
+          print(json.dumps(result, indent=2, sort_keys=True))
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as stream:
+              stream.write("\n" + markdown)
+          PY
+
+      - name: Upload replay audit trail
+        if: ${{ always() }}
+        # actions/upload-artifact v7.0.1
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: teo-documentation-replay-audit-${{ github.run_id }}
+          path: .teo/runtime/live-scope-replay/audit/
+          if-no-files-found: error
+          retention-days: 30
+          include-hidden-files: true
+
       - name: Upload provider-backed replay evidence
         if: ${{ steps.replay.outcome == 'success' }}
         # actions/upload-artifact v7.0.1
@@ -255,64 +353,6 @@ jobs:
           if-no-files-found: error
           retention-days: 30
           include-hidden-files: true
-
-      - name: Report sanitized replay result
-        if: ${{ always() }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPLAY_OUTCOME: ${{ steps.replay.outcome }}
-          TARGET_NUMBER: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.event.issue.number }}
-        run: |
-          python - <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          revision_path = Path("/tmp/documentation-replay-revision.txt")
-          revision = revision_path.read_text(encoding="utf-8").strip() if revision_path.exists() else "unknown"
-          summary_path = Path("/tmp/documentation-replay-summary.json")
-          lines = [
-              "<!-- teo-documentation-replay-result -->",
-              "### Controlled documentation replay result",
-              "",
-              f"- Actions run ID: `{os.environ['GITHUB_RUN_ID']}`",
-              f"- Trusted base revision: `{revision}`",
-              f"- Replay step outcome: **{os.environ['REPLAY_OUTCOME']}**",
-          ]
-          if summary_path.exists():
-              summary = json.loads(summary_path.read_text(encoding="utf-8"))
-              counts = summary["summary"]
-              lines.extend(
-                  [
-                      f"- Trials: `{counts['completed']}/{counts['total_trials']}` completed",
-                      f"- Primary: `{summary['primary']['provider_family']}/{summary['primary']['model']}`",
-                      f"- Verifier: `{summary['primary_verifier']['provider_family']}/{summary['primary_verifier']['model']}`",
-                      f"- Replay record integrity: `{summary['record_integrity_sha256']}`",
-                      f"- Artifact: `teo-documentation-replay-{os.environ['GITHUB_RUN_ID']}`",
-                      f"- Activation authorized: `{str(summary['activation_authorized']).lower()}`",
-                      f"- Live scope widened: `{str(summary['live_scope_widened']).lower()}`",
-                  ]
-              )
-          else:
-              lines.extend(
-                  [
-                      "- Provider-backed evidence accepted: `false`",
-                      "- No empirical success is claimed from this run.",
-                  ]
-              )
-          Path("/tmp/documentation-replay-result.md").write_text(
-              "\n".join(lines) + "\n", encoding="utf-8"
-          )
-          payload = {"body": "\n".join(lines) + "\n"}
-          Path("/tmp/documentation-replay-result.json").write_text(
-              json.dumps(payload) + "\n", encoding="utf-8"
-          )
-          PY
-          gh api --method POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2026-03-10" \
-            "repos/${GITHUB_REPOSITORY}/issues/${TARGET_NUMBER}/comments" \
-            --input /tmp/documentation-replay-result.json
 
       - name: Enforce provider-backed replay success
         if: ${{ steps.replay.outcome != 'success' }}
