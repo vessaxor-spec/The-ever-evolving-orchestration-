@@ -9,14 +9,20 @@ permissions:
   pull-requests: read
 
 jobs:
-  cleanup-agent-branch:
+  cleanup-temporary-branch:
     if: >-
       github.event.pull_request.merged == true &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      startsWith(github.event.pull_request.head.ref, 'agent/')
+      (
+        startsWith(github.event.pull_request.head.ref, 'agent/') ||
+        startsWith(github.event.pull_request.head.ref, 'audit/') ||
+        startsWith(github.event.pull_request.head.ref, 'capsule/') ||
+        startsWith(github.event.pull_request.head.ref, 'cleanup/') ||
+        startsWith(github.event.pull_request.head.ref, 'governance/')
+      )
     runs-on: ubuntu-24.04
     steps:
-      - name: Delete accounted agent branches
+      - name: Delete accounted temporary branches
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -39,11 +45,19 @@ jobs:
             [[ "$count" != "0" ]]
           }
 
+          is_temporary_branch() {
+            local branch="$1"
+            case "$branch" in
+              agent/*|audit/*|capsule/*|cleanup/*|governance/*) return 0 ;;
+              *) return 1 ;;
+            esac
+          }
+
           delete_if_safe() {
             local branch="$1"
 
-            if [[ "$branch" != agent/* ]]; then
-              echo "Refusing non-agent branch: $branch"
+            if ! is_temporary_branch "$branch"; then
+              echo "Refusing ungoverned branch: $branch"
               return 1
             fi
 
@@ -58,6 +72,28 @@ jobs:
             fi
 
             echo "Deleting accounted branch: $branch"
+            gh api --method DELETE "/repos/${REPO}/git/refs/heads/${branch}"
+          }
+
+          delete_exact_probe_if_safe() {
+            local branch="$1"
+
+            if [[ "$branch" != "noop-check" ]]; then
+              echo "Refusing unexpected probe branch: $branch"
+              return 1
+            fi
+
+            if has_open_pr "$branch"; then
+              echo "Preserving $branch because it backs an open pull request"
+              return 0
+            fi
+
+            if ! branch_exists "$branch"; then
+              echo "Already absent: $branch"
+              return 0
+            fi
+
+            echo "Deleting accounted accidental probe branch: $branch"
             gh api --method DELETE "/repos/${REPO}/git/refs/heads/${branch}"
           }
 
@@ -174,6 +210,25 @@ jobs:
             for branch in "${legacy_branches[@]}"; do
               delete_if_safe "$branch"
             done
+          fi
+
+          if [[ "$HEAD_REF" == "agent/branch-retention-v2" ]]; then
+            # BEGIN POST_V1_TEMPORARY_BRANCH_SNAPSHOT
+            post_v1_branches=(
+              "agent/pr108-progress-reconcile"
+              "audit/authority-temporal-causality"
+              "audit/mission-control-finalization-authority-recovery-mutations"
+              "capsule/0009-evidence-becomes-authority"
+              "cleanup/remove-specialist-origin-references"
+              "governance/reframe-human-calibration"
+            )
+            # END POST_V1_TEMPORARY_BRANCH_SNAPSHOT
+
+            for branch in "${post_v1_branches[@]}"; do
+              delete_if_safe "$branch"
+            done
+
+            delete_exact_probe_if_safe "noop-check"
           fi
 
           delete_if_safe "$HEAD_REF"
