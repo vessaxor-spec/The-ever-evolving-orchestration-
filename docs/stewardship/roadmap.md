@@ -128,6 +128,26 @@ Replace single-process reference persistence where production deployment require
 - distributed workflow/audit correlation
 - streaming and richer latency evidence
 
+### Host integration contract research
+
+External-host integration evidence has exposed a distinct embedding boundary that is not equivalent to missing core orchestration architecture. A pre-existing AI host can misintegrate TEO by loading the entire specialist corpus into prompt context, replacing host identity with specialist personas, over-applying human-approval semantics, failing to bind host-native tools to TEO capabilities, or simulating independent verification inside one model session.
+
+The non-normative research path is recorded in [`../../research/runtime/2026-08-12-host-agent-integration-premortem.md`](../../research/runtime/2026-08-12-host-agent-integration-premortem.md) and [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md).
+
+The candidate Host Integration Contract should preserve:
+
+- host identity, safety floor, permissions, and product constraints separately from canonical specialist identity;
+- executable TEO version and registry binding rather than file-count inference;
+- bounded context projection and deterministic specialist narrowing before semantic retrieval;
+- host-native capability adapters rather than host-specific edits to specialist cards;
+- explicit autonomy semantics without creating universal human-approval gates;
+- truthful independent-verification capability declarations;
+- bounded orchestration re-entry, specialist spawning, attempts, and parallelism;
+- explicit conformance declarations for supported, partial, and unsupported TEO surfaces;
+- shadow-first validation before governed activation in an external host.
+
+This research does not alter current runtime policy, active specialist count, live-execution scope, verifier independence, human authority, or Progress Tracker sequencing. Before normative promotion, validate the candidate contract against at least two structurally different host architectures and independently review whether it creates any parallel routing or authority plane.
+
 ## Regulated specialist pilot
 
 Keep the evidence-backed freshness pilot limited to the approved six cards until maintainability is demonstrated through repeated refresh cycles, authority resolution, provenance checks, expiry behavior, independent verification, mutation tests, and explicit approval.
