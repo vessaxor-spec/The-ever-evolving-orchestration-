@@ -106,9 +106,11 @@ It does not solve freshness by itself. A valid old revision can remain internall
 
 ### 3. Missing local implementation access does not become route authority
 
-The host records local provider/runtime mappings outside TEO routing. If the selected implementation is unavailable locally, the host reports unavailability rather than silently selecting another provider or model.
+The live execution path resolves the TEO-selected primary implementation against local access. A failed primary execution enters a fresh TEO redispatch before a fallback is executed rather than letting the host invent an alternate route.
 
-This preserves the existing TEO separation between model-routing authority and connection/access mechanism.
+The adapter also rejects a required independent verifier when it cannot resolve an eligible local implementation.
+
+This supports the existing TEO separation between model-routing authority and connection/access mechanism. It does not by itself prove every host permission or execution-scope decision is authority-bound.
 
 ### 4. Recursive Mission Control entry can be prevented explicitly
 
@@ -125,6 +127,8 @@ This supports bounded context projection and demonstrates that TEO integration d
 ### 6. Provider-diverse execution and verification can survive the host boundary
 
 The host reports a live TEO-routed research/documentation dispatch using a Gemini execution route with independent Claude verification, alongside repository validation evidence.
+
+The implementation also checks for a verifier/executor runtime collision before accepting an independent-verification route.
 
 That is useful implementation evidence for provider-diverse verification across an external-host adapter boundary. It is not a universal certification of every route or host capability.
 
@@ -179,6 +183,24 @@ Domain constraints may be relevant to both, but independence is stronger when th
 Supporting DeltaX evidence reinforces this point: its independent verifier uses fresh context, an adversarial objective, artifact/diff evidence, acceptance criteria, test claims, and restricted tools.
 
 **Contract implication:** verification context should be purpose-built and asymmetric. Shared domain constraints are allowed, but executor and verifier prompts should not be identical by default.
+
+### 4. Host execution scope still needs explicit authority binding
+
+The adapter accepts a host-side `permission_scope` and translates `read_only` or `workspace_write` into concrete local execution behavior. The reviewed implementation validates the allowed scope values, but the scope is carried alongside the TEO dispatch rather than visibly derived from a TEO action-authority field.
+
+That is not automatically wrong: host/user permissions are allowed to impose their own boundary. The unresolved requirement is proving the scope is authorized by the host/user and then restrictively intersected with whatever TEO authorization applies to the action.
+
+The required relation is:
+
+```text
+actual execution scope
+  <= host/user granted scope
+  AND
+actual execution scope
+  <= TEO-authorized action scope
+```
+
+**Contract implication:** host permission scope must be evidence-bound and participate in restrictive authority intersection. A host-local execution mode must not silently widen what the TEO dispatch is authorized to do.
 
 ## Supporting ancestor evidence
 
@@ -244,13 +266,14 @@ The stronger correction derived executed control surfaces from runtime wiring an
 
 ## Round 2 contract refinements
 
-The combined evidence supports five additional candidate requirements:
+The combined evidence supports six additional candidate requirements:
 
 1. **Portfolio authority boundary.** TEO orchestration authority does not automatically confer host backlog, product-priority, or task-admission authority.
 2. **Verifier-context asymmetry.** Independent verification should receive a purpose-built challenge context rather than automatically inheriting the executor's complete specialist role and reasoning frame.
 3. **Artifact-bound verification authority.** Verification must bind to the exact artifact/change identity and freshness relation it examined; stale PASS evidence cannot discharge later mutation.
 4. **Derived authority-surface inventory.** Protect and validate integration authority surfaces from executable runtime wiring where possible rather than relying only on parallel hand-maintained lists.
 5. **Integration freshness state.** Revision identity, compatibility, and currentness are separate claims; pinned hosts should expose an explicit freshness/compatibility state.
+6. **Execution-scope authority binding.** Host-local permission scope must be proven authorized and restrictively intersected with TEO action authority before execution.
 
 These refine the round-1 requirements. They do not replace restrictive authority intersection, dispatch-bound execution, adapter integrity, exact routing structure, bounded context, capability classification, recursion control, or truthful verification semantics.
 
@@ -285,7 +308,7 @@ The architecture-diversity gate no longer blocks further research, but normative
 - bounded-context economics versus naive corpus loading;
 - executable dispatch-authorization mutation tests;
 - adapter-authority integrity and self-expansion resistance;
-- restrictive TEO/host authority-intersection mutation tests;
+- restrictive TEO/host authority-intersection mutation tests, including execution-scope binding;
 - risk-lowering resistance;
 - verification artifact/change binding and stale-PASS resistance;
 - verifier-context independence and evidence completeness;
@@ -300,6 +323,6 @@ The architecture-diversity gate no longer blocks further research, but normative
 - Count this record as Host Integration Validation Round 2.
 - Mark the two-host architecture-diversity research gate satisfied.
 - Retain the Host Integration Contract as non-normative research.
-- Incorporate the five round-2 refinements into the canonical host-integration research roadmap.
+- Incorporate the round-2 refinements into the canonical host-integration research roadmap.
 - Treat DeltaX and JinX as supporting implementation evidence, not additional normative authorities.
 - Do not alter current Mission Control policy, active roster, live scope, provider routing, verifier eligibility, qualified-human authority, or Progress Tracker NOW/NEXT sequencing.
