@@ -66,7 +66,20 @@ jobs:
             "- Trigger event: \`${TRIGGER_KIND}\`" \
             '- Evidence status: pending provider-backed execution' \
             > /tmp/documentation-replay-start.md
-          gh issue comment "$TARGET_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/documentation-replay-start.md
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          body = Path("/tmp/documentation-replay-start.md").read_text(encoding="utf-8")
+          Path("/tmp/documentation-replay-start.json").write_text(
+              json.dumps({"body": body}) + "\n", encoding="utf-8"
+          )
+          PY
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "repos/${GITHUB_REPOSITORY}/issues/${TARGET_NUMBER}/comments" \
+            --input /tmp/documentation-replay-start.json
 
       - name: Install pinned replay environment
         run: |
@@ -290,8 +303,16 @@ jobs:
           Path("/tmp/documentation-replay-result.md").write_text(
               "\n".join(lines) + "\n", encoding="utf-8"
           )
+          payload = {"body": "\n".join(lines) + "\n"}
+          Path("/tmp/documentation-replay-result.json").write_text(
+              json.dumps(payload) + "\n", encoding="utf-8"
+          )
           PY
-          gh issue comment "$TARGET_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/documentation-replay-result.md
+          gh api --method POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "repos/${GITHUB_REPOSITORY}/issues/${TARGET_NUMBER}/comments" \
+            --input /tmp/documentation-replay-result.json
 
       - name: Enforce provider-backed replay success
         if: ${{ steps.replay.outcome != 'success' }}

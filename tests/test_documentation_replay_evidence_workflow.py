@@ -30,6 +30,9 @@ def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() ->
         "live_scope_widened",
         "telemetry_persisted",
         "teo-documentation-replay-${{ github.run_id }}",
+        "gh api --method POST",
+        '"repos/${GITHUB_REPOSITORY}/issues/${TARGET_NUMBER}/comments"',
+        "X-GitHub-Api-Version: 2026-03-10",
     ):
         assert phrase in text
 
@@ -38,6 +41,7 @@ def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() ->
         "github.event.pull_request.head.sha",
         "refs/pull/",
         "gh pr checkout",
+        "gh issue comment",
         "git fetch",
         "allow-unsafe-pr-checkout",
     ):
