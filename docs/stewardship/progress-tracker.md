@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record  
-**Last reconciled:** 2026-08-11  
+**Last reconciled:** 2026-08-12  
 **Stable release:** `v1.0.0`  
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -28,6 +28,8 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
 | Latest validated test suite | 680 tests passed |
+| Host-integration research validation | CI #546: 680 tests, 491 tracked-file layout checks, 41 schemas, valid linked configuration, provider-diverse end-to-end pass |
+| Host Integration Contract | Two-host architecture-diversity research gate satisfied; contract remains non-normative |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -78,6 +80,8 @@ Rules:
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
+The Host Integration Contract remains a non-normative research track rather than a scored operational workstream. Satisfying its architecture-diversity gate does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.
+
 ## NOW
 
 ### Evidence-governed live execution expansion
@@ -104,6 +108,8 @@ Reference Implementation CI run #514 is the current accepted substantive reposit
 
 A follow-on targeted mutation audit then weakened ten finalization, authority, expiry, and recovery invariants one at a time. Reference Implementation CI run #519 intentionally exposed four surviving mutants, proving four test-evidence gaps rather than production-control defects. Exact approval, request, and authority-grant expiry boundaries plus caller-risk versus dispatch-effective-risk fallback preservation were then covered explicitly. Reference Implementation CI run #521 killed **10 of 10 targeted mutants** and passed 671 tests, 479 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. This is control-integrity evidence hardening and does not replace CI #514 as the accepted substantive runtime baseline or change live authority.
 
+Host Integration Validation Round 2 then completed a separate provider-independent research milestone. Its merge candidate passed Reference Implementation CI #546 with 680 tests, 491 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. Two materially different external-host integration architectures have now been examined, so the two-host architecture-diversity research gate is satisfied. This does not replace CI #514 as the accepted substantive runtime baseline, does not make the Host Integration Contract normative, and does not change live authority or the `NOW` workstream.
+
 Completion criteria for the current bounded milestone:
 
 - select one explicitly bounded task class beyond the current `high_volume_simple` canary only when the candidate scope is low or medium effective risk and capability-valid;
@@ -126,9 +132,17 @@ The current `high_volume_simple` low or medium risk canary remains the only acce
 
 ## NEXT
 
-No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. While its provider-backed replay gate is deferred, provider-independent control-integrity and evidence-maintenance work may continue without changing the sequencing or live-authority boundary. The next live-expansion sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
+No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. While its provider-backed replay gate is deferred, provider-independent control-integrity, evidence-maintenance, and non-normative Host Integration adversarial research may continue without changing the sequencing or live-authority boundary. The next live-expansion sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
 
 ## LATER
+
+### Host Integration Contract research
+
+The candidate Host Integration Contract has completed its two-host architecture-diversity research gate. Validation now covers both a host-local vendorized/capability-adapter pattern and a structurally different revision-pinned upstream-dispatch/downstream-execution-adapter pattern.
+
+The contract remains non-normative. Before any schema or reference-runtime promotion, the next research gate is adversarial executable validation of bounded-context economics, dispatch authorization, adapter self-expansion resistance, restrictive host/TEO authority intersection, host execution-scope binding, risk-lowering resistance, verifier-context independence, exact artifact/change-set verification, revision freshness semantics, portfolio/task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure behavior, and independent review against a parallel routing or authority plane.
+
+This research does not alter current Mission Control policy, specialist cards, active roster, verifier rules, provider routing, qualified-human authority, or live-execution scope.
 
 ### Governed route adaptation
 
@@ -310,6 +324,9 @@ When parallel sessions are active, reconcile against current `main` before editi
 
 - [`roadmap.md`](roadmap.md): canonical stewardship roadmap
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
+- [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
+- [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md): first implementation-backed external-host validation round
+- [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md): second structurally different host validation and architecture-diversity gate decision
 - [`../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md`](../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md): staged `documentation` live-scope candidate research and blockers
 - [`../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md`](../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md): repaired documentation fallback, fresh-verifier, and staged adapter-readiness evidence
 - [`../../research/runtime/2026-08-11-documentation-controlled-replay.md`](../../research/runtime/2026-08-11-documentation-controlled-replay.md): staged replay harness, evidence boundary, and pending provider-backed replay gate
