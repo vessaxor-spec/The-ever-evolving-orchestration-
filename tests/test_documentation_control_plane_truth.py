@@ -138,7 +138,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Live execution expansion | In progress | 65% |",
         "`documentation` staged replay harness and operator evidence path validated",
         "Produce provider-backed controlled documentation replay evidence",
-        "formal refresh cycle 1",
+        "Formal refresh cycle 1",
         "1 of 2 required formal refresh cycles",
         "30-day scheduled authority-resolution stability",
         "expansion remains unauthorized",
