@@ -27,9 +27,9 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 680 tests passed |
-| Host-integration research validation | CI #546: 680 tests, 491 tracked-file layout checks, 41 schemas, valid linked configuration, provider-diverse end-to-end pass |
-| Host Integration Contract | Two-host architecture-diversity research gate satisfied; contract remains non-normative |
+| Latest validated test suite | 703 tests passed |
+| Host-integration research validation | CI #555: 703 tests, 497 tracked-file layout checks, 41 schemas, valid linked configuration, provider-diverse end-to-end pass |
+| Host Integration Contract | Two-host architecture diversity, static context-economics, process-local dispatch-provenance, and bundled-adapter payload self-expansion research slices satisfied; contract remains non-normative |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -80,7 +80,7 @@ Rules:
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
-The Host Integration Contract remains a non-normative research track rather than a scored operational workstream. Satisfying its architecture-diversity gate does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.
+The Host Integration Contract remains a non-normative research track rather than a scored operational workstream. Satisfying its architecture-diversity, context-economics, dispatch-provenance, or bundled-adapter research slices does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.
 
 ## NOW
 
@@ -110,6 +110,10 @@ A follow-on targeted mutation audit then weakened ten finalization, authority, e
 
 Host Integration Validation Round 2 then completed a separate provider-independent research milestone. Its merge candidate passed Reference Implementation CI #546 with 680 tests, 491 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. Two materially different external-host integration architectures have now been examined, so the two-host architecture-diversity research gate is satisfied. This does not replace CI #514 as the accepted substantive runtime baseline, does not make the Host Integration Contract normative, and does not change live authority or the `NOW` workstream.
 
+A first Host Integration adversarial slice then measured bounded specialist projection against naive loading of every runtime-resolved active specialist card. Reference Implementation CI #552 passed 681 tests and 494 tracked-file layout checks while the research harness measured 1,157,957 bytes across 82 active role cards, with 98.7805% mean and 97.6295% worst-case payload reduction for one-card projection. This supports only the static specialist-card prompt-size slice; provider token usage, latency, task adherence, and architecture-diverse live execution remain unproven.
+
+The next Host Integration adversarial slice made dispatch provenance and bundled-adapter self-expansion executable. The generic provider executor was confirmed not to independently prove that a host-supplied `DispatchRecord` came from the TEO dispatcher. A non-normative process-local research authority then rejected 14 independent dispatch tamper classes, an unissued token, and cross-dispatch token reuse before adapter invocation. The bundled OpenAI, Anthropic, and Google adapters also omitted attempted tool, MCP, web-search, and fallback-expansion fields from provider-native requests while preserving the dispatch-selected model. CI #554 was intentionally red because the first Anthropic fixture omitted Sonnet 5's required effort; after correcting that fixture without weakening the boundary, CI #555 passed 703 tests and 497 tracked-file layout checks. Arbitrary third-party adapter provenance, registration, and manifest integrity remain open.
+
 Completion criteria for the current bounded milestone:
 
 - select one explicitly bounded task class beyond the current `high_volume_simple` canary only when the candidate scope is low or medium effective risk and capability-valid;
@@ -138,9 +142,9 @@ No additional workstream is promoted ahead of the current evidence-governed live
 
 ### Host Integration Contract research
 
-The candidate Host Integration Contract has completed its two-host architecture-diversity research gate. Validation now covers both a host-local vendorized/capability-adapter pattern and a structurally different revision-pinned upstream-dispatch/downstream-execution-adapter pattern.
+The candidate Host Integration Contract has completed its two-host architecture-diversity research gate, the first bounded-context static-payload slice, a process-local dispatch-provenance adversarial slice, and bundled-adapter payload self-expansion testing. Validation covers both a host-local vendorized/capability-adapter pattern and a structurally different revision-pinned upstream-dispatch/downstream-execution-adapter pattern. Static measurement shows that one-card specialist projection materially reduces specialist-card payload, and the research dispatch authority demonstrates that exact authority-owned snapshots can reject tested host tampering before adapter execution.
 
-The contract remains non-normative. Before any schema or reference-runtime promotion, the next research gate is adversarial executable validation of bounded-context economics, dispatch authorization, adapter self-expansion resistance, restrictive host/TEO authority intersection, host execution-scope binding, risk-lowering resistance, verifier-context independence, exact artifact/change-set verification, revision freshness semantics, portfolio/task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure behavior, and independent review against a parallel routing or authority plane.
+The contract remains non-normative. Before any schema or reference-runtime promotion, remaining evidence includes provider/model input economics, end-to-end latency, task adherence, arbitrary third-party adapter provenance and registration integrity, restrictive host/TEO authority intersection, host execution-scope binding, risk-lowering resistance beyond the process-local dispatch snapshot, verifier-context independence, exact artifact/change-set verification, revision freshness semantics, portfolio/task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure behavior, cross-process dispatch authenticity/replay semantics, and independent review against a parallel routing or authority plane.
 
 This research does not alter current Mission Control policy, specialist cards, active roster, verifier rules, provider routing, qualified-human authority, or live-execution scope.
 
@@ -327,6 +331,8 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md): first implementation-backed external-host validation round
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md): second structurally different host validation and architecture-diversity gate decision
+- [`../../research/runtime/host-integration-context-economics-2026-08-12.md`](../../research/runtime/host-integration-context-economics-2026-08-12.md): static bounded-context specialist-payload measurement and remaining empirical context-economics gate
+- [`../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md`](../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md): dispatch-provenance and bundled-adapter self-expansion adversarial evidence
 - [`../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md`](../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md): staged `documentation` live-scope candidate research and blockers
 - [`../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md`](../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md): repaired documentation fallback, fresh-verifier, and staged adapter-readiness evidence
 - [`../../research/runtime/2026-08-11-documentation-controlled-replay.md`](../../research/runtime/2026-08-11-documentation-controlled-replay.md): staged replay harness, evidence boundary, and pending provider-backed replay gate
