@@ -126,3 +126,25 @@ def test_missing_claim_review_is_rejected(tmp_path: Path) -> None:
 
     errors = validate_refresh_history(root)
     assert any("latest refresh must cover every and only active pilot claim" in error for error in errors)
+
+
+def test_refresh_registry_hash_chain_is_enforced(tmp_path: Path) -> None:
+    root = _copy_refresh_fixture(tmp_path)
+    first = json.loads(_record_path(root).read_text(encoding="utf-8"))
+    second = json.loads(json.dumps(first))
+    second["cycle_id"] = "regulated-specialist-evidence-refresh-cycle-0002"
+    second["sequence"] = 2
+    second["performed_at"] = "2026-08-12"
+    second["registry_before_blob_sha"] = "f" * 40
+    second["expansion_gate"]["refresh_cycles_completed"] = 2
+    second_path = (
+        root
+        / "docs/history/validation/regulated-specialist-evidence-refresh-cycle-2026-08-12.json"
+    )
+    second_path.write_text(json.dumps(second, indent=2) + "\n", encoding="utf-8")
+
+    errors = validate_refresh_history(root)
+    assert any(
+        "registry_before_blob_sha must equal the prior cycle registry_after_blob_sha" in error
+        for error in errors
+    )
