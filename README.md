@@ -369,6 +369,7 @@ This topology is intentionally asymmetric. Executor fallback and verifier rotati
 - **Authentication never changes these directions.** API keys, OAuth or subscription-backed sessions, delegated identity, and other provider-supported access mechanisms belong to the execution boundary after routing.
 
 Reasoning effort is part of the executable dispatch contract where the selected implementation supports a corresponding control. Mission Control may raise effort when risk or complexity justifies it, but maximum effort and premium modes are conditional tools rather than routine defaults.
+
 Model freshness is governed by [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml). Newer triggers evaluation; it does not automatically trigger replacement.
 
 The canonical routing source is [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml). The README summarizes that policy and must not outrank it.
