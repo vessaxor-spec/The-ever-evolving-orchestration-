@@ -20,8 +20,7 @@ def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() ->
         "github.event.pull_request.head.ref == 'evidence/documentation-replay-trigger-v1'",
         "github.event.pull_request.base.ref == 'main'",
         "github.event.pull_request.base.sha || github.sha",
-        "contents: read",
-        "issues: write",
+        "permissions:\n  contents: read",
         "persist-credentials: false",
         "ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}",
         "OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}",
@@ -30,9 +29,13 @@ def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() ->
         "live_scope_widened",
         "telemetry_persisted",
         "teo-documentation-replay-${{ github.run_id }}",
-        "gh api --method POST",
-        '"repos/${GITHUB_REPOSITORY}/issues/${TARGET_NUMBER}/comments"',
-        "X-GitHub-Api-Version: 2026-03-10",
+        "teo-documentation-replay-audit-${{ github.run_id }}",
+        "GITHUB_STEP_SUMMARY",
+        '"record_type": "live_scope_replay_audit_start"',
+        '"record_type": "live_scope_replay_audit_result"',
+        '"provider_backed_evidence_accepted": accepted',
+        ".teo/runtime/live-scope-replay/audit/start.json",
+        ".teo/runtime/live-scope-replay/audit/",
     ):
         assert phrase in text
 
@@ -42,6 +45,10 @@ def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() ->
         "refs/pull/",
         "gh pr checkout",
         "gh issue comment",
+        "gh api --method POST",
+        "GH_TOKEN:",
+        "issues: write",
+        "pull-requests: write",
         "git fetch",
         "allow-unsafe-pr-checkout",
     ):
