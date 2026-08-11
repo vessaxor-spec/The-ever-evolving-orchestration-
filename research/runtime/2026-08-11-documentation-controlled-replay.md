@@ -109,6 +109,8 @@ Therefore this gate distinguishes:
 
 No `controlled_replay` evidence pointer should be populated in `policy/runtime/live-execution-expansion.yaml` until a real operator execution produces the exact integrity-protected replay record and Route-Outcome Evidence set.
 
+A one-time branch workflow was explored to collect provider-backed evidence from repository secrets. Its push-triggered result was not available through the connected evidence surface and it did not produce an auditable content-minimized PR result. It was therefore not counted as evidence and was removed from the final branch. TEO does not treat an unobservable execution attempt as empirical evidence.
+
 ## Corrective CI findings
 
 The implementation benefited from three legitimate CI findings before the harness became green.
@@ -158,7 +160,16 @@ Reference Implementation CI #482 validated the replay harness after the three co
 - linked TEO configuration reported zero issues;
 - the provider-diverse end-to-end reference lifecycle passed.
 
-A later final-head CI must validate the operator CLI and stewardship reconciliation before merge.
+After the operator CLI, CLI boundary tests, research record, and removal of the non-auditable one-time workflow were included, clean-head Reference Implementation CI #488 validated the durable branch state:
+
+- 651 tests passed;
+- 472 tracked files passed repository-layout validation;
+- regulated specialist evidence passed structural validation;
+- 40 JSON Schemas parsed;
+- linked TEO configuration reported zero issues;
+- the provider-diverse end-to-end reference lifecycle passed.
+
+CI #488 proves the replay contracts, preflight, retry semantics, evidence construction, operator acknowledgement boundary, and active-scope refusal behavior. It does not prove a provider-backed documentation replay was executed.
 
 ## Remaining evidence gate
 
