@@ -49,10 +49,7 @@ def plan_dict() -> dict:
             {
                 "fixture_id": "bounded-note",
                 "risk_level": "low",
-                "task": (
-                    "Using only these facts, write two concise sentences: service A calls service B; "
-                    "the retry budget is two attempts; no external tools are allowed."
-                ),
+                "task": "Rewrite in two concise sentences: Alpha follows Beta. The color is blue.",
                 "required_capabilities": ["transformation"],
             },
             {
