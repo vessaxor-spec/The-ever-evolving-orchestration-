@@ -17,13 +17,27 @@ Deleting an accounted working-branch ref does not delete the commits reachable f
 
 ## Default retention rule
 
-Same-repository branches under `agent/*` are temporary.
+Same-repository delivery branches under these governed prefixes are temporary:
 
-After a pull request from an `agent/*` branch is merged into `main`, the branch should be deleted automatically after the merge record and required validation have been preserved.
+- `agent/*`
+- `audit/*`
+- `capsule/*`
+- `cleanup/*`
+- `governance/*`
 
-Closed but unmerged `agent/*` branches should be deleted after the work is explicitly abandoned, superseded, or otherwise accounted for. They must be retained when they still back an open pull request, an active recovery process, or an explicit forensic hold.
+After a pull request from one of those prefixes is merged into `main`, the branch should be deleted automatically after the merge record and required validation have been preserved.
+
+Closed but unmerged temporary branches should be deleted after the work is explicitly abandoned, superseded, or otherwise accounted for. They must be retained when they still back an open pull request, an active recovery process, or an explicit forensic hold.
 
 A branch must never be retained merely because it contains an older implementation of a decision that is already represented by `main`, a merged pull request, a release, a Capsule, or a historical record.
+
+## Explicit retained branch
+
+`evidence/documentation-replay-trigger-v1` is intentionally retained while the provider-backed controlled `documentation` replay remains an open evidence gate.
+
+The controlled replay workflow uses that exact same-repository branch identity as part of its trigger boundary. It is therefore not treated as an ordinary completed delivery branch. Retaining it does not create routing, execution, evidence, or activation authority.
+
+When the replay trigger design is retired or replaced, this exception should be removed and the branch should be accounted for before deletion.
 
 ## Automated enforcement
 
@@ -34,21 +48,33 @@ The workflow:
 1. runs only after a pull request is closed,
 2. requires that the pull request was actually merged,
 3. requires that the head branch belongs to this repository,
-4. acts only on `agent/*` branches,
+4. acts only on the governed temporary prefixes listed above,
 5. checks that no open pull request currently uses the branch before deletion, and
 6. deletes only the accounted branch ref.
 
 The workflow uses the repository-scoped GitHub token and does not call external actions.
 
+The evidence replay trigger branch is outside the governed temporary-prefix set and is therefore preserved by default.
+
 ## Legacy cleanup
 
 Issue #100 records the one-time cleanup of the historical `agent/*` backlog discovered by the 2026-08-10 hard audit.
 
-The cleanup workflow contains a fixed snapshot of the 104 legacy refs reviewed for that issue. It does not dynamically sweep arbitrary future branches. The legacy sweep runs only when the reviewed `agent/branch-retention-hygiene` pull request is merged.
+The original cleanup workflow contains a fixed snapshot of the 104 legacy refs reviewed for that issue. It does not dynamically sweep arbitrary historical branches. The legacy sweep runs only when the reviewed `agent/branch-retention-hygiene` pull request is merged.
 
 Any legacy ref that unexpectedly backs an open pull request at execution time is preserved automatically.
 
 The audit and disposition record is `docs/history/audits/branch-cleanup-2026-08-10.md`.
+
+## Post-v1 retention reconciliation
+
+A 2026-08-11 repository reconciliation found that the original prevention rule covered only `agent/*`, while later TEO delivery work also used `audit/*`, `capsule/*`, `cleanup/*`, and `governance/*` branches.
+
+That scope mismatch left several fully accounted merged branches behind and also exposed one orphan `agent/*` reconciliation branch that was not itself a pull-request head. The remediation expands future automatic retention coverage to the governed temporary prefixes above and uses a fixed reviewed one-time snapshot for the already-accounted refs.
+
+The same reconciliation also identified `noop-check`, an accidental capability-probe branch with no project work or authority. It is deleted only by an exact-name one-time cleanup guard and is not promoted into a reusable branch family.
+
+The durable reconciliation record is `docs/history/audits/branch-retention-reconciliation-2026-08-11.md`.
 
 ## Authority boundary
 
