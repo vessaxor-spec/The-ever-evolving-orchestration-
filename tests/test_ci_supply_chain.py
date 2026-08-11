@@ -11,6 +11,7 @@ LOCKFILE_WORKFLOWS = (
     WORKFLOW_DIR / "reference-ci.yml",
     WORKFLOW_DIR / "specialist-evidence-resolution.yml",
     WORKFLOW_DIR / "provisional-operational-evidence.yml",
+    WORKFLOW_DIR / "documentation-replay-evidence.yml",
 )
 HASH_PATTERN = re.compile(r"--hash=sha256:[0-9a-f]{64}$")
 ACTION_SHA_PATTERN = re.compile(r"uses:\s+[^@\s]+@[0-9a-f]{40}(?:\s|$)")
