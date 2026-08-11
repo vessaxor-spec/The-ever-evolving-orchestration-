@@ -74,8 +74,23 @@ The adapters are required to construct their outbound provider request from thei
 
 This establishes a narrower claim than "all adapters are safe":
 
-- **bundled adapter payload-driven self-expansion:** executable resistance can be tested now;
+- **bundled adapter payload-driven self-expansion:** executable resistance is supported by this audit;
 - **arbitrary third-party adapter provenance, registration, and manifest integrity:** remains open and requires a separate authority mechanism before external adapters can be treated as trusted execution components.
+
+## Verification record
+
+Reference Implementation CI **#554** was intentionally red during the first audit run: the Anthropic adversarial fixture omitted Claude Sonnet 5's required explicit reasoning effort, so the adapter correctly refused the request before the injection test reached the provider payload. That was a test-fixture defect, not a surviving authority mutation or production-control defect.
+
+The fixture was corrected without weakening the tested boundary. Reference Implementation CI **#555** then passed:
+
+- **703 tests**;
+- **497 tracked-file repository-layout checks**;
+- regulated specialist evidence structural validation;
+- **41 parsed JSON Schemas**;
+- linked TEO configuration with zero issues;
+- the provider-diverse end-to-end example.
+
+The successful run proves, for this research slice, that all 14 dispatch mutations, forged-token use, and cross-dispatch token reuse are rejected before adapter invocation. It also proves that the bundled OpenAI, Anthropic, and Google adapters omit the injected tool, MCP, web-search, and fallback-expansion fields from their outbound provider-native request bodies while retaining the dispatch-selected model.
 
 ## Security boundary of the candidate control
 
@@ -88,8 +103,12 @@ A later production design would need one of the following, with independent secu
 
 A plain unkeyed hash carried beside the dispatch is insufficient because a hostile host could recompute it after tampering.
 
-## Decision boundary
+## Decision
 
-This research slice may support the proposition that dispatcher provenance can be enforced before adapter execution and that the three bundled provider adapters resist payload-driven execution-surface injection.
+**Dispatch-provenance enforcement property: supported in a process-local research boundary.** The existing generic executor itself does not prove provenance, but an authority-owned exact dispatch snapshot can reject the tested fabrication and tampering classes before any adapter call.
 
-It does **not** make the Host Integration Contract normative, authorize external-host execution, register third-party adapters, change live scope, or solve cross-process dispatch authenticity. Those remain later gates.
+**Bundled-adapter payload self-expansion resistance: supported for the current OpenAI, Anthropic, and Google adapters.** Caller-injected execution-surface fields are not forwarded into provider-native requests.
+
+**Third-party adapter trust: still open.** The generic adapter protocol does not itself establish adapter provenance, approved registration, code identity, or manifest integrity.
+
+This research does **not** make the Host Integration Contract normative, authorize external-host execution, register third-party adapters, change live scope, or solve cross-process dispatch authenticity, replay, or freshness. Those remain later gates.
