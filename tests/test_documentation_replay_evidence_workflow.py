@@ -5,18 +5,23 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = REPO_ROOT / ".github/workflows/documentation-replay-evidence.yml"
 
 
-def test_documentation_replay_workflow_is_owner_bound_and_default_branch_only() -> None:
+def test_documentation_replay_workflow_is_owner_bound_and_trusted_base_only() -> None:
     text = WORKFLOW.read_text(encoding="utf-8")
 
     for phrase in (
         "issue_comment:",
+        "pull_request:",
         "github.event.issue.number == 121",
         "github.event.issue.pull_request != null",
         "github.event.comment.user.login == 'vessaxor-spec'",
         "github.event.comment.body == '/run-documentation-replay'",
+        "github.event.pull_request.user.login == 'vessaxor-spec'",
+        "github.event.pull_request.head.repo.full_name == github.repository",
+        "github.event.pull_request.head.ref == 'evidence/documentation-replay-trigger-v1'",
+        "github.event.pull_request.base.ref == 'main'",
+        "github.event.pull_request.base.sha || github.sha",
         "contents: read",
         "issues: write",
-        "ref: ${{ github.sha }}",
         "persist-credentials: false",
         "ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}",
         "OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}",
