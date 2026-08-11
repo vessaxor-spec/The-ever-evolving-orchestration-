@@ -85,15 +85,16 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "community/specialists/workforce-expansion-active.yaml",
         "Shadow Route Evaluation",
         "Qualified-human approval lifecycle",
-        "641 automated tests",
-        "465 tracked-file layout checks",
-        "38 JSON Schema",
+        "651 automated tests",
+        "472 tracked-file layout checks",
+        "40 JSON Schema",
         "evidence-governed live execution expansion",
-        "now at 55%",
+        "now at 65%",
         "`documentation` is the first staged candidate",
-        "fallback/fresh-verifier topology and direct adapter readiness are validated",
+        "staged replay harness are validated",
+        "provider-backed replay evidence is still pending",
         "no live-execution authority",
-        "The next gate is controlled documentation live replay",
+        "The next gate is provider-backed controlled documentation replay evidence",
         "Issue #100",
         "is complete",
     ):
@@ -117,19 +118,22 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 641 tests passed |",
+        "| Latest validated test suite | 651 tests passed |",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
         "| Shadow route evaluation | Complete | 100% |",
         "| Qualified-human approval lifecycle | Complete | 100% |",
-        "| Live execution expansion | In progress | 55% |",
+        "| Live execution expansion | In progress | 65% |",
+        "`documentation` staged replay harness and operator evidence path validated",
+        "Produce provider-backed controlled documentation replay evidence",
         "## NOW",
         "### Evidence-governed live execution expansion",
         "`documentation` is the first bounded candidate",
         "staged only",
-        "The next material gate is controlled live replay",
+        "The staged documentation replay harness is now implemented",
+        "The next material gate is a real provider-backed controlled replay",
         "## NEXT",
         "No additional workstream is promoted",
         "## LATER",
@@ -146,9 +150,12 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "GPT-5.6 Sol as the provider-diverse non-preview routine fallback" in now_section
     assert "Gemini 3.6 Flash as the fresh provider-diverse verifier" in now_section
     assert "Existing canary wrappers and live-verification task scope remain `high_volume_simple` only" in now_section
+    assert "CI uses deterministic fake provider transports" in now_section
+    assert "controlled_replay` evidence pointer" in now_section
     assert "No additional workstream is promoted" in next_section
+    assert "provider-backed controlled `documentation` replay" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
-    assert "Reference Implementation CI run #473" in text
+    assert "Reference Implementation CI run #488" in text
     assert "78 active specialists" not in text
 
     benchmark_spec = (
@@ -241,7 +248,9 @@ def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> 
     assert "live activation is not authorized" in text
     assert "provider-diverse non-preview routine fallback: GPT-5.6 Sol" in text
     assert "fresh redispatch verifier: Gemini 3.6 Flash" in text
-    assert "The next evidence gate is controlled documentation live replay" in text
+    assert "staged replay harness are complete" in text
+    assert "The next evidence gate is **provider-backed controlled documentation replay**" in text
+    assert "CI conformance with deterministic fake transports does not count as empirical provider-backed evidence" in text
     assert "remains the only accepted live execution scope" in text
     assert "78 preserved specialist" not in text
     assert "78 active specialists" not in text

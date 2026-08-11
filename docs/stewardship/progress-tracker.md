@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 641 tests passed |
+| Latest validated test suite | 651 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -74,7 +74,7 @@ Rules:
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve evidence and authority boundaries through later reviewed adaptation |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, and finalization boundaries |
-| Live execution expansion | In progress | 55% | `documentation` topology and staged adapter readiness validated | Run controlled documentation live replay without widening active scope |
+| Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
@@ -94,6 +94,10 @@ The exact staged adapter capabilities needed by that topology are now implemente
 
 Reference Implementation CI run #473 validated this topology and adapter-readiness gate with 641 passing tests, 465 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The same suite also proves the existing Flash-Lite -> Haiku throughput recovery and fresh-verifier rotation remain intact after removal of the global worker override.
 
+The staged documentation replay harness is now implemented. It provides strict replay-plan and replay-record schemas, whole-plan no-network routing preflight, exact candidate-route checks, active retry-policy alignment, isolated per-trial circuit state, assigned Terra verification, in-memory replay telemetry, canonical Route-Outcome Evidence generation, and an operator CLI with explicit `--execute-live` acknowledgement. Automatic fallback is intentionally disabled in this replay milestone so a staged evidence runner cannot become a hidden alternate live runtime. Provider-scoped recovery, rollback, and deliberate fallback execution remain separate later gates.
+
+Reference Implementation CI run #488 validated the clean replay-harness and operator-path state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. CI uses deterministic fake provider transports for conformance and therefore does not constitute empirical provider-backed documentation replay evidence.
+
 Completion criteria for the current bounded milestone:
 
 - select one explicitly bounded task class beyond the current `high_volume_simple` canary only when the candidate scope is low or medium effective risk and capability-valid;
@@ -108,13 +112,13 @@ Completion criteria for the current bounded milestone:
 - do not authorize high or critical live execution in this milestone;
 - add conformance and mutation tests that fail if live-scope boundaries, rollback, verification, or authority gates are weakened.
 
-Candidate selection, fallback/fresh-verifier topology, and direct adapter-readiness criteria are now satisfied for `documentation`. The next material gate is controlled live replay for the exact staged route. Replay must remain evidence generation only and cannot add `documentation` to active telemetry, live-verification, or guarded-execution scope. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates.
+Candidate selection, fallback/fresh-verifier topology, direct adapter readiness, and the staged replay harness are now satisfied for `documentation`. The next material gate is a real provider-backed controlled replay using the exact staged plan and current repository revision. That execution must produce the integrity-protected replay record and canonical Route-Outcome Evidence set before the candidate's `controlled_replay` evidence pointer can be populated. Green CI alone must not be mislabeled as empirical replay evidence.
 
-The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded activation change satisfies every applicable criterion. High and critical live execution remains unauthorized.
+The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded activation change satisfies every applicable criterion. `documentation` remains `activation_authorized: false`. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates. High and critical live execution remains unauthorized.
 
 ## NEXT
 
-No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
+No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. The next sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
 
 ## LATER
 
@@ -241,17 +245,21 @@ Reference Implementation CI run #451 validated the executable milestone with 626
 
 This milestone implements authority evidence for requirements existing policy already imposes. It does not broaden which tasks require qualified-human approval and does not widen live execution.
 
-### Live execution expansion, 55%
+### Live execution expansion, 65%
 
-The first bounded expansion candidate is `documentation`, low or medium effective risk only. Candidate selection, a machine-readable staged policy, no-network route preflight, corrected fallback/fresh-verifier topology, and direct adapter readiness are now validated while active live authority remains unchanged.
+The first bounded expansion candidate is `documentation`, low or medium effective risk only. Candidate selection, a machine-readable staged policy, no-network route preflight, corrected fallback/fresh-verifier topology, direct adapter readiness, and a controlled staged replay harness are validated while active live authority remains unchanged.
 
 The former `runtime-worker-overrides.yaml` behavior unintentionally mutated the shared documentation worker. That global implementation-order override has been removed. Ordinary documentation dispatch now records Claude Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, and GPT-5.6 Terra as the primary verifier. Model- or provider-scoped Sonnet recovery redispatch selects GPT-5.6 Sol with Gemini 3.6 Flash as a fresh provider-diverse verifier.
 
 Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the provider-adapter layer. The active provider canary wrappers and live-verification task scope remain limited to `high_volume_simple`, so adapter support does not create documentation live authority.
 
-Reference Implementation CI run #473 validated this gate with 641 passing tests, 465 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The test suite also preserves the existing `high_volume_simple` Flash-Lite primary, Haiku fallback, Gemini fresh verifier after model-scoped failure, and Sol fresh verifier after Google provider-scoped failure.
+The staged replay layer now validates the entire replay plan before network access, preserves exact candidate routing and effective risk, reuses the active retry policy, isolates circuit state per trial, executes the staged Sonnet primary through the provider adapter, invokes the exact assigned Terra verifier, holds replay telemetry only in memory, and creates canonical integrity-protected Route-Outcome Evidence plus a staged replay record. Its operator CLI requires explicit live-execution acknowledgement and keeps provider access outside routing semantics.
 
-Controlled documentation replay, canonical replay Route-Outcome Evidence, downstream Shadow Route Evaluation, and rollback/recovery evidence do not yet exist for this candidate. Independent review of any later active-scope policy change also remains required.
+Automatic fallback is disabled in this replay milestone. Model- or provider-scoped execution failure is recorded rather than automatically redispatched. Deliberate fallback, rollback, and recovery execution remains a distinct later evidence gate.
+
+Reference Implementation CI run #488 validated the durable replay-harness state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The CI provider calls are deterministic fake transports used for conformance. They are not empirical provider-backed replay observations.
+
+Provider-backed controlled documentation replay evidence therefore remains pending. `policy/runtime/live-execution-expansion.yaml` must continue to leave `controlled_replay` unset until a real operator execution produces the exact integrity-protected replay record and canonical Route-Outcome Evidence set. Downstream Shadow Route Evaluation, rollback/recovery evidence, and independent review of any later active-scope policy change also remain required.
 
 No live scope has widened. `documentation` remains `activation_authorized: false`; `high_volume_simple` at low or medium effective risk remains the only accepted guarded live execution class, and high or critical live execution remains unauthorized.
 
@@ -286,6 +294,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
 - [`../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md`](../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md): staged `documentation` live-scope candidate research and blockers
 - [`../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md`](../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md): repaired documentation fallback, fresh-verifier, and staged adapter-readiness evidence
+- [`../../research/runtime/2026-08-11-documentation-controlled-replay.md`](../../research/runtime/2026-08-11-documentation-controlled-replay.md): staged replay harness, evidence boundary, and pending provider-backed replay gate
 - [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate
 - [`docs/releases/v1.0.0.md`](../releases/v1.0.0.md): immutable functional-v1 release contract
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary

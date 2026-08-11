@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/live-scope-replay-record.schema.json",
+  "title": "TEO Live Scope Candidate Replay Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "replay_version",
+    "record_type",
+    "replay_id",
+    "plan_sha256",
+    "task_type",
+    "candidate_state",
+    "activation_authorized",
+    "evidence_only",
+    "live_scope_widened",
+    "telemetry_persisted",
+    "active_scope",
+    "candidate_route",
+    "suite_id",
+    "suite_version",
+    "trials_per_fixture",
+    "bindings",
+    "summary",
+    "limitations",
+    "integrity_sha256"
+  ],
+  "properties": {
+    "replay_version": {"const": "1"},
+    "record_type": {"const": "live_scope_replay_record"},
+    "replay_id": {"type": "string", "minLength": 1},
+    "plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "task_type": {"const": "documentation"},
+    "candidate_state": {"const": "staged"},
+    "activation_authorized": {"const": false},
+    "evidence_only": {"const": true},
+    "live_scope_widened": {"const": false},
+    "telemetry_persisted": {"const": false},
+    "active_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_types", "risk_levels"],
+      "properties": {
+        "task_types": {
+          "type": "array",
+          "const": ["high_volume_simple"]
+        },
+        "risk_levels": {
+          "type": "array",
+          "const": ["low", "medium"]
+        }
+      }
+    },
+    "candidate_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "primary",
+        "initial_fallback",
+        "primary_verifier",
+        "failure_redispatch_executor",
+        "failure_redispatch_verifier"
+      ],
+      "properties": {
+        "primary": {"$ref": "#/$defs/route"},
+        "initial_fallback": {"$ref": "#/$defs/route"},
+        "primary_verifier": {"$ref": "#/$defs/route"},
+        "failure_redispatch_executor": {"$ref": "#/$defs/route"},
+        "failure_redispatch_verifier": {"$ref": "#/$defs/route"}
+      }
+    },
+    "suite_id": {"type": "string", "minLength": 1},
+    "suite_version": {"type": "string", "minLength": 1},
+    "trials_per_fixture": {"type": "integer", "minimum": 1, "maximum": 5},
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "fixture_id",
+          "trial_index",
+          "outcome_id",
+          "final_disposition"
+        ],
+        "properties": {
+          "fixture_id": {"type": "string", "minLength": 1},
+          "trial_index": {"type": "integer", "minimum": 1},
+          "outcome_id": {"type": "string", "minLength": 1},
+          "final_disposition": {
+            "enum": [
+              "completed",
+              "verification_failed",
+              "awaiting_human",
+              "verification_missing",
+              "execution_failed",
+              "abandoned"
+            ]
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total_trials",
+        "completed",
+        "verification_failed",
+        "awaiting_human",
+        "verification_missing",
+        "execution_failed",
+        "abandoned"
+      ],
+      "properties": {
+        "total_trials": {"type": "integer", "minimum": 1},
+        "completed": {"type": "integer", "minimum": 0},
+        "verification_failed": {"type": "integer", "minimum": 0},
+        "awaiting_human": {"type": "integer", "minimum": 0},
+        "verification_missing": {"type": "integer", "minimum": 0},
+        "execution_failed": {"type": "integer", "minimum": 0},
+        "abandoned": {"type": "integer", "minimum": 0}
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "integrity_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "$defs": {
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider_family", "model", "reasoning_effort"],
+      "properties": {
+        "provider_family": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "reasoning_effort": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}

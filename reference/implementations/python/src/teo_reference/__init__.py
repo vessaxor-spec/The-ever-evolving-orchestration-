@@ -51,6 +51,12 @@ from .live_scope_candidate import (
     LiveScopeExpansionPolicy,
     evaluate_live_scope_candidate,
 )
+from .live_scope_replay import (
+    LiveScopeReplayExecution,
+    LiveScopeReplayPlan,
+    LiveScopeReplayRecord,
+    run_staged_documentation_replay,
+)
 from .openai_adapter import OpenAIResponsesAdapter, execute_openai_canary_once
 from .openai_verifier import OpenAILiveVerifier
 from .provider_adapter import (
@@ -171,6 +177,9 @@ __all__ = [
     "LiveScopeCandidateEvaluation",
     "LiveScopeCandidateGate",
     "LiveScopeExpansionPolicy",
+    "LiveScopeReplayExecution",
+    "LiveScopeReplayPlan",
+    "LiveScopeReplayRecord",
     "LiveVerificationDecision",
     "LiveVerificationError",
     "LiveVerificationExecution",
@@ -248,6 +257,7 @@ __all__ = [
     "load_pricing_evidence",
     "load_route_outcomes",
     "run_controlled_replay",
+    "run_staged_documentation_replay",
     "verify_guarded_canary_outcome",
     "verify_guarded_canary_outcome_with_evidence",
 ]
