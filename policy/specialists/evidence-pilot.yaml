@@ -1,6 +1,6 @@
 version: 0.2
 status: pilot
-reviewed_at: 2026-08-07
+reviewed_at: 2026-08-11
 purpose: Prove maintainable evidence-backed freshness for consequential specialist use before any registry-wide rollout.
 
 controls:
@@ -17,7 +17,7 @@ pilot_specialists:
     risk_tier: critical
     claims:
       - id: legal-us-frcp-37e-preservation
-        statement: Rule 37(e) applies when electronically stored information that should have been preserved in anticipation or conduct of United States federal civil litigation is lost because reasonable preservation steps were not taken.
+        statement: Rule 37(e) applies when electronically stored information that should have been preserved in anticipation or conduct of United States federal civil litigation is lost because reasonable preservation steps were not taken and the information cannot be restored or replaced through additional discovery.
         volatility_class: slow_moving
         consequential_use: true
         applicability:
@@ -29,11 +29,11 @@ pilot_specialists:
           source_type: primary_law
           url: https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure
           expected_hosts: [www.uscourts.gov]
-          locator: Current Federal Rules of Civil Procedure, Rule 37(e); the preservation rewrite became effective December 1 2015
+          locator: Current Federal Rules of Civil Procedure, December 1 2025, Rule 37(e); the preservation rewrite became effective December 1 2015
           source_date_basis: observed
-          source_date: 2026-08-07
-        verified_at: 2026-08-07
-        expires_at: 2026-11-05
+          source_date: 2026-08-11
+        verified_at: 2026-08-11
+        expires_at: 2026-11-09
         verification:
           prepared_by: research
           verified_by: legal_review
@@ -63,8 +63,8 @@ pilot_specialists:
           locator: Period of limitations that apply to income tax returns
           source_date_basis: last_updated
           source_date: 2026-06-30
-        verified_at: 2026-08-06
-        expires_at: 2026-11-04
+        verified_at: 2026-08-11
+        expires_at: 2026-11-09
         verification:
           prepared_by: research
           verified_by: tax_review
@@ -94,8 +94,8 @@ pilot_specialists:
           locator: Official interpretation of paragraph 43(e)(2)
           source_date_basis: effective
           source_date: 2021-03-01
-        verified_at: 2026-08-06
-        expires_at: 2026-09-05
+        verified_at: 2026-08-11
+        expires_at: 2026-09-10
         verification:
           prepared_by: research
           verified_by: lending_compliance
@@ -125,8 +125,8 @@ pilot_specialists:
           locator: NIST CSWP 29, published February 26 2024
           source_date_basis: published
           source_date: 2024-02-26
-        verified_at: 2026-08-06
-        expires_at: 2026-11-04
+        verified_at: 2026-08-11
+        expires_at: 2026-11-09
         verification:
           prepared_by: research
           verified_by: compliance
@@ -155,9 +155,9 @@ pilot_specialists:
           expected_hosts: [www.asce.org]
           locator: Current Edition, ASCE/SEI 7
           source_date_basis: observed
-          source_date: 2026-08-06
-        verified_at: 2026-08-06
-        expires_at: 2026-11-04
+          source_date: 2026-08-11
+        verified_at: 2026-08-11
+        expires_at: 2026-11-09
         verification:
           prepared_by: research
           verified_by: civil_engineering_review
@@ -180,9 +180,9 @@ pilot_specialists:
           expected_hosts: [www.iccsafe.org]
           locator: Adoption of ICC Codes and Standards FAQ
           source_date_basis: observed
-          source_date: 2026-08-06
-        verified_at: 2026-08-06
-        expires_at: 2026-11-04
+          source_date: 2026-08-11
+        verified_at: 2026-08-11
+        expires_at: 2026-11-09
         verification:
           prepared_by: research
           verified_by: civil_engineering_review
@@ -212,8 +212,8 @@ pilot_specialists:
           locator: ISO lifecycle stage 60.60, International Standard published October 31 2024; edition 5
           source_date_basis: published
           source_date: 2024-10-31
-        verified_at: 2026-08-07
-        expires_at: 2026-11-05
+        verified_at: 2026-08-11
+        expires_at: 2026-11-09
         verification:
           prepared_by: research
           verified_by: embedded_systems_review
