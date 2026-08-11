@@ -7,6 +7,7 @@ from typing import Mapping
 import pytest
 
 from teo_reference.config import ConfigBundle
+from teo_reference.engine import RoutingError
 from teo_reference.live_scope_replay import (
     LiveScopeReplayPlan,
     run_staged_documentation_replay,
@@ -52,7 +53,7 @@ def plan_dict() -> dict:
                     "Using only these facts, write two concise sentences: service A calls service B; "
                     "the retry budget is two attempts; no external tools are allowed."
                 ),
-                "required_capabilities": ["synthesis", "technical_accuracy", "clear_writing"],
+                "required_capabilities": ["transformation"],
             },
             {
                 "fixture_id": "bounded-summary",
@@ -61,7 +62,7 @@ def plan_dict() -> dict:
                     "Summarize these supplied facts in three bullets without adding claims: the route is staged; "
                     "live activation is false; the current active task class is high_volume_simple."
                 ),
-                "required_capabilities": ["synthesis", "technical_accuracy", "clear_writing"],
+                "required_capabilities": ["transformation"],
             },
         ],
         "harness": {
@@ -89,7 +90,9 @@ def replay_plan(raw: dict | None = None) -> LiveScopeReplayPlan:
     return LiveScopeReplayPlan.from_dict(raw or plan_dict(), repo_root=REPO_ROOT)
 
 
-def anthropic_connection(calls: list[dict], *, fail_mode: str | None = None) -> HeaderProviderConnection:
+def anthropic_connection(
+    calls: list[dict], *, fail_mode: str | None = None
+) -> HeaderProviderConnection:
     state = {"count": 0}
 
     def transport(
@@ -141,12 +144,17 @@ def anthropic_connection(calls: list[dict], *, fail_mode: str | None = None) -> 
             "content": [
                 {
                     "type": "text",
-                    "text": "Bounded documentation output derived only from the supplied task: " + task[:80],
+                    "text": "Bounded documentation output derived only from the supplied task: "
+                    + task[:80],
                 }
             ],
             "usage": {"input_tokens": 20, "output_tokens": 15},
         }
-        return 200, {"request-id": f"req-sonnet-{state['count']}"}, json.dumps(response).encode("utf-8")
+        return (
+            200,
+            {"request-id": f"req-sonnet-{state['count']}"},
+            json.dumps(response).encode("utf-8"),
+        )
 
     return HeaderProviderConnection(
         provider_family="anthropic",
@@ -175,7 +183,11 @@ def openai_connection(calls: list[dict]) -> HeaderProviderConnection:
             "output_text": json.dumps(verifier_decision()),
             "usage": {"input_tokens": 30, "output_tokens": 12, "total_tokens": 42},
         }
-        return 200, {"x-request-id": "req-terra-replay"}, json.dumps(response).encode("utf-8")
+        return (
+            200,
+            {"x-request-id": "req-terra-replay"},
+            json.dumps(response).encode("utf-8"),
+        )
 
     return HeaderProviderConnection(
         provider_family="openai",
@@ -210,13 +222,29 @@ def test_staged_documentation_replay_generates_canonical_route_outcomes_without_
 
     outcomes = [item.to_dict() for item in execution.outcomes]
     assert all(item["task_type"] == "documentation" for item in outcomes)
-    assert all(item["primary_route"]["implementation"]["provider_family"] == "anthropic" for item in outcomes)
-    assert all(item["primary_route"]["implementation"]["model"] == "claude-sonnet-5" for item in outcomes)
-    assert all(item["primary_route"]["verifier"]["provider_family"] == "openai" for item in outcomes)
-    assert all(item["primary_route"]["verifier"]["model"] == "gpt-5.6-terra" for item in outcomes)
+    assert all(
+        item["primary_route"]["implementation"]["provider_family"] == "anthropic"
+        for item in outcomes
+    )
+    assert all(
+        item["primary_route"]["implementation"]["model"] == "claude-sonnet-5"
+        for item in outcomes
+    )
+    assert all(
+        item["primary_route"]["verifier"]["provider_family"] == "openai"
+        for item in outcomes
+    )
+    assert all(
+        item["primary_route"]["verifier"]["model"] == "gpt-5.6-terra"
+        for item in outcomes
+    )
+    assert all("transformation" in item["primary_route"]["required_capabilities"] for item in outcomes)
     assert all(item["fallback_route"] is None for item in outcomes)
     assert all(item["final_disposition"] == "completed" for item in outcomes)
-    assert all(item["versions"]["repository_revision"] == "documentation-replay-test-revision" for item in outcomes)
+    assert all(
+        item["versions"]["repository_revision"] == "documentation-replay-test-revision"
+        for item in outcomes
+    )
 
     record = execution.record.to_dict()
     assert record["candidate_state"] == "staged"
@@ -233,19 +261,25 @@ def test_staged_documentation_replay_generates_canonical_route_outcomes_without_
     assert record["candidate_route"]["primary"]["model"] == "claude-sonnet-5"
     assert record["candidate_route"]["initial_fallback"]["model"] == "gpt-5.6-sol"
     assert record["candidate_route"]["primary_verifier"]["model"] == "gpt-5.6-terra"
-    assert record["candidate_route"]["failure_redispatch_verifier"]["model"] == "gemini-3.6-flash"
-    assert any("does not authorize documentation live execution" in item for item in record["limitations"])
+    assert (
+        record["candidate_route"]["failure_redispatch_verifier"]["model"]
+        == "gemini-3.6-flash"
+    )
+    assert any(
+        "does not authorize documentation live execution" in item
+        for item in record["limitations"]
+    )
     assert any("Automatic fallback is disabled" in item for item in record["limitations"])
 
 
 def test_replay_preflights_entire_plan_before_provider_calls(tmp_path: Path) -> None:
     raw = plan_dict()
-    raw["fixtures"][1]["required_capabilities"] = ["multimodal"]
+    raw["fixtures"][1]["required_capabilities"] = ["coding"]
     plan = replay_plan(raw)
     anthropic_calls: list[dict] = []
     openai_calls: list[dict] = []
 
-    with pytest.raises(ProviderAdapterContractError):
+    with pytest.raises(RoutingError, match="cannot satisfy required capability coding"):
         run_staged_documentation_replay(
             plan,
             engine(),
@@ -288,7 +322,6 @@ def test_replay_harness_retry_budget_must_match_active_policy_before_network(
 
 def test_model_failure_is_recorded_without_automatic_fallback(tmp_path: Path) -> None:
     raw = plan_dict()
-    raw["fixtures"] = raw["fixtures"][:2]
     raw["trials_per_fixture"] = 1
     anthropic_calls: list[dict] = []
     openai_calls: list[dict] = []
@@ -316,7 +349,6 @@ def test_model_failure_is_recorded_without_automatic_fallback(tmp_path: Path) ->
 
 def test_transient_retry_preserves_same_staged_dispatch(tmp_path: Path) -> None:
     raw = plan_dict()
-    raw["fixtures"] = raw["fixtures"][:2]
     raw["trials_per_fixture"] = 1
     anthropic_calls: list[dict] = []
     openai_calls: list[dict] = []
