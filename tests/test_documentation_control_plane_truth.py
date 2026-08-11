@@ -7,9 +7,10 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_TEAM_COUNT = 10
 EXPECTED_WORKER_COUNT = 84
 EXPECTED_SPECIALIST_COUNT = 82
-EXPECTED_LATEST_VALIDATED_TESTS = 657
-EXPECTED_LATEST_TRACKED_FILES = 477
-EXPECTED_LATEST_CI_RUN = 514
+EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
+EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
+EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
+EXPECTED_LATEST_VALIDATED_TESTS = 671
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -88,9 +89,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "community/specialists/workforce-expansion-active.yaml",
         "Shadow Route Evaluation",
         "Qualified-human approval lifecycle",
-        f"{EXPECTED_LATEST_VALIDATED_TESTS} automated tests",
-        f"{EXPECTED_LATEST_TRACKED_FILES} tracked-file layout checks",
-        f"Reference Implementation CI #{EXPECTED_LATEST_CI_RUN}",
+        f"{EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS} automated tests",
+        f"{EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES} tracked-file layout checks",
+        f"Reference Implementation CI #{EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN}",
         "40 JSON Schema",
         "evidence-governed live execution expansion",
         "now at 65%",
@@ -145,6 +146,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "provider-backed `documentation` replay is intentionally deferred as an open action item",
         "control-integrity audit",
         "temporal-causality",
+        "targeted mutation audit",
+        "10 of 10 targeted mutants",
         "Control integrity remains intentionally scored at 90%",
         "## NEXT",
         "No additional workstream is promoted",
@@ -168,8 +171,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "provider-backed controlled `documentation` replay" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
     assert "Reference Implementation CI run #488" in text
-    assert f"Reference Implementation CI run #{EXPECTED_LATEST_CI_RUN}" in text
-    assert f"{EXPECTED_LATEST_TRACKED_FILES} tracked-file layout checks" in text
+    assert f"Reference Implementation CI run #{EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN}" in text
+    assert f"{EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES} tracked-file layout checks" in text
     assert "78 active specialists" not in text
 
     benchmark_spec = (
