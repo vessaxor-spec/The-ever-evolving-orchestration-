@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://teo.example/schemas/specialist-evidence-refresh-cycle.schema.json",
+  "title": "TEO Regulated Specialist Evidence Refresh Cycle",
+  "type": "object",
+  "required": [
+    "cycle_id",
+    "sequence",
+    "status",
+    "performed_at",
+    "repository_base_commit",
+    "registry_path",
+    "registry_before_blob_sha",
+    "registry_after_blob_sha",
+    "pilot_specialists",
+    "claims_reviewed",
+    "maintenance_summary",
+    "expansion_gate"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "cycle_id": {"type": "string", "pattern": "^regulated-specialist-evidence-refresh-cycle-[0-9]{4}$"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "status": {"const": "completed"},
+    "performed_at": {"type": "string", "format": "date"},
+    "repository_base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "registry_path": {"const": "policy/specialists/evidence-pilot.yaml"},
+    "registry_before_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "registry_after_blob_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "pilot_specialists": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "legal-operations",
+          "tax-strategist",
+          "loan-officer-assistant",
+          "compliance-auditor",
+          "civil-engineer",
+          "embedded-engineer"
+        ]
+      }
+    },
+    "claims_reviewed": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/claimReview"}
+    },
+    "maintenance_summary": {"$ref": "#/$defs/maintenanceSummary"},
+    "expansion_gate": {"$ref": "#/$defs/expansionGate"}
+  },
+  "$defs": {
+    "claimReview": {
+      "type": "object",
+      "required": [
+        "specialist",
+        "claim_id",
+        "outcome",
+        "authority_url",
+        "source_date_basis",
+        "source_date",
+        "observed_at",
+        "resolution_status",
+        "statement_changed",
+        "ownership"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "specialist": {
+          "enum": [
+            "legal-operations",
+            "tax-strategist",
+            "loan-officer-assistant",
+            "compliance-auditor",
+            "civil-engineer",
+            "embedded-engineer"
+          ]
+        },
+        "claim_id": {"type": "string", "minLength": 1},
+        "outcome": {"enum": ["reaffirmed", "amended", "authority_moved", "canonical_card_change"]},
+        "authority_url": {"type": "string", "pattern": "^https://"},
+        "source_date_basis": {"enum": ["published", "effective", "last_updated", "observed"]},
+        "source_date": {"type": "string", "format": "date"},
+        "observed_at": {"type": "string", "format": "date"},
+        "resolution_status": {"enum": ["resolved", "unavailable", "conflict"]},
+        "statement_changed": {"type": "boolean"},
+        "ownership": {
+          "type": "object",
+          "required": ["prepared_by", "verified_by", "independent"],
+          "additionalProperties": false,
+          "properties": {
+            "prepared_by": {"type": "string", "minLength": 1},
+            "verified_by": {"type": "string", "minLength": 1},
+            "independent": {"const": true}
+          }
+        }
+      }
+    },
+    "maintenanceSummary": {
+      "type": "object",
+      "required": [
+        "claims_reviewed",
+        "authorities_resolved",
+        "claims_reaffirmed",
+        "claims_amended",
+        "authorities_moved",
+        "authority_conflicts",
+        "specialist_cards_changed"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "claims_reviewed": {"type": "integer", "minimum": 0},
+        "authorities_resolved": {"type": "integer", "minimum": 0},
+        "claims_reaffirmed": {"type": "integer", "minimum": 0},
+        "claims_amended": {"type": "integer", "minimum": 0},
+        "authorities_moved": {"type": "integer", "minimum": 0},
+        "authority_conflicts": {"type": "integer", "minimum": 0},
+        "specialist_cards_changed": {"type": "integer", "minimum": 0}
+      }
+    },
+    "expansionGate": {
+      "type": "object",
+      "required": [
+        "refresh_cycles_completed",
+        "refresh_cycles_required",
+        "stable_authority_resolution_days_required",
+        "stable_authority_resolution_gate_satisfied",
+        "controlled_change_handled",
+        "controlled_change_type",
+        "next_batch_approved",
+        "expansion_authorized"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "refresh_cycles_completed": {"type": "integer", "minimum": 0},
+        "refresh_cycles_required": {"type": "integer", "const": 2},
+        "stable_authority_resolution_days_required": {"type": "integer", "const": 30},
+        "stable_authority_resolution_gate_satisfied": {"type": "boolean"},
+        "controlled_change_handled": {"type": "boolean"},
+        "controlled_change_type": {"enum": ["none", "claim_amendment", "authority_move", "canonical_card_change"]},
+        "next_batch_approved": {"type": "boolean"},
+        "expansion_authorized": {"type": "boolean"}
+      }
+    }
+  }
+}

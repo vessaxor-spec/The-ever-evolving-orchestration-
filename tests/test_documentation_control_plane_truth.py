@@ -10,7 +10,7 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_LATEST_VALIDATED_TESTS = 671
+EXPECTED_LATEST_VALIDATED_TESTS = 680
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -129,6 +129,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
+        "| Regulated specialist evidence pilot | In progress | 70% |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
@@ -137,6 +138,10 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Live execution expansion | In progress | 65% |",
         "`documentation` staged replay harness and operator evidence path validated",
         "Produce provider-backed controlled documentation replay evidence",
+        "Formal refresh cycle 1",
+        "1 of 2 required formal refresh cycles",
+        "30-day scheduled authority-resolution stability",
+        "expansion remains unauthorized",
         "## NOW",
         "### Evidence-governed live execution expansion",
         "`documentation` is the first bounded candidate",

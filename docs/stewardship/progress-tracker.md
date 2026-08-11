@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 671 tests passed |
+| Latest validated test suite | 680 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -68,7 +68,7 @@ Rules:
 | Team, worker, and specialist architecture | Operational | 100% | 10 teams, 84 workers, 82 active specialists | Add roles only after proven responsibility-gap and authority review |
 | Control integrity | Operational | 90% | Post-v1 hardening with conformance and mutation resistance | Continue closing uncovered finalization, authority, and recovery mutation gaps as discovered |
 | Verifier calibration evidence | In progress | 70% | Deterministic and empirical verifier evidence | Strengthen repeatability, disagreement, adversarial, and route-specific evidence |
-| Regulated specialist evidence pilot | In progress | 60% | Six-card maintainability pilot | Demonstrate repeated refresh cycles, expiry, provenance, authority resolution, and mutation resistance |
+| Regulated specialist evidence pilot | In progress | 70% | Formal refresh cycle 1 completed across the six-card pilot | Complete refresh cycle 2 and establish 30-day scheduled authority-resolution stability before any expansion decision |
 | Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
@@ -181,9 +181,15 @@ The fixed corpus, deterministic checks, empirical instrumentation, provider-dive
 
 Benchmark Lab measures multi-verifier disagreement for controlled evaluations, but that diagnostic capability does not by itself complete the broader verifier-calibration evidence program.
 
-### Regulated specialist evidence pilot, 60%
+### Regulated specialist evidence pilot, 70%
 
-The six-card pilot has dated authoritative claims, validation, expiry behavior, authority resolution, and mutation resistance. Repeated refresh-cycle maintainability must be demonstrated before broader rollout is justified.
+Formal refresh cycle 1 completed on 2026-08-11 across the exact six-card pilot. All seven consequential claims were re-reviewed against their declared tier-1 authorities: six were reaffirmed, one was amended, zero authoritative conflicts were found, and no specialist card changed. The Rule 37(e) claim was corrected to include the condition that the lost information cannot be restored or replaced through additional discovery.
+
+The refresh now has append-only machine-readable history with contiguous cycle sequencing, active-registry blob binding, exact claim coverage, ownership/source consistency, maintenance counters, and mutation checks that reject forged history, missing claims, broken registry-hash continuity, or premature expansion authorization. This preserves proof of repeated maintenance instead of overwriting prior verification dates in the active registry.
+
+Reference Implementation CI run #535 validated the refresh-cycle implementation with 680 passing tests, 487 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example.
+
+The pilot has completed **1 of 2 required formal refresh cycles**. The required 30-day scheduled authority-resolution stability window is not yet satisfied, and no next risk-tier batch has been approved. The controlled-change requirement has been exercised through the Rule 37(e) claim amendment, but registry expansion remains unauthorized. Complete refresh cycle 2 and the 30-day stability gate before any expansion decision.
 
 ### Route-outcome evidence, 100%
 
@@ -313,6 +319,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
 - [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md): targeted finalization, qualified-human authority, and recovery control-integrity audit
 - [`docs/history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md`](../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md): targeted mutation audit and boundary/effective-risk regression evidence
+- [`docs/history/validation/regulated-specialist-evidence-refresh-cycle-2026-08-11.md`](../history/validation/regulated-specialist-evidence-refresh-cycle-2026-08-11.md): formal regulated-specialist evidence refresh cycle 1 and expansion-gate disposition
 - [`community/specialists/orchestration-evaluation-analyst.md`](../../community/specialists/orchestration-evaluation-analyst.md): active post-run route evaluator
 - [`../specification/route-outcome-evidence.md`](../specification/route-outcome-evidence.md): canonical route-outcome evidence contract
 - [`../specification/benchmark-outcome-lab.md`](../specification/benchmark-outcome-lab.md): completed Benchmark and Outcome Lab current milestone
