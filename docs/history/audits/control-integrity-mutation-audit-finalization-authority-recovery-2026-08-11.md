@@ -38,6 +38,8 @@ A targeted mutation harness copies the reference Python package into an isolated
 
 A mutant is considered killed only when the corresponding regression slice fails. If the regression slice remains green, the mutant survives and proves that the current tests do not distinguish the intended invariant from the weakened behavior.
 
+Independent verification tightened that oracle further: the harness accepts a kill only when pytest returns exit code `1` and reports a failed test. Collection, usage, missing-node, or internal runner errors therefore cannot masquerade as mutation resistance.
+
 The harness itself is retained as regression protection so future changes continue to prove these specific authority and recovery invariants rather than merely exercising the surrounding code.
 
 ## Test-first evidence: CI #519
