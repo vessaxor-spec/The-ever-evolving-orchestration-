@@ -31,7 +31,13 @@ ProcessLocalDispatchAuthority = RESEARCH["ProcessLocalDispatchAuthority"]
 execute_authorized_provider_once = RESEARCH["execute_authorized_provider_once"]
 
 
-def choice(model: str, provider: str, *, agent: str = "host-test") -> ImplementationChoice:
+def choice(
+    model: str,
+    provider: str,
+    *,
+    agent: str = "host-test",
+    reasoning: str | None = None,
+) -> ImplementationChoice:
     return ImplementationChoice(
         agent=agent,
         model=model,
@@ -39,6 +45,7 @@ def choice(model: str, provider: str, *, agent: str = "host-test") -> Implementa
         provider_family=provider,
         availability="current",
         source="host-integration-research",
+        reasoning=reasoning,
     )
 
 
@@ -56,7 +63,11 @@ def dispatch(*, provider: str = "openai", model: str = "gpt-5.6-sol") -> Dispatc
         specialist_source="community/specialists/backend-engineer.md",
         specialist_risk_profile="medium",
         required_capabilities=["tool_execution"],
-        selected_implementation=choice(model, provider),
+        selected_implementation=choice(
+            model,
+            provider,
+            reasoning="medium" if model == "claude-sonnet-5" else None,
+        ),
         fallback_implementation=choice("gemini-3.6-flash", "google"),
         verification=VerificationPlan(
             team="verification",
