@@ -7,6 +7,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_TEAM_COUNT = 10
 EXPECTED_WORKER_COUNT = 84
 EXPECTED_SPECIALIST_COUNT = 82
+EXPECTED_LATEST_VALIDATED_TESTS = 653
+EXPECTED_LATEST_TRACKED_FILES = 474
+EXPECTED_LATEST_CI_RUN = 506
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -85,8 +88,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "community/specialists/workforce-expansion-active.yaml",
         "Shadow Route Evaluation",
         "Qualified-human approval lifecycle",
-        "651 automated tests",
-        "472 tracked-file layout checks",
+        f"{EXPECTED_LATEST_VALIDATED_TESTS} automated tests",
+        f"{EXPECTED_LATEST_TRACKED_FILES} tracked-file layout checks",
+        f"Reference Implementation CI #{EXPECTED_LATEST_CI_RUN}",
         "40 JSON Schema",
         "evidence-governed live execution expansion",
         "now at 65%",
@@ -118,7 +122,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        "| Latest validated test suite | 651 tests passed |",
+        f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
@@ -156,6 +160,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "provider-backed controlled `documentation` replay" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
     assert "Reference Implementation CI run #488" in text
+    assert f"Reference Implementation CI run #{EXPECTED_LATEST_CI_RUN}" in text
+    assert f"{EXPECTED_LATEST_TRACKED_FILES} tracked-file layout checks" in text
     assert "78 active specialists" not in text
 
     benchmark_spec = (
