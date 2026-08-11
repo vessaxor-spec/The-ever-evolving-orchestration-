@@ -65,7 +65,7 @@ MUTATIONS = (
         old="if finalized >= expiry:",
         new="if finalized > expiry:",
         pytest_targets=(
-            "tests/test_qualified_human_approval.py::test_approved_disposition_expires_fail_closed_without_rewriting_history",
+            "tests/test_control_integrity_boundary_regressions.py::test_approval_is_expired_at_exact_expiry_instant",
         ),
     ),
     MutationProbe(
@@ -74,7 +74,7 @@ MUTATIONS = (
         old='if at >= _parse_datetime(request_data["expires_at"], "approval request expires_at"):',
         new='if at > _parse_datetime(request_data["expires_at"], "approval request expires_at"):',
         pytest_targets=(
-            "tests/test_qualified_human_approval.py::test_request_expiry_is_explicit_and_system_only",
+            "tests/test_control_integrity_boundary_regressions.py::test_request_rejects_human_disposition_at_exact_expiry_instant",
         ),
     ),
     MutationProbe(
@@ -83,8 +83,7 @@ MUTATIONS = (
         old="if at < valid_from or (valid_until is not None and at >= valid_until):",
         new="if at < valid_from or (valid_until is not None and at > valid_until):",
         pytest_targets=(
-            "tests/test_qualified_human_approval.py::test_out_of_scope_authority_grant_fails_closed",
-            "tests/test_qualified_human_approval.py::test_approval_cannot_outlive_request_or_authority_grant",
+            "tests/test_control_integrity_boundary_regressions.py::test_authority_grant_rejects_disposition_at_valid_until_boundary",
         ),
     ),
     MutationProbe(
@@ -93,7 +92,7 @@ MUTATIONS = (
         old="task_type=dispatch.task_type,\n        risk_level=dispatch.risk_level,\n        domain=task.domain,",
         new="task_type=dispatch.task_type,\n        risk_level=task.risk_level,\n        domain=task.domain,",
         pytest_targets=(
-            "tests/test_recovery_authority_integrity.py::test_failure_redispatch_preserves_risk_and_human_authority_requirement",
+            "tests/test_control_integrity_boundary_regressions.py::test_fallback_redispatch_preserves_dispatch_elevated_effective_risk",
         ),
     ),
     MutationProbe(
