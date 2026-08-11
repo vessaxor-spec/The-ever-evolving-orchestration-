@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 651 tests passed |
+| Latest validated test suite | 653 tests passed |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -97,6 +97,8 @@ Reference Implementation CI run #473 validated this topology and adapter-readine
 The staged documentation replay harness is now implemented. It provides strict replay-plan and replay-record schemas, whole-plan no-network routing preflight, exact candidate-route checks, active retry-policy alignment, isolated per-trial circuit state, assigned Terra verification, in-memory replay telemetry, canonical Route-Outcome Evidence generation, and an operator CLI with explicit `--execute-live` acknowledgement. Automatic fallback is intentionally disabled in this replay milestone so a staged evidence runner cannot become a hidden alternate live runtime. Provider-scoped recovery, rollback, and deliberate fallback execution remain separate later gates.
 
 Reference Implementation CI run #488 validated the clean replay-harness and operator-path state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. CI uses deterministic fake provider transports for conformance and therefore does not constitute empirical provider-backed documentation replay evidence.
+
+Reference Implementation CI run #506 is the current accepted repository-validation baseline after the Actions-native replay path and provider-access blocker record: 653 passing tests, 474 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. That newer validation does not create empirical provider-backed replay evidence or widen live authority.
 
 Completion criteria for the current bounded milestone:
 
