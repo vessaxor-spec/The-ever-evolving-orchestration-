@@ -695,6 +695,13 @@ def _validate_transition(
     previous: QualifiedHumanApprovalDispositionRecord | None,
 ) -> None:
     request_data = request.to_dict()
+    requested_at = _parse_datetime(
+        request_data["requested_at"], "approval request requested_at"
+    )
+    if effective_at < requested_at:
+        raise ProviderAdapterContractError(
+            "Qualified-human approval disposition cannot predate its approval request"
+        )
     allowed_initial = {"approved", "rejected", "unable_to_determine", "expired"}
     if previous is None:
         if state not in allowed_initial:
@@ -962,6 +969,12 @@ def evaluate_qualified_human_finalization(
         )
 
     latest = chain[-1] if chain else None
+    if latest is not None and finalized < _parse_datetime(
+        latest["effective_at"], "current approval disposition effective_at"
+    ):
+        raise ProviderAdapterContractError(
+            "Qualified-human finalization cannot predate its current approval disposition"
+        )
     approval_state = "requested"
     block_reason = "missing_approval"
     status = "blocked"
