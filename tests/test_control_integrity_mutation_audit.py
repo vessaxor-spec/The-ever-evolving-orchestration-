@@ -154,7 +154,11 @@ def test_targeted_control_integrity_mutants_are_killed(
 ) -> None:
     result = _run_mutant(probe, tmp_path)
     output = "\n".join(part for part in (result.stdout, result.stderr) if part)
-    assert result.returncode != 0, (
-        f"SURVIVING MUTANT: {probe.name}. The targeted regression suite stayed green after "
-        f"weakening {probe.source_file}.\n{output}"
+    assert result.returncode == 1, (
+        f"INVALID MUTATION RESULT: {probe.name}. Expected pytest exit code 1 for a real "
+        f"regression failure after weakening {probe.source_file}, got {result.returncode}.\n{output}"
+    )
+    assert "FAILED" in output, (
+        f"INVALID MUTATION RESULT: {probe.name}. Pytest returned a test-failure code but did not "
+        f"report a failed test after weakening {probe.source_file}.\n{output}"
     )
