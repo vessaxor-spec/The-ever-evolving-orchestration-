@@ -10,7 +10,7 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_LATEST_VALIDATED_TESTS = 719
+EXPECTED_LATEST_VALIDATED_TESTS = 742
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -127,6 +127,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
         f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",
+        "restrictive host/TEO authority intersection and host execution-scope binding",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | In progress | 70% |",
