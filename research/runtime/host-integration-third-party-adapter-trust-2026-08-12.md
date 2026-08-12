@@ -62,7 +62,7 @@ The executable suite challenges the candidate boundary with:
 14. a manifest attempting to declare a different contract version;
 15. a manifest attempting to declare a wider execution operation including fallback authority.
 
-The candidate passes only when every unauthorized case fails before provider execution.
+Every unauthorized case is required to fail before provider execution. The exact authority-owned registered adapter remains the positive control and must still execute exactly once.
 
 ## Trust boundary
 
@@ -83,14 +83,23 @@ A later production design would require separate review of at least:
 - least-privilege execution isolation;
 - authority for approving, activating, and removing external adapters.
 
-## Decision boundary
-
-If the mutation suite passes, the narrow supported proposition is:
-
-> A third-party adapter can be made non-self-authorizing when execution resolves through an authority-owned registration that binds exact manifest state, measured artifact identity, registered runtime type, provider family, operation, capability scope, and revocation state before the existing Provider Adapter Contract is invoked.
-
-That result would not make third-party adapters supported by TEO, create a normative adapter registry, authorize external-host execution, establish production package provenance, or change live scope.
-
 ## Verification record
 
-Pending branch CI. The final evidence record must include the exact passing suite count and repository validation result before this research slice can be marked satisfied in the Progress Tracker.
+Reference Implementation CI **#560** passed the first complete branch validation:
+
+- **719 tests**;
+- **500 tracked-file repository-layout checks**;
+- regulated specialist evidence structural validation;
+- **41 parsed JSON Schemas**;
+- linked TEO configuration with zero issues;
+- the provider-diverse end-to-end example.
+
+The suite proves, for this process-local research boundary, that all 15 declared adversarial classes are rejected without allowing an unauthorized provider attempt, while the exact registered positive-control adapter still executes once through the unchanged Provider Adapter Contract.
+
+## Decision
+
+**Process-local third-party adapter non-self-authorization: supported.** An authority-owned registration can bind exact manifest state, measured artifact identity, registered runtime type, provider family, operation, capability scope, and revocation state before the existing Provider Adapter Contract is invoked.
+
+**Production third-party adapter provenance: still open.** This audit does not prove trusted package acquisition, signatures, transitive dependency identity, cross-process persistence, rollback/downgrade resistance, least-privilege isolation, or distributed attestation.
+
+This result does not make third-party adapters supported by TEO, create a normative adapter registry, authorize external-host execution, establish production package provenance, or change live scope.
