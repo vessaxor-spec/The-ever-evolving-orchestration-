@@ -4,10 +4,11 @@
 This module models the smallest process-local registration boundary needed to test
 third-party adapter provenance without changing the normative provider-adapter contract.
 
-The authority owns the approved manifest snapshot, adapter factory, and artifact reader.
-The artifact reader stands in for a trusted loader/package measurement. A production
-implementation must derive executable artifact identity from an authority-controlled
-loader or package store rather than accept a digest or bytes asserted by an untrusted host.
+The authority owns the approved manifest snapshot, adapter factory, measured artifact
+identity, and registered runtime type. The artifact reader stands in for a trusted
+loader/package measurement. A production implementation must derive executable artifact
+identity from an authority-controlled loader or package store rather than accept a digest
+or bytes asserted by an untrusted host.
 """
 
 from __future__ import annotations
@@ -50,7 +51,10 @@ class ThirdPartyAdapterManifest:
             raise AdapterTrustError("unsupported adapter contract_version")
         if self.operation != "provider_execute_once":
             raise AdapterTrustError("unsupported adapter operation")
-        normalized = tuple(_require_text(item, "supported_capability") for item in self.supported_capabilities)
+        normalized = tuple(
+            _require_text(item, "supported_capability")
+            for item in self.supported_capabilities
+        )
         if len(normalized) != len(set(normalized)):
             raise AdapterTrustError("supported_capabilities cannot contain duplicates")
 
@@ -89,6 +93,7 @@ class _Registration:
     artifact_digest: str
     artifact_reader: ArtifactReader
     adapter_factory: AdapterFactory
+    adapter_type: type
     active: bool = True
 
 
@@ -106,12 +111,18 @@ class ProcessLocalAdapterAuthority:
         adapter_factory: AdapterFactory,
     ) -> str:
         artifact = artifact_reader()
+        probe = adapter_factory()
+        if probe.provider_family != manifest.provider_family:
+            raise AdapterTrustError(
+                "adapter factory provider does not match the approved manifest"
+            )
         token = secrets.token_urlsafe(24)
         self._registrations[token] = _Registration(
             manifest_snapshot=canonical_manifest_bytes(manifest),
             artifact_digest=artifact_sha256(artifact),
             artifact_reader=artifact_reader,
             adapter_factory=adapter_factory,
+            adapter_type=type(probe),
         )
         return token
 
@@ -134,26 +145,43 @@ class ProcessLocalAdapterAuthority:
             raise AdapterTrustError("adapter registration is revoked")
 
         presented_manifest = canonical_manifest_bytes(manifest)
-        if not hmac.compare_digest(presented_manifest, registration.manifest_snapshot):
-            raise AdapterTrustError("adapter manifest differs from the authority-owned registration")
+        if not hmac.compare_digest(
+            presented_manifest, registration.manifest_snapshot
+        ):
+            raise AdapterTrustError(
+                "adapter manifest differs from the authority-owned registration"
+            )
 
         current_digest = artifact_sha256(registration.artifact_reader())
         if not hmac.compare_digest(current_digest, registration.artifact_digest):
-            raise AdapterTrustError("adapter implementation artifact changed after registration")
+            raise AdapterTrustError(
+                "adapter implementation artifact changed after registration"
+            )
 
         selected_provider = dispatch.selected_implementation.provider_family
         if selected_provider != manifest.provider_family:
-            raise AdapterTrustError("adapter manifest provider does not match the dispatch-selected provider")
+            raise AdapterTrustError(
+                "adapter manifest provider does not match the dispatch-selected provider"
+            )
 
-        missing = sorted(set(dispatch.required_capabilities) - set(manifest.supported_capabilities))
+        missing = sorted(
+            set(dispatch.required_capabilities) - set(manifest.supported_capabilities)
+        )
         if missing:
             raise AdapterTrustError(
-                "adapter registration does not cover dispatch capabilities: " + ", ".join(missing)
+                "adapter registration does not cover dispatch capabilities: "
+                + ", ".join(missing)
             )
 
         adapter = registration.adapter_factory()
+        if type(adapter) is not registration.adapter_type:
+            raise AdapterTrustError(
+                "adapter factory resolved a different runtime type after registration"
+            )
         if adapter.provider_family != manifest.provider_family:
-            raise AdapterTrustError("registered adapter factory produced a different provider family")
+            raise AdapterTrustError(
+                "registered adapter runtime provider family drifted after registration"
+            )
         return adapter
 
 
