@@ -161,6 +161,16 @@ This gate completion does not certify either host, make the contract normative, 
 
 This research does not alter current runtime policy, active specialist count, live-execution scope, verifier independence, human authority, or Progress Tracker sequencing.
 
+### Execution environment and recovery contract research
+
+TEO has accepted a future non-normative research track for governing isolated execution, pre-change checkpointing, rollback, and recovery verification through a vendor-neutral contract. The research is recorded in [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md).
+
+The contract should define when isolation is required, what guarantees an execution substrate must expose, how a checkpoint is bound to the exact governed action and target, how rollback preserves the original effective-risk and authority floor, how recovery is independently verified, and how sandbox evidence may support but never self-authorize later production execution.
+
+Execution substrates remain replaceable host/runtime implementations. TEO should not become a container runtime, microVM manager, deployment platform, database backup engine, or universal workflow engine merely to implement this capability. The research must remain compatible with Host Integration authority intersection, exact execution-envelope binding, canonical evidence, independent verification, and current live-scope controls.
+
+This accepted research direction does not alter the current `documentation` replay gate, active `high_volume_simple` scope, provider routing, specialist roster, qualified-human authority, or stable `v1.0.0` contract.
+
 ## Regulated specialist pilot
 
 Keep the evidence-backed freshness pilot limited to the approved six cards until maintainability is demonstrated through repeated refresh cycles, authority resolution, provenance checks, expiry behavior, independent verification, mutation tests, and explicit approval.

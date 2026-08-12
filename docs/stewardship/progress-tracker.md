@@ -82,6 +82,8 @@ Rules:
 
 The Host Integration Contract remains a non-normative research track rather than a scored operational workstream. Satisfying its architecture-diversity, context-economics, dispatch-provenance, bundled-adapter, process-local third-party adapter trust, restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, or exact artifact/change-set stale-PASS resistance research slices does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.
 
+The Execution Environment & Recovery Contract is likewise a non-normative future research track rather than a scored operational workstream. Its acceptance records direction only: isolation requirements, checkpoint binding, rollback/recovery authority, recovery verification, and simulation-to-promotion boundaries remain research questions and do not change current live authority or progress percentages.
+
 ## NOW
 
 ### Evidence-governed live execution expansion
@@ -157,6 +159,12 @@ The contract remains non-normative. Before any schema or reference-runtime promo
 The next bounded provider-independent Host Integration gate should be selected from the remaining roadmap evidence after this reconciled research slice merges; this tracker does not promote Host Integration ahead of the deferred provider-backed `documentation` replay milestone.
 
 This research does not alter current Mission Control policy, specialist cards, active roster, verifier rules, provider routing, qualified-human authority, or live-execution scope.
+
+### Execution Environment & Recovery Contract research
+
+TEO has accepted a future non-normative research direction for governing isolated execution, pre-change checkpointing, rollback, and recovery verification through a vendor-neutral contract. The research is recorded in [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md).
+
+The research must preserve current risk, authority, verification, and Host Integration boundaries. It does not promote a specific sandbox technology, does not authorize simulation-to-production promotion, and does not move ahead of the deferred provider-backed `documentation` replay milestone.
 
 ### Governed route adaptation
 
@@ -339,10 +347,11 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`roadmap.md`](roadmap.md): canonical stewardship roadmap
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
 - [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
+- [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md): non-normative isolated-execution, checkpoint, rollback, and recovery-verification research roadmap
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md): first implementation-backed external-host validation round
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md): second structurally different host validation and architecture-diversity gate decision
 - [`../../research/runtime/host-integration-context-economics-2026-08-12.md`](../../research/runtime/host-integration-context-economics-2026-08-12.md): static bounded-context specialist-payload measurement and remaining empirical context-economics gate
-- [`../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md`](../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md): dispatch-provenance and bundled-adapter self-expansion adversarial evidence
+- [`../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md`](../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md): dispatch-provenance and bundled-adapter payload self-expansion adversarial evidence
 - [`../../research/runtime/host-integration-third-party-adapter-trust-2026-08-12.md`](../../research/runtime/host-integration-third-party-adapter-trust-2026-08-12.md): process-local third-party adapter registration, provenance-binding, and non-self-authorization adversarial evidence
 - [`../../research/runtime/host-integration-authority-intersection-2026-08-12.md`](../../research/runtime/host-integration-authority-intersection-2026-08-12.md): restrictive host/TEO authority intersection and exact host execution-scope binding adversarial evidence
 - [`../../research/runtime/host-integration-execution-envelope-integrity-2026-08-12.md`](../../research/runtime/host-integration-execution-envelope-integrity-2026-08-12.md): exact process-local action target, parameter, side-effect, prerequisite, and retry-envelope adversarial evidence
