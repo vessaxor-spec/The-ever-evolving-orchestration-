@@ -27,8 +27,8 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | 788 tests passed |
-| Host-integration research validation | CI #577: 788 tests, 509 tracked-file layout checks, 41 schemas, valid linked configuration, provider-diverse end-to-end pass |
+| Latest validated test suite | 790 tests passed |
+| Host-integration research validation | CI #580: 788 tests, 509 tracked-file layout checks, 41 schemas, valid linked configuration, provider-diverse end-to-end pass |
 | Host Integration Contract | Two-host architecture diversity, static context-economics, process-local dispatch-provenance, bundled-adapter payload self-expansion, process-local third-party adapter trust, restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance research slices satisfied; contract remains non-normative |
 | Regulated evidence pilot | 6 specialists, intentionally bounded |
 | Repository information architecture | R1 through R5 complete |

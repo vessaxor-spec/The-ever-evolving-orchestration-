@@ -17,6 +17,8 @@ The first implementation-backed validation round is recorded in [`../runtime/202
 
 The second implementation-backed validation round is recorded in [`../runtime/2026-08-12-host-integration-validation-round-2.md`](../runtime/2026-08-12-host-integration-validation-round-2.md). It validates the candidate against a structurally different revision-pinned upstream-dispatch architecture and adds evidence around portfolio authority, verifier-context asymmetry, artifact-bound verification, runtime-derived authority surfaces, and integration freshness states.
 
+The verifier-context and exact artifact/change-set stale-PASS adversarial slice is recorded in [`../runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](../runtime/host-integration-verifier-artifact-binding-2026-08-12.md). PR #146 and Reference Implementation CI #580 satisfy those two evidence gates at the non-normative research layer only; canonical runtime verification/finalization schemas and live authority remain unchanged.
+
 This document does not change current routing, runtime, specialist, verification, approval, or release authority.
 
 ## Core design principle
@@ -481,6 +483,17 @@ The following refinements now have implementation evidence behind them:
 
 See [`../runtime/2026-08-12-host-integration-validation-round-2.md`](../runtime/2026-08-12-host-integration-validation-round-2.md) for the evidence and gate decision.
 
+## PR #146 verifier/artifact-binding refinement
+
+The next research slice made two Round 2 requirements executable without changing normative runtime contracts:
+
+1. **Verifier-context independence:** tested executor reasoning, executor messages, conversation history, prior verdicts, and executor self-assessment are rejected from the independent-verifier request boundary.
+2. **Exact artifact/change-set binding:** a PASS is bound to the exact task, dispatch, change, artifact, revision, SHA-256 digest, and target reference, and cannot finalize a stale, substituted, mutated, or wrong-target artifact.
+
+Reference Implementation CI #580 reproduced the 21-case matrix on the exact reconciled PR #146 head with 788 tests, 509 tracked-file layout checks, 41 JSON Schemas, valid linked configuration, regulated specialist evidence validation, and the provider-diverse end-to-end reference lifecycle.
+
+See [`../runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](../runtime/host-integration-verifier-artifact-binding-2026-08-12.md). This is non-normative research evidence only.
+
 ## Anti-patterns
 
 The following should be treated as integration failures:
@@ -526,8 +539,8 @@ The Host Integration Contract should remain research until at least the followin
 13. **Registry freshness:** prove stale or mismatched TEO release, policy, registry, overlay, or executable-composition bindings are detected.
 14. **Routing conformance:** prove host-local taxonomies cannot collapse required Team, Worker, Specialist, Capability, Implementation, or Verification fields.
 15. **Portfolio-authority separation:** prove TEO routing cannot silently seize host backlog, product-priority, or task-admission authority unless that authority is explicitly delegated.
-16. **Verifier-context independence:** prove independent verification can preserve required domain constraints without inheriting executor reasoning or implementation framing by default.
-17. **Artifact-bound verification:** prove stale, mismatched, or wrong-target PASS evidence cannot finalize a later or unrelated artifact/change-set.
+16. **Verifier-context independence:** prove independent verification can preserve required domain constraints without inheriting executor reasoning or implementation framing by default. **Satisfied at the non-normative research layer by PR #146 and Reference Implementation CI #580.**
+17. **Artifact-bound verification:** prove stale, mismatched, or wrong-target PASS evidence cannot finalize a later or unrelated artifact/change-set. **Satisfied at the non-normative research layer by PR #146 and Reference Implementation CI #580.**
 18. **Authority-surface reconciliation:** prove integration authority surfaces are derived from or reconciled against executable runtime wiring and that omissions fail closed.
 19. **Integration freshness state:** prove pinned/vendorized hosts distinguish current, compatible, update-available, unsupported, and mismatched TEO states appropriately.
 20. **Independent review:** challenge whether the integration layer creates a second routing authority or weakens existing TEO invariants.
@@ -546,8 +559,9 @@ No new specialist is proposed by this document.
 ## Current disposition
 
 - Record the contract as non-normative research.
-- Treat external-host validation rounds 1 and 2 as implementation evidence, not normative authority or host certification.
+- Treat external-host validation rounds 1 and 2 plus the PR #146 verifier/artifact-binding slice as implementation evidence, not normative authority or host certification.
 - Mark the two-host architecture-diversity research gate satisfied.
+- Mark verifier-context independence and exact artifact/change-set stale-PASS resistance satisfied at the non-normative research layer only.
 - Do not change current Mission Control policy, specialist cards, active roster, verifier rules, or live-execution scope.
-- Continue the remaining evidence gates before proposing a normative schema or reference-runtime implementation, especially context economics, dispatch-authorization mutation resistance, adapter integrity, restrictive authority intersection, artifact-bound verification, freshness semantics, authority-surface reconciliation, and independent review.
+- Continue the remaining evidence gates before proposing a normative schema or reference-runtime implementation, especially provider/model context economics and task adherence, production/distributed adapter provenance, freshness semantics, portfolio/task-admission separation, authority-surface reconciliation, recursion resistance, and independent review.
 - Preserve the current Progress Tracker sequencing. This research is not promoted ahead of the provider-backed `documentation` replay gate.
