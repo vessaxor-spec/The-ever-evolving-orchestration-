@@ -88,7 +88,7 @@ The executable suite challenges the boundary with:
 17. host-scope replacement after authorization;
 18. TEO-scope replacement after authorization.
 
-The candidate passes only when every denied or altered case stops before the concrete action callback and the exact positive control executes once.
+Every denied or altered case is required to stop before the concrete action callback. The exact positive control must execute once.
 
 ## Trust boundary
 
@@ -98,14 +98,25 @@ It also does not treat the process-local `DispatchRecord` itself as portable pro
 
 The TEO side of this experiment uses the repository's current active live-execution scope only to test restrictive intersection semantics. It does not promote the Host Integration Contract into live runtime authority and does not change that policy.
 
-## Decision boundary
-
-If the suite passes, the narrow supported proposition is:
-
-> A host-native action can be made subject to deny-wins, more-restrictive-control-wins semantics by binding the exact TEO dispatch action and current TEO execution scope to the host's own permission scope before the action is invoked.
-
-That result would not make the Host Integration Contract normative, authorize `documentation`, widen live execution, prove distributed authority synchronization, or close the broader cross-process authenticity and replay gates.
-
 ## Verification record
 
-Pending branch CI. The final record must capture the exact test count, tracked-file layout count, schema count, linked-configuration validation, and provider-diverse end-to-end result before the Progress Tracker is reconciled.
+Reference Implementation CI **#565** passed the first complete branch validation:
+
+- **742 tests**;
+- **503 tracked-file repository-layout checks**;
+- regulated specialist evidence structural validation;
+- **41 parsed JSON Schemas**;
+- linked TEO configuration with zero issues;
+- the provider-diverse end-to-end example.
+
+The suite proves that the current repository active scope is read as `high_volume_simple` only at low/medium risk, that host and TEO denials both stop action execution, that explicit host deny wins over host allow, that host permissions cannot add a capability absent from the TEO dispatch, and that authorization cannot be reused across altered dispatch, capability, operation, host-scope, or TEO-scope snapshots.
+
+## Decision
+
+**Process-local restrictive host/TEO authority intersection: supported.** The tested boundary enforces deny-wins and more-restrictive-control-wins semantics before invoking a concrete host-native action.
+
+**Process-local host execution-scope binding: supported.** The authorization is bound to the exact dispatch snapshot, selected capability, concrete operation, current TEO active scope, and current host scope.
+
+**Distributed authority synchronization remains open.** This audit does not prove portable authorization, cryptographic host identity, distributed revocation, cross-process replay resistance, or production synchronization of host and TEO authority state.
+
+This result does not make the Host Integration Contract normative, authorize `documentation`, widen live execution, change provider/model routing, or alter qualified-human authority.
