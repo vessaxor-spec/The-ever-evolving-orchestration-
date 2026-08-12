@@ -1,7 +1,7 @@
 # Host Integration verifier-context and artifact-binding adversarial research
 
 **Date:** 2026-08-12  
-**Status:** non-normative research evidence  
+**Status:** validated non-normative research evidence  
 **Base repository revision:** `a601882c6b33416bff7e0b0b464be42bb6541fa7`  
 **Runtime authority change:** none
 
@@ -117,11 +117,22 @@ pytest -q tests/test_host_integration_artifact_bound_verification.py
 21 passed in 0.05s
 ```
 
-This is local mutation evidence only. Repository CI remains required before the research slice can be recorded as a reconciled repository milestone.
+## Repository verification
+
+Reference Implementation CI #577 reproduced the research slice on the exact PR #146 head before stewardship reconciliation:
+
+- 788 automated tests passed;
+- 509 tracked-file layout checks passed;
+- regulated specialist evidence structural validation passed;
+- 41 JSON Schemas parsed;
+- linked TEO configuration was valid with zero issues;
+- the provider-diverse end-to-end reference lifecycle passed.
+
+The workflow ran on GitHub-hosted Ubuntu 24.04 and completed successfully. This is repository-level conformance evidence for the non-normative research slice. It is not empirical provider-backed `documentation` replay evidence and does not widen live authority.
 
 ## What this proves
 
-Subject to repository CI reproducing the result, this slice demonstrates a concrete fail-closed shape in which:
+At the tested process-local Host Integration research boundary, this slice demonstrates a concrete fail-closed shape in which:
 
 - an independent verifier cannot inherit tested executor-derived or verdict-priming host context;
 - a generic PASS is insufficient;
@@ -148,4 +159,4 @@ Revision/digest mismatch resistance is covered here. Time-based freshness and ex
 
 Keep this implementation in the non-normative research plane. Do not modify canonical runtime verification/finalization schemas from this evidence alone.
 
-If repository CI reproduces the 21-case matrix, reconcile the Progress Tracker with the exact CI evidence and treat verifier-context independence plus exact artifact/change-set stale-PASS resistance as satisfied at the research layer. Then proceed to the next bounded Host Integration evidence gate without changing live authority.
+Reference Implementation CI #577 reproduces the 21-case matrix inside the full repository validation suite, so verifier-context independence plus exact artifact/change-set stale-PASS resistance is satisfied at the research layer. Reconcile the Progress Tracker with the exact CI evidence before merge, preserve the deferred provider-backed `documentation` replay gate, and proceed to the next bounded Host Integration evidence gate only after repository truth is aligned.
