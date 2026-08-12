@@ -82,6 +82,8 @@ Rules:
 
 The Host Integration Contract remains a non-normative research track rather than a scored operational workstream. Satisfying its architecture-diversity, context-economics, dispatch-provenance, bundled-adapter, process-local third-party adapter trust, restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, or exact artifact/change-set stale-PASS resistance research slices does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.
 
+The Execution Environment & Recovery Contract is likewise a non-normative future research track rather than a scored operational workstream. Its acceptance records direction only: isolation requirements, checkpoint binding, rollback/recovery authority, recovery verification, and simulation-to-promotion boundaries remain research questions and do not change current live authority or progress percentages.
+
 ## NOW
 
 ### Evidence-governed live execution expansion
@@ -106,7 +108,7 @@ Reference Implementation CI run #506 validated the Actions-native replay path an
 
 Reference Implementation CI run #514 is the current accepted substantive repository-validation baseline after the targeted finalization -> authority -> recovery control-integrity audit: 657 passing tests, 477 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. The audit closed a proven qualified-human temporal-causality gap and added recovery-authority regression coverage without changing live scope, routing, risk, provider access, or approval authority. Control integrity remains intentionally scored at 90% because continuing mutation depth and newly discovered failure modes remain an ongoing adversarial discipline.
 
-A follow-on targeted mutation audit then weakened ten finalization, authority, expiry, and recovery invariants one at a time. Reference Implementation CI run #519 intentionally exposed four surviving mutants, proving four test-evidence gaps rather than production-control defects. Exact approval, request, and authority-grant expiry boundaries plus caller-risk versus dispatch-effective-risk fallback preservation were then covered explicitly. Reference Implementation CI run #521 killed **10 of 10 targeted mutants** and passed 671 tests, 479 tracked-file layout checks, regulated specialist evidence validation, 40 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. This is control-integrity evidence hardening and does not replace CI #514 as the accepted substantive runtime baseline or change live authority.
+A follow-on targeted mutation audit then weakened ten finalization, authority, expiry, and recovery invariants one at a time. Reference Implementation CI run #519 intentionally exposed four surviving mutants, proving four test-evidence gaps rather than production-control defects. Exact approval, request, and authority-grant expiry boundaries plus caller-risk versus dispatch-effective-risk fallback preservation were then covered explicitly. Production behavior was already correct, so remediation added focused evidence rather than changing runtime code. CI #521 killed 10 of 10 targeted mutants after remediation. This is control-integrity evidence hardening and does not replace CI #514 as the accepted substantive runtime baseline or change live authority.
 
 Host Integration Validation Round 2 then completed a separate provider-independent research milestone. Its merge candidate passed Reference Implementation CI #546 with 680 tests, 491 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example. Two materially different external-host integration architectures have now been examined, so the two-host architecture-diversity research gate is satisfied. This does not replace CI #514 as the accepted substantive runtime baseline, does not make the Host Integration Contract normative, and does not change live authority or the `NOW` workstream.
 
@@ -157,6 +159,12 @@ The contract remains non-normative. Before any schema or reference-runtime promo
 The next bounded provider-independent Host Integration gate should be selected from the remaining roadmap evidence after this reconciled research slice merges; this tracker does not promote Host Integration ahead of the deferred provider-backed `documentation` replay milestone.
 
 This research does not alter current Mission Control policy, specialist cards, active roster, verifier rules, provider routing, qualified-human authority, or live-execution scope.
+
+### Execution Environment & Recovery Contract research
+
+TEO has accepted a future non-normative research direction for governing isolated execution, pre-change checkpointing, rollback, and recovery verification through a vendor-neutral contract. The research is recorded in [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md).
+
+The research must preserve current risk, authority, verification, and Host Integration boundaries. It does not promote a specific sandbox technology, does not authorize simulation-to-production promotion, and does not move ahead of the deferred provider-backed `documentation` replay milestone.
 
 ### Governed route adaptation
 
@@ -339,6 +347,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`roadmap.md`](roadmap.md): canonical stewardship roadmap
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
 - [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
+- [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md): non-normative isolated-execution, checkpoint, rollback, and recovery-verification research roadmap
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md): first implementation-backed external-host validation round
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md): second structurally different host validation and architecture-diversity gate decision
 - [`../../research/runtime/host-integration-context-economics-2026-08-12.md`](../../research/runtime/host-integration-context-economics-2026-08-12.md): static bounded-context specialist-payload measurement and remaining empirical context-economics gate
