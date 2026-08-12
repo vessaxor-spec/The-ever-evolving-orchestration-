@@ -10,7 +10,9 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_LATEST_VALIDATED_TESTS = 767
+EXPECTED_LATEST_VALIDATED_TESTS = 788
+EXPECTED_HOST_INTEGRATION_CI_RUN = 577
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 509
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -127,9 +129,13 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
         f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",
+        f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}: {EXPECTED_LATEST_VALIDATED_TESTS} tests, {EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
         "restrictive host/TEO authority intersection and host execution-scope binding",
         "exact host execution-envelope integrity",
+        "verifier-context independence",
+        "exact artifact/change-set stale-PASS resistance",
         "host-integration-execution-envelope-integrity-2026-08-12.md",
+        "host-integration-verifier-artifact-binding-2026-08-12.md",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | In progress | 70% |",
@@ -157,9 +163,13 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "targeted mutation audit",
         "10 of 10 targeted mutants",
         "Control integrity remains intentionally scored at 90%",
+        "21-case matrix",
+        "Reference Implementation CI #577 passed 788 tests and 509 tracked-file layout checks",
+        "canonical `VerificationResult` and `FinalOutcome` schemas remain unchanged",
         "## NEXT",
         "No additional workstream is promoted",
         "## LATER",
+        "next bounded provider-independent Host Integration gate should be selected from the remaining roadmap evidence",
     ):
         assert phrase in text
 
