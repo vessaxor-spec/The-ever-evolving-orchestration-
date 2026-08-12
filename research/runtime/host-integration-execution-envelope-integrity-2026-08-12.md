@@ -149,8 +149,21 @@ The process-local action authority is an architectural research abstraction. Pro
 
 ## Verification
 
-Pending Reference Implementation CI on the research branch.
+Reference Implementation CI #570 passed the initial research branch with:
+
+- 767 automated tests;
+- 506 tracked-file layout checks;
+- regulated specialist evidence structural validation;
+- 41 parsed JSON Schemas;
+- linked TEO configuration status `valid` with zero issues;
+- the provider-diverse end-to-end example.
+
+The suite adds 25 tests: one current-policy baseline plus the 24 declared adversarial and positive-control classes above. The execution callback is not reached by any rejected case.
 
 ## Decision
 
-Pending adversarial verification. No normative Host Integration schema, runtime authority, routing policy, live-execution scope, provider policy, specialist allocation, or qualified-human authority is changed by this experiment.
+**Process-local exact execution-envelope integrity is supported for the tested boundary.** Once an authority-owned TEO action snapshot is issued, the tested host cannot lower its effective risk, substitute capability, target, parameters, or side-effect class, omit required prerequisites, multiply the current TEO retry budget, reuse an execution token, or move the authorization to a different dispatch without rejection before the supplied action callback executes.
+
+This closes the previously unqualified process-local `risk-lowering resistance beyond the process-local dispatch snapshot` research item by refining it into a stronger exact-action result. Production and distributed forms remain open, including resource canonicalization, credential/tenant binding, cross-process authenticity, distributed retry coordination, and a normative exact-action schema.
+
+No normative Host Integration schema, runtime authority, routing policy, live-execution scope, provider policy, specialist allocation, or qualified-human authority is changed by this experiment.
