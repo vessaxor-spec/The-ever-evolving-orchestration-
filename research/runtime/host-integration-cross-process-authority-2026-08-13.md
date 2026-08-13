@@ -145,7 +145,7 @@ The correction made the test use the same base-harness instance already loaded b
 
 ## Green verification
 
-Exact-head Reference Implementation CI #625 passed on commit `79db1c22a194b669b1717491349ca8a4a0ad9330` with:
+Exact-head Reference Implementation CI #625 passed the corrected executable head on commit `79db1c22a194b669b1717491349ca8a4a0ad9330` with:
 
 - **817 automated tests passed**;
 - **519 tracked-file layout checks**;
@@ -154,9 +154,16 @@ Exact-head Reference Implementation CI #625 passed on commit `79db1c22a194b669b1
 - linked TEO configuration status `valid` with zero issues;
 - the provider-diverse end-to-end example passed.
 
-The end-to-end repository example continued to preserve provider-diverse independent verification. This research did not alter routing policy, provider adapters, schemas, live scope, or finalization behavior.
+After this research record was added, exact-head Reference Implementation CI #626 passed commit `4c4aeeee8fa8eb7ae119ae65de11f918858af245` with:
 
-A final exact-head CI run after this research record is added remains required before merge.
+- **817 automated tests passed**;
+- **520 tracked-file layout checks**;
+- regulated specialist evidence structural validation passed;
+- **41 JSON Schemas parsed**;
+- linked TEO configuration status `valid` with zero issues;
+- the provider-diverse end-to-end example passed.
+
+PR #156 was then squash-merged to `main` as commit `558a54a3cf198e6f7d31468d353ee13c4d1b276d` without changing routing policy, provider adapters, schemas, live scope, finalization behavior, or Host Integration normative status.
 
 ## What this supports
 
@@ -191,6 +198,6 @@ Because these limits remain material, the existing roadmap requirement for cross
 
 **Brokered process-lifetime cross-process authority and replay resistance is supported for the tested conformant boundary.**
 
-Do not promote the Host Integration Contract from this evidence alone. Preserve the current provider-backed `documentation` replay sequencing and all current routing, verification, qualified-human, and live-execution authority boundaries.
+The evidence was accepted into `main` through PR #156 as non-normative Host Integration research only. Do not promote the Host Integration Contract from this evidence alone. Preserve the current provider-backed `documentation` replay sequencing and all current routing, verification, qualified-human, and live-execution authority boundaries.
 
 A future production Host Integration design should reuse this separation of authority from host-native execution, but must independently solve the remaining production authenticity, host identity, resource/credential/tenant binding, restart/distributed replay, effect-evidence, and independent-review gates before normative promotion.
