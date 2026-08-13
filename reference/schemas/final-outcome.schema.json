@@ -21,6 +21,48 @@
     "evidence": {"type": "array", "items": {"type": "string"}},
     "failed_attempts": {"type": "integer", "minimum": 0},
     "escalation_used": {"type": "boolean"},
-    "notes": {"type": "array", "items": {"type": "string"}}
+    "notes": {"type": "array", "items": {"type": "string"}},
+    "execution_provenance": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "route_outcome_id",
+            "route_outcome_integrity_sha256",
+            "active_dispatch_id",
+            "active_route_role",
+            "provider_family",
+            "model",
+            "reasoning_effort",
+            "verification_dispatch_id",
+            "final_disposition",
+            "fallback_assisted",
+            "retry_assisted"
+          ],
+          "properties": {
+            "source": {"const": "route_outcome"},
+            "route_outcome_id": {"type": "string", "pattern": "^outcome-[a-f0-9]{20}$"},
+            "route_outcome_integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "active_dispatch_id": {"type": "string", "minLength": 1},
+            "active_route_role": {"enum": ["primary", "fallback"]},
+            "provider_family": {"type": "string", "minLength": 1},
+            "model": {"type": "string", "minLength": 1},
+            "reasoning_effort": {
+              "oneOf": [
+                {"type": "null"},
+                {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]}
+              ]
+            },
+            "verification_dispatch_id": {"type": "string", "minLength": 1},
+            "final_disposition": {"enum": ["completed", "verification_failed", "awaiting_human"]},
+            "fallback_assisted": {"type": "boolean"},
+            "retry_assisted": {"type": "boolean"}
+          }
+        }
+      ]
+    }
   }
 }
