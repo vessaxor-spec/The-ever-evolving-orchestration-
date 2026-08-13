@@ -10,7 +10,9 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_LATEST_VALIDATED_TESTS = 790
+EXPECTED_LATEST_VALIDATED_TESTS = 802
+EXPECTED_RECONCILIATION_CI_RUN = 602
+EXPECTED_RECONCILIATION_TRACKED_FILES = 515
 EXPECTED_HOST_INTEGRATION_CI_RUN = 580
 EXPECTED_HOST_INTEGRATION_TESTS = 788
 EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 509
@@ -96,6 +98,12 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         f"{EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES} tracked-file layout checks",
         f"Reference Implementation CI #{EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN}",
         "40 JSON Schema",
+        f"{EXPECTED_LATEST_VALIDATED_TESTS} automated tests",
+        f"{EXPECTED_RECONCILIATION_TRACKED_FILES} tracked-file layout checks",
+        f"CI #{EXPECTED_RECONCILIATION_CI_RUN}",
+        "final execution provenance",
+        "Task Intent & Action Authority",
+        "Execution Environment & Recovery",
         "evidence-governed live execution expansion",
         "now at 65%",
         "`documentation` is the first staged candidate",
@@ -130,11 +138,15 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
         f"| Latest validated test suite | {EXPECTED_LATEST_VALIDATED_TESTS} tests passed |",
+        f"CI #{EXPECTED_RECONCILIATION_CI_RUN}: {EXPECTED_LATEST_VALIDATED_TESTS} tests, {EXPECTED_RECONCILIATION_TRACKED_FILES} tracked-file layout checks",
         f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}: {EXPECTED_HOST_INTEGRATION_TESTS} tests, {EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
         "restrictive host/TEO authority intersection and host execution-scope binding",
         "exact host execution-envelope integrity",
         "verifier-context independence",
         "exact artifact/change-set stale-PASS resistance",
+        "Final execution provenance",
+        "Task Intent & Action Authority Contract",
+        "Execution Environment & Recovery Contract",
         "host-integration-execution-envelope-integrity-2026-08-12.md",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
@@ -166,7 +178,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Control integrity remains intentionally scored at 90%",
         "21-case matrix",
         "Reference Implementation CI #577 passed 788 tests and 509 tracked-file layout checks",
-        "canonical `VerificationResult` and `FinalOutcome` schemas remain unchanged",
+        "canonical `VerificationResult` and `FinalOutcome` schemas remained unchanged",
+        "later route-backed final execution provenance change was a separate compatible extension",
         "## NEXT",
         "No additional workstream is promoted",
         "## LATER",
