@@ -45,7 +45,7 @@ All notable public changes to TEO are recorded here.
 - release-history integrity tests require an explicit `v1.0.0` changelog boundary
 - the targeted finalization -> authority -> recovery mutation campaign killed 10 of 10 selected control mutants after focused evidence hardening
 - Host Integration research validation reached CI #580 with 788 tests, 509 tracked-file layout checks, 41 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse end-to-end reference lifecycle
-- the current full repository suite reached 804 passing tests, 510 tracked-file layout checks, 41 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse end-to-end reference lifecycle on CI #602
+- the documentation-reconciliation baseline CI #602 passed 802 tests, 515 tracked-file layout checks, 41 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse end-to-end reference lifecycle
 
 ### Status
 
