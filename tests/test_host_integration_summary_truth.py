@@ -8,13 +8,15 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
     text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
     for phrase in (
-        "six provider-independent adversarial slices",
-        "Reference Implementation CI #580",
-        "788 automated tests",
-        "509 tracked-file layout checks",
+        "seven provider-independent adversarial slices",
+        "Reference Implementation CI #626",
+        "817 automated tests",
+        "520 tracked-file layout checks",
+        "brokered conformant process-lifetime cross-process authority/replay",
         "verifier-context independence",
         "exact artifact/change-set stale-PASS resistance",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
+        "host-integration-cross-process-authority-2026-08-13.md",
         "The next gate is provider-backed controlled documentation replay evidence",
     ):
         assert phrase in text
@@ -29,7 +31,7 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
     )
 
 
-def test_host_integration_roadmap_marks_pr146_gate_satisfied() -> None:
+def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
     text = (
         REPO_ROOT / "research" / "roadmaps" / "host-integration-contract.md"
     ).read_text(encoding="utf-8")
@@ -38,7 +40,11 @@ def test_host_integration_roadmap_marks_pr146_gate_satisfied() -> None:
         "**Verifier-context independence:**",
         "**Artifact-bound verification:**",
         "Satisfied at the non-normative research layer by PR #146 and CI #580.",
+        "Brokered cross-process authority/replay",
+        "Conformant process-lifetime slice satisfied",
+        "CI #626",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
+        "host-integration-cross-process-authority-2026-08-13.md",
         "Preserve the current Progress Tracker sequencing",
     ):
         assert phrase in text
