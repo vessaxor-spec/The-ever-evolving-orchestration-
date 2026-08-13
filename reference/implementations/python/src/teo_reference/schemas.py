@@ -165,7 +165,7 @@ class VerificationResult:
         )
 
 
-@dataclass(slots=True)
+@dataclass(frozen=True, slots=True)
 class ExecutionProvenance:
     source: Literal["route_outcome"]
     route_outcome_id: str
