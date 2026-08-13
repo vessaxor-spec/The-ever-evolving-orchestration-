@@ -37,7 +37,7 @@ def test_host_integration_roadmap_marks_pr146_gate_satisfied() -> None:
     for phrase in (
         "**Verifier-context independence:**",
         "**Artifact-bound verification:**",
-        "Satisfied at the non-normative research layer by PR #146 and Reference Implementation CI #580.",
+        "Satisfied at the non-normative research layer by PR #146 and CI #580.",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "Preserve the current Progress Tracker sequencing",
     ):
