@@ -92,6 +92,13 @@ def build_parser() -> argparse.ArgumentParser:
     finalize.add_argument("execution")
     finalize.add_argument("verification")
     finalize.add_argument(
+        "--artifact-root",
+        help=(
+            "Authorized local artifact root required when a passed verification finalizes "
+            "an artifact-backed execution."
+        ),
+    )
+    finalize.add_argument(
         "--route-outcome",
         help="Optional canonical Route-Outcome Evidence record used to project validated active execution provenance.",
     )
@@ -136,7 +143,12 @@ def main(argv: list[str] | None = None) -> int:
         dispatch = _dispatch(dispatch_data)
         execution = ExecutionResult.from_dict(execution_data)
         verification = VerificationResult.from_dict(verification_data)
-        outcome = engine.finalize(dispatch, execution, verification)
+        outcome = engine.finalize(
+            dispatch,
+            execution,
+            verification,
+            artifact_root=args.artifact_root,
+        )
         if args.route_outcome:
             route_outcome_data = _load(args.route_outcome)
             outcome = attach_execution_provenance(
