@@ -12,17 +12,11 @@ from teo_reference.schemas import DispatchRecord, ImplementationChoice, Verifica
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE_HARNESS = (
-    ROOT
-    / "research"
-    / "runtime"
-    / "host_integration_execution_envelope_integrity.py"
-)
 CROSS_PROCESS_HARNESS = (
     ROOT / "research" / "runtime" / "host_integration_cross_process_authority.py"
 )
-BASE = runpy.run_path(str(BASE_HARNESS))
 CROSS = runpy.run_path(str(CROSS_PROCESS_HARNESS))
+BASE = CROSS["_BASE"]
 ExecutionEnvelopeAuthority = BASE["ExecutionEnvelopeAuthority"]
 HostExecutionEnvelopeScope = BASE["HostExecutionEnvelopeScope"]
 ResourceTarget = BASE["ResourceTarget"]
