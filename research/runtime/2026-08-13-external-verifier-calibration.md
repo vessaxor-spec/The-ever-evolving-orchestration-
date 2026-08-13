@@ -135,7 +135,7 @@ This result is the negative-control success. The verifier rejected a TEO claim w
 
 The combined positive and negative controls provide enough evidence to classify this verifier as:
 
-**External Independent Technical Verifier — evidence authority only**
+**External Independent Technical Verifier: evidence authority only**
 
 The evidence supports using the verifier for bounded independent technical assessments where the task, artifacts, claim, and requested verdict structure are explicit.
 
