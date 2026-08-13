@@ -4,11 +4,11 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal, Mapping, Protocol
-from urllib.parse import unquote, urlparse
 
+from .artifact_integrity import ArtifactIntegrityError, read_verified_text_artifact
 from .provider_adapter import ProviderAdapterContractError, ProviderUsage
 from .provider_connection import ProviderConnection
-from .schemas import DispatchRecord, VerificationResult
+from .schemas import DispatchRecord, VerificationResult, VerifiedArtifact
 
 VerificationCheckId = Literal[
     "output_present",
@@ -153,7 +153,13 @@ class LiveVerificationDecision:
             human_reason=str(data["human_reason"]),  # type: ignore[arg-type]
         )
 
-    def to_verification_result(self, dispatch: DispatchRecord, *, evidence: list[str]) -> VerificationResult:
+    def to_verification_result(
+        self,
+        dispatch: DispatchRecord,
+        *,
+        evidence: list[str],
+        verified_artifact: VerifiedArtifact | None = None,
+    ) -> VerificationResult:
         checks = [f"{name}:{verdict}" for name, verdict in self.verdicts.items()]
         notes = (
             f"live_verifier_human_reason:{self.human_reason}"
@@ -167,6 +173,7 @@ class LiveVerificationDecision:
             checks=checks,
             evidence=evidence,
             notes=notes,
+            verified_artifact=verified_artifact,
         )
 
 
@@ -243,41 +250,33 @@ class LiveVerifierAdapter(Protocol):
         ...
 
 
+def read_execution_artifact(
+    output_ref: str,
+    *,
+    allowed_root: str | Path,
+    max_bytes: int = 65536,
+) -> tuple[str, VerifiedArtifact]:
+    try:
+        return read_verified_text_artifact(
+            output_ref,
+            allowed_root=allowed_root,
+            max_bytes=max_bytes,
+        )
+    except ArtifactIntegrityError as exc:
+        raise LiveVerificationError(str(exc)) from exc
+
+
 def read_execution_output(
     output_ref: str,
     *,
     allowed_root: str | Path,
     max_bytes: int = 65536,
 ) -> str:
-    parsed = urlparse(_require_text(output_ref, "output_ref"))
-    if parsed.scheme != "file":
-        raise LiveVerificationError(
-            "Guarded live verification accepts only local file output artifacts"
-        )
-    try:
-        root = Path(allowed_root).resolve(strict=True)
-    except OSError as exc:
-        raise LiveVerificationError("Authorized execution artifact root does not exist") from exc
-    try:
-        path = Path(unquote(parsed.path)).resolve(strict=True)
-    except OSError as exc:
-        raise LiveVerificationError("Execution output artifact does not exist") from exc
-    if not path.is_relative_to(root):
-        raise LiveVerificationError("Execution output artifact is outside the authorized artifact root")
-    if not path.is_file():
-        raise LiveVerificationError("Execution output artifact does not exist")
-    try:
-        size = path.stat().st_size
-    except OSError as exc:
-        raise LiveVerificationError("Execution output artifact could not be inspected") from exc
-    if size > max_bytes:
-        raise LiveVerificationError(
-            f"Execution output artifact exceeds guarded verification limit of {max_bytes} bytes"
-        )
-    try:
-        return _require_text(path.read_text(encoding="utf-8"), "execution output")
-    except (OSError, UnicodeDecodeError) as exc:
-        raise LiveVerificationError("Execution output artifact could not be read as UTF-8") from exc
+    return read_execution_artifact(
+        output_ref,
+        allowed_root=allowed_root,
+        max_bytes=max_bytes,
+    )[0]
 
 
 def decode_structured_decision(text: str) -> LiveVerificationDecision:
