@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import json
-from dataclasses import replace
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import pytest
 from jsonschema import Draft202012Validator
 
+from teo_reference.artifact_integrity import read_verified_text_artifact
 from teo_reference.cli import main
 from teo_reference.final_execution_provenance import attach_execution_provenance
 from teo_reference.provider_adapter import (
@@ -137,7 +138,7 @@ def final_outcome(active_dispatch: DispatchRecord, *, status: str = "completed",
     )
 
 
-def primary_record():
+def primary_record(output_ref: str = "file:///synthetic.txt"):
     primary = dispatch(
         "dispatch-primary",
         provider="google",
@@ -150,7 +151,7 @@ def primary_record():
         status="succeeded",
         provider_family="google",
         model=primary.selected_implementation.model,
-        output_ref="file:///synthetic.txt",
+        output_ref=output_ref,
     )
     record = build_guarded_canary_route_outcome(
         CanaryRuntimeOutcome(
@@ -323,7 +324,14 @@ def test_projected_final_outcome_passes_strict_schema() -> None:
 
 
 def test_finalize_cli_can_emit_route_backed_execution_provenance(tmp_path: Path) -> None:
-    primary, record = primary_record()
+    artifact_path = tmp_path / "synthetic.txt"
+    artifact_path.write_text("synthetic output\n", encoding="utf-8")
+    artifact_ref = artifact_path.resolve().as_uri()
+    _, verified_artifact = read_verified_text_artifact(
+        artifact_ref,
+        allowed_root=tmp_path,
+    )
+    primary, record = primary_record(artifact_ref)
     dispatch_path = tmp_path / "dispatch.json"
     execution_path = tmp_path / "execution.json"
     verification_path = tmp_path / "verification.json"
@@ -336,7 +344,7 @@ def test_finalize_cli_can_emit_route_backed_execution_provenance(tmp_path: Path)
             {
                 "dispatch_id": primary.dispatch_id,
                 "status": "succeeded",
-                "output_ref": "file:///synthetic.txt",
+                "output_ref": artifact_ref,
                 "evidence": ["execution:test"],
                 "failed_attempts": 0,
             }
@@ -351,6 +359,7 @@ def test_finalize_cli_can_emit_route_backed_execution_provenance(tmp_path: Path)
                 "verifier_model": primary.verification.implementation.model,
                 "checks": ["output_validation"],
                 "evidence": ["verification:test"],
+                "verified_artifact": asdict(verified_artifact),
             }
         ),
         encoding="utf-8",
@@ -365,6 +374,8 @@ def test_finalize_cli_can_emit_route_backed_execution_provenance(tmp_path: Path)
             str(dispatch_path),
             str(execution_path),
             str(verification_path),
+            "--artifact-root",
+            str(tmp_path),
             "--route-outcome",
             str(route_outcome_path),
             "--output",
