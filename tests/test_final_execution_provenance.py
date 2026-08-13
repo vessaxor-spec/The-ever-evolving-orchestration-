@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from jsonschema import Draft202012Validator
 
+from teo_reference.cli import main
 from teo_reference.final_execution_provenance import attach_execution_provenance
 from teo_reference.provider_adapter import (
     ProviderAdapterContractError,
@@ -319,3 +320,60 @@ def test_projected_final_outcome_passes_strict_schema() -> None:
     schema = json.loads((REPO_ROOT / "reference/schemas/final-outcome.schema.json").read_text(encoding="utf-8"))
     errors = list(Draft202012Validator(schema).iter_errors(projected))
     assert errors == []
+
+
+def test_finalize_cli_can_emit_route_backed_execution_provenance(tmp_path: Path) -> None:
+    primary, record = primary_record()
+    dispatch_path = tmp_path / "dispatch.json"
+    execution_path = tmp_path / "execution.json"
+    verification_path = tmp_path / "verification.json"
+    route_outcome_path = tmp_path / "route-outcome.json"
+    output_path = tmp_path / "final.json"
+
+    dispatch_path.write_text(json.dumps(primary.to_dict()), encoding="utf-8")
+    execution_path.write_text(
+        json.dumps(
+            {
+                "dispatch_id": primary.dispatch_id,
+                "status": "succeeded",
+                "output_ref": "file:///synthetic.txt",
+                "evidence": ["execution:test"],
+                "failed_attempts": 0,
+            }
+        ),
+        encoding="utf-8",
+    )
+    verification_path.write_text(
+        json.dumps(
+            {
+                "dispatch_id": primary.dispatch_id,
+                "status": "passed",
+                "verifier_model": primary.verification.implementation.model,
+                "checks": ["output_validation"],
+                "evidence": ["verification:test"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    route_outcome_path.write_text(json.dumps(record.to_dict()), encoding="utf-8")
+
+    assert main(
+        [
+            "--repo-root",
+            str(REPO_ROOT),
+            "finalize",
+            str(dispatch_path),
+            str(execution_path),
+            str(verification_path),
+            "--route-outcome",
+            str(route_outcome_path),
+            "--output",
+            str(output_path),
+        ]
+    ) == 0
+
+    result = json.loads(output_path.read_text(encoding="utf-8"))
+    assert result["status"] == "completed"
+    assert result["execution_provenance"]["active_route_role"] == "primary"
+    assert result["execution_provenance"]["provider_family"] == "google"
+    assert result["execution_provenance"]["model"] == "gemini-3.5-flash-lite"
