@@ -185,4 +185,4 @@ python reference/examples/run_example.py
 pytest
 ```
 
-The current repository validation suite contains 804 passing automated tests as of the 2026-08-13 documentation reconciliation baseline. The canonical current state and historical validation milestones are tracked in `docs/stewardship/progress-tracker.md`.
+The documentation-reconciliation baseline CI #602 passed 802 automated tests. The canonical current state and historical validation milestones are tracked in `docs/stewardship/progress-tracker.md`.
