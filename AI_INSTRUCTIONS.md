@@ -5,17 +5,19 @@ Use this repository as the source of truth for TEO orchestration.
 ## Required read order
 
 1. Read `CONSTITUTION.md` and `docs/specification/lexicon.md` for enduring principles and terminology.
-2. Read `community/teams/README.md` and `community/teams/mission-control.md`.
-3. Read `policy/routing/core/team-routing.yaml` plus active routing extensions.
-4. Read `community/workers/workers.yaml` plus active worker extensions.
-5. Read `community/specialists/specialists.yaml` and the selected specialist role card when applicable.
-6. Read `registry/capabilities/capabilities.yaml` and `registry/capabilities/README.md`.
-7. Read `policy/routing/core/routing.yaml`, `policy/routing/core/specialist-model-routing.yaml`, and active route extensions.
-8. Read `policy/routing/core/implementation-defaults.yaml` and current provider/model evidence before changing time-sensitive implementation defaults.
-9. For live execution, read the applicable policies under `policy/runtime/`.
-10. For consequential specialist facts, apply `policy/specialists/freshness.yaml` and the regulated evidence pilot where in scope.
-11. For any model-bearing decision, apply `policy/governance/model-freshness.yaml` before relying on a model identifier, lifecycle state, capability, or routing assumption.
-12. Keep provider access separate from routing by applying `policy/governance/provider-access-separation.yaml` whenever authentication, subscription, credentials, connectors, or account entitlement appear in implementation work.
+2. Read `docs/stewardship/progress-tracker.md` for the current release identity, active roster, NOW/NEXT/LATER sequencing, live-scope boundary, and accepted research direction.
+3. Read `community/teams/README.md` and `community/teams/mission-control.md`.
+4. Read `policy/routing/core/team-routing.yaml` plus active routing extensions.
+5. Read `community/workers/workers.yaml` plus active worker extensions.
+6. Read `community/specialists/specialists.yaml` and the selected specialist role card when applicable.
+7. Read `registry/capabilities/capabilities.yaml` and `registry/capabilities/README.md`.
+8. Read `policy/routing/core/routing.yaml`, `policy/routing/core/specialist-model-routing.yaml`, and active route extensions.
+9. Read `policy/routing/core/implementation-defaults.yaml` and current provider/model evidence before changing time-sensitive implementation defaults.
+10. For live execution, read the applicable policies under `policy/runtime/`.
+11. For consequential specialist facts, apply `policy/specialists/freshness.yaml` and the regulated evidence pilot where in scope.
+12. For any model-bearing decision, apply `policy/governance/model-freshness.yaml` before relying on a model identifier, lifecycle state, capability, or routing assumption.
+13. Keep provider access separate from routing by applying `policy/governance/provider-access-separation.yaml` whenever authentication, subscription, credentials, connectors, or account entitlement appear in implementation work.
+14. When work touches host embedding, isolation/recovery, or request-action authority research, read the applicable accepted roadmap under `research/roadmaps/` and preserve its non-normative status unless a reviewed canonical policy/schema/runtime change has promoted it.
 
 ## Core routing rule
 
@@ -130,6 +132,21 @@ Credential material must remain outside provider execution payloads and persiste
 - Verification infrastructure failure is not a model judgment and fails closed.
 - Guarded live verification reads only authorized local artifacts inside the supplied runtime artifact root.
 
+## Finalization and execution-provenance rules
+
+A successful provider call is not a completed TEO outcome. Finalization must preserve dispatch identity, execution identity, assigned verifier identity, verification status, provider independence, and any separately required qualified-human authority.
+
+When a canonical Route-Outcome Evidence record is supplied to finalization, `FinalOutcome.execution_provenance` may be populated only after the route record is revalidated and shown to match the final dispatch, successful execution, selected model, assigned verifier, verification status, and disposition. See `docs/specification/final-execution-provenance.md`.
+
+Execution provenance is read-only evidence. It must never be used to:
+
+- select or reroute a provider/model;
+- widen task, host, capability, tool, or live-execution authority;
+- infer that the originating request authorized a state-changing action;
+- replace the complete Route-Outcome Evidence record as canonical route evidence.
+
+The accepted `research/roadmaps/task-intent-action-authority-contract.md` direction is non-normative research. Until a later reviewed change promotes a machine-readable authority contract, do not invent Task Request or Dispatch fields and do not represent the research vocabulary as current runtime authority.
+
 ## Telemetry and artifact rules
 
 The default guarded runtime writes local execution artifacts under `.teo/`, which is repository-ignored.
@@ -187,3 +204,5 @@ Model names, capabilities, provider-level lifecycle/availability, prices, quotas
 Provider access mechanics are a separate integration concern. Do not convert changes in OAuth, API-key provisioning, subscription packaging, account entitlement, credential brokers, or connector behavior into routing-policy changes unless they reveal a genuine provider-level model fact or a separate runtime integration defect.
 
 Material control-plane changes should add or update executable conformance tests. Major accepted milestones should be preserved through a new Capsule rather than rewriting an accepted historical Capsule.
+
+Before material recommendations or repository changes, reconcile the current Progress Tracker, roadmap, open issues/PRs, relevant tests, and current implementation state. Repository truth overrides remembered counts, model state, prior-session assumptions, and stale documentation.

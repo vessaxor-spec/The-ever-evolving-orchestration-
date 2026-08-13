@@ -11,7 +11,18 @@ All notable public changes to TEO are recorded here.
 - lifecycle-specific activation and audit history indexes
 - post-v1 intelligence-control-plane roadmap research
 - active-authority lifecycle conformance for current routing and worker control files
-- durable post-v1 hard-audit evidence under `docs/history/audits/`
+- durable post-v1 hard-audit and targeted control-integrity evidence under `docs/history/audits/`
+- canonical integrity-protected Route-Outcome Evidence with primary/fallback lineage, retry preservation, verification linkage, version context, and explicit unknown-cost semantics
+- Benchmark and Outcome Lab controlled evaluation, live replay, multi-verifier disagreement measurement, and consequential conclusion handoff
+- source-backed effective-dated route-cost attribution with explicit billable surfaces and fail-closed unknown semantics
+- governed Shadow Route Evaluation with bounded recommendation states, anti-Goodhart controls, independent challenge, and no direct policy-write authority
+- scoped qualified-human authority grants, evidence-bound approval requests, append-only dispositions, expiry/revocation, temporal-causality enforcement, and terminal human finalization
+- first regulated-specialist evidence refresh cycle with append-only maintenance history and mutation-resistant registry binding
+- staged `documentation` live-scope candidate policy, corrected provider-diverse fallback/fresh-verifier topology, provider-adapter readiness, controlled replay plan/record contracts, and operator replay path
+- provider-independent Host Integration Contract research covering two-host architecture diversity, bounded context projection, dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter trust, restrictive host/TEO authority intersection, exact execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance
+- non-normative Execution Environment & Recovery Contract research for isolated execution, checkpoint binding, rollback, recovery verification, and simulation-to-promotion boundaries
+- optional route-backed `FinalOutcome.execution_provenance`, projected only from revalidated canonical Route-Outcome Evidence and carrying no routing or execution authority
+- non-normative Task Intent & Action Authority Contract research for preserving assessment, preparation, execution, verification, delegated, and side-effect authority ceilings
 
 ### Changed
 
@@ -22,22 +33,29 @@ All notable public changes to TEO are recorded here.
 - direct current routing and worker authority now reports `active`, while cryptographically pinned staged workers preserve their original artifact status and receive current authority through the activation manifest
 - current development builds identify as `1.0.1.dev0` so post-release `main` does not claim the exact immutable `1.0.0` package identity
 - the Gemini 3.1 Flash-Lite compatibility note now reflects completed Gemini 3.5 Flash-Lite promotion and current provider deprecation guidance
+- bounded `high_volume_simple` execution now preserves the Flash-Lite -> Haiku recovery topology with fresh provider-diverse verifier rotation
+- the shared documentation worker no longer receives a global runtime implementation-order override; staged documentation routing preserves Sonnet 5 primary, GPT-5.6 Sol fallback, GPT-5.6 Terra primary verification, and Gemini 3.6 Flash fresh verification after recovery redispatch
+- control-integrity tests now cover exact qualified-human chronology/expiry boundaries and effective-risk preservation across recovery preparation
+- current stewardship documentation distinguishes accepted substantive runtime baselines, later research/evidence validations, and non-normative future research without allowing documentation to create authority
 
 ### Validation
 
 - repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
 - active-authority integrity tests distinguish direct `active` authority from byte-preserved staged worker definitions activated through the principal-engineering manifest
 - release-history integrity tests require an explicit `v1.0.0` changelog boundary
+- the targeted finalization -> authority -> recovery mutation campaign killed 10 of 10 selected control mutants after focused evidence hardening
+- Host Integration research validation reached CI #580 with 788 tests, 509 tracked-file layout checks, 41 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse end-to-end reference lifecycle
+- the documentation-reconciliation baseline CI #602 passed 802 tests, 515 tracked-file layout checks, 41 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse end-to-end reference lifecycle
 
 ### Status
 
-Phases 1 through 5 are complete. Runtime execution remains intentionally guarded to explicit `high_volume_simple` work at low or medium effective risk.
+Phases 1 through 5 and the functional `v1.0.0` reference release are complete. Current `main` is the compatible `1.0.1.dev0` development line.
 
-Current work is operational evidence: control integrity, verifier calibration, route-outcome evaluation, source-backed cost attribution, qualified-human approval integration, distributed runtime hardening, and continued observation of the six-card regulated evidence pilot.
+The canonical `NOW` workstream is evidence-governed live execution expansion at 65%. `documentation` remains a staged evaluation candidate with `activation_authorized: false`; provider-backed controlled replay is the next empirical live-expansion gate and is intentionally deferred until legitimate provider access is supplied through an appropriate execution boundary.
 
-Repository information-architecture migration has completed R1 through R5. The planned information-architecture migration is complete.
+The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. High and critical live execution remain unauthorized.
 
-High and critical live execution remain unauthorized.
+Host Integration, Execution Environment & Recovery, and Task Intent & Action Authority remain non-normative research tracks. They do not change current Task/Dispatch schemas, Mission Control policy, provider routing, specialist authority, qualified-human requirements, or live scope.
 
 ## [1.0.0] - 2026-08-09
 
