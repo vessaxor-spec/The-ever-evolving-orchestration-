@@ -42,7 +42,7 @@ def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
         "Satisfied at the non-normative research layer by PR #146 and CI #580.",
         "Brokered cross-process authority/replay",
         "Conformant process-lifetime slice satisfied",
-        "CI #626",
+        "and #626. CI evidence proves",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
         "Preserve the current Progress Tracker sequencing",
