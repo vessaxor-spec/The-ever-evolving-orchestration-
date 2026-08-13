@@ -11,6 +11,8 @@ from jsonschema import Draft202012Validator, FormatChecker
 from .audit import append_jsonl
 from .config import ConfigBundle, ConfigurationError
 from .engine import RoutingError
+from .final_execution_provenance import attach_execution_provenance
+from .provider_adapter import ProviderAdapterContractError
 from .schemas import (
     DispatchRecord,
     ExecutionResult,
@@ -89,6 +91,10 @@ def build_parser() -> argparse.ArgumentParser:
     finalize.add_argument("dispatch")
     finalize.add_argument("execution")
     finalize.add_argument("verification")
+    finalize.add_argument(
+        "--route-outcome",
+        help="Optional canonical Route-Outcome Evidence record used to project validated active execution provenance.",
+    )
     finalize.add_argument("--output")
     finalize.add_argument("--audit-log")
     finalize.set_defaults(action="finalize")
@@ -131,6 +137,13 @@ def main(argv: list[str] | None = None) -> int:
         execution = ExecutionResult.from_dict(execution_data)
         verification = VerificationResult.from_dict(verification_data)
         outcome = engine.finalize(dispatch, execution, verification)
+        if args.route_outcome:
+            route_outcome_data = _load(args.route_outcome)
+            outcome = attach_execution_provenance(
+                outcome,
+                route_outcome_data,
+                repo_root=args.repo_root,
+            )
         result = outcome.to_dict()
         _validate_schema(args.repo_root, "final-outcome.schema.json", result, "final outcome")
         if args.output:
@@ -141,7 +154,14 @@ def main(argv: list[str] | None = None) -> int:
             append_jsonl(args.audit_log, "final_outcome", result)
         _print(result)
         return 0
-    except (ConfigurationError, RoutingError, ValueError, OSError, json.JSONDecodeError) as exc:
+    except (
+        ConfigurationError,
+        ProviderAdapterContractError,
+        RoutingError,
+        ValueError,
+        OSError,
+        json.JSONDecodeError,
+    ) as exc:
         parser = build_parser()
         parser.error(str(exc))
         return 2

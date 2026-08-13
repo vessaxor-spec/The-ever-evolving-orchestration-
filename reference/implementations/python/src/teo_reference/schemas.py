@@ -165,6 +165,25 @@ class VerificationResult:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class ExecutionProvenance:
+    source: Literal["route_outcome"]
+    route_outcome_id: str
+    route_outcome_integrity_sha256: str
+    active_dispatch_id: str
+    active_route_role: Literal["primary", "fallback"]
+    provider_family: str
+    model: str
+    reasoning_effort: str | None
+    verification_dispatch_id: str
+    final_disposition: str
+    fallback_assisted: bool
+    retry_assisted: bool
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
 @dataclass(slots=True)
 class FinalOutcome:
     dispatch_id: str
@@ -179,6 +198,10 @@ class FinalOutcome:
     failed_attempts: int
     escalation_used: bool
     notes: list[str]
+    execution_provenance: ExecutionProvenance | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        if self.execution_provenance is None:
+            data.pop("execution_provenance")
+        return data
