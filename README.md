@@ -92,7 +92,13 @@ It includes dedicated Mission Control workers for orchestration, operations, pro
 
 The repository information-architecture migration **R1 through R5 is complete**. Current authority, historical activation records, research, executable reference code, evidence, registries, and stewardship documentation now have governed canonical locations under [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml).
 
-The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** complete at their declared milestones. Reference Implementation CI #514 passed **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The targeted 2026-08-11 finalization -> authority -> recovery audit closed a proven qualified-human temporal-causality gap and added recovery-authority regression protection without widening routing or execution authority. The canonical current priority remains **evidence-governed live execution expansion**, now at 65%. `documentation` is the first staged candidate; its fallback/fresh-verifier topology, direct adapter readiness, and staged replay harness are validated, but provider-backed replay evidence is still pending and it has no live-execution authority. The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
+The current accepted post-v1 evidence baseline has **Route-Outcome Evidence**, the **Benchmark and Outcome Lab**, **Source-backed Cost Attribution**, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** complete at their declared milestones. Reference Implementation CI #514 remains the accepted substantive runtime-control baseline: **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The targeted 2026-08-11 finalization -> authority -> recovery audit closed a proven qualified-human temporal-causality gap and added recovery-authority regression protection without widening routing or execution authority.
+
+The current full repository validation scale is **804 automated tests**, **510 tracked-file layout checks**, regulated specialist evidence validation, **41 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle, validated on CI #602 after the current Host Integration research chain, route-backed final execution provenance, and Task Intent & Action Authority research direction were reconciled. This later full-suite validation does not replace CI #514 as the substantive runtime-control baseline and does not create empirical provider-backed live-execution evidence.
+
+The canonical current priority remains **evidence-governed live execution expansion**, now at 65%. `documentation` is the first staged candidate; its fallback/fresh-verifier topology, direct adapter readiness, and staged replay harness are validated, but provider-backed replay evidence is still pending and it has no live-execution authority. The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. See [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md).
+
+The current development line also includes an optional **final execution provenance** projection. When canonical Route-Outcome Evidence is supplied to finalization, TEO can revalidate that evidence and expose the observed successful provider/model route through `FinalOutcome.execution_provenance`. The projection is read-only evidence. It cannot reroute a task, nominate a provider, authorize a host action, widen live scope, or replace the complete Route-Outcome Evidence record. See [`docs/specification/final-execution-provenance.md`](docs/specification/final-execution-provenance.md).
 
 The post-v1 hard audit completed on 2026-08-10 without finding a critical control-plane defect. The final audited tree passed **390 tracked-file layout checks**, **519 automated tests**, regulated specialist evidence validation, **18 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. The durable audit record is [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md).
 
@@ -117,11 +123,20 @@ The candidate remains **non-normative research**. These results do not certify a
 
 The exact reconciled PR #146 head was validated by Reference Implementation CI #580 with **788 automated tests**, **509 tracked-file layout checks**, regulated specialist evidence validation, **41 JSON Schema** parses, linked configuration with zero issues, and the provider-diverse end-to-end reference lifecycle. This validates verifier-context independence and exact artifact/change-set stale-PASS resistance at the research layer and does not replace CI #514 as the accepted substantive runtime baseline.
 
-Before normative promotion, remaining evidence includes provider/model input economics, end-to-end latency and task adherence, production-grade external-adapter package provenance and authority-controlled loading, dependency/transitive-code identity, revocation/update and downgrade semantics, distributed host/TEO authority synchronization, production resource-target canonicalization and containment, credential/account/tenant scope binding, cross-process dispatch and exact-action authenticity/replay, distributed retry-budget coordination, revision freshness and expiry semantics, portfolio/task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure paths, cross-process dispatch authenticity/replay semantics, and independent review against a parallel routing or authority plane.
+Before normative promotion, remaining evidence includes provider/model input economics, end-to-end latency and task adherence, production-grade external-adapter package provenance and authority-controlled loading, dependency/transitive-code identity, revocation/update and downgrade semantics, distributed host/TEO authority synchronization, production resource-target canonicalization and containment, credential/account/tenant scope binding, cross-process dispatch and exact-action authenticity/replay, distributed retry-budget coordination, revision freshness and expiry semantics, portfolio/task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure paths, and independent review against a parallel routing or authority plane.
 
 The next bounded provider-independent Host Integration gate should be selected from those remaining evidence requirements after repository recalibration. Host Integration research does not supersede the deferred provider-backed controlled `documentation` replay milestone or change live authority.
 
 See [`research/roadmaps/host-integration-contract.md`](research/roadmaps/host-integration-contract.md), [`research/runtime/2026-08-12-host-integration-validation-round-1.md`](research/runtime/2026-08-12-host-integration-validation-round-1.md), [`research/runtime/2026-08-12-host-integration-validation-round-2.md`](research/runtime/2026-08-12-host-integration-validation-round-2.md), [`research/runtime/host-integration-context-economics-2026-08-12.md`](research/runtime/host-integration-context-economics-2026-08-12.md), [`research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md`](research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md), [`research/runtime/host-integration-third-party-adapter-trust-2026-08-12.md`](research/runtime/host-integration-third-party-adapter-trust-2026-08-12.md), [`research/runtime/host-integration-authority-intersection-2026-08-12.md`](research/runtime/host-integration-authority-intersection-2026-08-12.md), [`research/runtime/host-integration-execution-envelope-integrity-2026-08-12.md`](research/runtime/host-integration-execution-envelope-integrity-2026-08-12.md), and [`research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md).
+
+### Additional accepted architecture research
+
+Two further research directions are accepted without changing current runtime authority or Progress Tracker sequencing:
+
+- [`research/roadmaps/execution-environment-recovery-contract.md`](research/roadmaps/execution-environment-recovery-contract.md) explores vendor-neutral isolated execution, pre-change checkpoints, rollback, recovery verification, and simulation-to-promotion boundaries without making TEO a container, microVM, deployment, or backup runtime.
+- [`research/roadmaps/task-intent-action-authority-contract.md`](research/roadmaps/task-intent-action-authority-contract.md) explores a machine-checkable boundary between assessment, recommendation, preparation, execution, and verification authority so downstream routing, delegation, host permissions, fallback, recovery, or exact action envelopes cannot silently widen the authority granted by the originating request or parent task.
+
+Both remain **non-normative**. They do not change the canonical Task Request or Dispatch Record, Mission Control policy, specialist roster, provider routing, qualified-human requirements, live execution, or the stable `v1.0.0` contract.
 
 ### Current authority and preserved staged artifacts
 
@@ -163,6 +178,7 @@ The repository currently implements:
 - abandoned half-open probe recovery
 - content-free provider-attempt telemetry
 - canonical integrity-protected Route-Outcome Evidence
+- optional route-backed final execution provenance projected from revalidated canonical Route-Outcome Evidence without routing or execution authority
 - controlled Benchmark and Outcome Lab replay, disagreement measurement, and consequential conclusion handoff
 - source-backed effective-dated route-cost attribution with explicit unknown semantics
 - governed Shadow Route Evaluation with exact evidence binding, bounded specialist #82 dispositions, independent challenge, and Mission Control or maintainer review handoff
@@ -439,6 +455,7 @@ The Python reference implementation is a runnable control plane that can:
 - record content-free provider-attempt telemetry
 - execute the assigned independent verifier on the guarded live path
 - build and persist canonical Route-Outcome Evidence
+- revalidate a supplied Route-Outcome Evidence record during finalization and optionally project the observed active route into `FinalOutcome.execution_provenance`
 - execute controlled Benchmark and Outcome Lab replay and evaluation
 - preserve multi-verifier disagreement and consequential conclusion handoffs
 - attribute route and verifier cost from explicit source-backed billable surfaces when evidence is sufficient
@@ -467,6 +484,8 @@ The integrating runtime may supply API-key, OAuth/subscription-backed, delegated
 A successful provider call is not automatically a completed TEO outcome.
 
 The active dispatch assigns verification independently. Finalization checks execution and verification identity, provider independence, dispatch identity, verification status, and any human-approval requirement. Where qualified-human authority is required, the model-verification path remains `awaiting_human` until a separate scoped authority record, approval lifecycle, and terminal human finalization prove that the exact gate has been satisfied.
+
+When route-backed execution provenance is requested, finalization additionally revalidates the complete canonical Route-Outcome Evidence record and proves it matches the final dispatch, successful active execution, selected model, assigned verifier, verification status, and final disposition before exposing the compact projection. The projection is evidence only and cannot authorize later work.
 
 The verifier-calibration system includes:
 
@@ -558,6 +577,7 @@ The repository test and validation system covers, among other controls:
 - staged documentation replay plan/record integrity, whole-plan preflight, retry/circuit semantics, assigned verification, operator acknowledgement, and continued active-runtime refusal
 - preview authorization
 - finalization integrity guards
+- route-backed final execution provenance validation, active-route binding, verifier consistency, integrity recomputation, stale/replacement rejection, and compatible legacy serialization
 - qualified-human request -> disposition -> finalization temporal causality
 - recovery preparation preserving effective risk and human-approval requirements
 - retry and fallback behavior
@@ -590,9 +610,11 @@ The reference CI:
 7. validates linked TEO configuration
 8. executes the end-to-end reference lifecycle
 
-The latest accepted substantive repository validation is Reference Implementation CI #514: 657 tests passed, 477 tracked files passed layout validation, 40 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed. It includes the targeted temporal-authority remediation, recovery-authority regression coverage, and durable audit record. It does not create empirical provider-backed documentation replay evidence or widen live execution authority.
+Reference Implementation CI #514 remains the latest accepted substantive runtime-control baseline: 657 tests passed, 477 tracked files passed layout validation, 40 JSON Schemas parsed, regulated specialist evidence passed, linked configuration reported zero issues, and provider-diverse end-to-end verification passed. It includes the targeted temporal-authority remediation, recovery-authority regression coverage, and durable audit record. It does not create empirical provider-backed documentation replay evidence or widen live execution authority.
 
-The exact reconciled Host Integration PR #146 head passed Reference Implementation CI #580 with 788 tests, 509 tracked files passing layout validation, 41 JSON Schemas parsed, regulated specialist evidence validation, linked configuration with zero issues, and provider-diverse end-to-end verification. This validates the current non-normative Host Integration research chain through bounded-context economics, dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter trust, restrictive host/TEO authority intersection, exact execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance while leaving CI #514 as the accepted substantive runtime baseline.
+The exact reconciled Host Integration PR #146 head passed Reference Implementation CI #580 with 788 tests, 509 tracked files passing layout validation, 41 JSON Schemas parsed, regulated specialist evidence validation, linked configuration with zero issues, and provider-diverse end-to-end verification. This validates the current non-normative Host Integration research chain through bounded-context static payload evidence, dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter trust, restrictive host/TEO authority intersection, exact execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance while leaving CI #514 as the accepted substantive runtime baseline.
+
+The full repository suite subsequently reached **804 tests**, **510 tracked-file layout checks**, **41 parsed JSON Schemas**, regulated specialist evidence validation, valid linked configuration, and provider-diverse end-to-end verification on Reference Implementation CI #602. That validation includes the route-backed final execution provenance baseline and accepted Task Intent & Action Authority research record. It does not make non-normative research normative and does not create provider-backed documentation replay evidence.
 
 The staged documentation replay harness itself was validated earlier in Reference Implementation CI #488 with controlled fake provider transports. Provider-backed replay remains a separate empirical evidence gate.
 
@@ -617,10 +639,11 @@ CI validates the control plane. It does not convert provisional or simulated evi
 11. Review verification policy under [`policy/verification/`](policy/verification/).
 12. Review specialists under [`community/specialists/`](community/specialists/).
 13. Review current model and provider evidence under [`policy/routing/core/implementation-defaults.yaml`](policy/routing/core/implementation-defaults.yaml) and [`registry/`](registry/).
-14. Review the completed evidence and authority contracts in [`docs/specification/route-outcome-evidence.md`](docs/specification/route-outcome-evidence.md), [`docs/specification/benchmark-outcome-lab.md`](docs/specification/benchmark-outcome-lab.md), [`docs/specification/source-backed-cost-attribution.md`](docs/specification/source-backed-cost-attribution.md), [`docs/specification/shadow-route-evaluation.md`](docs/specification/shadow-route-evaluation.md), and [`docs/specification/qualified-human-approval-lifecycle.md`](docs/specification/qualified-human-approval-lifecycle.md).
+14. Review the completed evidence and authority contracts in [`docs/specification/route-outcome-evidence.md`](docs/specification/route-outcome-evidence.md), [`docs/specification/final-execution-provenance.md`](docs/specification/final-execution-provenance.md), [`docs/specification/benchmark-outcome-lab.md`](docs/specification/benchmark-outcome-lab.md), [`docs/specification/source-backed-cost-attribution.md`](docs/specification/source-backed-cost-attribution.md), [`docs/specification/shadow-route-evaluation.md`](docs/specification/shadow-route-evaluation.md), and [`docs/specification/qualified-human-approval-lifecycle.md`](docs/specification/qualified-human-approval-lifecycle.md).
 15. Review the staged live-scope candidate gate in [`policy/runtime/live-execution-expansion.yaml`](policy/runtime/live-execution-expansion.yaml) and its evidence under [`research/runtime/`](research/runtime/).
-16. Review the latest hard-audit record under [`docs/history/audits/`](docs/history/audits/).
-17. Run validation and tests.
+16. Review accepted non-normative architecture directions in [`research/roadmaps/`](research/roadmaps/) without treating them as current policy or runtime authority.
+17. Review the latest hard-audit record under [`docs/history/audits/`](docs/history/audits/).
+18. Run validation and tests.
 
 ### For AI agents
 
@@ -676,6 +699,17 @@ teo --repo-root ../../.. finalize \
   /tmp/teo-dispatch.json \
   execution-result.json \
   verification-result.json \
+  --audit-log /tmp/teo-audit.jsonl
+```
+
+When canonical Route-Outcome Evidence for the final active dispatch is available, request the compatible execution-provenance projection with:
+
+```bash
+teo --repo-root ../../.. finalize \
+  /tmp/teo-dispatch.json \
+  execution-result.json \
+  verification-result.json \
+  --route-outcome route-outcome-record.json \
   --audit-log /tmp/teo-audit.jsonl
 ```
 
@@ -800,11 +834,13 @@ The repository layout is governed and CI-enforced. Root normalization, documenta
 
 ### Current development line
 
-Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, integrity, evidence, controlled-evaluation, qualified-human authority, and staged live-scope evaluation work while `v1.0.0` remains the immutable stable release.
+Current `main` identifies as `teo-reference-router==1.0.1.dev0`. It contains post-v1 compatible stewardship, repository-organization, integrity, evidence, controlled-evaluation, qualified-human authority, route-backed final execution provenance, and staged live-scope evaluation work while `v1.0.0` remains the immutable stable release.
 
 Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, Shadow Route Evaluation, and the Qualified-human approval lifecycle have completed their current milestones. The canonical `NOW` workstream is evidence-governed live execution expansion, now at 65%. `documentation` is the first staged candidate and remains `activation_authorized: false`. Its provider-diverse fallback/fresh-verifier topology, direct Sonnet/Sol/Terra adapter readiness, and staged replay harness are validated. The next gate is provider-backed controlled documentation replay evidence. That gate is currently deferred as an open action item, not removed or bypassed. The current low or medium risk `high_volume_simple` canary remains the only accepted live execution scope until the candidate also passes provider-backed replay, shadow, recovery, rollback, and independent-review gates. High and critical live execution remains unauthorized.
 
 The Host Integration Contract remains non-normative after satisfying two-host architecture diversity, static bounded-context payload economics, process-local dispatch provenance, bundled-adapter payload self-expansion resistance, process-local third-party adapter trust, restrictive host/TEO authority intersection and execution-scope binding, exact process-local execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance. Reference Implementation CI #580 validated the exact reconciled PR #146 head with 788 tests, 509 tracked-file layout checks, regulated specialist evidence validation, 41 JSON Schemas, valid linked configuration, and provider-diverse end-to-end verification. Remaining promotion evidence includes production and distributed authenticity/provenance controls, provider/model economics and task-adherence evidence, revision freshness and expiry semantics, task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure behavior, cross-process authenticity/replay semantics, and independent review against parallel routing or authority planes. The next bounded provider-independent Host Integration gate should be selected from those remaining evidence requirements after repository recalibration. This research does not alter the canonical `NOW` sequencing or live authority.
+
+The Execution Environment & Recovery Contract and Task Intent & Action Authority Contract are accepted non-normative future research directions. They preserve TEO's vendor-neutral control-plane boundary and do not authorize a specific sandbox, change Task/Dispatch schemas, create a second permissions plane, or widen current live execution.
 
 The 2026-08-10 hard audit reconciled lifecycle, release, and model-evidence metadata and is preserved at [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](docs/history/audits/post-v1-hard-audit-2026-08-10.md). The 2026-08-11 targeted authority/recovery audit is preserved at [`docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](docs/history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
 
@@ -815,7 +851,9 @@ Current and future work may include:
 - evidence-governed live-scope expansion, the current canonical `NOW` workstream
 - provider-backed controlled documentation replay followed by shadow, recovery, rollback, and independent-review gates
 - continuing adversarial control-integrity hardening and mutation coverage
-- adversarial Host Integration Contract research before any normative schema or reference-runtime promotion
+- remaining adversarial Host Integration Contract research before any normative schema or reference-runtime promotion
+- Execution Environment & Recovery Contract research without selecting a mandatory execution substrate prematurely
+- Task Intent & Action Authority Contract research before any machine-readable request-authority schema or runtime gate is proposed
 - optional independent blinded human calibration research ([Issue #75](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues/75))
 - distributed circuit-state coordination
 - distributed telemetry export and retention controls
