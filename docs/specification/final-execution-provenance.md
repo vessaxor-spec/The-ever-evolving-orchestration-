@@ -61,6 +61,24 @@ When present, `execution_provenance` contains:
 
 The projection deliberately omits task content, provider output, evidence payloads, prompts, model reasoning, credentials, and other content that is unnecessary to identify the active execution lane.
 
+## Host-Facing Finalization Path
+
+Existing finalization remains unchanged:
+
+```text
+teo finalize <dispatch> <execution> <verification>
+```
+
+When a host also possesses the canonical Route-Outcome Evidence record for the final active dispatch, it may request the compatible projection through:
+
+```text
+teo finalize <dispatch> <execution> <verification> --route-outcome <route-outcome-record>
+```
+
+The `--route-outcome` input is optional. TEO revalidates it before attachment and then validates the emitted `FinalOutcome` against the strict final-outcome schema.
+
+The option does not allow a host to nominate or override provider identity. If the supplied route record does not agree with the final dispatch/execution/verification result, finalization fails closed.
+
 ## Binding Rules
 
 Before projection, TEO must prove all of the following:
@@ -119,7 +137,8 @@ Load-bearing tests must fail if any of these protections are weakened:
 - verification status/disposition mismatch is accepted;
 - an unverified or failed route is projected as verified execution provenance;
 - different route evidence can silently replace already attached provenance;
-- legacy FinalOutcome serialization is widened when no provenance is attached.
+- legacy FinalOutcome serialization is widened when no provenance is attached;
+- the host-facing finalize path accepts mismatched Route-Outcome Evidence.
 
 ## Invariant
 
