@@ -274,6 +274,15 @@ def test_selected_model_mismatch_is_rejected() -> None:
         attach_execution_provenance(outcome, record, repo_root=REPO_ROOT)
 
 
+def test_verifier_model_mismatch_is_rejected() -> None:
+    primary, record = primary_record()
+    outcome = final_outcome(primary)
+    outcome.verifier_model = "not-the-route-verifier"
+
+    with pytest.raises(ProviderAdapterContractError, match="verifier model"):
+        attach_execution_provenance(outcome, record, repo_root=REPO_ROOT)
+
+
 def test_final_status_must_match_route_outcome_disposition() -> None:
     primary, record = primary_record()
     outcome = final_outcome(primary, status="failed")
@@ -288,6 +297,16 @@ def test_verification_status_must_match_route_outcome() -> None:
 
     with pytest.raises(ProviderAdapterContractError, match="verification status"):
         attach_execution_provenance(outcome, record, repo_root=REPO_ROOT)
+
+
+def test_different_existing_provenance_cannot_be_silently_replaced() -> None:
+    primary, record = primary_record()
+    projected = attach_execution_provenance(final_outcome(primary), record, repo_root=REPO_ROOT)
+    assert projected.execution_provenance is not None
+    projected.execution_provenance.provider_family = "tampered-provider"
+
+    with pytest.raises(ProviderAdapterContractError, match="cannot be replaced"):
+        attach_execution_provenance(projected, record, repo_root=REPO_ROOT)
 
 
 def test_projected_final_outcome_passes_strict_schema() -> None:
