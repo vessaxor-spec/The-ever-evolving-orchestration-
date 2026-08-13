@@ -201,4 +201,7 @@ class FinalOutcome:
     execution_provenance: ExecutionProvenance | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
+        data = asdict(self)
+        if self.execution_provenance is None:
+            data.pop("execution_provenance")
+        return data
