@@ -66,7 +66,8 @@ The current reference control plane now includes completed declared milestones f
 - the Benchmark and Outcome Lab with controlled replay, multi-verifier disagreement, and independently challenged consequential conclusions;
 - source-backed cost attribution with explicit billable surfaces, effective-dated evidence, and fail-closed unknown semantics;
 - governed Shadow Route Evaluation with bounded specialist #82 recommendation states, anti-Goodhart controls, independent challenge, and no live policy-write authority;
-- qualified-human approval with scoped authority grants, exact evidence-bound requests, append-only dispositions, expiry/revocation, and terminal human finalization.
+- qualified-human approval with scoped authority grants, exact evidence-bound requests, append-only dispositions, expiry/revocation, and terminal human finalization;
+- optional final-execution provenance projection that revalidates canonical Route-Outcome Evidence and exposes the observed active route through `FinalOutcome` without creating routing, execution, host, or permission authority.
 
 These layers provide evidence and authority control. They do not automatically authorize route changes or broader live execution.
 
@@ -157,7 +158,9 @@ The candidate Host Integration Contract should preserve:
 
 The **two-host architecture-diversity research gate is satisfied** by two materially different integration patterns: a host-local vendorized/capability-adapter architecture and a separate revision-pinned upstream-dispatch/downstream-execution-adapter architecture. Supporting ancestor experiments add further assurance and proportional-governance evidence but are not needed to inflate the host count.
 
-This gate completion does not certify either host, make the contract normative, or authorize a schema/runtime implementation. Remaining pre-normative evidence includes context economics, dispatch-authorization mutation resistance, adapter integrity, restrictive authority-intersection tests, risk-lowering resistance, verifier-context independence, artifact-bound verification, revision freshness behavior, portfolio-authority separation, authority-surface drift detection, recursion/recovery failure paths, and independent review of any possible parallel routing or authority plane.
+Additional provider-independent research has also satisfied the static bounded-context payload slice, process-local dispatch-provenance and bundled-adapter self-expansion slice, process-local third-party adapter non-self-authorization slice, restrictive host/TEO authority-intersection and execution-scope slice, exact process-local execution-envelope integrity slice, verifier-context independence, and exact artifact/change-set stale-PASS resistance. Those are research findings, not normative host certification.
+
+Remaining pre-normative evidence is narrower and materially different: provider/model input economics, end-to-end latency and task adherence, production-grade external-adapter package provenance and authority-controlled loading, dependency/transitive-code identity, revocation/update and downgrade semantics, distributed host/TEO authority synchronization, production resource-target canonicalization and containment, credential/account/tenant scope binding, cross-process dispatch and exact-action authenticity/replay, distributed retry-budget coordination, revision freshness and expiry semantics, portfolio/task-admission authority separation, runtime-derived authority-surface reconciliation, recursion/recovery failure behavior, and independent review against a parallel routing or authority plane.
 
 This research does not alter current runtime policy, active specialist count, live-execution scope, verifier independence, human authority, or Progress Tracker sequencing.
 
