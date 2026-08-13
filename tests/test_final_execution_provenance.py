@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -303,7 +304,10 @@ def test_different_existing_provenance_cannot_be_silently_replaced() -> None:
     primary, record = primary_record()
     projected = attach_execution_provenance(final_outcome(primary), record, repo_root=REPO_ROOT)
     assert projected.execution_provenance is not None
-    projected.execution_provenance.provider_family = "tampered-provider"
+    projected.execution_provenance = replace(
+        projected.execution_provenance,
+        provider_family="tampered-provider",
+    )
 
     with pytest.raises(ProviderAdapterContractError, match="cannot be replaced"):
         attach_execution_provenance(projected, record, repo_root=REPO_ROOT)
