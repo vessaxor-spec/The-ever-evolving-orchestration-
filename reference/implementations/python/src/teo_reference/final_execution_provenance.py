@@ -65,6 +65,13 @@ def attach_execution_provenance(
             "Final outcome selected model does not match Route-Outcome active model"
         )
 
+    verifier = active_route["verifier"]
+    verifier_model = str(verifier.get("model") or "").strip()
+    if not verifier_model or verifier_model != outcome.verifier_model:
+        raise ProviderAdapterContractError(
+            "Final outcome verifier model does not match Route-Outcome evidence"
+        )
+
     verification_dispatch_id = validated["provenance"]["verification_dispatch_id"]
     if verification_dispatch_id != outcome.dispatch_id:
         raise ProviderAdapterContractError(
@@ -100,4 +107,8 @@ def attach_execution_provenance(
         fallback_assisted=bool(validated["fallback_assisted"]),
         retry_assisted=bool(validated["retry_assisted"]),
     )
+    if outcome.execution_provenance is not None and outcome.execution_provenance != provenance:
+        raise ProviderAdapterContractError(
+            "Final execution provenance cannot be replaced by different route evidence"
+        )
     return replace(outcome, execution_provenance=provenance)
