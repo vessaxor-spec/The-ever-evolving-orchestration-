@@ -16,7 +16,7 @@ from .specialist_routing import SpecialistRoutingEngine
 from .verification_adapter import (
     LiveVerificationError,
     LiveVerificationRequest,
-    read_execution_output,
+    read_execution_artifact,
 )
 from .verification_policy import LiveVerificationPolicy
 
@@ -80,7 +80,7 @@ def execute_live_verification_with_evidence(
     if dispatch.verification.human_approval_required and policy.human_approval_satisfied_by_model_verifier:
         raise LiveVerificationError("Model verification cannot satisfy qualified-human approval")
 
-    output_text = read_execution_output(
+    output_text, verified_artifact = read_execution_artifact(
         execution.output_ref,
         allowed_root=artifact_root,
         max_bytes=policy.max_output_bytes,
@@ -109,6 +109,7 @@ def execute_live_verification_with_evidence(
     result = response.decision.to_verification_result(
         dispatch,
         evidence=list(response.evidence),
+        verified_artifact=verified_artifact,
     )
     return LiveVerificationExecution(
         result=result,
