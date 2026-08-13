@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record  
-**Last reconciled:** 2026-08-12  
+**Last reconciled:** 2026-08-13  
 **Stable release:** `v1.0.0`  
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -84,6 +84,8 @@ The Host Integration Contract remains a non-normative research track rather than
 
 The Execution Environment & Recovery Contract is likewise a non-normative future research track rather than a scored operational workstream. Its acceptance records direction only: isolation requirements, checkpoint binding, rollback/recovery authority, recovery verification, and simulation-to-promotion boundaries remain research questions and do not change current live authority or progress percentages.
 
+The Task Intent & Action Authority Contract is also a non-normative future research track rather than a scored operational workstream. Its acceptance records a request-authority research gap between task interpretation and exact execution authorization; it does not change the canonical Task Request, Dispatch Record, live authority, or progress percentages.
+
 ## NOW
 
 ### Evidence-governed live execution expansion
@@ -165,6 +167,14 @@ This research does not alter current Mission Control policy, specialist cards, a
 TEO has accepted a future non-normative research direction for governing isolated execution, pre-change checkpointing, rollback, and recovery verification through a vendor-neutral contract. The research is recorded in [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md).
 
 The research must preserve current risk, authority, verification, and Host Integration boundaries. It does not promote a specific sandbox technology, does not authorize simulation-to-production promotion, and does not move ahead of the deferred provider-backed `documentation` replay milestone.
+
+### Task Intent & Action Authority Contract research
+
+TEO has accepted a future non-normative research direction for preserving the action authority granted by an originating request before routing, delegation, host-native action, recovery, or state-changing execution. The research is recorded in [`../../research/roadmaps/task-intent-action-authority-contract.md`](../../research/roadmaps/task-intent-action-authority-contract.md).
+
+The research treats originating request authority as a ceiling that later TEO policy, Host Integration authority intersection, capability controls, qualified-human requirements, and exact execution-envelope authorization may narrow but never silently widen. It must distinguish assessment, recommendation, preparation, execution, and verification without turning task subject, model capability, or host standing permission into implicit execution authority.
+
+This research does not alter the canonical Task Request or Dispatch Record, current Mission Control policy, specialist cards, provider routing, qualified-human authority, live-execution scope, or the deferred provider-backed `documentation` replay milestone.
 
 ### Governed route adaptation
 
@@ -348,6 +358,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
 - [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
 - [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md): non-normative isolated-execution, checkpoint, rollback, and recovery-verification research roadmap
+- [`../../research/roadmaps/task-intent-action-authority-contract.md`](../../research/roadmaps/task-intent-action-authority-contract.md): non-normative request-intent, assessment-versus-action, delegation, and state-change authority research roadmap
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md): first implementation-backed external-host validation round
 - [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md): second structurally different host validation and architecture-diversity gate decision
 - [`../../research/runtime/host-integration-context-economics-2026-08-12.md`](../../research/runtime/host-integration-context-economics-2026-08-12.md): static bounded-context specialist-payload measurement and remaining empirical context-economics gate

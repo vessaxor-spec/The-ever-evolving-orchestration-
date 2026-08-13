@@ -171,6 +171,16 @@ Execution substrates remain replaceable host/runtime implementations. TEO should
 
 This accepted research direction does not alter the current `documentation` replay gate, active `high_volume_simple` scope, provider routing, specialist roster, qualified-human authority, or stable `v1.0.0` contract.
 
+### Task intent and action authority contract research
+
+TEO has accepted a future non-normative research track for making the authority granted by an originating request explicit before routing, delegation, host-native action, recovery, or state-changing execution. The research is recorded in [`../../research/roadmaps/task-intent-action-authority-contract.md`](../../research/roadmaps/task-intent-action-authority-contract.md).
+
+The contract should distinguish assessment, recommendation, preparation, execution, and verification authority without using task topic, model capability, host permission, or specialist eligibility as a proxy for user intent. A request-authority record should act as an authority ceiling that later TEO policy, Host Integration authority intersection, capability controls, qualified-human requirements, and exact action-envelope authorization may narrow but never silently widen.
+
+The research must remain content-minimized, preserve delegated-child authority inheritance, keep verification separate from repair authority, and reject fallback, escalation, sandbox, recovery, or host-standing-permission paths that increase the action scope granted by the originating request.
+
+This accepted research direction does not modify the canonical Task Request or Dispatch Record, does not create a second routing or permissions plane, and does not alter current live scope, provider routing, specialist roster, qualified-human authority, Progress Tracker sequencing, or the stable `v1.0.0` contract.
+
 ## Regulated specialist pilot
 
 Keep the evidence-backed freshness pilot limited to the approved six cards until maintainability is demonstrated through repeated refresh cycles, authority resolution, provenance checks, expiry behavior, independent verification, mutation tests, and explicit approval.
