@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import runpy
 from dataclasses import replace
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,7 @@ HistoricalDisposition = FRESHNESS["HistoricalDisposition"]
 IntegrationFreshnessError = FRESHNESS["IntegrationFreshnessError"]
 build_binding_snapshot = FRESHNESS["build_binding_snapshot"]
 assess_host_binding = FRESHNESS["assess_host_binding"]
+sha256_payload = FRESHNESS["_sha256_payload"]
 
 MAIN_REVISION = "bff9991917af31b8a3b8bae7cc5f79a2deec65d2"
 
@@ -64,6 +66,10 @@ def catalog_with_states(current_binding):
             ),
         ),
     ), compatible, update_available, unsupported
+
+
+def test_typed_date_scalar_does_not_collapse_to_same_text_string() -> None:
+    assert sha256_payload(date(2026, 2, 16)) != sha256_payload("2026-02-16")
 
 
 def test_current_binding_is_derived_from_executable_repository_truth(current_binding) -> None:
@@ -254,6 +260,16 @@ def test_duplicate_historical_revision_is_rejected(current_binding) -> None:
                 HistoricalBindingRecord(second, HistoricalDisposition.UNSUPPORTED),
             ),
         )
+
+
+def test_historical_catalog_rejects_wrong_binding_type(current_binding) -> None:
+    malformed = HistoricalBindingRecord(
+        "host-supplied-not-a-binding",
+        HistoricalDisposition.COMPATIBLE,
+    )
+
+    with pytest.raises(IntegrationFreshnessError, match="historical binding"):
+        AuthorityOwnedBindingCatalog(current_binding, (malformed,))
 
 
 def test_historical_catalog_cannot_reuse_current_revision(current_binding) -> None:
