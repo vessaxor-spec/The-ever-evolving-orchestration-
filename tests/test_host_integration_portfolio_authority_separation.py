@@ -165,7 +165,7 @@ def test_sibling_admission_cannot_authorize_another_task() -> None:
     beta_grant = authority.admit_task("task-beta")
     gateway = authority.teo_gateway()
 
-    with pytest.raises(PortfolioAuthorityError, match="request task_id"):
+    with pytest.raises(PortfolioAuthorityError, match="request admission_id"):
         gateway.claim(request(beta_grant), alpha_grant, alpha)
 
     beta_session = gateway.claim(request(beta_grant), beta_grant, beta)
@@ -305,6 +305,17 @@ def test_session_task_substitution_is_rejected_on_revalidation() -> None:
 
     with pytest.raises(PortfolioAuthorityError, match="identity"):
         gateway.revalidate(session, substituted)
+
+
+def test_fabricated_session_identity_is_rejected_on_revalidation() -> None:
+    authority = HostPortfolioAuthority()
+    payload = task()
+    grant, gateway = admit(authority, payload)
+    session = gateway.claim(request(grant), grant, payload).to_dict()
+    session["session_id"] = "teo-session-fabricated"
+
+    with pytest.raises(PortfolioAuthorityError, match="session identity"):
+        gateway.revalidate(session, payload)
 
 
 def test_session_binding_tamper_is_rejected_on_revalidation() -> None:

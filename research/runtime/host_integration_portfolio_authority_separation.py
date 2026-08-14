@@ -209,6 +209,7 @@ class _AdmissionState:
     admission_revision: int
     active: bool = True
     claimed: bool = False
+    session_id: str | None = None
 
 
 class HostPortfolioAuthority:
@@ -434,9 +435,11 @@ class HostPortfolioAuthority:
             if task_state.task_digest != parsed_grant.task_digest:
                 raise PortfolioAuthorityError("host task digest no longer matches admission")
 
+            session_id = f"teo-session-{secrets.token_hex(12)}"
             admission.claimed = True
+            admission.session_id = session_id
             return AdmittedTaskSession(
-                session_id=f"teo-session-{secrets.token_hex(12)}",
+                session_id=session_id,
                 portfolio_id=self.portfolio_id,
                 admission_id=parsed_grant.admission_id,
                 task_id=parsed_grant.task_id,
@@ -468,6 +471,8 @@ class HostPortfolioAuthority:
                 raise PortfolioAuthorityError("session admission has been revoked or cancelled")
             if not admission.claimed:
                 raise PortfolioAuthorityError("session admission was never claimed")
+            if admission.session_id != parsed_session.session_id:
+                raise PortfolioAuthorityError("session identity does not match issued host session")
             if admission.task_id != parsed_session.task_id:
                 raise PortfolioAuthorityError("session task identity does not match host admission")
             if admission.task_digest != parsed_session.task_digest:

@@ -21,7 +21,7 @@ The research authority binds an admission to:
 - host-owned admission revision; and
 - an HMAC-bound host authorization token.
 
-TEO can claim that exact admission once and revalidate the resulting task session. The TEO-facing gateway exposes no operation for queue creation, task selection, admission, prioritization, cancellation, revocation, or portfolio inspection.
+TEO can claim that exact admission once and revalidate the resulting task session. Revalidation is bound to the exact host-issued session identity so a fabricated session record cannot impersonate an already-claimed admission through the conformant gateway. The TEO-facing gateway exposes no operation for queue creation, task selection, admission, prioritization, cancellation, revocation, or portfolio inspection.
 
 ## Separation from Task Intent & Action Authority
 
@@ -64,6 +64,7 @@ The test matrix includes:
 - cross-portfolio grant reuse;
 - unknown widening fields in the host grant;
 - task substitution during session revalidation;
+- fabricated or substituted session identity during revalidation;
 - session binding tamper; and
 - duplicate host admission for the same already-admitted task.
 
