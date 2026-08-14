@@ -174,7 +174,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "exact artifact/change-set stale-PASS resistance",
         "brokered conformant process-lifetime cross-process authority/replay resistance",
         "static runtime-wired authority-surface reconciliation",
-        "dynamic executable-hook discovery",
+        "Dynamic executable-hook discovery",
         "Artifact-bound finalization",
         "Task 002 is now closed as a scoped normative remediation",
         "2026-08-14-external-verifier-assessment-artifact-bound-finalization.md",
