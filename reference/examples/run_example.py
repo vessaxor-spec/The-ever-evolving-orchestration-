@@ -9,6 +9,7 @@ from pathlib import Path
 import yaml
 
 from teo_reference import OrchestrationEngine, TaskRequest, VerificationResult
+from teo_reference.artifact_integrity import read_verified_text_artifact
 from teo_reference.schemas import ExecutionResult
 
 
@@ -18,20 +19,36 @@ def main() -> int:
     engine = OrchestrationEngine.from_repo(str(repo_root))
     dispatch = engine.dispatch(TaskRequest.from_dict(task_data))
 
+    artifact_root = repo_root / ".teo" / "reference-example"
+    artifact_root.mkdir(parents=True, exist_ok=True)
+    artifact_path = artifact_root / "execution-output.txt"
+    artifact_path.write_text("provider-neutral reference lifecycle output\n", encoding="utf-8")
+    output_ref = artifact_path.resolve().as_uri()
+    _, verified_artifact = read_verified_text_artifact(
+        output_ref,
+        allowed_root=artifact_root,
+    )
+
     execution = ExecutionResult(
         dispatch_id=dispatch.dispatch_id,
         status="succeeded",
-        output_ref="reference/implementations/python/",
-        evidence=["pytest: all reference-router tests passed"],
+        output_ref=output_ref,
+        evidence=["reference example execution artifact created"],
     )
     verification = VerificationResult(
         dispatch_id=dispatch.dispatch_id,
         status="passed",
         verifier_model=dispatch.verification.implementation.model,
         checks=dispatch.verification.method,
-        evidence=["independent review confirmed route, fallback, and audit behavior"],
+        evidence=["reference example verification fixture accepted the bound artifact"],
+        verified_artifact=verified_artifact,
     )
-    outcome = engine.finalize(dispatch, execution, verification)
+    outcome = engine.finalize(
+        dispatch,
+        execution,
+        verification,
+        artifact_root=artifact_root,
+    )
     print(json.dumps({"dispatch": dispatch.to_dict(), "outcome": outcome.to_dict()}, indent=2))
     return 0
 

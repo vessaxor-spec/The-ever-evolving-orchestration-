@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
 from typing import Any, Literal
@@ -10,6 +11,7 @@ VerificationStatus = Literal["passed", "failed", "needs_human"]
 ExecutionStatus = Literal["succeeded", "failed"]
 
 RISK_ORDER: dict[str, int] = {"low": 0, "medium": 1, "high": 2, "critical": 3}
+_SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
 def utc_now() -> str:
@@ -141,6 +143,29 @@ class ExecutionResult:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class VerifiedArtifact:
+    output_ref: str
+    sha256: str
+    size_bytes: int
+
+    def __post_init__(self) -> None:
+        if not str(self.output_ref).strip():
+            raise ValueError("verified_artifact.output_ref is required")
+        if not _SHA256_RE.fullmatch(str(self.sha256)):
+            raise ValueError("verified_artifact.sha256 must be a lowercase SHA-256 digest")
+        if isinstance(self.size_bytes, bool) or not isinstance(self.size_bytes, int) or self.size_bytes < 0:
+            raise ValueError("verified_artifact.size_bytes must be a non-negative integer")
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "VerifiedArtifact":
+        return cls(
+            output_ref=str(_require(data.get("output_ref"), "verified_artifact.output_ref")),
+            sha256=str(_require(data.get("sha256"), "verified_artifact.sha256")),
+            size_bytes=int(_require(data.get("size_bytes"), "verified_artifact.size_bytes")),
+        )
+
+
 @dataclass(slots=True)
 class VerificationResult:
     dispatch_id: str
@@ -149,12 +174,16 @@ class VerificationResult:
     checks: list[str] = field(default_factory=list)
     evidence: list[str] = field(default_factory=list)
     notes: str | None = None
+    verified_artifact: VerifiedArtifact | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "VerificationResult":
         status = str(_require(data.get("status"), "verification.status"))
         if status not in {"passed", "failed", "needs_human"}:
             raise ValueError(f"Unsupported verification status: {status}")
+        artifact_data = data.get("verified_artifact")
+        if artifact_data is not None and not isinstance(artifact_data, dict):
+            raise ValueError("verification.verified_artifact must be an object or null")
         return cls(
             dispatch_id=str(_require(data.get("dispatch_id"), "verification.dispatch_id")),
             status=status,  # type: ignore[arg-type]
@@ -162,6 +191,9 @@ class VerificationResult:
             checks=list(data.get("checks", [])),
             evidence=list(data.get("evidence", [])),
             notes=str(data["notes"]) if data.get("notes") else None,
+            verified_artifact=(
+                VerifiedArtifact.from_dict(artifact_data) if artifact_data is not None else None
+            ),
         )
 
 

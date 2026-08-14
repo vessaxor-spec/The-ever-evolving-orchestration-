@@ -196,6 +196,10 @@ def test_primary_live_verifier_is_blinded_and_uses_sonnet_structured_output(tmp_
 
     assert result.status == "passed"
     assert result.verifier_model == "claude-sonnet-5"
+    assert result.verified_artifact is not None
+    assert result.verified_artifact.output_ref.endswith("/execution.txt")
+    assert len(result.verified_artifact.sha256) == 64
+    assert result.verified_artifact.size_bytes == 16
     body = calls[0]["body"]
     assert body["model"] == "claude-sonnet-5"
     assert body["output_config"]["effort"] == "medium"
@@ -433,6 +437,7 @@ def test_live_verification_integrates_with_existing_finalize_without_bypass(tmp_
         dispatch,
         execution.to_execution_result(),
         verification,
+        artifact_root=tmp_path,
     )
     assert outcome.status == "completed"
     assert outcome.verifier_model == "claude-sonnet-5"

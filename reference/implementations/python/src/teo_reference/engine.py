@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any, Iterable
 from uuid import uuid4
 
+from .artifact_integrity import ArtifactIntegrityError, revalidate_verified_artifact
 from .config import ConfigBundle
 from .schemas import (
     DispatchRecord,
@@ -359,6 +361,8 @@ class OrchestrationEngine:
         dispatch: DispatchRecord,
         execution: ExecutionResult,
         verification: VerificationResult,
+        *,
+        artifact_root: str | Path | None = None,
     ) -> FinalOutcome:
         if execution.dispatch_id != dispatch.dispatch_id or verification.dispatch_id != dispatch.dispatch_id:
             raise RoutingError("Execution and verification records must reference the dispatch being finalized")
@@ -374,6 +378,26 @@ class OrchestrationEngine:
             == dispatch.selected_implementation.provider_family
         ):
             raise RoutingError("Independent verification cannot use the selected execution provider family")
+
+        if verification.verified_artifact is not None and not execution.output_ref:
+            raise RoutingError("Verification artifact binding has no execution output artifact")
+        if execution.status == "succeeded" and verification.status == "passed" and execution.output_ref:
+            if verification.verified_artifact is None:
+                raise RoutingError(
+                    "Artifact-backed passed verification requires exact verified artifact identity"
+                )
+            if artifact_root is None:
+                raise RoutingError(
+                    "Artifact-backed passed verification requires an authorized artifact_root"
+                )
+            try:
+                revalidate_verified_artifact(
+                    execution.output_ref,
+                    verification.verified_artifact,
+                    allowed_root=artifact_root,
+                )
+            except ArtifactIntegrityError as exc:
+                raise RoutingError(str(exc)) from exc
 
         notes: list[str] = []
         escalation_used = False

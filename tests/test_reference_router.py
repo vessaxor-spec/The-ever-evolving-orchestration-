@@ -319,7 +319,7 @@ def test_finalize_records_evidence_and_audit(tmp_path: Path) -> None:
     execution = ExecutionResult(
         dispatch_id=dispatch.dispatch_id,
         status="succeeded",
-        output_ref="artifact://architecture",
+        output_ref=None,
         evidence=["architecture document produced"],
     )
     verification = VerificationResult(
