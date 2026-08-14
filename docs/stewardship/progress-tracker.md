@@ -27,7 +27,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Latest validated test suite | CI #634: 825 tests passed, 522 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass |
+| Current validated scale | 825 tests passed, 523 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #637 |
 | Documentation reconciliation baseline | CI #602: 802 tests, 515 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse end-to-end pass |
 | Host-integration research validation | CI #626: 817 tests, 520 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse end-to-end pass |
 | Host Integration Contract | Two-host architecture diversity, static bounded-context payload, process-local dispatch provenance, bundled-adapter payload self-expansion, process-local third-party adapter trust, process-local restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, exact artifact/change-set stale-PASS resistance, and brokered conformant process-lifetime cross-process authority/replay resistance research slices satisfied; contract remains non-normative and production/distributed authenticity remains open |
