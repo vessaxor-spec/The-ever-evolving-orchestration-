@@ -5,6 +5,7 @@ import json
 import runpy
 import tomllib
 from dataclasses import dataclass
+from datetime import date, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Mapping, Sequence
@@ -48,9 +49,43 @@ _BINDING_FIELDS = {
 _HASH_FIELDS = _BINDING_FIELDS - {"release", "runtime_version", "revision"}
 
 
+def _canonicalize_for_hash(value: Any) -> Any:
+    """Convert effective configuration values into deterministic typed JSON data.
+
+    YAML may load scalars such as dates into Python objects that plain JSON cannot
+    serialize. Those values must retain their type identity rather than being flattened
+    to strings, because a YAML date and an ordinary string with the same characters are
+    not the same executable configuration value.
+    """
+
+    if value is None or type(value) in {bool, int, str}:
+        return value
+    if isinstance(value, float):
+        return value
+    if isinstance(value, datetime):
+        return {"$type": "datetime", "value": value.isoformat()}
+    if isinstance(value, date):
+        return {"$type": "date", "value": value.isoformat()}
+    if isinstance(value, Mapping):
+        canonical: dict[str, Any] = {}
+        for key, nested in value.items():
+            if not isinstance(key, str):
+                raise IntegrationFreshnessError(
+                    "effective configuration mappings must use string keys"
+                )
+            canonical[key] = _canonicalize_for_hash(nested)
+        return canonical
+    if isinstance(value, (list, tuple)):
+        return [_canonicalize_for_hash(item) for item in value]
+    raise IntegrationFreshnessError(
+        "unsupported effective configuration value for freshness hashing: "
+        f"{type(value).__name__}"
+    )
+
+
 def _sha256_payload(value: Any) -> str:
     encoded = json.dumps(
-        value,
+        _canonicalize_for_hash(value),
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,
@@ -203,6 +238,10 @@ class AuthorityOwnedBindingCatalog:
                     "historical disposition must use HistoricalDisposition"
                 )
             binding = record.binding
+            if not isinstance(binding, IntegrationBindingSnapshot):
+                raise IntegrationFreshnessError(
+                    "historical binding must use IntegrationBindingSnapshot"
+                )
             if binding.revision == current.revision:
                 raise IntegrationFreshnessError(
                     "historical binding cannot reuse the current revision"
