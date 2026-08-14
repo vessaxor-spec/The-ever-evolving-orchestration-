@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import secrets
 import threading
@@ -260,8 +261,7 @@ class ProcessLocalRecursionAuthority:
         self._root_id_by_dispatch_id: dict[str, str] = {}
         self._leases: dict[str, RecursionLease] = {}
         self._active_lease_ids: set[str] = set()
-        self._authorizations: dict[str, RecursionEntryAuthorization] = {}
-        self._pending_authorization_by_root: dict[str, str] = {}
+        self._authorization_secret = secrets.token_bytes(32)
         self._claimed_authorizations: set[str] = set()
         self._used_request_ids: dict[str, set[str]] = {}
         self._lock = threading.Lock()
@@ -382,6 +382,40 @@ class ProcessLocalRecursionAuthority:
         if root.active_descendants >= limits.max_active_branches:
             raise RecursionAdmissionError("maximum active branch budget exhausted")
 
+    def _sign_authorization_fields(
+        self,
+        *,
+        root_id: str,
+        parent_lease_id: str,
+        dispatch_id: str,
+        task_id: str,
+        request_id: str,
+        entry_kind: str,
+        depth: int,
+        recovery_generation: int,
+        state_revision: int,
+        dispatch_digest: str,
+        limits_digest: str,
+    ) -> str:
+        payload = {
+            "root_id": root_id,
+            "parent_lease_id": parent_lease_id,
+            "dispatch_id": dispatch_id,
+            "task_id": task_id,
+            "request_id": request_id,
+            "entry_kind": entry_kind,
+            "depth": depth,
+            "recovery_generation": recovery_generation,
+            "state_revision": state_revision,
+            "dispatch_digest": dispatch_digest,
+            "limits_digest": limits_digest,
+        }
+        return hmac.new(
+            self._authorization_secret,
+            _canonical_json(payload).encode("utf-8"),
+            hashlib.sha256,
+        ).hexdigest()
+
     def authorize_descendant(
         self,
         parent_lease: RecursionLease | Mapping[str, Any],
@@ -404,11 +438,7 @@ class ProcessLocalRecursionAuthority:
                 depth=depth,
                 recovery_generation=recovery_generation,
             )
-            prior_pending = self._pending_authorization_by_root.get(parent.root_id)
-            if prior_pending is not None:
-                self._authorizations.pop(prior_pending, None)
-            authorization = RecursionEntryAuthorization(
-                authorization_token=secrets.token_urlsafe(24),
+            authorization_token = self._sign_authorization_fields(
                 root_id=parent.root_id,
                 parent_lease_id=parent.lease_id,
                 dispatch_id=parent.dispatch_id,
@@ -421,11 +451,20 @@ class ProcessLocalRecursionAuthority:
                 dispatch_digest=root.dispatch_digest,
                 limits_digest=root.limits_digest,
             )
-            self._authorizations[authorization.authorization_token] = authorization
-            self._pending_authorization_by_root[parent.root_id] = (
-                authorization.authorization_token
+            return RecursionEntryAuthorization(
+                authorization_token=authorization_token,
+                root_id=parent.root_id,
+                parent_lease_id=parent.lease_id,
+                dispatch_id=parent.dispatch_id,
+                task_id=parent.task_id,
+                request_id=request_id,
+                entry_kind=entry_kind,
+                depth=depth,
+                recovery_generation=recovery_generation,
+                state_revision=root.revision,
+                dispatch_digest=root.dispatch_digest,
+                limits_digest=root.limits_digest,
             )
-            return authorization
 
     def claim_descendant(
         self,
@@ -434,18 +473,26 @@ class ProcessLocalRecursionAuthority:
     ) -> RecursionLease:
         with self._lock:
             supplied = self._coerce_authorization(authorization)
-            registered = self._authorizations.get(supplied.authorization_token)
-            if registered is None or registered != supplied:
+            expected_token = self._sign_authorization_fields(
+                root_id=supplied.root_id,
+                parent_lease_id=supplied.parent_lease_id,
+                dispatch_id=supplied.dispatch_id,
+                task_id=supplied.task_id,
+                request_id=supplied.request_id,
+                entry_kind=supplied.entry_kind,
+                depth=supplied.depth,
+                recovery_generation=supplied.recovery_generation,
+                state_revision=supplied.state_revision,
+                dispatch_digest=supplied.dispatch_digest,
+                limits_digest=supplied.limits_digest,
+            )
+            if not hmac.compare_digest(supplied.authorization_token, expected_token):
                 raise RecursionAdmissionError(
                     "authorization does not match a TEO-side recursion admission snapshot"
                 )
             if supplied.authorization_token in self._claimed_authorizations:
                 raise RecursionAdmissionError("recursion authorization has already been claimed")
             parent, root = self._validate_lease(parent_lease)
-            if self._pending_authorization_by_root.get(parent.root_id) != supplied.authorization_token:
-                raise RecursionAdmissionError(
-                    "authorization is not the current pending admission for this root"
-                )
             if supplied.root_id != parent.root_id or supplied.parent_lease_id != parent.lease_id:
                 raise RecursionAdmissionError(
                     "authorization is not bound to the supplied parent lineage"
@@ -499,7 +546,6 @@ class ProcessLocalRecursionAuthority:
                 limits_digest=root.limits_digest,
             )
             self._claimed_authorizations.add(supplied.authorization_token)
-            self._pending_authorization_by_root.pop(parent.root_id, None)
             self._used_request_ids[parent.root_id].add(supplied.request_id)
             self._leases[lease.lease_id] = lease
             self._active_lease_ids.add(lease.lease_id)
