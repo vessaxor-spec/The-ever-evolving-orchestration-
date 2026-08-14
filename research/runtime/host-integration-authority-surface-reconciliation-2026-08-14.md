@@ -130,6 +130,8 @@ Corrected exact head `9cc5694474d310bc50bac1aa342b61f45fb17e10` passed Reference
 
 The controlled provider-backed documentation replay workflow remained skipped, as intended. This research run is not provider-backed live-execution evidence.
 
+After the research result, evidence record, Host Integration roadmap, Progress Tracker, README, and documentation-truth canaries were reconciled, CI #651 passed the complete integrated branch with **842 automated tests**, **526 tracked-file layout checks**, regulated specialist evidence validation, **41 JSON Schemas**, valid linked configuration with zero issues, and the provider-diverse artifact-bound end-to-end reference lifecycle. CI #644 remains the exact executable research proof; CI #651 establishes the fully reconciled repository/documentation scale for this slice.
+
 ## What this supports
 
 For the tested Python reference runtime and the declared static prefixes, the evidence supports the following bounded claim:
