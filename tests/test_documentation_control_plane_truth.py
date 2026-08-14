@@ -135,6 +135,27 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
     assert "route-outcome learning and shadow-route evaluation" not in text
 
 
+def test_live_verification_spec_matches_executable_canary_routes() -> None:
+    text = (
+        REPO_ROOT / "docs" / "specification" / "live-independent-verification.md"
+    ).read_text(encoding="utf-8")
+
+    for phrase in (
+        "Primary bounded route:\n\n```text\nGemini 3.5 Flash-Lite execution\n  -> Claude Sonnet 5 verification\n```",
+        "Model-specific fallback after Gemini 3.5 Flash-Lite is blocked while Anthropic remains eligible:\n\n```text\nClaude Haiku 4.5 execution\n  -> Gemini 3.6 Flash verification\n```",
+        "Google provider-family failure:\n\n```text\nClaude Haiku 4.5 execution\n  -> GPT-5.6 Sol verification\n```",
+        "The live verifier does not choose these routes. Routing recomputes eligibility and records the assignment before verification executes.",
+    ):
+        assert phrase in text
+
+    for stale in (
+        "Primary bounded route:\n\n```text\nClaude Haiku 4.5 execution\n  -> Gemini 3.6 Flash verification\n```",
+        "Model-specific fallback to Gemini while Anthropic remains eligible:\n\n```text\nGemini 3.6 Flash execution\n  -> Claude Sonnet 5 verification\n```",
+        "Anthropic provider-family failure:\n\n```text\nGemini 3.6 Flash execution\n  -> GPT-5.6 Sol verification\n```",
+    ):
+        assert stale not in text
+
+
 def test_progress_tracker_matches_executable_roster_and_current_priority() -> None:
     text = (
         REPO_ROOT / "docs" / "stewardship" / "progress-tracker.md"
