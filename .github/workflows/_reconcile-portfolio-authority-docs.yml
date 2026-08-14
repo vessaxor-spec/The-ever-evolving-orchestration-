@@ -51,6 +51,19 @@ jobs:
       - name: Apply fail-closed documentation reconciliation
         run: python research/runtime/_reconcile_portfolio_authority_docs.py
 
+      - name: Link roadmap gate to exact portfolio authority evidence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('research/roadmaps/host-integration-contract.md')
+          text = path.read_text(encoding='utf-8')
+          old = 'Conformant process-local task-admission separation slice satisfied by the 2026-08-15 research harness and corrected CI #703;'
+          new = 'Conformant process-local task-admission separation slice satisfied by the [2026-08-15 research harness](../runtime/host-integration-portfolio-authority-separation-2026-08-15.md) and corrected CI #703;'
+          if text.count(old) != 1:
+              raise SystemExit(f'roadmap evidence link expected one match, found {text.count(old)}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
       - name: Restore temporary helper and prove write scope and documentation truth
         run: |
           git checkout -- research/runtime/_reconcile_portfolio_authority_docs.py
