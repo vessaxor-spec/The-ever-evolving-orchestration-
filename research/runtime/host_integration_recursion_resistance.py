@@ -261,6 +261,7 @@ class ProcessLocalRecursionAuthority:
         self._leases: dict[str, RecursionLease] = {}
         self._active_lease_ids: set[str] = set()
         self._authorizations: dict[str, RecursionEntryAuthorization] = {}
+        self._pending_authorization_by_root: dict[str, str] = {}
         self._claimed_authorizations: set[str] = set()
         self._used_request_ids: dict[str, set[str]] = {}
         self._lock = threading.Lock()
@@ -403,6 +404,9 @@ class ProcessLocalRecursionAuthority:
                 depth=depth,
                 recovery_generation=recovery_generation,
             )
+            prior_pending = self._pending_authorization_by_root.get(parent.root_id)
+            if prior_pending is not None:
+                self._authorizations.pop(prior_pending, None)
             authorization = RecursionEntryAuthorization(
                 authorization_token=secrets.token_urlsafe(24),
                 root_id=parent.root_id,
@@ -418,6 +422,9 @@ class ProcessLocalRecursionAuthority:
                 limits_digest=root.limits_digest,
             )
             self._authorizations[authorization.authorization_token] = authorization
+            self._pending_authorization_by_root[parent.root_id] = (
+                authorization.authorization_token
+            )
             return authorization
 
     def claim_descendant(
@@ -435,6 +442,10 @@ class ProcessLocalRecursionAuthority:
             if supplied.authorization_token in self._claimed_authorizations:
                 raise RecursionAdmissionError("recursion authorization has already been claimed")
             parent, root = self._validate_lease(parent_lease)
+            if self._pending_authorization_by_root.get(parent.root_id) != supplied.authorization_token:
+                raise RecursionAdmissionError(
+                    "authorization is not the current pending admission for this root"
+                )
             if supplied.root_id != parent.root_id or supplied.parent_lease_id != parent.lease_id:
                 raise RecursionAdmissionError(
                     "authorization is not bound to the supplied parent lineage"
@@ -488,6 +499,7 @@ class ProcessLocalRecursionAuthority:
                 limits_digest=root.limits_digest,
             )
             self._claimed_authorizations.add(supplied.authorization_token)
+            self._pending_authorization_by_root.pop(parent.root_id, None)
             self._used_request_ids[parent.root_id].add(supplied.request_id)
             self._leases[lease.lease_id] = lease
             self._active_lease_ids.add(lease.lease_id)
