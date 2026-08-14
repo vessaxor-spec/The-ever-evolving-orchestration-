@@ -25,7 +25,8 @@ Implementation-backed evidence now includes:
 - [`../runtime/host-integration-execution-envelope-integrity-2026-08-12.md`](../runtime/host-integration-execution-envelope-integrity-2026-08-12.md), exact process-local action-envelope integrity;
 - [`../runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](../runtime/host-integration-verifier-artifact-binding-2026-08-12.md), verifier-context independence and exact artifact/change-set stale-PASS resistance;
 - [`../runtime/host-integration-cross-process-authority-2026-08-13.md`](../runtime/host-integration-cross-process-authority-2026-08-13.md), brokered conformant process-lifetime cross-process authority and replay resistance with the production/distributed boundary kept open;
-- [`../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md`](../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md), runtime-derived reconciliation of statically wired authority configuration and policy surfaces, with dynamic executable-hook discovery explicitly kept open.
+- [`../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md`](../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md), runtime-derived reconciliation of statically wired authority configuration and policy surfaces, with dynamic executable-hook discovery explicitly kept open;
+- [`../runtime/host-integration-recursion-resistance-2026-08-14.md`](../runtime/host-integration-recursion-resistance-2026-08-14.md), process-lifetime root-scoped recursion admission with depth, descendant, specialist-spawn, active-branch, and recovery-generation ceilings.
 
 This document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority.
 
@@ -251,8 +252,10 @@ Candidate controls:
 ```yaml
 orchestration_budget:
   maximum_teo_reentry_depth: 1
+  maximum_descendants: <bounded>
   maximum_specialist_spawns: <bounded>
   maximum_parallel_branches: <bounded>
+  maximum_recovery_generations: <bounded>
   maximum_attempts: <bounded>
   deadline: <optional>
   normalized_usage_budget: <optional>
@@ -263,7 +266,7 @@ Resource limits may refuse or constrain execution. They must never lower effecti
 
 Already-dispatched executor contexts should not recursively re-enter Mission Control unless a new bounded dispatch is explicitly required by policy or delegation semantics.
 
-Recursion and recovery failure behavior remain open evidence gates.
+Process-lifetime recursion admission is now supported at the non-normative research layer. The tested TEO-side authority binds one root dispatch to immutable re-entry depth, total descendant, specialist-spawn, active-branch, and recovery-generation ceilings. Descendant admission uses stateless HMAC-bound claims tied to the exact root revision so host forgery, replay, stale claims, cross-root reuse, release-based budget reset, and raced same-revision claims fail closed. Same-dispatch provider retry remains governed separately by the existing retry policy. Restart-durable, multi-process/distributed, production-scheduler, remote-authenticity, and compromised-host recursion/recovery boundaries remain open.
 
 ### 9. Preserve authority boundaries
 
@@ -394,8 +397,10 @@ host_integration:
 
   orchestration_budget:
     maximum_teo_reentry_depth: 1
+    maximum_descendants: <int>
     maximum_specialist_spawns: <int>
     maximum_parallel_branches: <int>
+    maximum_recovery_generations: <int>
 
   conformance:
     mission_control: <supported|partial|unsupported>
@@ -452,8 +457,9 @@ This research does not define a "full TEO" marketing claim or certify any host.
 | Verifier-context independence | **Satisfied at research layer** | tested executor-derived and verdict-priming context rejected |
 | Exact artifact/change-set binding | **Satisfied at research layer** | stale, substituted, mutated, wrong-task/dispatch/change/target PASS evidence rejected |
 | Authority-surface reconciliation | **Static runtime-wired slice satisfied** | runtime-derived canonical YAML/JSON authority paths, presence and content fingerprinting, exact declaration reconciliation, and tested stale/omitted/extra/aliased path resistance; dynamic executable hooks/plugins/transitive code remain open |
+| Recursion resistance | **Process-lifetime slice satisfied** | root dispatch/budget binding with depth, descendant, specialist-spawn, active-branch, and recovery-generation ceilings; stateless HMAC authorization plus replay/stale/cross-root/race/release-reset resistance; restart-durable, distributed, scheduler, and compromised-host boundaries remain open |
 
-Validation milestones include CI #546, #552, #555, #560, #565, #570/#573, #577/#580, #626, and #644. CI evidence proves the tested repository research boundary only; it does not promote the contract into normative runtime authority.
+Validation milestones include CI #546, #552, #555, #560, #565, #570/#573, #577/#580, #626, #644, and #658. CI evidence proves the tested repository research boundary only; it does not promote the contract into normative runtime authority.
 
 ## Anti-patterns
 
@@ -498,7 +504,7 @@ The contract remains research until the complete promotion case is supported. Cu
 9. **Autonomy correctness:** prove routine multi-step work can remain autonomous while explicit human-authority requirements remain blocking. **Open as an integrated host-conformance gate.**
 10. **Authority intersection:** prove host and TEO constraints resolve by deny-wins/more-restrictive-control-wins. **Process-local adversarial slice satisfied; distributed synchronization remains open.**
 11. **Verification honesty:** prove unsupported independence is surfaced rather than simulated. **Verifier-context independence is satisfied at the research layer; broader host declaration/conformance remains open.**
-12. **Recursion resistance:** mutation-test delegation-depth, spawn-budget, and recovery/re-entry boundaries. **Open.**
+12. **Recursion resistance:** mutation-test delegation-depth, spawn-budget, and recovery/re-entry boundaries. **Process-lifetime slice satisfied by the 2026-08-14 recursion-resistance harness and CI #658; restart-durable, multi-process/distributed, production-scheduler, remote-authenticity, and compromised-host boundaries remain open.**
 13. **Registry freshness:** prove stale or mismatched TEO release, policy, registry, overlay, or executable-composition bindings are detected. **Open.**
 14. **Routing conformance:** prove host-local taxonomies cannot collapse Team, Worker, Specialist, Capability, Implementation, or Verification fields. **Partially supported by validation rounds; formal conformance remains open.**
 15. **Portfolio-authority separation:** prove TEO routing cannot silently seize host backlog, product-priority, or task-admission authority unless explicitly delegated. **Research principle established; executable promotion evidence remains open.**
