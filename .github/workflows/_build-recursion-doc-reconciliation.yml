@@ -16,8 +16,20 @@ jobs:
       - name: Check out exact branch head
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
 
-      - name: Apply fail-closed documentation reconciliation
-        run: python research/runtime/_build_recursion_doc_reconciliation.py
+      - name: Apply fail-closed canonical documentation reconciliation
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('research/runtime/_build_recursion_doc_reconciliation.py')
+          text = path.read_text(encoding='utf-8')
+          marker = '# Public-summary truth canary.'
+          if text.count(marker) != 1:
+              raise SystemExit('expected exactly one canonical-doc/test reconciliation boundary')
+          path.write_text(text.split(marker, 1)[0], encoding='utf-8')
+          PY
+          python research/runtime/_build_recursion_doc_reconciliation.py
+          python research/runtime/_build_recursion_truth_reconciliation.py
+          git diff -- README.md docs/stewardship/progress-tracker.md research/roadmaps/host-integration-contract.md tests/test_host_integration_summary_truth.py tests/test_documentation_control_plane_truth.py > recursion-doc-reconciliation.diff
 
       - name: Upload patched canonical files and diff
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
