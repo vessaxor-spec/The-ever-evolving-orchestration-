@@ -1,22 +1,28 @@
-name: Build Recursion Documentation Reconciliation
+name: Apply Recursion Documentation Reconciliation
 
 on:
   push:
     branches:
       - agent/host-recursion-resistance
-  workflow_dispatch:
+    paths:
+      - .github/workflows/_build-recursion-doc-reconciliation.yml
+      - research/runtime/_build_recursion_doc_reconciliation.py
+      - research/runtime/_build_recursion_truth_reconciliation.py
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  reconcile:
+    if: github.repository == 'vessaxor-spec/The-ever-evolving-orchestration-' && github.ref == 'refs/heads/agent/host-recursion-resistance'
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out exact branch head
+      - name: Check out exact research branch head
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/host-recursion-resistance
 
-      - name: Apply fail-closed canonical documentation reconciliation
+      - name: Apply fail-closed canonical reconciliation
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -29,17 +35,29 @@ jobs:
           PY
           python research/runtime/_build_recursion_doc_reconciliation.py
           python research/runtime/_build_recursion_truth_reconciliation.py
-          git diff -- README.md docs/stewardship/progress-tracker.md research/roadmaps/host-integration-contract.md tests/test_host_integration_summary_truth.py tests/test_documentation_control_plane_truth.py > recursion-doc-reconciliation.diff
 
-      - name: Upload patched canonical files and diff
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
-        with:
-          name: recursion-doc-reconciliation
-          if-no-files-found: error
-          path: |
-            README.md
-            docs/stewardship/progress-tracker.md
-            research/roadmaps/host-integration-contract.md
-            tests/test_host_integration_summary_truth.py
-            tests/test_documentation_control_plane_truth.py
-            recursion-doc-reconciliation.diff
+      - name: Prove write scope and patch hygiene
+        run: |
+          python - <<'PY'
+          import subprocess
+          expected = {
+              'README.md',
+              'docs/stewardship/progress-tracker.md',
+              'research/roadmaps/host-integration-contract.md',
+              'tests/test_documentation_control_plane_truth.py',
+              'tests/test_host_integration_summary_truth.py',
+          }
+          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
+          if actual != expected:
+              raise SystemExit(f'unexpected reconciliation write scope: expected={sorted(expected)} actual={sorted(actual)}')
+          PY
+          git diff --check
+
+      - name: Commit only reconciled canonical files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- README.md docs/stewardship/progress-tracker.md research/roadmaps/host-integration-contract.md tests/test_documentation_control_plane_truth.py tests/test_host_integration_summary_truth.py
+          git diff --cached --check
+          git commit -m 'Reconcile recursion-resistance research documentation'
+          git push origin HEAD:refs/heads/agent/host-recursion-resistance
