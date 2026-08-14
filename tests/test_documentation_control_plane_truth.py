@@ -16,9 +16,9 @@ EXPECTED_CURRENT_VALIDATED_CI_RUN = 689
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
-EXPECTED_HOST_INTEGRATION_CI_RUN = 678
-EXPECTED_HOST_INTEGRATION_TESTS = 891
-EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 532
+EXPECTED_HOST_INTEGRATION_CI_RUN = 703
+EXPECTED_HOST_INTEGRATION_TESTS = 915
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 535
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -114,7 +114,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
+        "host-integration-portfolio-authority-separation-2026-08-15.md",
         "exact local freshness binding",
+        "portfolio/task-admission separation",
         "red-canary CI #676",
         "final execution provenance",
         "Task Intent & Action Authority",
@@ -181,6 +183,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "static runtime-wired authority-surface reconciliation",
         "process-lifetime recursion-resistance",
         "exact local freshness-binding",
+        "portfolio/task-admission authority-separation",
         "Dynamic executable-hook discovery",
         "Artifact-bound finalization",
         "Task 002 is now closed as a scoped normative remediation",
@@ -194,6 +197,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
+        "host-integration-portfolio-authority-separation-2026-08-15.md",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | In progress | 70% |",
@@ -231,6 +235,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Reference Implementation CI #658 passed **863 tests**, **528 tracked-file layout checks**",
         "Red-canary CI #676",
         "Corrected Reference Implementation CI #678 passed **891 tests**, **532 tracked-file layout checks**",
+        "Initial CI #696 preserved a test-assumption canary with **913 passed and 1 failed**",
+        "Clean corrected Reference Implementation CI #703 passed **915 tests**, **535 tracked-file layout checks**",
         "production-grade remote or distributed dispatch/exact-action authenticity and replay",
         "## NEXT",
         "No additional workstream is promoted",

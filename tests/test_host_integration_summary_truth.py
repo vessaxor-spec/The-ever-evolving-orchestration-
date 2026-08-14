@@ -8,10 +8,10 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
     text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
     for phrase in (
-        "ten provider-independent adversarial slices",
-        "Reference Implementation CI #678",
-        "891 automated tests",
-        "532 tracked-file layout checks",
+        "eleven provider-independent adversarial slices",
+        "Reference Implementation CI #703",
+        "915 automated tests",
+        "535 tracked-file layout checks",
         "brokered conformant process-lifetime cross-process authority/replay",
         "static runtime-wired authority-surface reconciliation",
         "verifier-context independence",
@@ -21,8 +21,10 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
+        "host-integration-portfolio-authority-separation-2026-08-15.md",
         "process-lifetime recursion resistance",
         "exact local freshness binding",
+        "portfolio/task-admission separation",
         "red-canary CI #676",
         "The next gate is provider-backed controlled documentation replay evidence",
     ):
@@ -36,6 +38,7 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
         "Remaining promotion evidence includes production and distributed authenticity/provenance controls, provider/model economics and task-adherence evidence, verifier-context independence, exact artifact/change-set verification and stale-PASS resistance"
         not in text
     )
+    assert "ten provider-independent adversarial slices" not in text
     assert "nine provider-independent adversarial slices" not in text
     assert "eight provider-independent adversarial slices" not in text
     assert "seven provider-independent adversarial slices" not in text
@@ -61,6 +64,10 @@ def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
         "Freshness binding",
         "Exact local classification slice satisfied",
         "CI #678",
+        "Portfolio-authority separation",
+        "Conformant process-local task-admission separation slice satisfied",
+        "CI #703",
+        "host-integration-portfolio-authority-separation-2026-08-15.md",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
@@ -76,5 +83,6 @@ def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
     )
     assert "Authority-surface reconciliation:** derive or reconcile authority surfaces against executable runtime wiring and fail on omissions. **Open.**" not in text
     assert "Recursion resistance:** mutation-test delegation-depth, spawn-budget, and recovery/re-entry boundaries. **Open.**" not in text
+    assert "Portfolio-authority separation:** prove TEO routing cannot silently seize host backlog, product-priority, or task-admission authority unless explicitly delegated. **Research principle established; executable promotion evidence remains open.**" not in text
     assert "Registry freshness:** prove stale or mismatched TEO release, policy, registry, overlay, or executable-composition bindings are detected. **Open.**" not in text
     assert "Integration freshness state:** distinguish current, compatible, update-available, unsupported, and mismatched TEO pins/vendorized copies. **Open.**" not in text
