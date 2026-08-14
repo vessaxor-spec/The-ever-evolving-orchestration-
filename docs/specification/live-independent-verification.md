@@ -79,21 +79,21 @@ Current provider implementations are `GoogleLiveVerifier`, `AnthropicLiveVerifie
 Primary bounded route:
 
 ```text
+Gemini 3.5 Flash-Lite execution
+  -> Claude Sonnet 5 verification
+```
+
+Model-specific fallback after Gemini 3.5 Flash-Lite is blocked while Anthropic remains eligible:
+
+```text
 Claude Haiku 4.5 execution
   -> Gemini 3.6 Flash verification
 ```
 
-Model-specific fallback to Gemini while Anthropic remains eligible:
+Google provider-family failure:
 
 ```text
-Gemini 3.6 Flash execution
-  -> Claude Sonnet 5 verification
-```
-
-Anthropic provider-family failure:
-
-```text
-Gemini 3.6 Flash execution
+Claude Haiku 4.5 execution
   -> GPT-5.6 Sol verification
 ```
 
