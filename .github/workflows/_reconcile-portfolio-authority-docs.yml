@@ -35,11 +35,25 @@ jobs:
           python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
           python -m pip install --disable-pip-version-check --no-build-isolation --no-deps -e .
 
+      - name: Align temporary reconciliation helper to current truth-test text
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('research/runtime/_reconcile_portfolio_authority_docs.py')
+          text = path.read_text(encoding='utf-8')
+          old = '''text = replace_once(text, '\"host-integration-freshness-binding-2026-08-14.md\",\\n        \"exact local freshness binding\",', '\"host-integration-freshness-binding-2026-08-14.md\",\\n        \"host-integration-portfolio-authority-separation-2026-08-15.md\",\\n        \"exact local freshness binding\",\\n        \"portfolio/task-admission separation\",', \"summary truth portfolio phrases\")'''
+          new = '''text = replace_once(text, '\"host-integration-freshness-binding-2026-08-14.md\",\\n        \"process-lifetime recursion resistance\",\\n        \"exact local freshness binding\",', '\"host-integration-freshness-binding-2026-08-14.md\",\\n        \"host-integration-portfolio-authority-separation-2026-08-15.md\",\\n        \"process-lifetime recursion resistance\",\\n        \"exact local freshness binding\",\\n        \"portfolio/task-admission separation\",', \"summary truth portfolio phrases\")'''
+          if text.count(old) != 1:
+              raise SystemExit(f'temporary helper alignment expected one match, found {text.count(old)}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+
       - name: Apply fail-closed documentation reconciliation
         run: python research/runtime/_reconcile_portfolio_authority_docs.py
 
-      - name: Prove write scope and documentation truth
+      - name: Restore temporary helper and prove write scope and documentation truth
         run: |
+          git checkout -- research/runtime/_reconcile_portfolio_authority_docs.py
           python - <<'PY'
           import subprocess
           expected = {
