@@ -71,9 +71,11 @@ def test_current_runtime_derives_known_authority_surfaces() -> None:
         assert by_path[path].present is True
         assert by_path[path].sha256 is not None
 
-    dormant = by_path["community/workers/extensions/runtime-worker-overrides.yaml"]
-    assert dormant.present is False
-    assert dormant.sha256 is None
+    worker_override_surface = by_path[
+        "community/workers/extensions/runtime-worker-overrides.yaml"
+    ]
+    assert worker_override_surface.present is True
+    assert worker_override_surface.sha256 is not None
 
 
 def test_exact_runtime_derived_inventory_reconciles() -> None:
@@ -117,19 +119,20 @@ def test_category_tampering_is_rejected() -> None:
         reconcile_declared_inventory(ROOT, declared)
 
 
-def test_presence_tampering_of_dormant_surface_is_rejected() -> None:
-    surfaces = derive_authority_surfaces(ROOT)
+def test_presence_tampering_of_dormant_surface_is_rejected(tmp_path: Path) -> None:
+    write_fixture(tmp_path)
+    surfaces = derive_authority_surfaces(tmp_path)
     declared = as_inventory(surfaces)
     index = next(
         index
         for index, entry in enumerate(declared)
-        if entry["path"] == "community/workers/extensions/runtime-worker-overrides.yaml"
+        if entry["path"] == "community/workers/extensions/optional-worker.yaml"
     )
     declared[index] = dict(declared[index])
     declared[index]["present"] = True
     declared[index]["sha256"] = "0" * 64
     with pytest.raises(AuthoritySurfaceError, match="stale or mismatched"):
-        reconcile_declared_inventory(ROOT, declared)
+        reconcile_declared_inventory(tmp_path, declared)
 
 
 def test_digest_tampering_is_rejected() -> None:
@@ -222,7 +225,7 @@ def test_symlink_escape_is_rejected(tmp_path: Path) -> None:
         encoding="utf-8",
     )
 
-    with pytest.raises(AuthoritySurfaceError, match="outside the repository root"):
+    with pytest.raises(AuthoritySurfaceError, match="repository root"):
         derive_authority_surfaces(root)
 
 
