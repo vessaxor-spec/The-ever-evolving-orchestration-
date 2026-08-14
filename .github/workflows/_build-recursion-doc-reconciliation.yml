@@ -35,6 +35,7 @@ jobs:
           PY
           python research/runtime/_build_recursion_doc_reconciliation.py
           python research/runtime/_build_recursion_truth_reconciliation.py
+          git checkout -- research/runtime/_build_recursion_doc_reconciliation.py
 
       - name: Prove write scope and patch hygiene
         run: |
