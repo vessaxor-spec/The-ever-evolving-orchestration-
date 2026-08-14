@@ -16,9 +16,9 @@ EXPECTED_CURRENT_VALIDATED_CI_RUN = 651
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
-EXPECTED_HOST_INTEGRATION_CI_RUN = 644
-EXPECTED_HOST_INTEGRATION_TESTS = 842
-EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 525
+EXPECTED_HOST_INTEGRATION_CI_RUN = 658
+EXPECTED_HOST_INTEGRATION_TESTS = 863
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 528
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -109,8 +109,10 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}",
         "brokered conformant process-lifetime",
         "static runtime-wired authority-surface reconciliation",
+        "process-lifetime recursion resistance",
         "host-integration-cross-process-authority-2026-08-13.md",
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
+        "host-integration-recursion-resistance-2026-08-14.md",
         "final execution provenance",
         "Task Intent & Action Authority",
         "Execution Environment & Recovery",
@@ -174,6 +176,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "exact artifact/change-set stale-PASS resistance",
         "brokered conformant process-lifetime cross-process authority/replay resistance",
         "static runtime-wired authority-surface reconciliation",
+        "process-lifetime recursion-resistance",
         "Dynamic executable-hook discovery",
         "Artifact-bound finalization",
         "Task 002 is now closed as a scoped normative remediation",
@@ -185,6 +188,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
+        "host-integration-recursion-resistance-2026-08-14.md",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | In progress | 70% |",
@@ -219,6 +223,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Reference Implementation CI #626 with **817 tests**, **520 tracked-file layout checks**",
         "CI #643 intentionally failed **2 tests while 840 passed**",
         "Exact corrected head `9cc5694474d310bc50bac1aa342b61f45fb17e10` then passed CI #644",
+        "Reference Implementation CI #658 passed **863 tests**, **528 tracked-file layout checks**",
         "production-grade remote or distributed dispatch/exact-action authenticity and replay",
         "## NEXT",
         "No additional workstream is promoted",
