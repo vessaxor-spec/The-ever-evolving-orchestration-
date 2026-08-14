@@ -58,7 +58,19 @@ The test matrix includes:
 - unknown or widening fields such as a host-injected `freshness_state` inside the bound snapshot;
 - malformed digest or revision values;
 - duplicate historical revision records;
-- attempted historical reuse of the current revision.
+- malformed historical binding types;
+- attempted historical reuse of the current revision;
+- typed YAML date scalars versus ordinary strings with the same visible text.
+
+## Executable evidence
+
+Reference Implementation CI #676 was intentionally retained as red evidence. Repository layout and Python compilation passed, while pytest reported **863 passed and 26 errors** because the first fingerprint encoder assumed every effective `ConfigBundle` value was directly JSON serializable. A YAML date scalar loaded as `datetime.date(2026, 2, 16)` falsified that assumption.
+
+The correction did not flatten values with `str()`. The freshness harness now canonicalizes supported configuration values into deterministic typed JSON data, explicitly type-tagging dates and datetimes so a typed YAML date cannot collide with an ordinary string containing the same characters. Unsupported value types fail closed. The Security and Authority Boundaries review also added an explicit type guard for historical catalog bindings.
+
+Corrected head `7c16324c9f1fbf620df605d7b5bbde90bc9efed5` passed Reference Implementation CI #678 with **891 tests**, **532 tracked-file layout checks**, regulated specialist evidence validation, **41 parsed JSON Schemas**, valid linked configuration with zero issues, and the provider-diverse artifact-bound end-to-end reference lifecycle.
+
+This is evidence only for the exact local research classification slice. It does not prove a production compatibility catalog or remote freshness authenticity.
 
 ## Authority boundary
 
@@ -89,9 +101,9 @@ This research does not close:
 
 ## Roadmap relationship
 
-This slice targets two currently open Host Integration promotion gates:
+This slice narrows two Host Integration promotion gates:
 
 - registry freshness; and
 - integration freshness state.
 
-A passing executable slice would support only exact local classification semantics. It would not by itself satisfy production remote/distributed authenticity or authorize normative promotion of the Host Integration Contract.
+The exact local classification semantics and stale/mismatch detection slice are now executable. Production compatibility-catalog provenance, remote authenticity, downgrade resistance, and distributed freshness coordination remain open. This evidence does not authorize normative promotion of the Host Integration Contract.
