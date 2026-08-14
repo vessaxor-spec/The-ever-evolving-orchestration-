@@ -1,7 +1,7 @@
 # Host Integration Contract Research
 
 **Date:** 2026-08-12  
-**Last reconciled:** 2026-08-13  
+**Last reconciled:** 2026-08-14  
 **Status:** research roadmap  
 **Authority:** non-normative  
 **Scope:** embedding TEO Mission Control into pre-existing AI agents and execution runtimes
@@ -24,7 +24,8 @@ Implementation-backed evidence now includes:
 - [`../runtime/host-integration-authority-intersection-2026-08-12.md`](../runtime/host-integration-authority-intersection-2026-08-12.md), restrictive host/TEO authority intersection and host execution-scope binding;
 - [`../runtime/host-integration-execution-envelope-integrity-2026-08-12.md`](../runtime/host-integration-execution-envelope-integrity-2026-08-12.md), exact process-local action-envelope integrity;
 - [`../runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](../runtime/host-integration-verifier-artifact-binding-2026-08-12.md), verifier-context independence and exact artifact/change-set stale-PASS resistance;
-- [`../runtime/host-integration-cross-process-authority-2026-08-13.md`](../runtime/host-integration-cross-process-authority-2026-08-13.md), brokered conformant process-lifetime cross-process authority and replay resistance with the production/distributed boundary kept open.
+- [`../runtime/host-integration-cross-process-authority-2026-08-13.md`](../runtime/host-integration-cross-process-authority-2026-08-13.md), brokered conformant process-lifetime cross-process authority and replay resistance with the production/distributed boundary kept open;
+- [`../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md`](../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md), runtime-derived reconciliation of statically wired authority configuration and policy surfaces, with dynamic executable-hook discovery explicitly kept open.
 
 This document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority.
 
@@ -303,7 +304,9 @@ Where a manual authority inventory remains necessary, conformance should reconci
 
 Protecting authority configuration is not sufficient by itself. Finalization and action paths must still prove that the governed decision was actually enforced.
 
-Runtime-derived authority-surface reconciliation remains an open pre-normative evidence gate.
+Runtime-derived reconciliation of **statically wired authority configuration and policy paths** is now supported at the non-normative research layer by the 2026-08-14 adversarial slice and CI #644. The research derives canonical YAML/JSON authority paths from executable Python runtime source, retains dormant-but-wired paths, fingerprints present files, and rejects tested omission, unwired additions, aliasing, category/presence/digest mismatch, stale snapshots, new wiring, dormant-path materialization, duplicate entries, unknown widening fields, and repository-root escape.
+
+This does not close the broader authority-surface problem. Dynamically constructed paths, arbitrary executable hooks, import hooks, plugins/loaders, generated code, monkey patches, transitive executable-code identity, signer/origin authenticity, and compromised-host bypass resistance remain open before any normative promotion claim.
 
 ## Candidate contract shape
 
@@ -448,8 +451,9 @@ This research does not define a "full TEO" marketing claim or certify any host.
 | Brokered cross-process authority/replay | **Conformant process-lifetime slice satisfied** | separate host processes cannot mint through the exposed gateway, mutate bound dispatch/action, replay or race two successful claims, or multiply retry budget; compromised-host bypass, remote/distributed authenticity, host identity, restart persistence, and effect evidence remain open |
 | Verifier-context independence | **Satisfied at research layer** | tested executor-derived and verdict-priming context rejected |
 | Exact artifact/change-set binding | **Satisfied at research layer** | stale, substituted, mutated, wrong-task/dispatch/change/target PASS evidence rejected |
+| Authority-surface reconciliation | **Static runtime-wired slice satisfied** | runtime-derived canonical YAML/JSON authority paths, presence and content fingerprinting, exact declaration reconciliation, and tested stale/omitted/extra/aliased path resistance; dynamic executable hooks/plugins/transitive code remain open |
 
-Validation milestones include CI #546, #552, #555, #560, #565, #570/#573, #577/#580, and #626. CI evidence proves the tested repository research boundary only; it does not promote the contract into normative runtime authority.
+Validation milestones include CI #546, #552, #555, #560, #565, #570/#573, #577/#580, #626, and #644. CI evidence proves the tested repository research boundary only; it does not promote the contract into normative runtime authority.
 
 ## Anti-patterns
 
@@ -475,6 +479,7 @@ Treat the following as integration failures:
 - giving executor and verifier identical reasoning context by default and calling the result independent;
 - allowing stale verification evidence to authorize later or unrelated mutations;
 - protecting a hand-maintained authority-file list without reconciling it to actual runtime wiring;
+- treating static authority-path discovery as proof that dynamic executable hooks or plugins cannot create additional authority surfaces;
 - protecting policy text while leaving the action or finalization path able to ignore it;
 - allowing a successful sandbox, test, or verifier result to self-authorize a broader production action.
 
@@ -499,7 +504,7 @@ The contract remains research until the complete promotion case is supported. Cu
 15. **Portfolio-authority separation:** prove TEO routing cannot silently seize host backlog, product-priority, or task-admission authority unless explicitly delegated. **Research principle established; executable promotion evidence remains open.**
 16. **Verifier-context independence:** preserve required domain constraints without inheriting executor reasoning/implementation framing. **Satisfied at the non-normative research layer by PR #146 and CI #580.**
 17. **Artifact-bound verification:** reject stale, mismatched, mutated, or wrong-target PASS evidence. **Satisfied at the non-normative research layer by PR #146 and CI #580.**
-18. **Authority-surface reconciliation:** derive or reconcile authority surfaces against executable runtime wiring and fail on omissions. **Open.**
+18. **Authority-surface reconciliation:** derive or reconcile authority surfaces against executable runtime wiring and fail on omissions. **Static runtime-wired YAML/JSON configuration and policy slice satisfied by the 2026-08-14 research harness and CI #644; dynamic path construction, arbitrary executable hooks/plugins/loaders, transitive code identity, and production authenticity remain open.**
 19. **Integration freshness state:** distinguish current, compatible, update-available, unsupported, and mismatched TEO pins/vendorized copies. **Open.**
 20. **Independent review:** challenge whether the integration layer creates a second routing/authority plane or weakens TEO invariants. **Open for any normative proposal.**
 21. **Exact execution-envelope integrity:** bind risk, capability, operation, target, canonical parameters, side effects, prerequisites, and attempt budget. **Process-local and brokered conformant process-lifetime slices satisfied; production target canonicalization, tenant/credential binding, compromised-host bypass resistance, remote/distributed authenticity, effect evidence, restart-durable replay, and distributed retry coordination remain open.**
@@ -509,7 +514,7 @@ The contract remains research until the complete promotion case is supported. Cu
 This work extends, rather than replaces, existing TEO architecture and research:
 
 - **Mission Control:** remains the orchestration authority for an admitted task.
-- **Specialist Execution Envelope:** host embedding now has concrete process-local and brokered process-lifetime evidence for scoped context, dispatch authorization, exact action binding, replay resistance on the conformant path, and verifier-context separation.
+- **Specialist Execution Envelope:** host embedding now has concrete process-local and brokered process-lifetime evidence for scoped context, dispatch authorization, exact action binding, replay resistance on the conformant path, verifier-context separation, and static runtime-wired authority-surface reconciliation.
 - **Resource Budget and Admission Contract:** delegation depth, spawn count, context/token budgets, parallelism, and host task admission remain directly relevant to external-host recursion control.
 - **Action Authority Plane:** host tool authorization remains distinct from provider access and TEO model routing; current research strengthens restrictive intersection and exact-action binding.
 - **Final Execution Provenance:** `docs/specification/final-execution-provenance.md` can expose the observed successful route to a host after canonical evidence revalidation, but that projection carries no routing or action authority.
@@ -517,14 +522,3 @@ This work extends, rather than replaces, existing TEO architecture and research:
 - **Task Intent & Action Authority Contract:** future request-authority research sits before host execution authorization and must ensure the host/TEO intersection cannot widen the originating request or delegated authority ceiling.
 
 No new specialist is proposed by this document. Existing architecture, platform, security, verification, and orchestration roles cover the current research responsibility.
-
-## Current disposition
-
-- Keep the Host Integration Contract non-normative.
-- Preserve the two-host architecture-diversity gate as satisfied.
-- Preserve the static bounded-context payload slice as satisfied while keeping provider token usage, latency, and task adherence open.
-- Preserve process-local dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter non-self-authorization, restrictive authority intersection, exact execution-envelope integrity, and brokered conformant process-lifetime cross-process authority/replay resistance as satisfied research slices without promoting them to production/distributed guarantees.
-- Preserve verifier-context independence and exact artifact/change-set stale-PASS resistance as satisfied at the non-normative research layer.
-- Do not change current Mission Control policy, specialist cards, active roster, verifier rules, Task Request/Dispatch schemas, provider routing, qualified-human authority, or live-execution scope through this research roadmap.
-- Continue only the genuinely remaining pre-normative evidence: provider/model economics, latency/adherence, production package/transitive provenance, authority-controlled loading, revocation/downgrade semantics, distributed authority synchronization, production target/credential/tenant binding, compromised-host bypass resistance, remote/distributed authenticity, effect-evidence authenticity, restart/distributed replay and retry coordination, freshness/expiry, portfolio authority, authority-surface reconciliation, recursion/recovery, and independent review.
-- Preserve the current Progress Tracker sequencing. Host Integration research is not promoted ahead of the deferred provider-backed `documentation` replay gate.

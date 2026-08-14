@@ -8,15 +8,17 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
     text = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
 
     for phrase in (
-        "seven provider-independent adversarial slices",
-        "Reference Implementation CI #626",
-        "817 automated tests",
-        "520 tracked-file layout checks",
+        "eight provider-independent adversarial slices",
+        "Reference Implementation CI #644",
+        "842 automated tests",
+        "525 tracked-file layout checks",
         "brokered conformant process-lifetime cross-process authority/replay",
+        "static runtime-wired authority-surface reconciliation",
         "verifier-context independence",
         "exact artifact/change-set stale-PASS resistance",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
+        "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "The next gate is provider-backed controlled documentation replay evidence",
     ):
         assert phrase in text
@@ -29,6 +31,7 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
         "Remaining promotion evidence includes production and distributed authenticity/provenance controls, provider/model economics and task-adherence evidence, verifier-context independence, exact artifact/change-set verification and stale-PASS resistance"
         not in text
     )
+    assert "seven provider-independent adversarial slices" not in text
 
 
 def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
@@ -42,10 +45,13 @@ def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
         "Satisfied at the non-normative research layer by PR #146 and CI #580.",
         "Brokered cross-process authority/replay",
         "Conformant process-lifetime slice satisfied",
-        "and #626. CI evidence proves",
+        "Authority-surface reconciliation",
+        "Static runtime-wired slice satisfied",
+        "CI #644",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
-        "Preserve the current Progress Tracker sequencing",
+        "host-integration-authority-surface-reconciliation-2026-08-14.md",
+        "dynamic executable hooks/plugins/transitive code remain open",
     ):
         assert phrase in text
 
@@ -53,3 +59,4 @@ def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
         "especially context economics, dispatch-authorization mutation resistance, adapter integrity, restrictive authority intersection, artifact-bound verification, freshness semantics"
         not in text
     )
+    assert "Authority-surface reconciliation:** derive or reconcile authority surfaces against executable runtime wiring and fail on omissions. **Open.**" not in text

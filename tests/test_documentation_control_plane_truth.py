@@ -10,15 +10,15 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_CURRENT_VALIDATED_TESTS = 825
-EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 523
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 637
+EXPECTED_CURRENT_VALIDATED_TESTS = 842
+EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 526
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 651
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
-EXPECTED_HOST_INTEGRATION_CI_RUN = 626
-EXPECTED_HOST_INTEGRATION_TESTS = 817
-EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 520
+EXPECTED_HOST_INTEGRATION_CI_RUN = 644
+EXPECTED_HOST_INTEGRATION_TESTS = 842
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 525
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -108,7 +108,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         f"{EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
         f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}",
         "brokered conformant process-lifetime",
+        "static runtime-wired authority-surface reconciliation",
         "host-integration-cross-process-authority-2026-08-13.md",
+        "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "final execution provenance",
         "Task Intent & Action Authority",
         "Execution Environment & Recovery",
@@ -171,6 +173,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "verifier-context independence",
         "exact artifact/change-set stale-PASS resistance",
         "brokered conformant process-lifetime cross-process authority/replay resistance",
+        "static runtime-wired authority-surface reconciliation",
+        "Dynamic executable-hook discovery",
         "Artifact-bound finalization",
         "Task 002 is now closed as a scoped normative remediation",
         "2026-08-14-external-verifier-assessment-artifact-bound-finalization.md",
@@ -180,6 +184,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "host-integration-execution-envelope-integrity-2026-08-12.md",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
+        "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | In progress | 70% |",
@@ -212,6 +217,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "canonical `VerificationResult` and `FinalOutcome` schemas remained unchanged",
         "later route-backed final execution provenance change was a separate compatible extension",
         "Reference Implementation CI #626 with **817 tests**, **520 tracked-file layout checks**",
+        "CI #643 intentionally failed **2 tests while 840 passed**",
+        "Exact corrected head `9cc5694474d310bc50bac1aa342b61f45fb17e10` then passed CI #644",
         "production-grade remote or distributed dispatch/exact-action authenticity and replay",
         "## NEXT",
         "No additional workstream is promoted",
