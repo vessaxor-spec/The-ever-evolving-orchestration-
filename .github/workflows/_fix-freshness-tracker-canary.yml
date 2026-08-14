@@ -1,0 +1,39 @@
+name: Fix Freshness Tracker Canary
+
+on:
+  push:
+    branches:
+      - agent/host-integration-freshness-binding
+    paths:
+      - .github/workflows/_fix-freshness-tracker-canary.yml
+      - research/runtime/_fix_freshness_tracker_canary.py
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.repository == 'vessaxor-spec/The-ever-evolving-orchestration-' && github.ref == 'refs/heads/agent/host-integration-freshness-binding'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact research branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/host-integration-freshness-binding
+
+      - name: Apply exact canary fix
+        run: python research/runtime/_fix_freshness_tracker_canary.py
+
+      - name: Prove one-file write scope
+        run: |
+          test "$(git diff --name-only)" = "tests/test_documentation_control_plane_truth.py"
+          git diff --check
+
+      - name: Commit exact canary fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- tests/test_documentation_control_plane_truth.py
+          git diff --cached --check
+          git commit -m 'Fix freshness tracker truth-canary case'
+          git push origin HEAD:refs/heads/agent/host-integration-freshness-binding
