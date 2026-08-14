@@ -33,6 +33,12 @@ module_path.write_text(module, encoding="utf-8")
 
 test_path = Path("tests/test_host_integration_portfolio_authority_separation.py")
 tests = test_path.read_text(encoding="utf-8")
+tests = replace_once(
+    tests,
+    'with pytest.raises(PortfolioAuthorityError, match="request task_id"):',
+    'with pytest.raises(PortfolioAuthorityError, match="request admission_id"):',
+    "sibling admission validation order",
+)
 insert_before = """def test_session_binding_tamper_is_rejected_on_revalidation() -> None:\n"""
 new_test = """def test_fabricated_session_identity_is_rejected_on_revalidation() -> None:\n    authority = HostPortfolioAuthority()\n    payload = task()\n    grant, gateway = admit(authority, payload)\n    session = gateway.claim(request(grant), grant, payload).to_dict()\n    session[\"session_id\"] = \"teo-session-fabricated\"\n\n    with pytest.raises(PortfolioAuthorityError, match=\"session identity\"):\n        gateway.revalidate(session, payload)\n\n\n"""
 tests = replace_once(
