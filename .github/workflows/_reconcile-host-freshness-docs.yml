@@ -1,0 +1,52 @@
+name: Reconcile Host Freshness Documentation
+
+on:
+  push:
+    branches:
+      - agent/host-integration-freshness-binding
+    paths:
+      - .github/workflows/_reconcile-host-freshness-docs.yml
+      - research/runtime/_reconcile_host_freshness_docs.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.repository == 'vessaxor-spec/The-ever-evolving-orchestration-' && github.ref == 'refs/heads/agent/host-integration-freshness-binding'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact research branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/host-integration-freshness-binding
+
+      - name: Apply fail-closed reconciliation
+        run: python research/runtime/_reconcile_host_freshness_docs.py
+
+      - name: Prove write scope and patch hygiene
+        run: |
+          python - <<'PY'
+          import subprocess
+          expected = {
+              'README.md',
+              'docs/stewardship/progress-tracker.md',
+              'research/roadmaps/host-integration-contract.md',
+              'tests/test_documentation_control_plane_truth.py',
+              'tests/test_host_integration_summary_truth.py',
+          }
+          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
+          if actual != expected:
+              raise SystemExit(f'unexpected reconciliation write scope: expected={sorted(expected)} actual={sorted(actual)}')
+          PY
+          git diff --check
+
+      - name: Commit only reconciled canonical files
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- README.md docs/stewardship/progress-tracker.md research/roadmaps/host-integration-contract.md tests/test_documentation_control_plane_truth.py tests/test_host_integration_summary_truth.py
+          git diff --cached --check
+          git commit -m 'Reconcile Host Integration freshness research documentation'
+          git push origin HEAD:refs/heads/agent/host-integration-freshness-binding
