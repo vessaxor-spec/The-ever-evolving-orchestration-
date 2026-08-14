@@ -1,0 +1,33 @@
+name: Build Recursion Documentation Reconciliation
+
+on:
+  push:
+    branches:
+      - agent/host-recursion-resistance
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact branch head
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Apply fail-closed documentation reconciliation
+        run: python research/runtime/_build_recursion_doc_reconciliation.py
+
+      - name: Upload patched canonical files and diff
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: recursion-doc-reconciliation
+          if-no-files-found: error
+          path: |
+            README.md
+            docs/stewardship/progress-tracker.md
+            research/roadmaps/host-integration-contract.md
+            tests/test_host_integration_summary_truth.py
+            tests/test_documentation_control_plane_truth.py
+            recursion-doc-reconciliation.diff
