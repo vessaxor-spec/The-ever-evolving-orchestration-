@@ -229,7 +229,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "CI #643 intentionally failed **2 tests while 840 passed**",
         "Exact corrected head `9cc5694474d310bc50bac1aa342b61f45fb17e10` then passed CI #644",
         "Reference Implementation CI #658 passed **863 tests**, **528 tracked-file layout checks**",
-        "red-canary CI #676",
+        "Red-canary CI #676",
         "Corrected Reference Implementation CI #678 passed **891 tests**, **532 tracked-file layout checks**",
         "production-grade remote or distributed dispatch/exact-action authenticity and replay",
         "## NEXT",
