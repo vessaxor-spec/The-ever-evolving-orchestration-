@@ -1,0 +1,48 @@
+name: Reconcile Recursion Current Scale
+
+on:
+  push:
+    branches:
+      - agent/host-recursion-resistance
+    paths:
+      - .github/workflows/_reconcile-recursion-current-scale.yml
+      - research/runtime/_reconcile_recursion_current_scale.py
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.repository == 'vessaxor-spec/The-ever-evolving-orchestration-' && github.ref == 'refs/heads/agent/host-recursion-resistance'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out exact research branch head
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/host-recursion-resistance
+
+      - name: Apply exact current-scale reconciliation
+        run: python research/runtime/_reconcile_recursion_current_scale.py
+
+      - name: Prove write scope and patch hygiene
+        run: |
+          python - <<'PY'
+          import subprocess
+          expected = {
+              'docs/stewardship/progress-tracker.md',
+              'tests/test_documentation_control_plane_truth.py',
+          }
+          actual = set(subprocess.check_output(['git', 'diff', '--name-only'], text=True).splitlines())
+          if actual != expected:
+              raise SystemExit(f'unexpected current-scale write scope: expected={sorted(expected)} actual={sorted(actual)}')
+          PY
+          git diff --check
+
+      - name: Commit only current-scale reconciliation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- docs/stewardship/progress-tracker.md tests/test_documentation_control_plane_truth.py
+          git diff --cached --check
+          git commit -m 'Reconcile recursion research current validation scale'
+          git push origin HEAD:refs/heads/agent/host-recursion-resistance
