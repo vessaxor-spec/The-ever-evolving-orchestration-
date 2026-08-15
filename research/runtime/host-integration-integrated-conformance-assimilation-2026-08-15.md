@@ -177,7 +177,9 @@ The tests include direct rejection of:
 
 The full composed positive path also passed locally with shadow routing, two governed executions, six negative controls, and all ten original premortem checks satisfied.
 
-Canonical repository CI evidence is still required before this research slice can be reconciled as accepted.
+Initial clean Reference Implementation CI #717 passed **940 tests**, **539 tracked-file layout checks**, regulated specialist evidence validation, **41 schemas**, valid linked configuration, and the provider-diverse artifact-bound end-to-end lifecycle.
+
+Independent review then found one continuity-proof weakness: the harness required two governed receipts but did not require them to represent distinct task IDs, so replaying one setup task twice could have satisfied the process-local count. The harness was hardened to require at least two distinct post-assimilation task IDs and to retain `cross_session_continued_use_proof` plus production scheduler, tenant/credential, dynamic hook/plugin, remote-authenticity, durable-state, and compromised-host boundaries as unsupported. The dedicated hardened suite passed **26 tests** under canonical Python 3.11 before commit. Clean hardened Reference Implementation CI #720 then passed **941 tests**, **539 tracked-file layout checks**, regulated specialist evidence validation, **41 schemas**, valid linked configuration, and the provider-diverse artifact-bound end-to-end lifecycle.
 
 ## Exact assimilation process
 
@@ -194,6 +196,7 @@ This research does not prove:
 - production host authenticity;
 - remote/distributed admission authenticity;
 - restart-durable assimilation or recursion state;
+- genuine fresh-session/no-reminder continued-use proof;
 - compromised-host resistance;
 - production scheduler enforcement;
 - tenant/account/credential binding;
