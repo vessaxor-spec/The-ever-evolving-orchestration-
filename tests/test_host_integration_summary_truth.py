@@ -9,9 +9,9 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
 
     for phrase in (
         "eleven provider-independent adversarial slices",
-        "Reference Implementation CI #703",
-        "915 automated tests",
-        "535 tracked-file layout checks",
+        "Reference Implementation CI #720",
+        "941 automated tests",
+        "539 tracked-file layout checks",
         "brokered conformant process-lifetime cross-process authority/replay",
         "static runtime-wired authority-surface reconciliation",
         "verifier-context independence",
@@ -22,6 +22,11 @@ def test_readme_tracks_latest_host_integration_research_truth() -> None:
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
         "host-integration-portfolio-authority-separation-2026-08-15.md",
+        "host-integration-assimilation-protocol.md",
+        "host-integration-integrated-conformance-assimilation-2026-08-15.md",
+        "integrated Fresh-AI assimilation/conformance",
+        "Assimilation is not installation",
+        "two distinct post-assimilation task IDs",
         "process-lifetime recursion resistance",
         "exact local freshness binding",
         "portfolio/task-admission separation",
@@ -68,12 +73,26 @@ def test_host_integration_roadmap_tracks_current_satisfied_gates() -> None:
         "Conformant process-local task-admission separation slice satisfied",
         "CI #703",
         "host-integration-portfolio-authority-separation-2026-08-15.md",
+        "host-integration-assimilation-protocol.md",
+        "host-integration-integrated-conformance-assimilation-2026-08-15.md",
+        "Fresh-AI integrated assimilation/conformance",
+        "Process-local integrated slice satisfied",
+        "CI #720",
         "host-integration-verifier-artifact-binding-2026-08-12.md",
         "host-integration-cross-process-authority-2026-08-13.md",
         "host-integration-authority-surface-reconciliation-2026-08-14.md",
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
         "dynamic executable hooks/plugins/transitive code remain open",
+    ):
+        assert phrase in text
+
+    for phrase in (
+        "treating TEO as a plugin, SDK, prompt persona, specialist pack, or finished product",
+        "replaying the same setup task twice",
+        "claiming cross-session persistence from a process-local hook",
+        "Process-local integrated replay satisfied",
+        "Process-local integrated host-conformance slice satisfied",
     ):
         assert phrase in text
 

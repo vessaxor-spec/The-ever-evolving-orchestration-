@@ -16,9 +16,9 @@ EXPECTED_CURRENT_VALIDATED_CI_RUN = 710
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
-EXPECTED_HOST_INTEGRATION_CI_RUN = 703
-EXPECTED_HOST_INTEGRATION_TESTS = 915
-EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 535
+EXPECTED_HOST_INTEGRATION_CI_RUN = 720
+EXPECTED_HOST_INTEGRATION_TESTS = 941
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 539
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -115,6 +115,10 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
         "host-integration-portfolio-authority-separation-2026-08-15.md",
+        "host-integration-assimilation-protocol.md",
+        "host-integration-integrated-conformance-assimilation-2026-08-15.md",
+        "integrated Fresh-AI assimilation/conformance",
+        "Assimilation is not installation",
         "exact local freshness binding",
         "portfolio/task-admission separation",
         "red-canary CI #676",
@@ -142,6 +146,20 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
     assert "automated qualified-human approval integration" not in text
     assert "source-backed historical cost attribution" not in text
     assert "route-outcome learning and shadow-route evaluation" not in text
+
+    ai_text = (REPO_ROOT / "AI_INSTRUCTIONS.md").read_text(encoding="utf-8")
+    for phrase in (
+        "## Fresh-AI assimilation rule",
+        "Assimilation is not installation",
+        "host-integration-assimilation-protocol.md",
+        "embedded_orchestration_control_plane",
+        "prove continued use on a later distinct admitted task",
+        "without relying on a special `use TEO` reminder",
+        "Copied files, installed packages, prompts, skills, one successful demo, or a green test suite do not prove assimilation",
+        "cannot by itself prove that a fresh session inherited the integration",
+        "Assimilation research never widens live execution by itself",
+    ):
+        assert phrase in ai_text
 
     live_spec = (
         REPO_ROOT / "docs" / "specification" / "live-independent-verification.md"
@@ -198,6 +216,11 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "host-integration-recursion-resistance-2026-08-14.md",
         "host-integration-freshness-binding-2026-08-14.md",
         "host-integration-portfolio-authority-separation-2026-08-15.md",
+        "host-integration-assimilation-protocol.md",
+        "host-integration-integrated-conformance-assimilation-2026-08-15.md",
+        "process-local integrated Fresh-AI assimilation/conformance",
+        "assimilation is not installation",
+        "two distinct task IDs",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | In progress | 70% |",
