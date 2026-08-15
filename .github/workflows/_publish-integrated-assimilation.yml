@@ -37,6 +37,7 @@ jobs:
           base64 -d /tmp/payload.b64 > /tmp/payload.tar.xz
           echo "77a679db4bdeac47aede4ea62ea061682793ddda85c4b74bd7b1585e5b602fdc  /tmp/payload.tar.xz" | sha256sum -c -
           tar -xJf /tmp/payload.tar.xz
+          sed -i 's/[[:space:]]\+$//' research/roadmaps/host-integration-assimilation-protocol.md research/runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md
       - name: Prove exact write scope and targeted conformance
         run: |
           python - <<'PY'
