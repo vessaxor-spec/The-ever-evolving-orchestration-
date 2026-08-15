@@ -10,15 +10,15 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_CURRENT_VALIDATED_TESTS = 941
-EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 539
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 730
+EXPECTED_CURRENT_VALIDATED_TESTS = 958
+EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 542
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 735
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
-EXPECTED_HOST_INTEGRATION_CI_RUN = 720
-EXPECTED_HOST_INTEGRATION_TESTS = 941
-EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 539
+EXPECTED_HOST_INTEGRATION_CI_RUN = 735
+EXPECTED_HOST_INTEGRATION_TESTS = 958
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 542
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -116,6 +116,7 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "host-integration-freshness-binding-2026-08-14.md",
         "host-integration-portfolio-authority-separation-2026-08-15.md",
         "host-integration-assimilation-protocol.md",
+        "host-integration-fresh-session-trial.md",
         "host-integration-integrated-conformance-assimilation-2026-08-15.md",
         "integrated Fresh-AI assimilation/conformance",
         "Assimilation is not installation",
@@ -155,6 +156,8 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "embedded_orchestration_control_plane",
         "prove continued use on a later distinct admitted task",
         "without relying on a special `use TEO` reminder",
+        "host-integration-fresh-session-trial.md",
+        "the existence of the trial framework or validator is not itself a PASS",
         "Copied files, installed packages, prompts, skills, one successful demo, or a green test suite do not prove assimilation",
         "cannot by itself prove that a fresh session inherited the integration",
         "Assimilation research never widens live execution by itself",
@@ -217,6 +220,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "host-integration-freshness-binding-2026-08-14.md",
         "host-integration-portfolio-authority-separation-2026-08-15.md",
         "host-integration-assimilation-protocol.md",
+        "host-integration-fresh-session-trial.md",
         "host-integration-integrated-conformance-assimilation-2026-08-15.md",
         "process-local integrated Fresh-AI assimilation/conformance",
         "assimilation is not installation",
