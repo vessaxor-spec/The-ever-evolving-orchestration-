@@ -1,9 +1,9 @@
 # Host Integration Contract Research
 
-**Date:** 2026-08-12  
-**Last reconciled:** 2026-08-14  
-**Status:** research roadmap  
-**Authority:** non-normative  
+**Date:** 2026-08-12
+**Last reconciled:** 2026-08-15
+**Status:** research roadmap
+**Authority:** non-normative
 **Scope:** embedding TEO Mission Control into pre-existing AI agents and execution runtimes
 
 ## Purpose
@@ -27,7 +27,10 @@ Implementation-backed evidence now includes:
 - [`../runtime/host-integration-cross-process-authority-2026-08-13.md`](../runtime/host-integration-cross-process-authority-2026-08-13.md), brokered conformant process-lifetime cross-process authority and replay resistance with the production/distributed boundary kept open;
 - [`../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md`](../runtime/host-integration-authority-surface-reconciliation-2026-08-14.md), runtime-derived reconciliation of statically wired authority configuration and policy surfaces, with dynamic executable-hook discovery explicitly kept open;
 - [`../runtime/host-integration-recursion-resistance-2026-08-14.md`](../runtime/host-integration-recursion-resistance-2026-08-14.md), process-lifetime root-scoped recursion admission with depth, descendant, specialist-spawn, active-branch, and recovery-generation ceilings;
-- [`../runtime/host-integration-freshness-binding-2026-08-14.md`](../runtime/host-integration-freshness-binding-2026-08-14.md), exact local freshness classification bound to release/runtime/revision plus authority-surface and effective routing/registry/model/composition fingerprints.
+- [`../runtime/host-integration-freshness-binding-2026-08-14.md`](../runtime/host-integration-freshness-binding-2026-08-14.md), exact local freshness classification bound to release/runtime/revision plus authority-surface and effective routing/registry/model/composition fingerprints;
+- [`../runtime/host-integration-portfolio-authority-separation-2026-08-15.md`](../runtime/host-integration-portfolio-authority-separation-2026-08-15.md), conformant process-local host-owned portfolio/task-admission authority separation;
+- [`host-integration-assimilation-protocol.md`](host-integration-assimilation-protocol.md), the fresh-AI 0-to-10 assimilation process that prevents install-and-forget integration;
+- [`../runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md`](../runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md), the hands-on integrated sandbox, negative controls, premortem replay, and continued-use evidence boundary.
 
 This document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority.
 
@@ -80,6 +83,10 @@ ARTIFACT-BOUND INDEPENDENT VERIFICATION / EVIDENCE
 Some host controls may operate before or beside Mission Control. Examples include untrusted-input screening, host runtime continuity, native credential boundaries, and system health mechanisms. The integration contract must classify those surfaces rather than forcing every host-native action behind a specialist dispatch.
 
 The integration layer is an adapter and evidence boundary. It must not become a second routing authority.
+
+Fresh-AI assimilation is a lifecycle obligation, not an installation event. A host or fresh AI must not claim integration merely because TEO files, prompts, skills, packages, or tests are present. The accepted research process in [`host-integration-assimilation-protocol.md`](host-integration-assimilation-protocol.md) requires exact TEO reconstitution, independent host reconstitution, an explicit authority map, a falsifiable assimilation declaration, a durable host hook, shadow operation, bounded governed activation, negative-control and premortem replay, and later continued-use evidence.
+
+The current process-local harness requires two governed receipts with distinct task IDs. That protects against replaying one setup demo twice, but it does not prove that a genuinely fresh session inherited the integration without a reminder or that a production host persisted the hook across restart. Those claims require separate host evidence.
 
 ## Design invariants
 
@@ -463,8 +470,9 @@ This research does not define a "full TEO" marketing claim or certify any host.
 | Recursion resistance | **Process-lifetime slice satisfied** | root dispatch/budget binding with depth, descendant, specialist-spawn, active-branch, and recovery-generation ceilings; stateless HMAC authorization plus replay/stale/cross-root/race/release-reset resistance; restart-durable, distributed, scheduler, and compromised-host boundaries remain open |
 | Freshness binding | **Exact local classification slice satisfied** | current/compatible/update-available/stale-unsupported/mismatched classification from exact authority-owned bindings; typed configuration canonicalization and tested mixed/unknown/host-mislabeled rejection; production catalog provenance, remote authenticity, downgrade, expiry, and distributed coordination remain open |
 | Portfolio/task-admission authority separation | **Conformant process-local slice satisfied** | host-owned queue, priority, admission, cancellation, and revocation state; exact task/admission/session binding and tested forgery, replay, sibling substitution, cancellation/revocation, widening-field, and duplicate-claim resistance through the TEO-facing gateway; remote/distributed authenticity, restart durability, scheduler integration, tenant binding, and compromised-host bypass remain open |
+| Fresh-AI integrated assimilation/conformance | **Process-local integrated slice satisfied** | exact TEO/host reconstitution declaration, anti-plugin/product framing, persistent-hook declaration, shadow-before-activation, two distinct governed task IDs, staged/revoked/artifact/human/autonomy/recursion negatives, and all ten premortem paths composed; true fresh-session/no-reminder persistence, restart-durable hooks, production scheduler enforcement, tenant binding, dynamic hook/plugin discovery, remote authenticity, durable distributed state, and compromised-host resistance remain open |
 
-Validation milestones include CI #546, #552, #555, #560, #565, #570/#573, #577/#580, #626, #644, #658, corrected freshness validation CI #678, and corrected portfolio/task-admission validation CI #703. Red-canary CI #676 is retained as evidence that the first freshness encoder failed on a typed YAML date before typed canonicalization was introduced. CI #696 is retained as a portfolio-slice test-assumption canary: 913 tests passed while one sibling-admission assertion expected a later mismatch than the fail-closed gate emitted. Security and Authority Boundaries review separately found and corrected missing exact session-identity binding before acceptance. CI evidence proves the tested repository research boundary only; it does not promote the contract into normative runtime authority.
+Validation milestones include CI #546, #552, #555, #560, #565, #570/#573, #577/#580, #626, #644, #658, corrected freshness validation CI #678, corrected portfolio/task-admission validation CI #703, and hardened integrated assimilation/conformance CI #720. Red-canary CI #676 is retained as evidence that the first freshness encoder failed on a typed YAML date before typed canonicalization was introduced. CI #696 is retained as a portfolio-slice test-assumption canary: 913 tests passed while one sibling-admission assertion expected a later mismatch than the fail-closed gate emitted. Security and Authority Boundaries review separately found and corrected missing exact session-identity binding before acceptance. CI evidence proves the tested repository research boundary only; it does not promote the contract into normative runtime authority.
 
 ## Anti-patterns
 
@@ -492,13 +500,19 @@ Treat the following as integration failures:
 - protecting a hand-maintained authority-file list without reconciling it to actual runtime wiring;
 - treating static authority-path discovery as proof that dynamic executable hooks or plugins cannot create additional authority surfaces;
 - protecting policy text while leaving the action or finalization path able to ignore it;
-- allowing a successful sandbox, test, or verifier result to self-authorize a broader production action.
+- allowing a successful sandbox, test, or verifier result to self-authorize a broader production action;
+- treating TEO as a plugin, SDK, prompt persona, specialist pack, or finished product that can be installed and then bypassed;
+- declaring assimilation complete because files were copied, packages installed, prompts added, or one setup demo passed;
+- leaving admitted TEO-governed work on a parallel host router after claiming TEO integration;
+- relying on a one-time conversation instruction instead of a durable, reviewable host integration mechanism;
+- replaying the same setup task twice and calling it evidence of continued TEO use;
+- claiming cross-session persistence from a process-local hook without proving that a fresh session inherited the integration.
 
 ## Evidence required before normative promotion
 
 The contract remains research until the complete promotion case is supported. Current status is deliberately granular so a satisfied process-local or brokered conformant slice is not confused with production readiness.
 
-1. **Premortem replay:** demonstrate that the contract directly prevents or truthfully detects all original failure paths. **Partially supported; complete integrated replay remains open.**
+1. **Premortem replay:** demonstrate that the contract directly prevents or truthfully detects all original failure paths. **Process-local integrated replay satisfied by the 2026-08-15 assimilation/conformance harness and CI #720; architecture-diverse production and cross-session replay remain open.**
 2. **Two-host validation:** test materially different host architectures. **Satisfied for research architecture diversity.**
 3. **Context economics:** compare bounded projection with naive corpus loading for prompt size, provider token usage, latency, and task adherence. **Static payload-size slice satisfied; provider token, latency, and adherence evidence remain open.**
 4. **Identity preservation:** verify host invariants remain intact while selected specialists retain canonical definitions. **Further architecture-diverse executable evidence remains open.**
@@ -506,12 +520,12 @@ The contract remains research until the complete promotion case is supported. Cu
 6. **Capability classification:** prove pre-routing safety, runtime, authority, verification, maintenance, and TEO-dispatched execution surfaces are classified without bypasses or unnecessary loops. **Partially supported.**
 7. **Dispatch authorization:** prove governed execution cannot invoke a TEO-dispatched capability without authority-owned dispatch evidence. **Process-local and brokered conformant process-lifetime adversarial slices satisfied; production remote/distributed authenticity, host identity, restart persistence, and bypass resistance remain open.**
 8. **Adapter integrity:** prove the executor cannot widen its own capability binding. **Process-local adversarial slice satisfied; production package provenance, loading, dependencies, downgrade, and distributed trust remain open.**
-9. **Autonomy correctness:** prove routine multi-step work can remain autonomous while explicit human-authority requirements remain blocking. **Open as an integrated host-conformance gate.**
+9. **Autonomy correctness:** prove routine multi-step work can remain autonomous while explicit human-authority requirements remain blocking. **Process-local integrated host-conformance slice satisfied by CI #720; production host and cross-session evidence remain open.**
 10. **Authority intersection:** prove host and TEO constraints resolve by deny-wins/more-restrictive-control-wins. **Process-local adversarial slice satisfied; distributed synchronization remains open.**
 11. **Verification honesty:** prove unsupported independence is surfaced rather than simulated. **Verifier-context independence is satisfied at the research layer; broader host declaration/conformance remains open.**
 12. **Recursion resistance:** mutation-test delegation-depth, spawn-budget, and recovery/re-entry boundaries. **Process-lifetime slice satisfied by the 2026-08-14 recursion-resistance harness and CI #658; restart-durable, multi-process/distributed, production-scheduler, remote-authenticity, and compromised-host boundaries remain open.**
 13. **Registry freshness:** prove stale or mismatched TEO release, policy, registry, overlay, or executable-composition bindings are detected. **Exact local stale/mismatch detection slice satisfied by the 2026-08-14 freshness-binding harness and corrected CI #678; production compatibility-catalog provenance, remote authenticity, downgrade resistance, expiry, and distributed coordination remain open.**
-14. **Routing conformance:** prove host-local taxonomies cannot collapse Team, Worker, Specialist, Capability, Implementation, or Verification fields. **Partially supported by validation rounds; formal conformance remains open.**
+14. **Routing conformance:** prove host-local taxonomies cannot collapse Team, Worker, Specialist, Capability, Implementation, or Verification fields. **Process-local integrated assimilation rejects collapsed responsibility semantics and parallel host routing for admitted TEO work; architecture-diverse formal conformance and production enforcement remain open.**
 15. **Portfolio-authority separation:** prove TEO routing cannot silently seize host backlog, product-priority, or task-admission authority unless explicitly delegated. **Conformant process-local task-admission separation slice satisfied by the [2026-08-15 research harness](../runtime/host-integration-portfolio-authority-separation-2026-08-15.md) and corrected CI #703; remote/distributed admission authenticity, durable revocation/admission state, production scheduler integration, tenant/account binding, distributed duplicate-work prevention, and compromised-host bypass remain open.**
 16. **Verifier-context independence:** preserve required domain constraints without inheriting executor reasoning/implementation framing. **Satisfied at the non-normative research layer by PR #146 and CI #580.**
 17. **Artifact-bound verification:** reject stale, mismatched, mutated, or wrong-target PASS evidence. **Satisfied at the non-normative research layer by PR #146 and CI #580.**
@@ -525,7 +539,8 @@ The contract remains research until the complete promotion case is supported. Cu
 This work extends, rather than replaces, existing TEO architecture and research:
 
 - **Mission Control:** remains the orchestration authority for an admitted task.
-- **Specialist Execution Envelope:** host embedding now has concrete process-local and brokered process-lifetime evidence for scoped context, dispatch authorization, exact action binding, replay resistance on the conformant path, verifier-context separation, static runtime-wired authority-surface reconciliation, exact local freshness binding, and host-owned portfolio/task-admission separation through a bounded TEO-facing gateway.
+- **Specialist Execution Envelope:** host embedding now has concrete process-local and brokered process-lifetime evidence for scoped context, dispatch authorization, exact action binding, replay resistance on the conformant path, verifier-context separation, static runtime-wired authority-surface reconciliation, exact local freshness binding, host-owned portfolio/task-admission separation through a bounded TEO-facing gateway, and one composed process-local assimilation/conformance path.
+- **Fresh-AI assimilation:** `host-integration-assimilation-protocol.md` defines the required source reconstitution, host reconstitution, authority mapping, standing hook, shadow, bounded activation, premortem, later-task, and evidence-bounded conformance lifecycle. It is mandatory research guidance for integration work but remains non-normative.
 - **Resource Budget and Admission Contract:** delegation depth, spawn count, context/token budgets, parallelism, and host task admission remain directly relevant to external-host recursion control.
 - **Action Authority Plane:** host tool authorization remains distinct from provider access and TEO model routing; current research strengthens restrictive intersection and exact-action binding.
 - **Final Execution Provenance:** `docs/specification/final-execution-provenance.md` can expose the observed successful route to a host after canonical evidence revalidation, but that projection carries no routing or action authority.

@@ -18,6 +18,33 @@ Use this repository as the source of truth for TEO orchestration.
 12. For any model-bearing decision, apply `policy/governance/model-freshness.yaml` before relying on a model identifier, lifecycle state, capability, or routing assumption.
 13. Keep provider access separate from routing by applying `policy/governance/provider-access-separation.yaml` whenever authentication, subscription, credentials, connectors, or account entitlement appear in implementation work.
 14. When work touches host embedding, isolation/recovery, or request-action authority research, read the applicable accepted roadmap under `research/roadmaps/` and preserve its non-normative status unless a reviewed canonical policy/schema/runtime change has promoted it.
+15. When asked to assimilate, adopt, embed, or integrate TEO into another AI agent, runtime, or host architecture, read both `research/roadmaps/host-integration-contract.md` and `research/roadmaps/host-integration-assimilation-protocol.md` before designing or implementing the integration.
+
+## Fresh-AI assimilation rule
+
+Assimilation is not installation. Do not represent TEO as an optional plugin, SDK, library, prompt persona, specialist pack, or finished product that can be installed and then bypassed. For work the host explicitly admits into the TEO-governed boundary, TEO is the orchestration control plane and Mission Control must resolve the governed route before execution.
+
+The assimilation declaration must identify the integration role as `embedded_orchestration_control_plane`; a declaration that frames TEO as a plugin, product, library, or bypassable sidecar is non-conformant.
+
+A fresh integrating AI must follow the 0-to-10 lifecycle in `research/roadmaps/host-integration-assimilation-protocol.md`:
+
+- acquire exact TEO source/revision identity and freshness state;
+- reconstitute current TEO repository truth before changing the host;
+- reconstitute the host independently without renaming it into TEO terminology;
+- map host versus TEO authority explicitly;
+- produce a falsifiable assimilation declaration;
+- install a durable host mechanism that routes future admitted work through TEO;
+- run shadow routing before bounded activation;
+- prove the admitted path through routing, authority intersection, exact execution envelope, independent verification, finalization, and evidence;
+- replay required negative controls and the Host Integration premortem;
+- prove continued use on a later distinct admitted task without relying on a special `use TEO` reminder;
+- state conformance only to the evidence actually proved and keep unsupported production/distributed surfaces explicit.
+
+The host remains the host. It retains its identity, portfolio/task-admission authority, native safety floor, credentials, and execution infrastructure unless a separately reviewed delegation says otherwise. TEO retains its Team, Worker, optional Specialist, Capability, Implementation, independent-verification, and evidence semantics. The host may narrow or deny TEO authority but must not silently replace the TEO route for admitted TEO-governed work. Provider connection happens after model/provider routing and is not routing authority.
+
+Copied files, installed packages, prompts, skills, one successful demo, or a green test suite do not prove assimilation. Process-local research can prove distinct-task continued use inside one running harness, but it cannot by itself prove that a fresh session inherited the integration, that no hidden reminder was supplied, or that the host persisted the hook across restart. Real host assimilation must provide durable cross-session evidence for those claims.
+
+Assimilation research never widens live execution by itself. The currently authorized live scope remains authoritative until a separately reviewed policy change satisfies every activation gate.
 
 ## Core routing rule
 
