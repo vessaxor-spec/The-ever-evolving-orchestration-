@@ -9,6 +9,13 @@ from pathlib import Path
 from typing import Iterable
 
 
+ROUTING_CONTINUITY_STAGES = (
+    "host_admission",
+    "teo_dispatch",
+    "authority_intersection",
+    "execution_envelope",
+)
+
 REQUIRED_EVIDENCE_STAGES = (
     "host_admission",
     "teo_dispatch",
@@ -200,6 +207,21 @@ class FreshSessionExecutionEvidence:
     user_task_digest: str
     challenge_digest: str
     teo_dispatch_id: str
+    execution_mode: str
+    selected_executor_provider_family: str
+    selected_executor_model: str
+    observed_executor_provider_family: str
+    observed_executor_model: str
+    executor_authenticity_status: str
+    artifact_digest: str
+    observed_executor_output_digest: str
+    selected_verifier_provider_family: str
+    selected_verifier_model: str
+    observed_verifier_provider_family: str
+    observed_verifier_model: str
+    verifier_authenticity_status: str
+    verification_record_digest: str
+    observed_verifier_record_digest: str
     verification_status: str
     finalization_status: str
     outcome_status: str
@@ -209,7 +231,9 @@ class FreshSessionExecutionEvidence:
 @dataclass(frozen=True)
 class FreshSessionTrialVerdict:
     trial_id: str
+    status: str
     passed: bool
+    routing_continuity_supported: bool
     setup_session_id: str
     fresh_session_id: str
     task_id: str
@@ -279,6 +303,99 @@ def validate_fresh_session_trial(
 
     if not fresh.teo_dispatch_id:
         raise FreshSessionTrialError("fresh session produced no TEO dispatch evidence")
+
+    routing_missing = [
+        stage for stage in ROUTING_CONTINUITY_STAGES if stage not in fresh.evidence_stages
+    ]
+    if routing_missing:
+        raise FreshSessionTrialError(
+            "fresh-session routing continuity is missing required stages: "
+            + ", ".join(routing_missing)
+        )
+
+    identity_fields = (
+        ("selected_executor_provider_family", fresh.selected_executor_provider_family),
+        ("selected_executor_model", fresh.selected_executor_model),
+        ("observed_executor_provider_family", fresh.observed_executor_provider_family),
+        ("observed_executor_model", fresh.observed_executor_model),
+        ("selected_verifier_provider_family", fresh.selected_verifier_provider_family),
+        ("selected_verifier_model", fresh.selected_verifier_model),
+        ("observed_verifier_provider_family", fresh.observed_verifier_provider_family),
+        ("observed_verifier_model", fresh.observed_verifier_model),
+    )
+    for label, value in identity_fields:
+        if not value.strip():
+            raise FreshSessionTrialError(f"{label} must be non-empty")
+
+    for label, digest in (
+        ("artifact_digest", fresh.artifact_digest),
+        ("observed_executor_output_digest", fresh.observed_executor_output_digest),
+        ("verification_record_digest", fresh.verification_record_digest),
+        ("observed_verifier_record_digest", fresh.observed_verifier_record_digest),
+    ):
+        _require_hex_digest(digest, label)
+
+    if fresh.execution_mode == "research_simulation":
+        return FreshSessionTrialVerdict(
+            trial_id=setup.trial_id,
+            status="routing_continuity_only",
+            passed=False,
+            routing_continuity_supported=True,
+            setup_session_id=setup.setup_session_id,
+            fresh_session_id=fresh.fresh_session_id,
+            task_id=fresh.task_id,
+            teo_dispatch_id=fresh.teo_dispatch_id,
+            verified_evidence_stages=ROUTING_CONTINUITY_STAGES,
+            residual_boundaries=RESIDUAL_BOUNDARIES,
+        )
+
+    if fresh.execution_mode != "live_provider":
+        raise FreshSessionTrialError(
+            "execution_mode must be live_provider or research_simulation"
+        )
+
+    selected_executor = (
+        fresh.selected_executor_provider_family,
+        fresh.selected_executor_model,
+    )
+    observed_executor = (
+        fresh.observed_executor_provider_family,
+        fresh.observed_executor_model,
+    )
+    if observed_executor != selected_executor:
+        raise FreshSessionTrialError(
+            "observed executor does not match the TEO-selected implementation"
+        )
+    if fresh.executor_authenticity_status != "authenticated":
+        raise FreshSessionTrialError(
+            "observed executor identity is not authenticated"
+        )
+    if fresh.observed_executor_output_digest != fresh.artifact_digest:
+        raise FreshSessionTrialError(
+            "observed executor output is not bound to the finalized artifact digest"
+        )
+
+    selected_verifier = (
+        fresh.selected_verifier_provider_family,
+        fresh.selected_verifier_model,
+    )
+    observed_verifier = (
+        fresh.observed_verifier_provider_family,
+        fresh.observed_verifier_model,
+    )
+    if observed_verifier != selected_verifier:
+        raise FreshSessionTrialError(
+            "observed verifier does not match the TEO-selected verifier"
+        )
+    if fresh.verifier_authenticity_status != "authenticated":
+        raise FreshSessionTrialError(
+            "observed verifier identity is not authenticated"
+        )
+    if fresh.observed_verifier_record_digest != fresh.verification_record_digest:
+        raise FreshSessionTrialError(
+            "observed verifier record is not bound to the verification record digest"
+        )
+
     if fresh.verification_status != "passed":
         raise FreshSessionTrialError("fresh-session independent verification did not pass")
     if fresh.finalization_status != "completed":
@@ -292,7 +409,9 @@ def validate_fresh_session_trial(
 
     return FreshSessionTrialVerdict(
         trial_id=setup.trial_id,
+        status="end_to_end_fresh_session_pass",
         passed=True,
+        routing_continuity_supported=True,
         setup_session_id=setup.setup_session_id,
         fresh_session_id=fresh.fresh_session_id,
         task_id=fresh.task_id,
