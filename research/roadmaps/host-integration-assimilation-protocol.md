@@ -306,7 +306,7 @@ A host that can demonstrate one integration demo but then returns to its native 
 
 The research harness therefore requires at least two governed receipts with **distinct task IDs** before it will emit a process-local integrated conformance result. Replaying the same setup/demo task twice is not continuity evidence.
 
-The process-local harness still cannot prove that the second task occurred in a genuinely fresh session, that no hidden reminder was supplied, or that a host persisted its hook across restart. Those remain explicit cross-session/production evidence requirements even after the process-local result passes.
+The process-local harness still cannot prove that the second task occurred in a genuinely fresh session, that no hidden reminder was supplied, or that a host persisted its hook across restart. Those remain explicit cross-session/production evidence requirements even after the process-local result passes. Any stronger fresh-session/no-reminder claim must use the two-session protocol and evidence validator in [`host-integration-fresh-session-trial.md`](host-integration-fresh-session-trial.md); having that framework installed does not close the empirical gate.
 
 ## Phase 10: emit an evidence-bounded conformance statement
 
