@@ -143,7 +143,7 @@ The process-local conformance report requires:
 
 - at least one real shadow dispatch;
 - a persistent standing integration hook;
-- **at least two distinct post-assimilation governed executions**;
+- **at least two post-assimilation governed executions with distinct task IDs**;
 - all required negative controls;
 - all ten original premortem failure paths mapped to a satisfied process-local check.
 

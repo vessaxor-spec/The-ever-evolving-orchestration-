@@ -249,6 +249,23 @@ def test_one_governed_demo_is_not_continued_integration(truth, tmp_path) -> None
         sandbox.claim_process_local_conformance()
 
 
+def test_replaying_same_governed_task_cannot_prove_continuity(truth, tmp_path) -> None:
+    sandbox = make_sandbox(truth)
+    register_hook(sandbox)
+    sandbox.shadow_route(active_task("shadow-before-replayed-use"))
+    payload = active_task("same-demo-twice")
+    sandbox.governed_execute(payload, artifact_root=tmp_path)
+    sandbox.governed_execute(payload, artifact_root=tmp_path)
+    sandbox.prove_staged_scope_refusal()
+    sandbox.prove_revoked_admission_refusal()
+    sandbox.prove_artifact_mutation_refusal(artifact_root=tmp_path)
+    sandbox.prove_autonomy_and_human_authority()
+    sandbox.prove_recursion_refusal()
+
+    with pytest.raises(IntegratedHostConformanceError, match="two distinct post-assimilation task IDs"):
+        sandbox.claim_process_local_conformance()
+
+
 def test_full_process_local_assimilation_and_integrated_premortem_replay(truth, tmp_path) -> None:
     sandbox = make_sandbox(truth)
     register_hook(sandbox)

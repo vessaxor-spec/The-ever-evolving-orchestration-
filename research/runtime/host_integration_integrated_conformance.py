@@ -52,6 +52,10 @@ REQUIRED_OPEN_SURFACES = frozenset(
         "production_remote_authenticity",
         "restart_durable_distributed_state",
         "compromised_host_bypass_resistance",
+        "production_scheduler_enforcement",
+        "tenant_account_credential_binding",
+        "dynamic_hook_plugin_authority_discovery",
+        "cross_session_continued_use_proof",
     }
 )
 
@@ -1012,6 +1016,11 @@ class IntegratedHostConformanceSandbox:
         if len(self._governed_receipts) < 2:
             raise IntegratedHostConformanceError(
                 "conformance requires repeated post-assimilation TEO use, not a one-time integration demo"
+            )
+        governed_task_ids = {receipt.task_id for receipt in self._governed_receipts}
+        if len(governed_task_ids) < 2:
+            raise IntegratedHostConformanceError(
+                "conformance requires at least two distinct post-assimilation task IDs; replaying one demo is not continuity evidence"
             )
         missing_controls = REQUIRED_NEGATIVE_CONTROLS - self._negative_controls
         if missing_controls:

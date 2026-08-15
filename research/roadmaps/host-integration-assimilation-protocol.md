@@ -304,7 +304,9 @@ After the first bounded activation succeeds:
 
 A host that can demonstrate one integration demo but then returns to its native router has **not** assimilated TEO operationally. In this protocol, one successful integration demo is insufficient.
 
-The research harness therefore requires repeated post-assimilation TEO use before it will emit a process-local integrated conformance result.
+The research harness therefore requires at least two governed receipts with **distinct task IDs** before it will emit a process-local integrated conformance result. Replaying the same setup/demo task twice is not continuity evidence.
+
+The process-local harness still cannot prove that the second task occurred in a genuinely fresh session, that no hidden reminder was supplied, or that a host persisted its hook across restart. Those remain explicit cross-session/production evidence requirements even after the process-local result passes.
 
 ## Phase 10: emit an evidence-bounded conformance statement
 
