@@ -1,0 +1,38 @@
+version: 0.1
+status: active
+purpose: Replace elapsed-calendar waiting with executable, evidence-dense qualification before regulated specialist registry expansion decisions.
+registry_path: policy/specialists/evidence-pilot.yaml
+
+qualification:
+  calendar_wait_required: false
+  minimum_clean_resolution_replays: 5
+  minimum_repeatability_runs: 3
+  require_all_declared_authorities_per_replay: true
+  require_repeatable_normalized_result: true
+  require_controlled_authority_move: true
+  require_external_network_resolution_observation: true
+  required_mutation_classes:
+    - authority_unavailable
+    - undeclared_redirect_host
+    - url_host_not_declared
+    - expired_evidence
+    - excessive_evidence_lifetime
+    - tier_downgrade
+    - verification_independence_removed
+    - same_preparer_verifier
+    - stale_behavior_weakened
+    - conflict_behavior_weakened
+    - pilot_scope_expanded
+    - unknown_schema_field
+    - non_https_authority
+    - duplicate_claim_id
+    - specialist_card_blob_mismatch
+
+continuous_monitoring:
+  source_resolution_cadence_days: 7
+  purpose: drift_detection
+  qualification_does_not_replace_monitoring: true
+
+expansion_authority:
+  explicit_next_batch_approval_required: true
+  qualification_auto_authorizes_expansion: false

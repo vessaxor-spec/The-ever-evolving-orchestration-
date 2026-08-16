@@ -1,0 +1,82 @@
+{
+  "qualification_id": "regulated-specialist-evidence-stability-qualification-0001",
+  "status": "completed",
+  "performed_at": "2026-08-16",
+  "repository_base_commit": "30b86a7f2d4b628111054988f13a6787b793fbf1",
+  "registry_path": "policy/specialists/evidence-pilot.yaml",
+  "registry_blob_sha": "05811a4e147d9d1de2e59bacb26c5c5084373754",
+  "pilot_specialists": [
+    "legal-operations",
+    "tax-strategist",
+    "loan-officer-assistant",
+    "compliance-auditor",
+    "civil-engineer",
+    "embedded-engineer"
+  ],
+  "claim_count": 7,
+  "qualification_policy": {
+    "calendar_wait_required": false,
+    "minimum_clean_resolution_replays": 5,
+    "minimum_repeatability_runs": 3,
+    "required_mutations": 15,
+    "continuous_resolution_cadence_days": 7,
+    "explicit_next_batch_approval_required": true,
+    "qualification_auto_authorizes_expansion": false
+  },
+  "sandbox_practical_run": {
+    "qualified": true,
+    "environment": "isolated ChatGPT sandbox mirror",
+    "outbound_network_available": false,
+    "baseline_claim_count": 7,
+    "clean_resolution_replays": 5,
+    "mutations_killed": 15,
+    "mutations_total": 15,
+    "repeatability_runs": 3,
+    "repeatability_digest": "d2ea786046ad32671040de3a70191e8fa29199375782ab1f8ab47bf2202c3883",
+    "controlled_authority_move": true,
+    "limitation": "The sandbox mirror exercised production-equivalent validation semantics with deterministic resolution fixtures because outbound network access was unavailable. It does not replace the external GitHub-runner authority-resolution observation."
+  },
+  "external_network_observation": {
+    "workflow": "ISO Resolution Probe",
+    "run_number": 5,
+    "run_id": 31961987236,
+    "head_sha": "633a8572b6417c3f61ff3baba67bfbb5534bf604",
+    "runner": "ubuntu-24.04",
+    "conclusion": "success",
+    "resolved_authorities": 7,
+    "purpose": "The unchanged production evidence resolver resolved all seven declared authorities after the ISO authority repair."
+  },
+  "test_only_model_substitution": {
+    "enabled": true,
+    "provider_diversity_satisfied": false,
+    "production_routing_changed": false,
+    "lanes": [
+      {
+        "purpose": "primary qualification execution placeholder",
+        "provider": "openai/codex",
+        "model": "gpt-5.6-terra",
+        "reasoning": "medium"
+      },
+      {
+        "purpose": "replay and mutation execution placeholder",
+        "provider": "openai/codex",
+        "model": "gpt-5.6-luna",
+        "reasoning": "medium"
+      },
+      {
+        "purpose": "independent high-reasoning review placeholder",
+        "provider": "openai/codex",
+        "model": "gpt-5.6-sol",
+        "reasoning": "xhigh"
+      }
+    ],
+    "limitation": "These identities document the user-approved single-provider placeholder topology for qualification testing only. They are not evidence of separate model execution in the sandbox and do not satisfy provider-diverse verification."
+  },
+  "disposition": {
+    "elapsed_30_day_pre_expansion_wait_removed": true,
+    "weekly_authority_resolution_retained_for_drift_detection": true,
+    "stability_qualification_satisfied": true,
+    "next_batch_approved": false,
+    "registry_expansion_authorized": false
+  }
+}
