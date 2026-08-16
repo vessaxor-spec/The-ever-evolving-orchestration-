@@ -73,7 +73,7 @@ Rules:
 | Team, worker, and specialist architecture | Operational | 100% | 10 teams, 84 workers, 82 active specialists | Add roles only after proven responsibility-gap and authority review |
 | Control integrity | Operational | 90% | Post-v1 hardening with conformance, mutation resistance, and exact artifact-bound finalization | Continue closing uncovered finalization, authority, and recovery mutation gaps as discovered |
 | Verifier calibration evidence | In progress | 70% | Deterministic and empirical verifier evidence | Strengthen repeatability, disagreement, adversarial, and route-specific evidence |
-| Regulated specialist evidence pilot | In progress | 70% | Formal refresh cycle 1 completed across the six-card pilot | Complete refresh cycle 2 and establish 30-day scheduled authority-resolution stability before any expansion decision |
+| Regulated specialist evidence pilot | In progress | 70% | Formal refresh cycle 2 completed across the six-card pilot | Establish 30-day scheduled authority-resolution stability before any expansion decision |
 | Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
@@ -260,13 +260,13 @@ Benchmark Lab measures multi-verifier disagreement for controlled evaluations, b
 
 ### Regulated specialist evidence pilot, 70%
 
-Formal refresh cycle 1 completed on 2026-08-11 across the exact six-card pilot. All seven consequential claims were re-reviewed against their declared tier-1 authorities: six were reaffirmed, one was amended, zero authoritative conflicts were found, and no specialist card changed. The Rule 37(e) claim was corrected to include the condition that the lost information cannot be restored or replaced through additional discovery.
+Formal refresh cycle 2 completed on 2026-08-16 across the exact six-card pilot. All seven consequential claims were re-reviewed against their declared tier-1 authorities: six were reaffirmed, one authority moved within the same standards body, zero authoritative conflicts were found, and no specialist card changed. The embedded-engineer ISO/IEC 9899:2024 source moved from the GitHub-runner-blocked `www.iso.org` catalog endpoint to the exact official `committee.iso.org` page without changing the claim, standard identity, verification ownership, or fail-closed resolver semantics. Formal refresh cycle 1 completed on 2026-08-11 and remains preserved as the prior historical cycle, including its Rule 37(e) claim correction.
 
 The refresh now has append-only machine-readable history with contiguous cycle sequencing, active-registry blob binding, exact claim coverage, ownership/source consistency, maintenance counters, and mutation checks that reject forged history, missing claims, broken registry-hash continuity, or premature expansion authorization. This preserves proof of repeated maintenance instead of overwriting prior verification dates in the active registry.
 
 Reference Implementation CI run #535 validated the refresh-cycle implementation with 680 passing tests, 487 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example.
 
-The pilot has completed **1 of 2 required formal refresh cycles**. The required 30-day scheduled authority-resolution stability window is not yet satisfied, and no next risk-tier batch has been approved. The controlled-change requirement has been exercised through the Rule 37(e) claim amendment, but registry expansion remains unauthorized. Complete refresh cycle 2 and the 30-day stability gate before any expansion decision.
+The pilot has completed **2 of 2 required formal refresh cycles**. Before cycle 2, the pilot stood at **1 of 2 required formal refresh cycles**. The required 30-day scheduled authority-resolution stability window is still not satisfied: the first scheduled run failed closed on the former ISO endpoint, and a 2026-08-16 rerun reproduced that failure before the source was repaired. The controlled-change requirement has now been exercised through the cycle-1 Rule 37(e) claim amendment and the cycle-2 ISO authority move. No next risk-tier batch has been approved, so expansion remains unauthorized. Establish the 30-day successful scheduled-resolution history before any expansion decision.
 
 ### Route-outcome evidence, 100%
 
