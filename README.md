@@ -140,7 +140,39 @@ See:
 - [`research/roadmaps/host-integration-fresh-session-trial.md`](research/roadmaps/host-integration-fresh-session-trial.md)
 - [`research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md)
 
-The repository's current validation counts, evidence milestones, and exact research boundaries belong in the canonical progress tracker and research records rather than being duplicated here as quickly stale README prose.
+The repository's current validation counts, evidence milestones, and exact research boundaries belong in the canonical progress tracker and research records. The compact snapshot below is retained because TEO CI explicitly protects these README truth claims.
+
+<details>
+<summary><strong>Current evidence snapshot (CI-protected)</strong></summary>
+
+TEO currently has **ten active organizational teams**, **84 workers**, **82 preserved specialist role cards**, and dedicated Mission Control workers for orchestration, operations, project delivery, and incident response. The Mission Control worker identities are `orchestration`, `operations`, `project_delivery`, and `incident_response`. The active specialist topology includes [`community/specialists/workforce-expansion-active.yaml`](community/specialists/workforce-expansion-active.yaml). Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** have completed their current declared milestones.
+
+The accepted substantive runtime-control baseline remains **Reference Implementation CI #514** with **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle. The documentation reconciliation baseline is **CI #602** with **802 automated tests** and **515 tracked-file layout checks**. The latest Host Integration research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks**. These baselines prove their declared checks, not broader provider-backed production claims.
+
+Host Integration has accumulated **eleven provider-independent adversarial slices** plus integrated Fresh-AI assimilation/conformance. Those slices include **verifier-context independence**, **exact artifact/change-set stale-PASS resistance**, **brokered conformant process-lifetime cross-process authority/replay**, **static runtime-wired authority-surface reconciliation**, **process-lifetime recursion resistance**, **exact local freshness binding**, and **portfolio/task-admission separation**. The assimilation work operationalizes the rule **Assimilation is not installation** and requires **two distinct post-assimilation task IDs** rather than treating one successful demo as durable continuity.
+
+Key research records include:
+
+- [`host-integration-verifier-artifact-binding-2026-08-12.md`](research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md)
+- [`host-integration-cross-process-authority-2026-08-13.md`](research/runtime/host-integration-cross-process-authority-2026-08-13.md)
+- [`host-integration-authority-surface-reconciliation-2026-08-14.md`](research/runtime/host-integration-authority-surface-reconciliation-2026-08-14.md)
+- [`host-integration-recursion-resistance-2026-08-14.md`](research/runtime/host-integration-recursion-resistance-2026-08-14.md)
+- [`host-integration-freshness-binding-2026-08-14.md`](research/runtime/host-integration-freshness-binding-2026-08-14.md)
+- [`host-integration-portfolio-authority-separation-2026-08-15.md`](research/runtime/host-integration-portfolio-authority-separation-2026-08-15.md)
+- [`host-integration-assimilation-protocol.md`](research/roadmaps/host-integration-assimilation-protocol.md)
+- [`host-integration-fresh-session-trial.md`](research/roadmaps/host-integration-fresh-session-trial.md)
+- [`host-integration-integrated-conformance-assimilation-2026-08-15.md`](research/runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md)
+- [`2026-08-15-local-fresh-ai-cross-session-trial-001.md`](research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md)
+
+Empirical trial 001 supports fresh-session, no-reminder **routing continuity** but not full end-to-end assimilation. The hardened validator therefore limits research simulation to `routing_continuity_only` unless authenticated selected-versus-observed executor and verifier identity plus digest binding are proven. The earlier **red-canary CI #676** is preserved as evidence from the exact local freshness binding slice rather than hidden as a clean-history rewrite.
+
+The current canonical workstream is **evidence-governed live execution expansion**, **now at 65%**. **`documentation` is the first staged candidate**; its provider-diverse topology and **staged replay harness are validated**, but **provider-backed replay evidence is still pending** and it has **no live-execution authority**. **The next gate is provider-backed controlled documentation replay evidence**. The low or medium risk `high_volume_simple` canary remains the only accepted live execution scope.
+
+The targeted **control-integrity audit** closed a qualified-human **temporal-causality** gap and added recovery-authority regression coverage. **Control Integrity remains intentionally scored at 90%** because mutation depth remains an ongoing discipline. **Issue #100** repository branch-retention cleanup **is complete** and is not a runtime or routing blocker.
+
+Current compatible extensions include **final execution provenance**. Accepted non-normative future research includes **Task Intent & Action Authority** and **Execution Environment & Recovery**. None of these research directions silently widen current live authority.
+
+</details>
 
 ## Quick start
 
@@ -221,7 +253,7 @@ Repository placement is governed by [`policy/governance/repository-layout.yaml`]
 | enduring principles | [`CONSTITUTION.md`](CONSTITUTION.md) |
 | project philosophy | [`docs/philosophy/manifesto.md`](docs/philosophy/manifesto.md) |
 | terminology | [`docs/specification/lexicon.md`](docs/specification/lexicon.md) |
-| functional-v1 boundary | [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md) |
+| functional-v1 boundary | [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md) and [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) |
 | current operational state | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
 | strategic direction | [`docs/stewardship/roadmap.md`](docs/stewardship/roadmap.md) |
 | canonical routing | [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml) |
