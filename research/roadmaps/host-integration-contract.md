@@ -1,7 +1,7 @@
 # Host Integration Contract Research
 
 **Date:** 2026-08-12
-**Last reconciled:** 2026-08-15
+**Last reconciled:** 2026-08-16
 **Status:** research roadmap
 **Authority:** non-normative
 **Scope:** embedding TEO Mission Control into pre-existing AI agents and execution runtimes
@@ -31,7 +31,8 @@ Implementation-backed evidence now includes:
 - [`../runtime/host-integration-portfolio-authority-separation-2026-08-15.md`](../runtime/host-integration-portfolio-authority-separation-2026-08-15.md), conformant process-local host-owned portfolio/task-admission authority separation;
 - [`host-integration-assimilation-protocol.md`](host-integration-assimilation-protocol.md), the fresh-AI 0-to-10 assimilation process that prevents install-and-forget integration;
 - [`../runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md`](../runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md), the hands-on integrated sandbox, negative controls, premortem replay, and continued-use evidence boundary;
-- [`host-integration-fresh-session-trial.md`](host-integration-fresh-session-trial.md), the two-session no-reminder trial protocol and evidence-packet validator for testing whether a durable host integration is actually inherited after the assimilation conversation ends.
+- [`host-integration-fresh-session-trial.md`](host-integration-fresh-session-trial.md), the two-session no-reminder trial protocol and evidence-packet validator for testing whether a durable host integration is actually inherited after the assimilation conversation ends;
+- [`../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md), the first empirical localhost two-session run, which supports fresh-session/no-reminder standing-hook and routing continuity but records a full end-to-end FAIL after executor and verifier substitution were independently falsified.
 
 This document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority.
 
@@ -87,7 +88,7 @@ The integration layer is an adapter and evidence boundary. It must not become a 
 
 Fresh-AI assimilation is a lifecycle obligation, not an installation event. A host or fresh AI must not claim integration merely because TEO files, prompts, skills, packages, or tests are present. The accepted research process in [`host-integration-assimilation-protocol.md`](host-integration-assimilation-protocol.md) requires exact TEO reconstitution, independent host reconstitution, an explicit authority map, a falsifiable assimilation declaration, a durable host hook, shadow operation, bounded governed activation, negative-control and premortem replay, and later continued-use evidence.
 
-The current process-local harness requires two governed receipts with distinct task IDs. That protects against replaying one setup demo twice, but it does not prove that a genuinely fresh session inherited the integration without a reminder or that a production host persisted the hook across restart. The dedicated [`host-integration-fresh-session-trial.md`](host-integration-fresh-session-trial.md) framework now makes that stronger claim falsifiable through a precommitted setup, distinct session, neutral challenge, exact TEO-path evidence, and independent PASS/FAIL/INCONCLUSIVE review. CI #735 validated the framework and validator, not an empirical host trial; true fresh-session/no-reminder inheritance remains open until a real host run passes.
+The current process-local harness requires two governed receipts with distinct task IDs. That protects against replaying one setup demo twice, but it does not prove that a genuinely fresh session inherited the integration without a reminder or that a production host persisted the hook across restart. The dedicated [`host-integration-fresh-session-trial.md`](host-integration-fresh-session-trial.md) framework makes the stronger claim falsifiable through a precommitted setup, distinct session, neutral challenge, exact TEO-path evidence, and independent PASS/FAIL/INCONCLUSIVE review. Empirical localhost trial 001 supports fresh-session/no-reminder standing-hook and routing continuity, but full end-to-end assimilation failed because the observed Qwen executor and research verifier fixture did not match the Gemini and Claude identities selected by TEO. PR #169 and CI #739 hardened the validator so research simulation can produce only `routing_continuity_only`; a full PASS now requires authenticated selected-versus-observed executor/verifier identity and exact digest binding. Restart-persistent hook proof and production enforcement remain open.
 
 ## Design invariants
 

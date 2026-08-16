@@ -10,15 +10,15 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_CURRENT_VALIDATED_TESTS = 958
-EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 542
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 735
+EXPECTED_CURRENT_VALIDATED_TESTS = 964
+EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 543
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 739
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
-EXPECTED_HOST_INTEGRATION_CI_RUN = 735
-EXPECTED_HOST_INTEGRATION_TESTS = 958
-EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 542
+EXPECTED_HOST_INTEGRATION_CI_RUN = 739
+EXPECTED_HOST_INTEGRATION_TESTS = 964
+EXPECTED_HOST_INTEGRATION_TRACKED_FILES = 543
 EXPECTED_MISSION_CONTROL_WORKERS = {
     "orchestration",
     "operations",
@@ -118,6 +118,8 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "host-integration-assimilation-protocol.md",
         "host-integration-fresh-session-trial.md",
         "host-integration-integrated-conformance-assimilation-2026-08-15.md",
+        "2026-08-15-local-fresh-ai-cross-session-trial-001.md",
+        "routing_continuity_only",
         "integrated Fresh-AI assimilation/conformance",
         "Assimilation is not installation",
         "exact local freshness binding",
@@ -158,6 +160,8 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "without relying on a special `use TEO` reminder",
         "host-integration-fresh-session-trial.md",
         "the existence of the trial framework or validator is not itself a PASS",
+        "Routing continuity is not full end-to-end assimilation",
+        "Research simulation may support `routing_continuity_only`",
         "Copied files, installed packages, prompts, skills, one successful demo, or a green test suite do not prove assimilation",
         "cannot by itself prove that a fresh session inherited the integration",
         "Assimilation research never widens live execution by itself",
@@ -222,6 +226,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "host-integration-assimilation-protocol.md",
         "host-integration-fresh-session-trial.md",
         "host-integration-integrated-conformance-assimilation-2026-08-15.md",
+        "2026-08-15-local-fresh-ai-cross-session-trial-001.md",
+        "routing_continuity_only",
         "process-local integrated Fresh-AI assimilation/conformance",
         "assimilation is not installation",
         "two distinct task IDs",
