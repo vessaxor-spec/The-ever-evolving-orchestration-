@@ -1,0 +1,123 @@
+{
+  "cycle_id": "regulated-specialist-evidence-refresh-cycle-0002",
+  "sequence": 2,
+  "status": "completed",
+  "performed_at": "2026-08-16",
+  "repository_base_commit": "934ab08db67b270f95f580052b0c7fa6316be23f",
+  "registry_path": "policy/specialists/evidence-pilot.yaml",
+  "registry_before_blob_sha": "21fed55e972c755e7837c3e2c4af11198d243788",
+  "registry_after_blob_sha": "05811a4e147d9d1de2e59bacb26c5c5084373754",
+  "pilot_specialists": [
+    "legal-operations",
+    "tax-strategist",
+    "loan-officer-assistant",
+    "compliance-auditor",
+    "civil-engineer",
+    "embedded-engineer"
+  ],
+  "claims_reviewed": [
+    {
+      "specialist": "legal-operations",
+      "claim_id": "legal-us-frcp-37e-preservation",
+      "outcome": "reaffirmed",
+      "authority_url": "https://www.uscourts.gov/forms-rules/current-rules-practice-procedure/federal-rules-civil-procedure",
+      "source_date_basis": "observed",
+      "source_date": "2026-08-16",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "legal_review", "independent": true}
+    },
+    {
+      "specialist": "tax-strategist",
+      "claim_id": "tax-us-record-retention",
+      "outcome": "reaffirmed",
+      "authority_url": "https://www.irs.gov/businesses/small-businesses-self-employed/how-long-should-i-keep-records",
+      "source_date_basis": "last_updated",
+      "source_date": "2026-06-30",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "tax_review", "independent": true}
+    },
+    {
+      "specialist": "loan-officer-assistant",
+      "claim_id": "lending-us-general-qm-dti",
+      "outcome": "reaffirmed",
+      "authority_url": "https://www.consumerfinance.gov/rules-policy/regulations/1026/interp-43/",
+      "source_date_basis": "effective",
+      "source_date": "2021-03-01",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "lending_compliance", "independent": true}
+    },
+    {
+      "specialist": "compliance-auditor",
+      "claim_id": "compliance-nist-csf-2-govern",
+      "outcome": "reaffirmed",
+      "authority_url": "https://www.nist.gov/publications/nist-cybersecurity-framework-csf-20",
+      "source_date_basis": "published",
+      "source_date": "2024-02-26",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "compliance", "independent": true}
+    },
+    {
+      "specialist": "civil-engineer",
+      "claim_id": "civil-asce-7-current-publication",
+      "outcome": "reaffirmed",
+      "authority_url": "https://www.asce.org/communities/institutes-and-technical-groups/structural-engineering-institute/asce-7-and-sei-standards",
+      "source_date_basis": "observed",
+      "source_date": "2026-08-16",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "civil_engineering_review", "independent": true}
+    },
+    {
+      "specialist": "civil-engineer",
+      "claim_id": "civil-model-code-adoption",
+      "outcome": "reaffirmed",
+      "authority_url": "https://www.iccsafe.org/advocacy/code-adoption-resources/",
+      "source_date_basis": "observed",
+      "source_date": "2026-08-16",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "civil_engineering_review", "independent": true}
+    },
+    {
+      "specialist": "embedded-engineer",
+      "claim_id": "embedded-c-language-current-standard",
+      "outcome": "authority_moved",
+      "authority_url": "https://committee.iso.org/ru/standard/82075.html",
+      "source_date_basis": "published",
+      "source_date": "2024-10-31",
+      "observed_at": "2026-08-16",
+      "resolution_status": "resolved",
+      "statement_changed": false,
+      "ownership": {"prepared_by": "research", "verified_by": "embedded_systems_review", "independent": true}
+    }
+  ],
+  "maintenance_summary": {
+    "claims_reviewed": 7,
+    "authorities_resolved": 7,
+    "claims_reaffirmed": 6,
+    "claims_amended": 0,
+    "authorities_moved": 1,
+    "authority_conflicts": 0,
+    "specialist_cards_changed": 0
+  },
+  "expansion_gate": {
+    "refresh_cycles_completed": 2,
+    "refresh_cycles_required": 2,
+    "stable_authority_resolution_days_required": 30,
+    "stable_authority_resolution_gate_satisfied": false,
+    "controlled_change_handled": true,
+    "controlled_change_type": "authority_move",
+    "next_batch_approved": false,
+    "expansion_authorized": false
+  }
+}
