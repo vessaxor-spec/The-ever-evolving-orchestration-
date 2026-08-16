@@ -1,6 +1,6 @@
 version: 0.2
 status: pilot
-reviewed_at: 2026-08-11
+reviewed_at: 2026-08-16
 purpose: Prove maintainable evidence-backed freshness for consequential specialist use before any registry-wide rollout.
 
 controls:
@@ -31,9 +31,9 @@ pilot_specialists:
           expected_hosts: [www.uscourts.gov]
           locator: Current Federal Rules of Civil Procedure, December 1 2025, Rule 37(e); the preservation rewrite became effective December 1 2015
           source_date_basis: observed
-          source_date: 2026-08-11
-        verified_at: 2026-08-11
-        expires_at: 2026-11-09
+          source_date: 2026-08-16
+        verified_at: 2026-08-16
+        expires_at: 2026-11-14
         verification:
           prepared_by: research
           verified_by: legal_review
@@ -63,8 +63,8 @@ pilot_specialists:
           locator: Period of limitations that apply to income tax returns
           source_date_basis: last_updated
           source_date: 2026-06-30
-        verified_at: 2026-08-11
-        expires_at: 2026-11-09
+        verified_at: 2026-08-16
+        expires_at: 2026-11-14
         verification:
           prepared_by: research
           verified_by: tax_review
@@ -94,8 +94,8 @@ pilot_specialists:
           locator: Official interpretation of paragraph 43(e)(2)
           source_date_basis: effective
           source_date: 2021-03-01
-        verified_at: 2026-08-11
-        expires_at: 2026-09-10
+        verified_at: 2026-08-16
+        expires_at: 2026-09-15
         verification:
           prepared_by: research
           verified_by: lending_compliance
@@ -125,8 +125,8 @@ pilot_specialists:
           locator: NIST CSWP 29, published February 26 2024
           source_date_basis: published
           source_date: 2024-02-26
-        verified_at: 2026-08-11
-        expires_at: 2026-11-09
+        verified_at: 2026-08-16
+        expires_at: 2026-11-14
         verification:
           prepared_by: research
           verified_by: compliance
@@ -155,9 +155,9 @@ pilot_specialists:
           expected_hosts: [www.asce.org]
           locator: Current Edition, ASCE/SEI 7
           source_date_basis: observed
-          source_date: 2026-08-11
-        verified_at: 2026-08-11
-        expires_at: 2026-11-09
+          source_date: 2026-08-16
+        verified_at: 2026-08-16
+        expires_at: 2026-11-14
         verification:
           prepared_by: research
           verified_by: civil_engineering_review
@@ -180,9 +180,9 @@ pilot_specialists:
           expected_hosts: [www.iccsafe.org]
           locator: Adoption of ICC Codes and Standards FAQ
           source_date_basis: observed
-          source_date: 2026-08-11
-        verified_at: 2026-08-11
-        expires_at: 2026-11-09
+          source_date: 2026-08-16
+        verified_at: 2026-08-16
+        expires_at: 2026-11-14
         verification:
           prepared_by: research
           verified_by: civil_engineering_review
@@ -207,13 +207,13 @@ pilot_specialists:
           tier: 1
           organization: International Organization for Standardization
           source_type: standards_body
-          url: https://www.iso.org/standard/82075.html
-          expected_hosts: [www.iso.org]
+          url: https://committee.iso.org/ru/standard/82075.html
+          expected_hosts: [committee.iso.org]
           locator: ISO lifecycle stage 60.60, International Standard published October 31 2024; edition 5
           source_date_basis: published
           source_date: 2024-10-31
-        verified_at: 2026-08-11
-        expires_at: 2026-11-09
+        verified_at: 2026-08-16
+        expires_at: 2026-11-14
         verification:
           prepared_by: research
           verified_by: embedded_systems_review
