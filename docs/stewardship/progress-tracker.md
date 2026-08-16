@@ -27,13 +27,13 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Current validated scale | 964 tests passed, 544 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #751 |
+| Current validated scale | 967 tests passed, 551 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #765 |
 | Documentation reconciliation baseline | CI #602: 802 tests, 515 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse end-to-end pass |
 | Host-integration research validation | CI #739: 964 tests, 543 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass after Fresh-AI trial 001 hardening; empirical trial 001 supports fresh-session/no-reminder routing continuity but failed full selected-executor/verifier end-to-end assimilation |
 | Host Integration Contract | Two-host architecture diversity, static bounded-context payload, process-local dispatch provenance, bundled-adapter payload self-expansion, process-local third-party adapter trust, process-local restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, exact artifact/change-set stale-PASS resistance, brokered conformant process-lifetime cross-process authority/replay resistance, static runtime-wired authority-surface reconciliation, process-lifetime recursion resistance, exact local freshness-binding, conformant process-local portfolio/task-admission authority-separation, and process-local integrated Fresh-AI assimilation/conformance plus premortem replay research slices satisfied and a Fresh-AI cross-session trial framework/validator implemented, with empirical trial 001 supporting fresh-session/no-reminder routing continuity; contract remains non-normative and authenticated end-to-end selected-executor/verifier proof, restart-persistent hooks, production compatibility-catalog provenance, remote/distributed freshness authenticity, downgrade/expiry, restart-durable/distributed recursion, production scheduler containment, tenant/account/credential binding, dynamic authority discovery, and production/distributed authenticity remain open |
 | Artifact-bound finalization | PR #154 merged; verifier-observed local `file://` identity, SHA-256, and byte length are revalidated under an explicit authorized artifact root before artifact-backed PASS can complete; independently verified |
 | Final execution provenance | Optional read-only projection from revalidated canonical Route-Outcome Evidence into `FinalOutcome`; implemented without routing, execution, host, or permission authority |
-| Regulated evidence pilot | 6 specialists, intentionally bounded |
+| Regulated evidence pilot | 6 specialists, stability-qualified and intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
@@ -73,7 +73,7 @@ Rules:
 | Team, worker, and specialist architecture | Operational | 100% | 10 teams, 84 workers, 82 active specialists | Add roles only after proven responsibility-gap and authority review |
 | Control integrity | Operational | 90% | Post-v1 hardening with conformance, mutation resistance, and exact artifact-bound finalization | Continue closing uncovered finalization, authority, and recovery mutation gaps as discovered |
 | Verifier calibration evidence | In progress | 70% | Deterministic and empirical verifier evidence | Strengthen repeatability, disagreement, adversarial, and route-specific evidence |
-| Regulated specialist evidence pilot | In progress | 70% | Formal refresh cycle 2 completed across the six-card pilot | Establish 30-day scheduled authority-resolution stability before any expansion decision |
+| Regulated specialist evidence pilot | Complete | 100% | Six-card pilot passed executable stability qualification | Maintain seven-day drift monitoring; any expansion requires explicit next risk-tier batch approval |
 | Route-outcome evidence | Complete | 100% | Canonical executable route-outcome evidence contract | Preserve schema/version compatibility and feed controlled evaluation |
 | Benchmark and Outcome Lab | Complete | 100% | Controlled evaluation, live replay, disagreement, and conclusion handoff | Preserve compatibility and feed governed downstream evaluation |
 | Source-backed cost attribution | Complete | 100% | Effective-dated reproducible route-level attribution | Maintain first-party price evidence and feed governed downstream evaluation |
@@ -258,7 +258,7 @@ The calibrated External Independent Technical Verifier is paused between materia
 
 Benchmark Lab measures multi-verifier disagreement for controlled evaluations, but that diagnostic capability does not by itself complete the broader verifier-calibration evidence program.
 
-### Regulated specialist evidence pilot, 70%
+### Regulated specialist evidence pilot, 100%
 
 Formal refresh cycle 2 completed on 2026-08-16 across the exact six-card pilot. All seven consequential claims were re-reviewed against their declared tier-1 authorities: six were reaffirmed, one authority moved within the same standards body, zero authoritative conflicts were found, and no specialist card changed. The embedded-engineer ISO/IEC 9899:2024 source moved from the GitHub-runner-blocked `www.iso.org` catalog endpoint to the exact official `committee.iso.org` page without changing the claim, standard identity, verification ownership, or fail-closed resolver semantics. Formal refresh cycle 1 completed on 2026-08-11 and remains preserved as the prior historical cycle, including its Rule 37(e) claim correction.
 
@@ -266,7 +266,9 @@ The refresh now has append-only machine-readable history with contiguous cycle s
 
 Reference Implementation CI run #535 validated the refresh-cycle implementation with 680 passing tests, 487 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example.
 
-The pilot has completed **2 of 2 required formal refresh cycles**. Before cycle 2, the pilot stood at **1 of 2 required formal refresh cycles**. The required 30-day scheduled authority-resolution stability window is still not satisfied: the first scheduled run failed closed on the former ISO endpoint, and a 2026-08-16 rerun reproduced that failure before the source was repaired. The controlled-change requirement has now been exercised through the cycle-1 Rule 37(e) claim amendment and the cycle-2 ISO authority move. No next risk-tier batch has been approved, so expansion remains unauthorized. Establish the 30-day successful scheduled-resolution history before any expansion decision.
+The pilot has completed **2 of 2 required formal refresh cycles**. Before cycle 2, the pilot stood at **1 of 2 required formal refresh cycles**. The former 30-day elapsed-time stewardship wait has been replaced by an executable stability qualification because elapsed calendar time is not itself evidence of maintainability. The qualification passed five complete clean authority-resolution replays across all seven claims, three deterministic repeatability runs, **15 of 15 governed fail-closed mutations**, and a controlled authority-move path without changing the bound claim statement or verification ownership. The external-network dimension is supplied by GitHub-hosted Ubuntu 24.04 `ISO Resolution Probe` run #5 (run ID `31961987236`), where the unchanged production evidence resolver resolved all seven declared authorities after the ISO repair. The seven-day source-resolution cadence remains mandatory continuous drift detection; it is not a countdown or a pre-expansion waiting period.
+
+This completes the current six-card regulated evidence pilot milestone. Qualification does not auto-authorize expansion. No next risk-tier batch has been approved, so expansion remains unauthorized. Any registry expansion requires explicit next risk-tier batch approval and a separate bounded reviewed change. See [`../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md) and [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml).
 
 ### Route-outcome evidence, 100%
 
@@ -409,6 +411,8 @@ When parallel sessions are active, reconcile against current `main` before editi
 - [`../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md`](../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md): repaired documentation fallback, fresh-verifier, and staged adapter-readiness evidence
 - [`../../research/runtime/2026-08-11-documentation-controlled-replay.md`](../../research/runtime/2026-08-11-documentation-controlled-replay.md): staged replay harness, evidence boundary, and pending provider-backed replay gate
 - [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate
+- [`../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md): practical regulated-evidence stability qualification and gate disposition
+- [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml): executable stability qualification requirements and continuous-monitoring boundary
 - [`docs/releases/v1.0.0.md`](../releases/v1.0.0.md): immutable functional-v1 release contract
 - [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
 - [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit

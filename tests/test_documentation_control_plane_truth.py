@@ -10,9 +10,9 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_CURRENT_VALIDATED_TESTS = 964
-EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 544
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 751
+EXPECTED_CURRENT_VALIDATED_TESTS = 967
+EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 551
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 765
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
@@ -233,7 +233,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "two distinct task IDs",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
         "| Control integrity | Operational | 90% |",
-        "| Regulated specialist evidence pilot | In progress | 70% |",
+        "| Regulated specialist evidence pilot | Complete | 100% |",
         "| Route-outcome evidence | Complete | 100% |",
         "| Benchmark and Outcome Lab | Complete | 100% |",
         "| Source-backed cost attribution | Complete | 100% |",
@@ -244,7 +244,11 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Produce provider-backed controlled documentation replay evidence",
         "Formal refresh cycle 1",
         "1 of 2 required formal refresh cycles",
-        "30-day scheduled authority-resolution stability",
+        "executable stability qualification",
+        "five complete clean authority-resolution replays",
+        "15 of 15 governed fail-closed mutations",
+        "seven-day source-resolution cadence",
+        "explicit next risk-tier batch approval",
         "expansion remains unauthorized",
         "## NOW",
         "### Evidence-governed live execution expansion",
