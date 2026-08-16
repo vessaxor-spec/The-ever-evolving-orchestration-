@@ -9,40 +9,28 @@ permissions:
 
 jobs:
   probe:
+    name: Resolve full regulated evidence registry
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
     steps:
-      - name: Probe official ISO endpoints
-        shell: python
-        run: |
-          from urllib.parse import urlparse
-          from urllib.request import Request, urlopen
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
 
-          candidates = [
-              "https://www.iso.org/standard/82075.html",
-              "https://www.iso.org/es/contents/data/standard/08/20/82075.html",
-              "https://www.iso.org/fr/standard/82075.html",
-              "https://committee.iso.org/ru/standard/82075.html",
-          ]
-          successes = 0
-          for url in candidates:
-              request = Request(
-                  url,
-                  headers={
-                      "User-Agent": "TEO-evidence-validator/0.1 (+https://github.com/vessaxor-spec/The-ever-evolving-orchestration-)",
-                      "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.1",
-                      "Range": "bytes=0-1023",
-                  },
-                  method="GET",
-              )
-              try:
-                  with urlopen(request, timeout=20.0) as response:
-                      status = getattr(response, "status", 200)
-                      final_url = response.geturl()
-                      response.read(1)
-                  print(f"PASS {status} {url} -> {final_url} ({urlparse(final_url).hostname})")
-                  successes += 1
-              except Exception as exc:
-                  print(f"FAIL {url}: {type(exc).__name__}: {exc}")
-          if successes == 0:
-              raise SystemExit("No official ISO candidate resolved")
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11.15"
+          cache: pip
+          cache-dependency-path: ci/requirements-ci.lock
+
+      - name: Install pinned evidence environment
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
+          python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
+          python -m pip install --disable-pip-version-check --no-build-isolation --no-deps -e .
+
+      - name: Resolve declared authorities with production validator
+        run: python -m teo_reference.evidence --repo-root . --resolve
+
+      - name: Validate refresh-cycle history
+        run: python -m teo_reference.evidence_refresh --repo-root .
