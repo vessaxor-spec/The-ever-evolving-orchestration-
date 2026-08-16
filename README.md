@@ -1,7 +1,7 @@
 <a id="readme-top"></a>
 
 <p align="center">
-  <img src="assets/banner/teo-banner.svg" alt="The Ever-Evolving Orchestration banner" width="100%">
+  <img src="assets/banner/teo-banner-hd-optimized.png" alt="The Ever-Evolving Orchestration banner" width="100%">
 </p>
 
 <div align="center">
