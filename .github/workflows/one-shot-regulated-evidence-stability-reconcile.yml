@@ -1,0 +1,78 @@
+name: One-shot regulated evidence stability reconciliation
+
+on:
+  push:
+    branches:
+      - agent/regulated-evidence-stability-qualification
+
+permissions:
+  contents: write
+
+concurrency:
+  group: one-shot-regulated-evidence-stability-reconcile
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/regulated-evidence-stability-qualification
+
+      - name: Reconcile tracker and documentation truth test
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          tracker_path = Path('docs/stewardship/progress-tracker.md')
+          tracker = tracker_path.read_text(encoding='utf-8')
+
+          replacements = {
+              '| Current validated scale | 964 tests passed, 544 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #751 |':
+                  '| Current validated scale | 967 tests passed, 551 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #765 |',
+              '| Regulated evidence pilot | 6 specialists, intentionally bounded |':
+                  '| Regulated evidence pilot | 6 specialists, stability-qualified and intentionally bounded |',
+              '| Regulated specialist evidence pilot | In progress | 70% | Formal refresh cycle 2 completed across the six-card pilot | Establish 30-day scheduled authority-resolution stability before any expansion decision |':
+                  '| Regulated specialist evidence pilot | Complete | 100% | Six-card pilot passed executable stability qualification | Maintain seven-day drift monitoring; any expansion requires explicit next risk-tier batch approval |',
+              '### Regulated specialist evidence pilot, 70%':
+                  '### Regulated specialist evidence pilot, 100%',
+              'The pilot has completed **2 of 2 required formal refresh cycles**. Before cycle 2, the pilot stood at **1 of 2 required formal refresh cycles**. The required 30-day scheduled authority-resolution stability window is still not satisfied: the first scheduled run failed closed on the former ISO endpoint, and a 2026-08-16 rerun reproduced that failure before the source was repaired. The controlled-change requirement has now been exercised through the cycle-1 Rule 37(e) claim amendment and the cycle-2 ISO authority move. No next risk-tier batch has been approved, so expansion remains unauthorized. Establish the 30-day successful scheduled-resolution history before any expansion decision.':
+                  'The pilot has completed **2 of 2 required formal refresh cycles**. Before cycle 2, the pilot stood at **1 of 2 required formal refresh cycles**. The former 30-day elapsed-time stewardship wait has been replaced by an executable stability qualification because elapsed calendar time is not itself evidence of maintainability. The qualification passed five complete clean authority-resolution replays across all seven claims, three deterministic repeatability runs, **15 of 15 governed fail-closed mutations**, and a controlled authority-move path without changing the bound claim statement or verification ownership. The external-network dimension is supplied by GitHub-hosted Ubuntu 24.04 `ISO Resolution Probe` run #5 (run ID `31961987236`), where the unchanged production evidence resolver resolved all seven declared authorities after the ISO repair. The seven-day source-resolution cadence remains mandatory continuous drift detection; it is not a countdown or a pre-expansion waiting period.\n\nThis completes the current six-card regulated evidence pilot milestone. Qualification does not auto-authorize expansion. No next risk-tier batch has been approved, so expansion remains unauthorized. Any registry expansion requires explicit next risk-tier batch approval and a separate bounded reviewed change. See [`../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md) and [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml).',
+              '- [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate':
+                  '- [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate\n- [`../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md): practical regulated-evidence stability qualification and gate disposition\n- [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml): executable stability qualification requirements and continuous-monitoring boundary',
+          }
+          for old, new in replacements.items():
+              count = tracker.count(old)
+              if count != 1:
+                  raise SystemExit(f'tracker replacement guard failed: expected 1 match, got {count}: {old[:100]!r}')
+              tracker = tracker.replace(old, new, 1)
+          tracker_path.write_text(tracker, encoding='utf-8')
+
+          test_path = Path('tests/test_documentation_control_plane_truth.py')
+          test = test_path.read_text(encoding='utf-8')
+          test_replacements = {
+              'EXPECTED_CURRENT_VALIDATED_TESTS = 964': 'EXPECTED_CURRENT_VALIDATED_TESTS = 967',
+              'EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 544': 'EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 551',
+              'EXPECTED_CURRENT_VALIDATED_CI_RUN = 751': 'EXPECTED_CURRENT_VALIDATED_CI_RUN = 765',
+              '"| Regulated specialist evidence pilot | In progress | 70% |",': '"| Regulated specialist evidence pilot | Complete | 100% |",',
+              '"30-day scheduled authority-resolution stability",': '"executable stability qualification",\n        "five complete clean authority-resolution replays",\n        "15 of 15 governed fail-closed mutations",\n        "seven-day source-resolution cadence",\n        "explicit next risk-tier batch approval",',
+          }
+          for old, new in test_replacements.items():
+              count = test.count(old)
+              if count != 1:
+                  raise SystemExit(f'test replacement guard failed: expected 1 match, got {count}: {old!r}')
+              test = test.replace(old, new, 1)
+          test_path.write_text(test, encoding='utf-8')
+          PY
+
+      - name: Commit reconciliation
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/stewardship/progress-tracker.md tests/test_documentation_control_plane_truth.py
+          git diff --cached --check
+          git commit -m 'Reconcile regulated evidence stability qualification'
+          git push origin HEAD:agent/regulated-evidence-stability-qualification
