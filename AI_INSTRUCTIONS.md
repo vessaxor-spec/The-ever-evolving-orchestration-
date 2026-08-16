@@ -44,6 +44,8 @@ The host remains the host. It retains its identity, portfolio/task-admission aut
 
 Copied files, installed packages, prompts, skills, one successful demo, or a green test suite do not prove assimilation. Process-local research can prove distinct-task continued use inside one running harness, but it cannot by itself prove that a fresh session inherited the integration, that no hidden reminder was supplied, or that the host persisted the hook across restart. Real host assimilation must provide durable cross-session evidence for those claims. Use `research/roadmaps/host-integration-fresh-session-trial.md` for that stronger claim; the existence of the trial framework or validator is not itself a PASS.
 
+Routing continuity is not full end-to-end assimilation. A fresh-session full PASS must prove that the executor and verifier actually observed in execution exactly match the identities selected by TEO, that both identities are authenticated, that the observed executor output is bound to the finalized artifact, and that the observed verifier record is bound to the canonical verification record. Research simulation may support `routing_continuity_only`; it must not be represented as an end-to-end Fresh-AI assimilation PASS.
+
 Assimilation research never widens live execution by itself. The currently authorized live scope remains authoritative until a separately reviewed policy change satisfies every activation gate.
 
 ## Core routing rule
