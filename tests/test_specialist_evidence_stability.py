@@ -37,10 +37,20 @@ def test_regulated_evidence_stability_qualification_passes_current_pilot() -> No
     assert all(item["passed"] for item in result["clean_resolution_replays"])
     assert all(
         item["resolved_authorities"] == 7
+        and len(item["observations"]) == 7
         for item in result["clean_resolution_replays"]
     )
     assert result["repeatability"]["runs"] == 3
     assert result["repeatability"]["passed"] is True
+    assert len(result["repeatability"]["results"]) == 3
+    assert len(result["repeatability"]["digests"]) == 3
+    assert len(set(result["repeatability"]["digests"])) == 1
+    assert all(
+        item["passed"]
+        and item["resolved_authorities"] == 7
+        and len(item["observations"]) == 7
+        for item in result["repeatability"]["results"]
+    )
     assert (
         result["mutations_killed"]
         == result["mutations_total"]
@@ -57,6 +67,28 @@ def test_regulated_evidence_stability_qualification_passes_current_pilot() -> No
         "explicit_next_batch_approval_required": True,
         "expansion_auto_authorized": False,
     }
+
+    calls = 0
+
+    def unstable_resolver(_url: str, _expected_hosts: set[str]) -> str | None:
+        nonlocal calls
+        calls += 1
+        # Five clean replays consume calls 1-35. Repeatability run 1 consumes
+        # 36-42. Inject one failure into repeatability run 2 to prove the
+        # qualification actually re-executes instead of re-hashing one result.
+        if calls == 43:
+            return "authority could not be resolved: repeatability canary"
+        return None
+
+    unstable = run_stability_qualification(
+        REPO_ROOT,
+        as_of=dt.date(2026, 8, 16),
+        resolver=unstable_resolver,
+        external_network_observation=EXTERNAL_NETWORK_OBSERVATION,
+    )
+    assert unstable["qualified"] is False
+    assert unstable["repeatability"]["passed"] is False
+    assert len(set(unstable["repeatability"]["digests"])) > 1
 
 
 def test_qualification_policy_rejects_calendar_wait_and_weakened_matrix() -> None:
