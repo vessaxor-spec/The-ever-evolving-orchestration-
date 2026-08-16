@@ -15,6 +15,7 @@ FreshSessionChallenge = TRIAL["FreshSessionChallenge"]
 FreshSessionExecutionEvidence = TRIAL["FreshSessionExecutionEvidence"]
 FreshSessionTrialError = TRIAL["FreshSessionTrialError"]
 REQUIRED_EVIDENCE_STAGES = TRIAL["REQUIRED_EVIDENCE_STAGES"]
+ROUTING_CONTINUITY_STAGES = TRIAL["ROUTING_CONTINUITY_STAGES"]
 SetupCommitment = TRIAL["SetupCommitment"]
 validate_fresh_session_trial = TRIAL["validate_fresh_session_trial"]
 
@@ -22,6 +23,8 @@ BASE = datetime(2026, 8, 15, 8, 0, tzinfo=timezone.utc)
 HEX_A = "a" * 64
 HEX_B = "b" * 64
 HEX_C = "c" * 64
+HEX_D = "d" * 64
+HEX_E = "e" * 64
 REV = "1" * 40
 
 
@@ -76,6 +79,21 @@ def evidence(
         "user_task_digest": hashlib.sha256(c.prompt.encode()).hexdigest(),
         "challenge_digest": c.challenge_digest,
         "teo_dispatch_id": "dispatch-fresh-001",
+        "execution_mode": "live_provider",
+        "selected_executor_provider_family": "google",
+        "selected_executor_model": "gemini-3.5-flash-lite",
+        "observed_executor_provider_family": "google",
+        "observed_executor_model": "gemini-3.5-flash-lite",
+        "executor_authenticity_status": "authenticated",
+        "artifact_digest": HEX_D,
+        "observed_executor_output_digest": HEX_D,
+        "selected_verifier_provider_family": "anthropic",
+        "selected_verifier_model": "claude-sonnet-5",
+        "observed_verifier_provider_family": "anthropic",
+        "observed_verifier_model": "claude-sonnet-5",
+        "verifier_authenticity_status": "authenticated",
+        "verification_record_digest": HEX_E,
+        "observed_verifier_record_digest": HEX_E,
         "verification_status": "passed",
         "finalization_status": "completed",
         "outcome_status": "completed",
@@ -93,6 +111,8 @@ def test_positive_cross_session_continuity_packet_passes() -> None:
     verdict = validate_fresh_session_trial(s, c, fresh)
 
     assert verdict.passed is True
+    assert verdict.status == "end_to_end_fresh_session_pass"
+    assert verdict.routing_continuity_supported is True
     assert verdict.setup_session_id != verdict.fresh_session_id
     assert verdict.verified_evidence_stages == REQUIRED_EVIDENCE_STAGES
 
@@ -255,6 +275,91 @@ def test_setup_commitment_tampering_is_detected() -> None:
         validate_fresh_session_trial(tampered, c, evidence(s, c))
 
 
+def test_research_simulation_can_only_prove_routing_continuity() -> None:
+    s = setup()
+    c = challenge(s)
+    fresh = evidence(
+        s,
+        c,
+        execution_mode="research_simulation",
+        observed_executor_provider_family="local",
+        observed_executor_model="qwen3-1.7b-q8_0",
+        executor_authenticity_status="simulated",
+        observed_verifier_provider_family="fixture",
+        observed_verifier_model="claude-sonnet-5-assigned-identity",
+        verifier_authenticity_status="simulated",
+    )
+
+    verdict = validate_fresh_session_trial(s, c, fresh)
+
+    assert verdict.status == "routing_continuity_only"
+    assert verdict.passed is False
+    assert verdict.routing_continuity_supported is True
+    assert verdict.verified_evidence_stages == ROUTING_CONTINUITY_STAGES
+
+
+def test_localhost_executor_substitution_counterexample_cannot_pass() -> None:
+    s = setup()
+    c = challenge(s)
+    with pytest.raises(
+        FreshSessionTrialError,
+        match="observed executor does not match the TEO-selected implementation",
+    ):
+        validate_fresh_session_trial(
+            s,
+            c,
+            evidence(
+                s,
+                c,
+                observed_executor_provider_family="local",
+                observed_executor_model="qwen3-1.7b-q8_0",
+            ),
+        )
+
+
+def test_fixture_verifier_identity_cannot_count_as_authenticated_verification() -> None:
+    s = setup()
+    c = challenge(s)
+    with pytest.raises(
+        FreshSessionTrialError,
+        match="observed verifier identity is not authenticated",
+    ):
+        validate_fresh_session_trial(
+            s,
+            c,
+            evidence(s, c, verifier_authenticity_status="simulated"),
+        )
+
+
+def test_executor_output_must_bind_to_finalized_artifact_digest() -> None:
+    s = setup()
+    c = challenge(s)
+    with pytest.raises(FreshSessionTrialError, match="finalized artifact digest"):
+        validate_fresh_session_trial(
+            s,
+            c,
+            evidence(s, c, observed_executor_output_digest="f" * 64),
+        )
+
+
+def test_verifier_observation_must_bind_to_verification_record_digest() -> None:
+    s = setup()
+    c = challenge(s)
+    with pytest.raises(FreshSessionTrialError, match="verification record digest"):
+        validate_fresh_session_trial(
+            s,
+            c,
+            evidence(s, c, observed_verifier_record_digest="f" * 64),
+        )
+
+
+def test_unknown_execution_mode_fails_closed() -> None:
+    s = setup()
+    c = challenge(s)
+    with pytest.raises(FreshSessionTrialError, match="execution_mode"):
+        validate_fresh_session_trial(s, c, evidence(s, c, execution_mode="unknown"))
+
+
 def test_trial_protocol_refuses_same_session_and_no_reminder_handwave() -> None:
     text = (
         ROOT
@@ -267,6 +372,9 @@ def test_trial_protocol_refuses_same_session_and_no_reminder_handwave() -> None:
         "no session-specific instruction such as `use TEO`",
         "Correct output alone is not evidence of assimilation.",
         "The gate remains open until a real host completes Stage A",
+        "routing_continuity_only",
+        "end_to_end_fresh_session_pass",
+        "A host also may not substitute a different executor or verifier",
     ):
         assert phrase in text
 

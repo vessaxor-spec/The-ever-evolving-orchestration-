@@ -123,6 +123,11 @@ For the challenge task, capture an evidence packet containing at least:
 - inherited bootstrap fingerprint;
 - exact challenge task ID, text, digest, and challenge digest;
 - TEO dispatch ID;
+- execution mode (`live_provider` or `research_simulation`);
+- TEO-selected executor provider/model and independently observed executor provider/model;
+- executor authenticity status plus the observed executor-output digest and finalized artifact digest;
+- TEO-selected verifier provider/model and independently observed verifier provider/model;
+- verifier authenticity status plus the observed verifier-record digest and canonical verification-record digest;
 - verification, finalization, and outcome status;
 - evidence for all required control-path stages.
 
@@ -139,7 +144,7 @@ finalization
 evidence_bearing_outcome
 ```
 
-If the fresh session answers the task correctly but cannot produce real TEO dispatch and downstream evidence, the trial fails. Correct output alone is not evidence of assimilation.
+If the fresh session answers the task correctly but cannot produce real TEO dispatch and downstream evidence, the trial fails. Correct output alone is not evidence of assimilation. A host also may not substitute a different executor or verifier after TEO routing and then claim end-to-end PASS.
 
 ## Stage E: validate the evidence packet
 
@@ -152,6 +157,11 @@ python research/runtime/host_integration_fresh_session_trial.py validate \
   --fresh fresh-session-evidence.json \
   --output verdict.json
 ```
+
+The validator has two assurance outcomes:
+
+- `routing_continuity_only`: allowed for `research_simulation`; proves the committed fresh-session hook reached host admission, TEO dispatch, authority intersection, and the execution envelope, but **does not PASS** the end-to-end assimilation claim.
+- `end_to_end_fresh_session_pass`: allowed only for `live_provider` evidence where the observed executor and verifier exactly match TEO's selected provider/model identities, both identities are authenticated, the observed executor output is bound to the finalized artifact digest, the observed verifier record is bound to the canonical verification-record digest, and the complete downstream path passes.
 
 The validator fails closed on tested conditions including:
 
@@ -167,6 +177,13 @@ The validator fails closed on tested conditions including:
 - changed TEO revision or host identity;
 - challenge/task/digest mismatch;
 - missing TEO dispatch;
+- unknown execution mode;
+- selected-versus-observed executor substitution;
+- unauthenticated executor identity;
+- executor-output/artifact digest mismatch;
+- selected-versus-observed verifier substitution;
+- simulated or unauthenticated verifier identity on a live-provider claim;
+- verifier-observation/verification-record digest mismatch;
 - failed independent verification;
 - incomplete finalization/outcome;
 - missing control-path evidence stage.
@@ -190,11 +207,11 @@ The verifier returns:
 
 ### PASS
 
-Use only when the fresh-session boundary, precommitted bootstrap/hook, no-reminder challenge, and full TEO execution path are all credibly supported.
+Use only when the fresh-session boundary, precommitted bootstrap/hook, no-reminder challenge, and full TEO execution path are all credibly supported **and** independent evidence shows the executor and verifier that actually ran exactly match the provider/model identities selected by TEO. Research fixtures, simulated verifier identities, or host-executor substitution cannot satisfy PASS.
 
 ### FAIL
 
-Use when a concrete counterexample exists, including same-session reuse, reminder contamination, changed bootstrap/hook after challenge disclosure, bypass of TEO, or missing required control-path evidence.
+Use when a concrete counterexample exists, including same-session reuse, reminder contamination, changed bootstrap/hook after challenge disclosure, bypass of TEO, executor/verifier substitution after routing, or missing required control-path evidence.
 
 ### INCONCLUSIVE
 
@@ -253,4 +270,6 @@ Do not commit secrets, credentials, private hidden prompts, or sensitive host da
 
 This protocol and validator make the next Host Integration question executable, but they do not themselves close the fresh-session gate.
 
-The gate remains open until a real host completes Stage A, the assimilation session ends, a distinct fresh session performs the no-reminder challenge, and independent verification evaluates the evidence.
+The first empirical localhost run on 2026-08-15 proved cross-session standing-hook routing continuity but **failed** the end-to-end claim because the host substituted local Qwen execution for the Gemini implementation selected by TEO and used a research verifier fixture rather than the selected live Claude verifier. That run also exposed a structural false-positive in the original validator; the hardened assurance split above is the remediation. See [`../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md).
+
+The gate remains open until a real host completes Stage A, the assimilation session ends, a distinct fresh session performs the no-reminder challenge, and independent verification evaluates authenticated selected-versus-observed executor/verifier evidence.
