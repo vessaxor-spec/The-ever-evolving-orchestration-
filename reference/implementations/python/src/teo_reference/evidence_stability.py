@@ -119,6 +119,43 @@ def _stage_repo(root: Path, destination: Path) -> None:
         shutil.copy2(root / relative, target)
 
 
+def _resolution_replay(
+    registry: dict[str, Any],
+    root: Path,
+    *,
+    as_of: dt.date,
+    resolver: Resolver,
+    claim_count: int,
+) -> dict[str, Any]:
+    observations: list[dict[str, Any]] = []
+
+    def recording_resolver(url: str, expected_hosts: set[str]) -> str | None:
+        error = resolver(url, expected_hosts)
+        observations.append(
+            {
+                "url": url,
+                "expected_hosts": sorted(expected_hosts),
+                "error": error,
+            }
+        )
+        return error
+
+    errors = validate_registry(
+        registry,
+        root,
+        as_of=as_of,
+        resolve=True,
+        resolver=recording_resolver,
+    )
+    return {
+        "passed": not errors,
+        "resolved_authorities": len(observations) if not errors else 0,
+        "expected_authorities": claim_count,
+        "observations": observations,
+        "errors": errors,
+    }
+
+
 def _mutation_result(
     staged_root: Path,
     baseline: dict[str, Any],
@@ -228,31 +265,43 @@ def run_stability_qualification(
         policy.get("qualification", {}).get("minimum_clean_resolution_replays", 0)
     )
     for index in range(replay_count):
-        errors = validate_registry(
+        replay = _resolution_replay(
             registry,
             root,
             as_of=as_of,
-            resolve=True,
             resolver=resolver,
+            claim_count=claim_count,
         )
-        clean_replays.append(
-            {
-                "replay": index + 1,
-                "passed": not errors,
-                "resolved_authorities": claim_count if not errors else 0,
-                "errors": errors,
-            }
-        )
+        clean_replays.append({"replay": index + 1, **replay})
 
-    normalized = json.dumps(clean_replays, sort_keys=True, separators=(",", ":"))
     repeatability_runs = int(
         policy.get("qualification", {}).get("minimum_repeatability_runs", 0)
     )
-    digests = [
-        hashlib.sha256(normalized.encode("utf-8")).hexdigest()
-        for _ in range(repeatability_runs)
-    ]
-    repeatable = bool(digests) and len(set(digests)) == 1
+    repeatability_results: list[dict[str, Any]] = []
+    repeatability_digests: list[str] = []
+    for index in range(repeatability_runs):
+        replay = _resolution_replay(
+            registry,
+            root,
+            as_of=as_of,
+            resolver=resolver,
+            claim_count=claim_count,
+        )
+        normalized = json.dumps(replay, sort_keys=True, separators=(",", ":"))
+        digest = hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+        repeatability_digests.append(digest)
+        repeatability_results.append(
+            {"run": index + 1, "digest": digest, **replay}
+        )
+    repeatable = (
+        bool(repeatability_digests)
+        and len(set(repeatability_digests)) == 1
+        and all(
+            item["passed"]
+            and item["resolved_authorities"] == claim_count
+            for item in repeatability_results
+        )
+    )
 
     mutation_results: list[dict[str, Any]] = []
     for name in REQUIRED_MUTATIONS:
@@ -318,7 +367,9 @@ def run_stability_qualification(
         "repeatability": {
             "runs": repeatability_runs,
             "passed": repeatable,
-            "digest": digests[0] if digests else None,
+            "digest": repeatability_digests[0] if repeatability_digests else None,
+            "digests": repeatability_digests,
+            "results": repeatability_results,
         },
         "mutation_results": mutation_results,
         "mutations_killed": sum(1 for item in mutation_results if item["killed"]),
