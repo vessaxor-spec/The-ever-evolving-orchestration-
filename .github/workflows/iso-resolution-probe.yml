@@ -1,0 +1,48 @@
+name: ISO Resolution Probe
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Probe official ISO endpoints
+        shell: python
+        run: |
+          from urllib.parse import urlparse
+          from urllib.request import Request, urlopen
+
+          candidates = [
+              "https://www.iso.org/standard/82075.html",
+              "https://www.iso.org/es/contents/data/standard/08/20/82075.html",
+              "https://www.iso.org/fr/standard/82075.html",
+              "https://committee.iso.org/ru/standard/82075.html",
+          ]
+          successes = 0
+          for url in candidates:
+              request = Request(
+                  url,
+                  headers={
+                      "User-Agent": "TEO-evidence-validator/0.1 (+https://github.com/vessaxor-spec/The-ever-evolving-orchestration-)",
+                      "Accept": "text/html,application/xhtml+xml,application/pdf;q=0.9,*/*;q=0.1",
+                      "Range": "bytes=0-1023",
+                  },
+                  method="GET",
+              )
+              try:
+                  with urlopen(request, timeout=20.0) as response:
+                      status = getattr(response, "status", 200)
+                      final_url = response.geturl()
+                      response.read(1)
+                  print(f"PASS {status} {url} -> {final_url} ({urlparse(final_url).hostname})")
+                  successes += 1
+              except Exception as exc:
+                  print(f"FAIL {url}: {type(exc).__name__}: {exc}")
+          if successes == 0:
+              raise SystemExit("No official ISO candidate resolved")
