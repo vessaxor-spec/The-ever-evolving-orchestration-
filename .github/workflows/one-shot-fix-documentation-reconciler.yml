@@ -1,0 +1,38 @@
+name: One-shot fix documentation reconciler
+
+on:
+  push:
+    branches:
+      - agent/reconcile-documentation-after-evidence-qualification
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: agent/reconcile-documentation-after-evidence-qualification
+      - name: Correct freshness insertion guard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.github/workflows/one-shot-documentation-reconcile.yml')
+          text = path.read_text(encoding='utf-8')
+          old = "          marker = '\\n## Escalation Rule\\n'"
+          new = "          marker = 'Research query templates use `{current_year}`, `latest`, `current stable`, or the task date rather than the year in which the card was authored. Freshness controls are additive and must never compress or weaken the authoritative specialist specification.'"
+          if text.count(old) != 1:
+              raise SystemExit(f'expected one freshness marker, found {text.count(old)}')
+          path.write_text(text.replace(old, new, 1), encoding='utf-8')
+          PY
+      - name: Commit corrected reconciler
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/one-shot-documentation-reconcile.yml
+          git diff --cached --check
+          git commit -m 'Correct documentation reconciliation guard'
+          git push origin HEAD:agent/reconcile-documentation-after-evidence-qualification
