@@ -72,6 +72,26 @@
         "evidence": {"type": "array", "items": {"type": "string"}}
       },
       "required": ["protocol_version", "instruction_id", "instruction_sha256", "dispatch_id", "route_role", "provider_family", "model", "attempt", "status", "output_ref", "output_sha256", "evidence"],
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "succeeded"}}, "required": ["status"]},
+          "then": {
+            "properties": {
+              "output_ref": {"type": "string", "minLength": 1},
+              "output_sha256": {"$ref": "#/$defs/sha256"}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"status": {"const": "failed"}}, "required": ["status"]},
+          "then": {
+            "properties": {
+              "output_ref": {"type": "null"},
+              "output_sha256": {"type": "null"}
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "verification_instruction": {
