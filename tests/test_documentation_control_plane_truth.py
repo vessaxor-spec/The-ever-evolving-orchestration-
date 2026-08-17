@@ -12,6 +12,7 @@ EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
 EXPECTED_CURRENT_VALIDATED_TESTS = 993
 EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 558
+EXPECTED_CURRENT_VALIDATED_SCHEMAS = 42
 EXPECTED_CURRENT_VALIDATED_CI_RUN = 806
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
@@ -204,7 +205,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        f"| Current validated scale | {EXPECTED_CURRENT_VALIDATED_TESTS} tests passed, {EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN} |",
+        f"| Current validated scale | {EXPECTED_CURRENT_VALIDATED_TESTS} tests passed, {EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks, {EXPECTED_CURRENT_VALIDATED_SCHEMAS} schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN} |",
         f"CI #{EXPECTED_RECONCILIATION_CI_RUN}: {EXPECTED_RECONCILIATION_TESTS} tests, {EXPECTED_RECONCILIATION_TRACKED_FILES} tracked-file layout checks",
         f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}: {EXPECTED_HOST_INTEGRATION_TESTS} tests, {EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
         "restrictive host/TEO authority intersection and host execution-scope binding",
