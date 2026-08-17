@@ -61,7 +61,7 @@ def _dispatch() -> DispatchRecord:
     )
 
 
-def test_all_protocol_message_types_validate_against_wire_schema():
+def _messages():
     session = HostIntegrationProtocolSession(_dispatch())
     execution_instruction = session.issue_execution()
     execution_receipt = HostExecutionReceipt(
@@ -92,12 +92,29 @@ def test_all_protocol_message_types_validate_against_wire_schema():
         status="passed",
         evidence=("verified",),
     )
-
-    for message in (
+    return (
         execution_instruction.to_dict(),
         execution_receipt.to_dict(),
         verification_instruction.to_dict(),
         verification_receipt.to_dict(),
-    ):
-        errors = list(VALIDATOR.iter_errors(message))
-        assert errors == []
+    )
+
+
+def test_all_protocol_message_types_validate_against_wire_schema():
+    for message in _messages():
+        assert list(VALIDATOR.iter_errors(message)) == []
+
+
+def test_wire_schema_rejects_failed_receipt_with_success_output_identity():
+    execution_receipt = _messages()[1]
+    execution_receipt["status"] = "failed"
+    errors = list(VALIDATOR.iter_errors(execution_receipt))
+    assert errors
+
+
+def test_wire_schema_rejects_success_receipt_without_output_identity():
+    execution_receipt = _messages()[1]
+    execution_receipt["output_ref"] = None
+    execution_receipt["output_sha256"] = None
+    errors = list(VALIDATOR.iter_errors(execution_receipt))
+    assert errors
