@@ -1,7 +1,7 @@
 # Host Integration Protocol 0.1 Reconciliation
 
 **Date:** 2026-08-17
-**Status:** verification pending
+**Status:** verification passed, merge pending
 **Authority:** non-normative research evidence
 **Canonical base:** `95ec0d35e49c8b4e7b96d0105ca95b4a968f59ce`
 **Source candidate:** PR #179 head `70adc79c8f190c281868f001cdc472987016673d`
@@ -37,10 +37,33 @@ The corrected session enforces:
 
 ## Verification
 
-Pending on this reconstructed branch:
+The reconstructed candidate passed both clean full-suite validation and targeted mutation verification before merge.
 
-- full Reference Implementation CI on the current base;
-- targeted mutation campaign for the corrected controls;
-- final exact-head CI after evidence and stewardship reconciliation.
+### Clean baseline
 
-The eventual PASS, if achieved, qualifies only the non-production reference candidate. Production transport authenticity, host/account/tenant identity, restart-persistent replay state, policy-snapshot retry binding, credential scope, containment, distributed coordination, effect authenticity, and full selected-executor/verifier live-provider assimilation remain open.
+Reference Implementation CI #806 (`32066910438`, job `95501344408`) validated head `f188df4b6f8eaa2a784b7ffd992fbd9b8db5982b` through synthetic PR merge `1fbf4e08d172a4360e396fdfa5e99a7387d96b7d` with:
+
+- 993 passing tests;
+- 558 tracked-file layout checks;
+- 42 parsed JSON Schemas;
+- regulated specialist evidence structural validation passed;
+- linked configuration valid with zero issues;
+- provider-diverse end-to-end reference verification passed using OpenAI `gpt-5.6-terra` execution and Anthropic `claude-sonnet-5` independent verification, with Google `gemini-3.6-flash` preserved as routine cross-provider fallback.
+
+### Targeted mutation campaign
+
+One-shot mutation run `32066827411` (job `95500782309`) executed on head `9c33d2addf9bbfb16741865ad4e579128eb74e12` and killed 5 of 5 targeted weakened controls:
+
+1. `retry_budget_integer`;
+2. `receipt_attempt_integer`;
+3. `single_outstanding_instruction`;
+4. `monotonic_fallback`;
+5. `terminal_phase_closure`.
+
+The mutation runner restored the production source after every mutant and the final source-restoration check passed.
+
+### Disposition
+
+The evidence qualifies only the bounded, non-production `teo-host-integration/0.1` reference candidate for reviewed merge. It does not promote the Host Integration Contract to normative or production status and does not widen live execution, routing, provider access, specialist authority, Task Request/Dispatch authority, or qualified-human authority.
+
+Production transport authenticity, host/account/tenant identity, restart-persistent replay state, policy-snapshot retry binding, credential scope, containment, distributed coordination, effect authenticity, dynamic authority discovery, and full selected-executor/verifier live-provider assimilation remain open research gates.

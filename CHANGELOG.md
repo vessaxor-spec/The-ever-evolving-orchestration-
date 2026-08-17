@@ -43,6 +43,7 @@ All notable public changes to TEO are recorded here.
 
 ### Validation
 
+- reconstructed Host Integration Protocol 0.1 candidate passed clean CI #806 with 993 tests, 558 tracked-file layout checks, 42 parsed JSON Schemas, regulated-specialist evidence validation, zero linked-config issues, and provider-diverse end-to-end verification; targeted mutation run `32066827411` killed 5 of 5 sequencing/type-control mutants without widening live or production authority
 - repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
 - active-authority integrity tests distinguish direct `active` authority from byte-preserved staged worker definitions activated through the principal-engineering manifest
 - release-history integrity tests require an explicit `v1.0.0` changelog boundary
