@@ -31,6 +31,16 @@ Missing credentials or entitlement are execution-boundary conditions. They do no
 
 See `policy/governance/provider-access-separation.yaml` and `docs/specification/provider-access-boundary.md`.
 
+## Regulated specialist evidence boundary
+
+The bounded six-card regulated specialist evidence pilot is a post-v1 evidence-maintenance program. Its current maintainability milestone is complete: two formal refresh cycles are preserved in validation history and the executable stability qualification has passed.
+
+The qualification requires five complete clean authority-resolution replays, three independently executed repeatability runs, all 15 governed fail-closed mutation classes to be killed, a controlled authority-move path, and an external-network observation resolving every declared authority. The seven-day source-resolution cadence remains continuous drift monitoring after qualification.
+
+This evidence state does not expand routing or execution authority and does not auto-authorize a larger specialist registry. Any next risk-tier batch requires explicit approval and a separate bounded reviewed change. Test-only one-provider or Codex placeholder lanes may exercise the qualification topology, but they must not be represented as provider-diverse verification.
+
+See `policy/specialists/evidence-pilot.yaml`, `policy/specialists/evidence-stability-qualification.yaml`, and `docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`.
+
 ## Operational evidence paths
 
 ### Provisional path available for v1
