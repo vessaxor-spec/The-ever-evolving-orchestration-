@@ -52,9 +52,17 @@ The candidate has four messages, all bound to `teo-host-integration/0.1`:
 
 The wire shape is defined by `reference/schemas/host-integration-protocol.schema.json`.
 
+## Dispatch snapshot binding
+
+A protocol session takes a defensive copy of the authoritative `DispatchRecord` at session creation and records a canonical digest of that snapshot. Every subsequent execution, receipt, verification, and evidence transition revalidates the snapshot before proceeding.
+
+If provider/model selection, fallback, verification assignment, routed task, capabilities, risk, or any other dispatch field changes after session creation, the reference coordinator rejects the transition rather than silently inheriting the changed routing authority.
+
+This is process-local drift detection. It is not a cryptographic production authority mechanism against an actor that can arbitrarily rewrite the coordinator's own memory.
+
 ## Execution instruction
 
-An execution instruction is created from the authoritative `DispatchRecord`. It binds:
+An execution instruction is created from the bound authoritative `DispatchRecord` snapshot. It binds:
 
 - dispatch and task identity;
 - route role: `primary` or `fallback`;
@@ -81,9 +89,9 @@ A successful execution receipt must echo the bound execution identity and provid
 - lowercase SHA-256 output identity;
 - optional evidence references.
 
-A failed receipt carries no successful output identity.
+A failed receipt carries no successful output identity. A failed receipt that supplies an output reference or output digest as though execution succeeded is rejected as contradictory evidence.
 
-The reference coordinator rejects unknown instructions, provider/model drift, route drift, attempt drift, duplicate receipts, and malformed successful output identity.
+The reference coordinator rejects unknown instructions, provider/model drift, route drift, attempt drift, duplicate receipts, contradictory failed receipts, and malformed successful output identity.
 
 ## Retry and fallback
 
@@ -180,7 +188,9 @@ The candidate is acceptable only if tests demonstrate at minimum:
 - primary provider/model binding;
 - provider and model drift rejection;
 - instruction-tamper rejection;
+- bound dispatch mutation rejection;
 - successful output identity requirement;
+- contradictory failed-receipt rejection;
 - replay rejection;
 - no host-invented fallback;
 - TEO-controlled fallback after primary failure;
