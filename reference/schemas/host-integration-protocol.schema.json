@@ -3,6 +3,7 @@
   "$id": "https://vessaxor-spec.github.io/teo/schemas/host-integration-protocol.schema.json",
   "title": "TEO Host Integration Protocol 0.1 messages",
   "description": "Non-production reference-candidate message contract for TEO-directed host-native execution and independent verification.",
+  "type": "object",
   "oneOf": [
     {"$ref": "#/$defs/execution_instruction"},
     {"$ref": "#/$defs/execution_receipt"},
