@@ -120,6 +120,13 @@ def test_execution_instruction_mutation_breaks_integrity():
         tampered.validate_integrity()
 
 
+def test_dispatch_mutation_after_session_creation_is_rejected():
+    session = HostIntegrationProtocolSession(_dispatch())
+    session.dispatch.selected_implementation.model = "codex/other"
+    with pytest.raises(HostIntegrationProtocolError, match="dispatch snapshot changed"):
+        session.issue_execution()
+
+
 def test_success_requires_output_identity():
     session = HostIntegrationProtocolSession(_dispatch())
     instruction = session.issue_execution()
