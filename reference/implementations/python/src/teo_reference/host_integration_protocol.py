@@ -275,10 +275,14 @@ class HostIntegrationProtocolSession:
         if receipt.status not in {"succeeded", "failed"}:
             raise HostIntegrationProtocolError("unsupported execution receipt status")
         if receipt.status == "succeeded":
-            if not receipt.output_ref or not _valid_sha256(receipt.output_sha256):
+            if not receipt.output_ref or not receipt.output_ref.strip() or not _valid_sha256(receipt.output_sha256):
                 raise HostIntegrationProtocolError(
                     "successful execution requires output_ref and lowercase output_sha256"
                 )
+        elif receipt.output_ref is not None or receipt.output_sha256 is not None:
+            raise HostIntegrationProtocolError(
+                "failed execution must not claim successful output identity"
+            )
         self._accepted_execution[key] = receipt
 
     def active_execution(self) -> HostExecutionReceipt:
