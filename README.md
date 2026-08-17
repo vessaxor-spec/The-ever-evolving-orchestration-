@@ -15,6 +15,7 @@ A vendor-neutral orchestration specification and runnable reference control plan
 [![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)
 [![Release](https://img.shields.io/github/v/release/vessaxor-spec/The-ever-evolving-orchestration-?label=release)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0)
 
+[**Public overview**](https://vessaxor-spec.github.io/teo/) ·
 [**Explore the specification**](docs/specification/lexicon.md) ·
 [**Run the reference router**](reference/implementations/python/README.md) ·
 [**See current progress**](docs/stewardship/progress-tracker.md) ·
