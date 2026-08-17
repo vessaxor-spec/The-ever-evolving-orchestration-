@@ -188,7 +188,7 @@ Required telemetry persistence failure fails closed.
 
 Volatile consequential facts require current authoritative evidence. A reachable URL alone is not sufficient evidence of correct provenance.
 
-For the regulated pilot, validate source authority, date basis, applicability, expiry, independent verification, and refusal/escalation behavior. Do not expand the six-card pilot until its maintainability gate is explicitly approved.
+For the regulated pilot, validate source authority, date basis, applicability, expiry, independent verification, and refusal/escalation behavior against `policy/specialists/evidence-pilot.yaml`. Apply `policy/specialists/evidence-stability-qualification.yaml` for maintainability qualification. The current six-card pilot has completed that executable qualification; the seven-day authority-resolution cadence remains continuous drift monitoring rather than an elapsed waiting period. Qualification never auto-authorizes registry expansion. Any next risk-tier batch requires explicit approval and a separate bounded reviewed change. Test-only model substitutions or one-provider placeholder lanes must never be described as provider-diverse verification.
 
 ## Model freshness rule
 

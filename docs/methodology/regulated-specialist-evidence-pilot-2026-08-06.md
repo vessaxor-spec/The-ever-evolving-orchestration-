@@ -119,13 +119,16 @@ Historical refresh records are evidence observations, not active policy. The lat
 
 ## Expansion Gate
 
-Expansion beyond the six-card pilot requires a separate reviewed decision. At minimum, the pilot must demonstrate:
+Expansion beyond the six-card pilot requires a separate reviewed decision. The pilot's maintainability milestone is established through the executable qualification defined in `policy/specialists/evidence-stability-qualification.yaml`, not through elapsed calendar time. At minimum, qualification requires:
 
 - two completed evidence-refresh cycles without weakening specialist cards;
-- no surviving expiry, independence, refusal, or refresh-history mutations;
-- stable scheduled authority resolution for at least 30 days;
-- documented maintenance effort and ownership for each claim;
-- successful handling of at least one authority move, claim amendment, or intentional canonical-card change;
-- explicit approval of the next risk-tier batch.
+- five complete clean authority-resolution replays across every declared pilot claim;
+- three independently executed repeatability runs with an identical normalized result;
+- all governed expiry, authority, independence, refusal, schema, scope, and specialist-card mutation classes killed;
+- a controlled authority-move path that preserves the bound claim statement and verification ownership;
+- an external-network observation showing every declared authority resolves through the production evidence resolver;
+- documented maintenance effort and ownership for each claim.
 
-Passing the initial CI run or a single completed refresh cycle proves only bounded implementation and maintenance evidence. It does not prove repeated-cycle maintainability and does not authorize registry expansion.
+The active seven-day source-resolution cadence remains mandatory continuous drift monitoring after qualification. It is not a countdown or a pre-expansion waiting period.
+
+The six-card pilot has completed this current maintainability milestone. Qualification is evidence, not expansion authority. Any registry expansion still requires explicit approval of the next risk-tier batch and a separate bounded reviewed change. Passing qualification, a CI run, or any model-placeholder exercise must never be interpreted as automatic registry expansion.

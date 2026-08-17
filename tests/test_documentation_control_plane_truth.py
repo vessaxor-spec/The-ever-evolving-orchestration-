@@ -12,7 +12,7 @@ EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
 EXPECTED_CURRENT_VALIDATED_TESTS = 967
 EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 551
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 765
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 784
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
@@ -97,6 +97,13 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "community/specialists/workforce-expansion-active.yaml",
         "Shadow Route Evaluation",
         "Qualified-human approval lifecycle",
+        "Regulated specialist evidence",
+        "stability-qualified",
+        "five complete clean authority-resolution replays",
+        "three independent repeatability runs",
+        "15 of 15 governed fail-closed mutations",
+        "seven-day source-resolution cadence",
+        "explicit next risk-tier batch approval",
         f"{EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS} automated tests",
         f"{EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES} tracked-file layout checks",
         f"Reference Implementation CI #{EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN}",

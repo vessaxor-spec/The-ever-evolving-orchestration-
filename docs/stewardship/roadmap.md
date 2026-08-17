@@ -21,7 +21,7 @@ For the current operational state, completion estimates, active milestone, and N
 - provider-family circuit state
 - content-free runtime telemetry
 - provider-diverse live independent verification
-- six-card regulated evidence/freshness pilot
+- six-card regulated evidence/freshness pilot with completed executable stability qualification
 
 ## Current: control integrity and evidence-governed operation
 
@@ -57,6 +57,12 @@ Measure:
 - retry/fallback relationship to outcomes
 
 Do not broaden live verification based on model confidence alone. Broader scope remains governed by applicable authority, capability, verification, telemetry, recovery, evidence, risk, and maintainer-review controls. Optional human calibration may strengthen the evidence base but does not create a separate approval authority.
+
+### Regulated specialist evidence
+
+The bounded six-card regulated specialist evidence pilot has completed its current maintainability milestone. Two formal refresh cycles are preserved in validation history, followed by an executable stability qualification with five complete clean authority-resolution replays, three independent repeatability runs, 15 of 15 governed fail-closed mutations, controlled authority-move handling, and an external-network 7-of-7 authority observation.
+
+The seven-day authority-resolution cadence remains mandatory continuous drift detection. There is no elapsed-time countdown gate. Qualification does not auto-authorize a larger registry: any next risk-tier batch requires explicit approval and a separate reviewed bounded change.
 
 ### Completed operational evidence chain
 
