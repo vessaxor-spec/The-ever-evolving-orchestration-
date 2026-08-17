@@ -10,9 +10,10 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_CURRENT_VALIDATED_TESTS = 967
-EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 552
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 799
+EXPECTED_CURRENT_VALIDATED_TESTS = 993
+EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 558
+EXPECTED_CURRENT_VALIDATED_SCHEMAS = 42
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 806
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
@@ -204,7 +205,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        f"| Current validated scale | {EXPECTED_CURRENT_VALIDATED_TESTS} tests passed, {EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN} |",
+        f"| Current validated scale | {EXPECTED_CURRENT_VALIDATED_TESTS} tests passed, {EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks, {EXPECTED_CURRENT_VALIDATED_SCHEMAS} schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN} |",
         f"CI #{EXPECTED_RECONCILIATION_CI_RUN}: {EXPECTED_RECONCILIATION_TESTS} tests, {EXPECTED_RECONCILIATION_TRACKED_FILES} tracked-file layout checks",
         f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}: {EXPECTED_HOST_INTEGRATION_TESTS} tests, {EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
         "restrictive host/TEO authority intersection and host execution-scope binding",
@@ -236,6 +237,9 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "2026-08-15-local-fresh-ai-cross-session-trial-001.md",
         "routing_continuity_only",
         "process-local integrated Fresh-AI assimilation/conformance",
+        "`teo-host-integration/0.1`",
+        "monotonic route progression",
+        "terminal execution sequencing",
         "assimilation is not installation",
         "two distinct task IDs",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
@@ -403,6 +407,8 @@ def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> 
     assert "staged replay harness are complete" in text
     assert "The next evidence gate is **provider-backed controlled documentation replay**" in text
     assert "CI conformance with deterministic fake transports does not count as empirical provider-backed evidence" in text
+    assert "`teo-host-integration/0.1` reference candidate" in text
+    assert "explicitly non-normative and non-production" in text
     assert "remains the only accepted live execution scope" in text
     assert "78 preserved specialist" not in text
     assert "78 active specialists" not in text

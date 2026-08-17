@@ -1,7 +1,7 @@
 # Host Integration Contract Research
 
 **Date:** 2026-08-12
-**Last reconciled:** 2026-08-16
+**Last reconciled:** 2026-08-17
 **Status:** research roadmap
 **Authority:** non-normative
 **Scope:** embedding TEO Mission Control into pre-existing AI agents and execution runtimes
@@ -33,8 +33,10 @@ Implementation-backed evidence now includes:
 - [`../runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md`](../runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md), the hands-on integrated sandbox, negative controls, premortem replay, and continued-use evidence boundary;
 - [`host-integration-fresh-session-trial.md`](host-integration-fresh-session-trial.md), the two-session no-reminder trial protocol and evidence-packet validator for testing whether a durable host integration is actually inherited after the assimilation conversation ends;
 - [`../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md), the first empirical localhost two-session run, which supports fresh-session/no-reminder standing-hook and routing continuity but records a full end-to-end FAIL after executor and verifier substitution were independently falsified.
+- [`../../docs/specification/host-integration-protocol-candidate.md`](../../docs/specification/host-integration-protocol-candidate.md), the `teo-host-integration/0.1` non-production reference candidate for TEO-issued execution/verification instructions and host receipts, reconstructed on current `main` with monotonic route progression, single-outstanding-instruction sequencing, terminal success, and strict integer retry-budget enforcement.
+- [`../runtime/host-integration-protocol-0-1-2026-08-17.md`](../runtime/host-integration-protocol-0-1-2026-08-17.md), the dated reconciliation and verification record for the candidate.
 
-This document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority.
+This document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority. The protocol candidate is an implementation-backed research artifact, not a production Host Integration promotion or a second authority plane.
 
 ## Core design principle
 

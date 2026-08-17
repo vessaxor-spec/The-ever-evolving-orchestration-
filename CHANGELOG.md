@@ -21,6 +21,7 @@ All notable public changes to TEO are recorded here.
 - executable regulated-evidence stability qualification with five clean resolution replays, three independent repeatability runs, 15 of 15 governed fail-closed mutations, controlled authority-move handling, and an external-network 7-of-7 authority observation
 - staged `documentation` live-scope candidate policy, corrected provider-diverse fallback/fresh-verifier topology, provider-adapter readiness, controlled replay plan/record contracts, and operator replay path
 - provider-independent Host Integration Contract research covering two-host architecture diversity, bounded context projection, dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter trust, restrictive host/TEO authority intersection, exact execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance
+- non-normative `teo-host-integration/0.1` reference candidate for TEO-issued host execution and independent-verification instructions, host receipts, sequential retry/fallback control, terminal success, and evidence projection without provider-credential transport or live-authority promotion
 - non-normative Execution Environment & Recovery Contract research for isolated execution, checkpoint binding, rollback, recovery verification, and simulation-to-promotion boundaries
 - optional route-backed `FinalOutcome.execution_provenance`, projected only from revalidated canonical Route-Outcome Evidence and carrying no routing or execution authority
 - non-normative Task Intent & Action Authority Contract research for preserving assessment, preparation, execution, verification, delegated, and side-effect authority ceilings
@@ -42,6 +43,7 @@ All notable public changes to TEO are recorded here.
 
 ### Validation
 
+- reconstructed Host Integration Protocol 0.1 candidate passed clean CI #806 with 993 tests, 558 tracked-file layout checks, 42 parsed JSON Schemas, regulated-specialist evidence validation, zero linked-config issues, and provider-diverse end-to-end verification; targeted mutation run `32066827411` killed 5 of 5 sequencing/type-control mutants without widening live or production authority
 - repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
 - active-authority integrity tests distinguish direct `active` authority from byte-preserved staged worker definitions activated through the principal-engineering manifest
 - release-history integrity tests require an explicit `v1.0.0` changelog boundary
