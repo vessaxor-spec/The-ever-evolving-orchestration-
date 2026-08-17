@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 from dataclasses import asdict, dataclass
@@ -169,13 +170,18 @@ class HostIntegrationProtocolSession:
     def __init__(self, dispatch: DispatchRecord, *, max_attempts_per_route: int = 1):
         if isinstance(max_attempts_per_route, bool) or max_attempts_per_route < 1:
             raise HostIntegrationProtocolError("max_attempts_per_route must be positive")
-        self.dispatch = dispatch
+        self.dispatch = copy.deepcopy(dispatch)
+        self._dispatch_sha256 = _digest(self.dispatch.to_dict())
         self.max_attempts_per_route = max_attempts_per_route
         self._issued_execution: dict[str, HostExecutionInstruction] = {}
         self._issued_attempts: dict[tuple[RouteRole, int], str] = {}
         self._accepted_execution: dict[tuple[RouteRole, int], HostExecutionReceipt] = {}
         self._issued_verification: dict[str, HostVerificationInstruction] = {}
         self._verification_receipt: HostVerificationReceipt | None = None
+
+    def _validate_dispatch_snapshot(self) -> None:
+        if _digest(self.dispatch.to_dict()) != self._dispatch_sha256:
+            raise HostIntegrationProtocolError("bound dispatch snapshot changed after session creation")
 
     def _latest_receipt(self, route_role: RouteRole) -> HostExecutionReceipt | None:
         candidates = [
@@ -186,6 +192,7 @@ class HostIntegrationProtocolSession:
         return max(candidates, key=lambda receipt: receipt.attempt, default=None)
 
     def issue_execution(self, *, route_role: RouteRole = "primary", attempt: int = 1) -> HostExecutionInstruction:
+        self._validate_dispatch_snapshot()
         if route_role not in {"primary", "fallback"}:
             raise HostIntegrationProtocolError("unsupported route role")
         if isinstance(attempt, bool) or not isinstance(attempt, int):
@@ -252,6 +259,7 @@ class HostIntegrationProtocolSession:
         return instruction
 
     def accept_execution(self, receipt: HostExecutionReceipt) -> None:
+        self._validate_dispatch_snapshot()
         instruction = self._issued_execution.get(receipt.instruction_id)
         if instruction is None:
             raise HostIntegrationProtocolError("execution receipt references an unknown instruction")
@@ -286,6 +294,7 @@ class HostIntegrationProtocolSession:
         self._accepted_execution[key] = receipt
 
     def active_execution(self) -> HostExecutionReceipt:
+        self._validate_dispatch_snapshot()
         fallback = self._latest_receipt("fallback")
         if fallback is not None and fallback.status == "succeeded":
             return fallback
@@ -295,6 +304,7 @@ class HostIntegrationProtocolSession:
         raise HostIntegrationProtocolError("no successful execution receipt is available")
 
     def issue_verification(self) -> HostVerificationInstruction:
+        self._validate_dispatch_snapshot()
         if self._issued_verification:
             raise HostIntegrationProtocolError("verification instruction was already issued")
         active = self.active_execution()
@@ -344,6 +354,7 @@ class HostIntegrationProtocolSession:
         return instruction
 
     def accept_verification(self, receipt: HostVerificationReceipt) -> None:
+        self._validate_dispatch_snapshot()
         instruction = self._issued_verification.get(receipt.instruction_id)
         if instruction is None:
             raise HostIntegrationProtocolError("verification receipt references an unknown instruction")
@@ -368,6 +379,7 @@ class HostIntegrationProtocolSession:
         self._verification_receipt = receipt
 
     def evidence_projection(self) -> dict[str, Any]:
+        self._validate_dispatch_snapshot()
         active = self.active_execution()
         if self._verification_receipt is None:
             raise HostIntegrationProtocolError("verification receipt has not been accepted")
