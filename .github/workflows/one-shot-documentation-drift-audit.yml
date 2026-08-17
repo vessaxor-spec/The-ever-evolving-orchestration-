@@ -1,0 +1,46 @@
+name: One-shot documentation drift audit
+
+on:
+  push:
+    branches:
+      - agent/reconcile-documentation-after-evidence-qualification
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - name: Scan current-facing documentation for regulated-evidence drift
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          patterns = [
+              re.compile(r"30-day", re.I),
+              re.compile(r"stable scheduled authority", re.I),
+              re.compile(r"maintainability gate", re.I),
+              re.compile(r"regulated specialist evidence pilot.*70%", re.I),
+              re.compile(r"regulated.*pilot.*in progress", re.I),
+              re.compile(r"CI #765", re.I),
+              re.compile(r"No validation records", re.I),
+              re.compile(r"first regulated-specialist evidence refresh cycle", re.I),
+          ]
+          roots = [Path('README.md'), Path('AI_INSTRUCTIONS.md'), Path('CHANGELOG.md')]
+          roots += sorted(Path('docs').rglob('*.md'))
+          roots += sorted(Path('community').rglob('README.md'))
+          roots += sorted(Path('reference').rglob('README.md'))
+          roots += sorted(Path('registry').rglob('README.md'))
+          roots += sorted(Path('research').rglob('README.md'))
+          seen = set()
+          for path in roots:
+              if path in seen or not path.exists():
+                  continue
+              seen.add(path)
+              for number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
+                  if any(pattern.search(line) for pattern in patterns):
+                      print(f'{path}:{number}:{line}')
+          PY
