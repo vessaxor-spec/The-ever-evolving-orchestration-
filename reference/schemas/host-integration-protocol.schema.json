@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vessaxor-spec.github.io/teo/schemas/host-integration-protocol.schema.json",
+  "title": "TEO Host Integration Protocol 0.1 messages",
+  "description": "Non-production reference-candidate message contract for TEO-directed host-native execution and independent verification.",
+  "oneOf": [
+    {"$ref": "#/$defs/execution_instruction"},
+    {"$ref": "#/$defs/execution_receipt"},
+    {"$ref": "#/$defs/verification_instruction"},
+    {"$ref": "#/$defs/verification_receipt"}
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "common_instruction": {
+      "type": "object",
+      "properties": {
+        "protocol_version": {"const": "teo-host-integration/0.1"},
+        "instruction_id": {"type": "string", "minLength": 1},
+        "dispatch_id": {"type": "string", "minLength": 1},
+        "task_id": {"type": "string", "minLength": 1},
+        "instruction_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "required": ["protocol_version", "instruction_id", "dispatch_id", "task_id", "instruction_sha256"]
+    },
+    "execution_instruction": {
+      "allOf": [
+        {"$ref": "#/$defs/common_instruction"},
+        {
+          "type": "object",
+          "properties": {
+            "protocol_version": {"const": "teo-host-integration/0.1"},
+            "instruction_id": {"type": "string", "minLength": 1},
+            "dispatch_id": {"type": "string", "minLength": 1},
+            "task_id": {"type": "string", "minLength": 1},
+            "route_role": {"enum": ["primary", "fallback"]},
+            "provider_family": {"type": "string", "minLength": 1},
+            "model": {"type": "string", "minLength": 1},
+            "reasoning_effort": {"type": ["string", "null"]},
+            "attempt": {"type": "integer", "minimum": 1},
+            "max_attempts": {"type": "integer", "minimum": 1},
+            "task": {"type": "string", "minLength": 1},
+            "required_capabilities": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1},
+              "uniqueItems": true
+            },
+            "instruction_sha256": {"$ref": "#/$defs/sha256"}
+          },
+          "required": ["protocol_version", "instruction_id", "dispatch_id", "task_id", "route_role", "provider_family", "model", "reasoning_effort", "attempt", "max_attempts", "task", "required_capabilities", "instruction_sha256"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "execution_receipt": {
+      "type": "object",
+      "properties": {
+        "protocol_version": {"const": "teo-host-integration/0.1"},
+        "instruction_id": {"type": "string", "minLength": 1},
+        "instruction_sha256": {"$ref": "#/$defs/sha256"},
+        "dispatch_id": {"type": "string", "minLength": 1},
+        "route_role": {"enum": ["primary", "fallback"]},
+        "provider_family": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "attempt": {"type": "integer", "minimum": 1},
+        "status": {"enum": ["succeeded", "failed"]},
+        "output_ref": {"type": ["string", "null"]},
+        "output_sha256": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["protocol_version", "instruction_id", "instruction_sha256", "dispatch_id", "route_role", "provider_family", "model", "attempt", "status", "output_ref", "output_sha256", "evidence"],
+      "additionalProperties": false
+    },
+    "verification_instruction": {
+      "allOf": [
+        {"$ref": "#/$defs/common_instruction"},
+        {
+          "type": "object",
+          "properties": {
+            "protocol_version": {"const": "teo-host-integration/0.1"},
+            "instruction_id": {"type": "string", "minLength": 1},
+            "dispatch_id": {"type": "string", "minLength": 1},
+            "task_id": {"type": "string", "minLength": 1},
+            "active_route_role": {"enum": ["primary", "fallback"]},
+            "executor_provider_family": {"type": "string", "minLength": 1},
+            "executor_model": {"type": "string", "minLength": 1},
+            "verifier_provider_family": {"type": "string", "minLength": 1},
+            "verifier_model": {"type": "string", "minLength": 1},
+            "output_ref": {"type": "string", "minLength": 1},
+            "output_sha256": {"$ref": "#/$defs/sha256"},
+            "verification_methods": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1}
+            },
+            "instruction_sha256": {"$ref": "#/$defs/sha256"}
+          },
+          "required": ["protocol_version", "instruction_id", "dispatch_id", "task_id", "active_route_role", "executor_provider_family", "executor_model", "verifier_provider_family", "verifier_model", "output_ref", "output_sha256", "verification_methods", "instruction_sha256"],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "verification_receipt": {
+      "type": "object",
+      "properties": {
+        "protocol_version": {"const": "teo-host-integration/0.1"},
+        "instruction_id": {"type": "string", "minLength": 1},
+        "instruction_sha256": {"$ref": "#/$defs/sha256"},
+        "dispatch_id": {"type": "string", "minLength": 1},
+        "verifier_provider_family": {"type": "string", "minLength": 1},
+        "verifier_model": {"type": "string", "minLength": 1},
+        "output_ref": {"type": "string", "minLength": 1},
+        "output_sha256": {"$ref": "#/$defs/sha256"},
+        "status": {"enum": ["passed", "failed", "needs_human"]},
+        "evidence": {"type": "array", "items": {"type": "string"}}
+      },
+      "required": ["protocol_version", "instruction_id", "instruction_sha256", "dispatch_id", "verifier_provider_family", "verifier_model", "output_ref", "output_sha256", "status", "evidence"],
+      "additionalProperties": false
+    }
+  }
+}
