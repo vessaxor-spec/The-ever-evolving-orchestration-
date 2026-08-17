@@ -33,6 +33,10 @@ jobs:
           done
       - name: Harden and reconcile candidate
         run: python .github/scripts/reconcile_host_integration_protocol.py
+      - name: Normalize generated Markdown
+        run: |
+          sed -i 's/[[:space:]]\+$//' docs/specification/host-integration-protocol-candidate.md
+          sed -i 's/[[:space:]]\+$//' research/runtime/host-integration-protocol-0-1-2026-08-17.md
       - name: Validate generated tree
         run: |
           set -euo pipefail
