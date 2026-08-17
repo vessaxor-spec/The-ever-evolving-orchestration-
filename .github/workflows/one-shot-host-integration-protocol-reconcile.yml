@@ -17,7 +17,7 @@ jobs:
         with:
           ref: agent/host-integration-protocol-0-1-reconciled
           fetch-depth: 0
-      - name: Reconstruct and harden candidate
+      - name: Reconstruct source candidate
         run: |
           set -euo pipefail
           git fetch origin agent/host-integration-protocol-0-1:refs/remotes/origin/agent/host-integration-protocol-0-1
@@ -31,207 +31,33 @@ jobs:
             mkdir -p "$(dirname "$path")"
             git show "origin/agent/host-integration-protocol-0-1:$path" > "$path"
           done
-
-          python - <<'PY'
-          from pathlib import Path
-
-          def replace_once(path: str, old: str, new: str) -> None:
-              p = Path(path)
-              text = p.read_text(encoding="utf-8")
-              count = text.count(old)
-              if count != 1:
-                  raise SystemExit(f"guard failed for {path}: expected 1 occurrence, got {count}: {old[:80]!r}")
-              p.write_text(text.replace(old, new, 1), encoding="utf-8")
-
-          module = "reference/implementations/python/src/teo_reference/host_integration_protocol.py"
-          replace_once(
-              module,
-              '''    def __init__(self, dispatch: DispatchRecord, *, max_attempts_per_route: int = 1):\n        if isinstance(max_attempts_per_route, bool) or max_attempts_per_route < 1:\n            raise HostIntegrationProtocolError("max_attempts_per_route must be positive")\n''',
-              '''    def __init__(self, dispatch: DispatchRecord, *, max_attempts_per_route: int = 1):\n        if (\n            isinstance(max_attempts_per_route, bool)\n            or not isinstance(max_attempts_per_route, int)\n            or max_attempts_per_route < 1\n        ):\n            raise HostIntegrationProtocolError(\n                "max_attempts_per_route must be a positive integer"\n            )\n''',
-          )
-          replace_once(
-              module,
-              '''    def issue_execution(self, *, route_role: RouteRole = "primary", attempt: int = 1) -> HostExecutionInstruction:\n''',
-              '''    def _has_unresolved_execution(self) -> bool:\n        return any(key not in self._accepted_execution for key in self._issued_attempts)\n\n    def _has_successful_execution(self) -> bool:\n        return any(\n            receipt.status == "succeeded"\n            for receipt in self._accepted_execution.values()\n        )\n\n    def _fallback_was_issued(self) -> bool:\n        return any(role == "fallback" for role, _ in self._issued_attempts)\n\n    def issue_execution(self, *, route_role: RouteRole = "primary", attempt: int = 1) -> HostExecutionInstruction:\n''',
-          )
-          replace_once(
-              module,
-              '''        key = (route_role, attempt)\n        if key in self._issued_attempts:\n            raise HostIntegrationProtocolError("execution attempt was already issued")\n\n        if route_role == "fallback":\n''',
-              '''        key = (route_role, attempt)\n        if key in self._issued_attempts:\n            raise HostIntegrationProtocolError("execution attempt was already issued")\n        if self._issued_verification or self._verification_receipt is not None:\n            raise HostIntegrationProtocolError(\n                "execution phase is closed after verification has started"\n            )\n        if self._has_successful_execution():\n            raise HostIntegrationProtocolError(\n                "execution phase is closed after a successful execution receipt"\n            )\n        if route_role == "primary" and self._fallback_was_issued():\n            raise HostIntegrationProtocolError(\n                "primary route is closed after fallback issuance"\n            )\n        if self._has_unresolved_execution():\n            raise HostIntegrationProtocolError(\n                "previous execution instruction remains unresolved"\n            )\n\n        if route_role == "fallback":\n''',
-          )
-          replace_once(
-              module,
-              '''        if instruction is None:\n            raise HostIntegrationProtocolError("execution receipt references an unknown instruction")\n        instruction.validate_integrity()\n''',
-              '''        if instruction is None:\n            raise HostIntegrationProtocolError("execution receipt references an unknown instruction")\n        if isinstance(receipt.attempt, bool) or not isinstance(receipt.attempt, int):\n            raise HostIntegrationProtocolError("execution receipt attempt must be an integer")\n        instruction.validate_integrity()\n''',
-          )
-
-          tests = Path("tests/test_host_integration_protocol.py")
-          test_text = tests.read_text(encoding="utf-8")
-          test_text += r'''
-
-
-def test_retry_budget_requires_positive_integer():
-    for budget in (True, 0, -1, 1.5, "2", None):
-        with pytest.raises(HostIntegrationProtocolError, match="positive integer"):
-            HostIntegrationProtocolSession(_dispatch(), max_attempts_per_route=budget)
-
-
-def test_execution_receipt_boolean_attempt_is_rejected():
-    session = HostIntegrationProtocolSession(_dispatch())
-    instruction = session.issue_execution()
-    receipt = replace(_receipt(instruction), attempt=True)
-    with pytest.raises(HostIntegrationProtocolError, match="attempt must be an integer"):
-        session.accept_execution(receipt)
-
-
-def test_outstanding_primary_retry_blocks_fallback_issue():
-    session = HostIntegrationProtocolSession(_dispatch(), max_attempts_per_route=2)
-    first = session.issue_execution()
-    session.accept_execution(_receipt(first, status="failed"))
-    session.issue_execution(attempt=2)
-    with pytest.raises(HostIntegrationProtocolError, match="remains unresolved"):
-        session.issue_execution(route_role="fallback")
-
-
-def test_fallback_transition_closes_primary_route_after_fallback_failure():
-    session = HostIntegrationProtocolSession(_dispatch(), max_attempts_per_route=2)
-    primary = session.issue_execution()
-    session.accept_execution(_receipt(primary, status="failed"))
-    fallback = session.issue_execution(route_role="fallback")
-    session.accept_execution(_receipt(fallback, status="failed"))
-    with pytest.raises(HostIntegrationProtocolError, match="primary route is closed"):
-        session.issue_execution(route_role="primary", attempt=2)
-
-
-def test_success_terminates_execution_phase_across_routes():
-    session = HostIntegrationProtocolSession(_dispatch(), max_attempts_per_route=2)
-    primary = session.issue_execution()
-    session.accept_execution(_receipt(primary, status="failed"))
-    fallback = session.issue_execution(route_role="fallback")
-    session.accept_execution(
-        _receipt(
-            fallback,
-            output_ref="artifact://fallback",
-            output_sha256=FALLBACK_SHA,
-        )
-    )
-    with pytest.raises(HostIntegrationProtocolError, match="successful execution"):
-        session.issue_execution(route_role="primary", attempt=2)
-
-
-def test_verification_start_closes_execution_phase():
-    session = HostIntegrationProtocolSession(_dispatch(), max_attempts_per_route=2)
-    primary = session.issue_execution()
-    session.accept_execution(_receipt(primary))
-    session.issue_verification()
-    with pytest.raises(HostIntegrationProtocolError, match="verification has started"):
-        session.issue_execution(route_role="fallback")
-'''
-          tests.write_text(test_text, encoding="utf-8")
-
-          spec = "docs/specification/host-integration-protocol-candidate.md"
-          replace_once(
-              spec,
-              '''For this candidate:\n\n- attempt `n + 1` may be issued only after accepted attempt `n` for the same route failed;\n- attempts cannot exceed the TEO-side session ceiling;\n- fallback can be issued only after the latest accepted primary attempt failed;\n- fallback identity comes only from `DispatchRecord.fallback_implementation`;\n- a host cannot introduce an undeclared fallback provider/model through a receipt.\n''',
-              '''For this candidate:\n\n- the session retry ceiling must be a positive integer;\n- only one execution instruction may remain unresolved at a time;\n- attempt `n + 1` may be issued only after accepted attempt `n` for the same route failed;\n- attempts cannot exceed the TEO-side session ceiling;\n- fallback can be issued only after the latest accepted primary attempt failed;\n- once any fallback instruction is issued, the primary route cannot reopen within that session;\n- once any execution receipt succeeds, the execution phase is terminal;\n- once verification begins, no further execution instruction may be issued;\n- fallback identity comes only from `DispatchRecord.fallback_implementation`;\n- a host cannot introduce an undeclared fallback provider/model through a receipt.\n''',
-          )
-          replace_once(
-              spec,
-              '''- TEO-controlled fallback after primary failure;\n- sequential bounded retry;\n- independent verifier binding;\n''',
-              '''- TEO-controlled fallback after primary failure;\n- sequential bounded retry with a positive-integer budget;\n- one unresolved execution instruction at a time;\n- monotonic primary-to-fallback progression without route reopening;\n- terminal execution after success or verification start;\n- independent verifier binding;\n''',
-          )
-
-          replace_once(
-              "docs/specification/README.md",
-              '''## Cross-boundary evidence\n\n- [`final-execution-provenance.md`](final-execution-provenance.md) defines the optional read-only projection from validated Route-Outcome Evidence into a host-consumable `FinalOutcome` without creating routing or execution authority.\n\n## Specification documents\n''',
-              '''## Cross-boundary evidence\n\n- [`final-execution-provenance.md`](final-execution-provenance.md) defines the optional read-only projection from validated Route-Outcome Evidence into a host-consumable `FinalOutcome` without creating routing or execution authority.\n\n## Host integration reference candidate\n\n- [`host-integration-protocol-candidate.md`](host-integration-protocol-candidate.md) defines the non-normative, non-production `teo-host-integration/0.1` message boundary for TEO-directed host-native execution and independent verification. It does not widen routing, live-execution, provider-access, specialist, or production authority.\n\n## Specification documents\n''',
-          )
-
-          replace_once(
-              "reference/implementations/README.md",
-              '''[`python/README.md`](python/README.md) documents the runnable Python router, provider-adapter boundary, retry/fallback behavior, live verification, finalization, controlled documentation replay, and executable regulated-evidence stability qualification.\n''',
-              '''[`python/README.md`](python/README.md) documents the runnable Python router, provider-adapter boundary, retry/fallback behavior, live verification, finalization, controlled documentation replay, executable regulated-evidence stability qualification, and the non-production Host Integration Protocol 0.1 reference candidate.\n''',
-          )
-
-          replace_once(
-              "reference/implementations/python/README.md",
-              '''## Staged documentation replay\n''',
-              '''## Host Integration Protocol 0.1 reference candidate\n\nThe package includes `teo_reference.host_integration_protocol`, a non-normative, non-production coordinator for a TEO-directed host-native execution boundary. The candidate binds provider/model execution and independent verification to a defensive `DispatchRecord` snapshot while leaving provider authentication and transport with the embedding host.\n\nThe candidate is deliberately sequential and fail-closed: retry budgets must be positive integers, only one execution instruction may be unresolved at a time, fallback is a monotonic transition that cannot reopen the primary route, a successful execution closes the execution phase, and verification start prevents any later execution issuance. Host receipts remain evidence presented to TEO rather than final acceptance authority.\n\nThis reference candidate does not provide hostile-transport authenticity, authenticated host/account/tenant identity, restart-persistent replay state, production retry-policy snapshot binding, credential-scope binding, distributed coordination, or production containment. It does not widen the current `high_volume_simple` live scope or authorize `documentation`.\n\nThe wire contract is `reference/schemas/host-integration-protocol.schema.json`, and the human-readable boundary is `docs/specification/host-integration-protocol-candidate.md`.\n\n## Staged documentation replay\n''',
-          )
-
-          research_path = "research/roadmaps/host-integration-contract.md"
-          replace_once(research_path, "**Last reconciled:** 2026-08-16", "**Last reconciled:** 2026-08-17")
-          replace_once(
-              research_path,
-              '''- [`../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md), the first empirical localhost two-session run, which supports fresh-session/no-reminder standing-hook and routing continuity but records a full end-to-end FAIL after executor and verifier substitution were independently falsified.\n\nThis document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority.\n''',
-              '''- [`../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](../runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md), the first empirical localhost two-session run, which supports fresh-session/no-reminder standing-hook and routing continuity but records a full end-to-end FAIL after executor and verifier substitution were independently falsified.\n- [`../../docs/specification/host-integration-protocol-candidate.md`](../../docs/specification/host-integration-protocol-candidate.md), the `teo-host-integration/0.1` non-production reference candidate for TEO-issued execution/verification instructions and host receipts, reconstructed on current `main` with monotonic route progression, single-outstanding-instruction sequencing, terminal success, and strict integer retry-budget enforcement.\n- [`../runtime/host-integration-protocol-0-1-2026-08-17.md`](../runtime/host-integration-protocol-0-1-2026-08-17.md), the dated reconciliation and verification record for the candidate.\n\nThis document does not change current routing, runtime, specialist, verification, approval, Task Request, Dispatch Record, live-execution, or release authority. The protocol candidate is an implementation-backed research artifact, not a production Host Integration promotion or a second authority plane.\n''',
-          )
-
-          roadmap = "docs/stewardship/roadmap.md"
-          replace_once(
-              roadmap,
-              '''Additional provider-independent research has also satisfied the static bounded-context payload slice, process-local dispatch-provenance and bundled-adapter self-expansion slice, process-local third-party adapter non-self-authorization slice, restrictive host/TEO authority-intersection and execution-scope slice, exact process-local execution-envelope integrity slice, verifier-context independence, and exact artifact/change-set stale-PASS resistance. Those are research findings, not normative host certification.\n\nRemaining pre-normative evidence is narrower and materially different:''',
-              '''Additional provider-independent research has also satisfied the static bounded-context payload slice, process-local dispatch-provenance and bundled-adapter self-expansion slice, process-local third-party adapter non-self-authorization slice, restrictive host/TEO authority-intersection and execution-scope slice, exact process-local execution-envelope integrity slice, verifier-context independence, and exact artifact/change-set stale-PASS resistance. Those are research findings, not normative host certification.\n\nThe `teo-host-integration/0.1` reference candidate now makes one bounded host-native execution/verification message path executable without promoting the broader contract. It preserves TEO ownership of route, retry/fallback authorization, verifier selection, and evidence acceptance; enforces one unresolved execution instruction at a time, monotonic primary-to-fallback progression, terminal success, and no execution after verification begins; and leaves provider authentication/transport with the host. It remains explicitly non-normative and non-production.\n\nRemaining pre-normative evidence is narrower and materially different:''',
-          )
-
-          tracker = "docs/stewardship/progress-tracker.md"
-          replace_once(
-              tracker,
-              '''and process-local integrated Fresh-AI assimilation/conformance plus premortem replay research slices satisfied and a Fresh-AI cross-session trial framework/validator implemented, with empirical trial 001 supporting fresh-session/no-reminder routing continuity; contract remains non-normative''',
-              '''and process-local integrated Fresh-AI assimilation/conformance plus premortem replay research slices satisfied, a Fresh-AI cross-session trial framework/validator implemented, and the non-production `teo-host-integration/0.1` execution/verification reference candidate implemented with monotonic route progression and terminal execution sequencing, with empirical trial 001 supporting fresh-session/no-reminder routing continuity; contract remains non-normative''',
-          )
-          replace_once(
-              tracker,
-              '''or integrated process-local Fresh-AI assimilation/conformance and premortem-replay research slices, or implementing the Fresh-AI cross-session trial framework, does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.''',
-              '''or integrated process-local Fresh-AI assimilation/conformance and premortem-replay research slices, implementing the Fresh-AI cross-session trial framework, or accepting the non-production `teo-host-integration/0.1` reference candidate, does not promote it ahead of the current live-execution milestone or imply an arbitrary completion percentage.''',
-          )
-
-          changelog = "CHANGELOG.md"
-          replace_once(
-              changelog,
-              '''- provider-independent Host Integration Contract research covering two-host architecture diversity, bounded context projection, dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter trust, restrictive host/TEO authority intersection, exact execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance\n''',
-              '''- provider-independent Host Integration Contract research covering two-host architecture diversity, bounded context projection, dispatch provenance, bundled-adapter self-expansion resistance, third-party adapter trust, restrictive host/TEO authority intersection, exact execution-envelope integrity, verifier-context independence, and exact artifact/change-set stale-PASS resistance\n- non-normative `teo-host-integration/0.1` reference candidate for TEO-issued host execution and independent-verification instructions, host receipts, sequential retry/fallback control, terminal success, and evidence projection without provider-credential transport or live-authority promotion\n''',
-          )
-
-          truth = "tests/test_documentation_control_plane_truth.py"
-          replace_once(
-              truth,
-              '''        "process-local integrated Fresh-AI assimilation/conformance",\n        "assimilation is not installation",\n''',
-              '''        "process-local integrated Fresh-AI assimilation/conformance",\n        "`teo-host-integration/0.1`",\n        "monotonic route progression",\n        "terminal execution sequencing",\n        "assimilation is not installation",\n''',
-          )
-          replace_once(
-              truth,
-              '''    assert "CI conformance with deterministic fake transports does not count as empirical provider-backed evidence" in text\n    assert "remains the only accepted live execution scope" in text\n''',
-              '''    assert "CI conformance with deterministic fake transports does not count as empirical provider-backed evidence" in text\n    assert "`teo-host-integration/0.1` reference candidate" in text\n    assert "explicitly non-normative and non-production" in text\n    assert "remains the only accepted live execution scope" in text\n''',
-          )
-
-          evidence = Path("research/runtime/host-integration-protocol-0-1-2026-08-17.md")
-          evidence.write_text('''# Host Integration Protocol 0.1 Reconciliation\n\n**Date:** 2026-08-17  \n**Status:** verification pending  \n**Authority:** non-normative research evidence  \n**Canonical base:** `95ec0d35e49c8b4e7b96d0105ca95b4a968f59ce`  \n**Source candidate:** PR #179 head `70adc79c8f190c281868f001cdc472987016673d`\n\n## Diagnosis\n\nPR #179 preserved a useful `teo-host-integration/0.1` reference candidate but its branch had diverged from current repository truth. The candidate head was 14 commits behind current `main` and three commits ahead from merge base `4b4f07fc448b48c9b551e5ae759dd02cf1bb8d24`. Its earlier synthetic merge against documentation-reconciled `main` passed CI #797 with 987 tests, 556 tracked-file layout checks, 42 JSON Schemas, valid regulated evidence, valid linked configuration, and the provider-diverse end-to-end reference lifecycle.\n\nThe branch was therefore treated as evidence to harvest, not as a continuation to merge or rebase-and-trust.\n\n## Control defects found during recalibration\n\nThe reconstruction corrects five fail-closed sequencing/type gaps that the original suite did not falsify:\n\n1. fractional/non-integer `max_attempts_per_route` values were accepted by the constructor;\n2. a boolean receipt attempt could compare equal to integer attempt 1;\n3. fallback could be issued while a newer primary retry instruction remained unresolved;\n4. after fallback issuance, a later primary retry could reopen the primary route;\n5. after a successful fallback, later execution issuance remained possible, including after verification began.\n\n## Decision\n\nRetain the protocol as a bounded non-production reference candidate, reconstructed from current `main`. Preserve TEO ownership of routing, retry/fallback authorization, verifier selection, and acceptance. Preserve host ownership of provider authentication and transport. Do not widen live scope, provider access, specialist authority, Task Request/Dispatch authority, or production Host Integration status.\n\nThe corrected session enforces:\n\n- positive-integer retry ceilings;\n- exact integer receipt attempts;\n- one unresolved execution instruction at a time;\n- monotonic primary-to-fallback progression;\n- terminal execution after any success;\n- no execution issuance once verification starts.\n\n## Verification\n\nPending on this reconstructed branch:\n\n- full Reference Implementation CI on the current base;\n- targeted mutation campaign for the five corrected controls;\n- final exact-head CI after evidence and stewardship reconciliation.\n\nThe eventual PASS, if achieved, qualifies only the non-production reference candidate. Production transport authenticity, host/account/tenant identity, restart-persistent replay state, policy-snapshot retry binding, credential scope, containment, distributed coordination, effect authenticity, and full selected-executor/verifier live-provider assimilation remain open.\n''', encoding="utf-8")
-          PY
-
-          python -m compileall -q reference/implementations/python/src tests
+      - name: Harden and reconcile candidate
+        run: python .github/scripts/reconcile_host_integration_protocol.py
+      - name: Validate generated tree
+        run: |
+          set -euo pipefail
+          python -m compileall -q reference/implementations/python/src tests .github/scripts
           git diff --check
-
-      - name: Commit reconciled candidate
+      - name: Commit reconciliation
         run: |
           set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add \
-            docs/specification/host-integration-protocol-candidate.md \
+            CHANGELOG.md \
             docs/specification/README.md \
-            docs/stewardship/roadmap.md \
+            docs/specification/host-integration-protocol-candidate.md \
             docs/stewardship/progress-tracker.md \
+            docs/stewardship/roadmap.md \
             research/roadmaps/host-integration-contract.md \
             research/runtime/host-integration-protocol-0-1-2026-08-17.md \
             reference/implementations/README.md \
             reference/implementations/python/README.md \
             reference/implementations/python/src/teo_reference/host_integration_protocol.py \
             reference/schemas/host-integration-protocol.schema.json \
-            tests/test_host_integration_protocol.py \
-            tests/test_host_integration_protocol_schema.py \
             tests/test_documentation_control_plane_truth.py \
-            CHANGELOG.md
+            tests/test_host_integration_protocol.py \
+            tests/test_host_integration_protocol_schema.py
           git diff --cached --check
           git commit -m 'Reconcile Host Integration Protocol 0.1 candidate'
           git push origin HEAD:agent/host-integration-protocol-0-1-reconciled
