@@ -167,6 +167,16 @@ teo --repo-root . finalize \
 
 The supplied route record is revalidated before attachment. It must agree with the final dispatch, successful active route, selected model, verifier model, verification status, and final disposition. A caller cannot use `--route-outcome` to nominate or override provider/model identity. The optional `execution_provenance` projection is read-only evidence and does not replace the complete Route-Outcome Evidence record.
 
+## Host Integration Protocol 0.1 reference candidate
+
+The package includes `teo_reference.host_integration_protocol`, a non-normative, non-production coordinator for a TEO-directed host-native execution boundary. The candidate binds provider/model execution and independent verification to a defensive `DispatchRecord` snapshot while leaving provider authentication and transport with the embedding host.
+
+The candidate is deliberately sequential and fail-closed: retry budgets must be positive integers, only one execution instruction may be unresolved at a time, fallback is a monotonic transition that cannot reopen the primary route, a successful execution closes the execution phase, and verification start prevents any later execution issuance. Host receipts remain evidence presented to TEO rather than final acceptance authority.
+
+This reference candidate does not provide hostile-transport authenticity, authenticated host/account/tenant identity, restart-persistent replay state, production retry-policy snapshot binding, credential-scope binding, distributed coordination, or production containment. It does not widen the current `high_volume_simple` live scope or authorize `documentation`.
+
+The wire contract is `reference/schemas/host-integration-protocol.schema.json`, and the human-readable boundary is `docs/specification/host-integration-protocol-candidate.md`.
+
 ## Staged documentation replay
 
 The `documentation` candidate has a separate controlled replay harness and operator path. It preserves the exact staged route, assigned Terra verifier, retry policy, per-trial circuit isolation, in-memory replay telemetry, and canonical Route-Outcome Evidence while requiring explicit operator acknowledgement before live provider calls.

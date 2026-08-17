@@ -236,6 +236,9 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "2026-08-15-local-fresh-ai-cross-session-trial-001.md",
         "routing_continuity_only",
         "process-local integrated Fresh-AI assimilation/conformance",
+        "`teo-host-integration/0.1`",
+        "monotonic route progression",
+        "terminal execution sequencing",
         "assimilation is not installation",
         "two distinct task IDs",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
@@ -403,6 +406,8 @@ def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> 
     assert "staged replay harness are complete" in text
     assert "The next evidence gate is **provider-backed controlled documentation replay**" in text
     assert "CI conformance with deterministic fake transports does not count as empirical provider-backed evidence" in text
+    assert "`teo-host-integration/0.1` reference candidate" in text
+    assert "explicitly non-normative and non-production" in text
     assert "remains the only accepted live execution scope" in text
     assert "78 preserved specialist" not in text
     assert "78 active specialists" not in text
