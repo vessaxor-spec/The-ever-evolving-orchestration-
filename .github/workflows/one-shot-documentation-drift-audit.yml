@@ -1,15 +1,16 @@
 name: One-shot documentation drift audit
 
 on:
-  push:
+  pull_request:
     branches:
-      - agent/reconcile-documentation-after-evidence-qualification
+      - main
 
 permissions:
   contents: read
 
 jobs:
   audit:
+    if: github.head_ref == 'agent/reconcile-documentation-after-evidence-qualification'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
