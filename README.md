@@ -124,11 +124,14 @@ TEO has crossed the functional-v1 boundary and is now in post-v1 stewardship and
 | Repository architecture | R1 through R5 complete and CI-governed |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
+| Regulated specialist evidence | six-card pilot stability-qualified; seven-day authority monitoring remains active; expansion requires explicit next risk-tier batch approval |
 | High and critical live execution | not authorized |
 | Current operational priority | evidence-governed live execution expansion |
 | Canonical current status | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
 
 The current reference system includes deterministic routing, risk controls, specialist bindings, capability checks, provider-diverse recovery, fresh-verifier rotation, guarded provider execution, content-free runtime telemetry, evidence-aware finalization, and qualified-human authority where policy requires it.
+
+The bounded regulated-specialist evidence pilot has completed **2 of 2 formal refresh cycles** and the executable **stability qualification**. The qualification performed **five complete clean authority-resolution replays**, **three independent repeatability runs**, **15 of 15 governed fail-closed mutations**, a controlled authority-move path, and an external-network observation that resolved all seven declared authorities. The seven-day source-resolution cadence remains continuous drift monitoring, not an elapsed-time waiting gate. Qualification does not auto-authorize expansion; an explicit next risk-tier batch approval and separate reviewed change are still required.
 
 ### Host Integration research
 
@@ -148,7 +151,9 @@ The repository's current validation counts, evidence milestones, and exact resea
 
 TEO currently has **ten active organizational teams**, **84 workers**, **82 preserved specialist role cards**, and dedicated Mission Control workers for orchestration, operations, project delivery, and incident response. The Mission Control worker identities are `orchestration`, `operations`, `project_delivery`, and `incident_response`. The active specialist topology includes [`community/specialists/workforce-expansion-active.yaml`](community/specialists/workforce-expansion-active.yaml). Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** have completed their current declared milestones.
 
-The accepted substantive runtime-control baseline remains **Reference Implementation CI #514** with **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle. The documentation reconciliation baseline is **CI #602** with **802 automated tests** and **515 tracked-file layout checks**. The latest Host Integration research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks**. These baselines prove their declared checks, not broader provider-backed production claims.
+The accepted substantive runtime-control baseline remains **Reference Implementation CI #514** with **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle. The documentation reconciliation baseline is **CI #602** with **802 automated tests** and **515 tracked-file layout checks**. The latest Host Integration research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks**. The regulated-evidence stability qualification was accepted with **967 automated tests**, **551 tracked-file layout checks**, **41 JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound reference lifecycle. These baselines prove their declared checks, not broader provider-backed production claims.
+
+The regulated pilot itself is now **stability-qualified**. Its current evidence consists of **five complete clean authority-resolution replays**, **three independent repeatability runs**, **15 of 15 governed fail-closed mutations**, a controlled authority move, and a GitHub-hosted external-network observation that resolved **7 of 7 declared authorities**. Continuous resolution remains on a **seven-day source-resolution cadence**, and any expansion still requires **explicit next risk-tier batch approval**.
 
 Host Integration has accumulated **eleven provider-independent adversarial slices** plus integrated Fresh-AI assimilation/conformance. Those slices include **verifier-context independence**, **exact artifact/change-set stale-PASS resistance**, **brokered conformant process-lifetime cross-process authority/replay**, **static runtime-wired authority-surface reconciliation**, **process-lifetime recursion resistance**, **exact local freshness binding**, and **portfolio/task-admission separation**. The assimilation work operationalizes the rule **Assimilation is not installation** and requires **two distinct post-assimilation task IDs** rather than treating one successful demo as durable continuity.
 
@@ -258,6 +263,7 @@ Repository placement is governed by [`policy/governance/repository-layout.yaml`]
 | current operational state | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
 | strategic direction | [`docs/stewardship/roadmap.md`](docs/stewardship/roadmap.md) |
 | canonical routing | [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml) |
+| regulated specialist evidence | [`policy/specialists/evidence-pilot.yaml`](policy/specialists/evidence-pilot.yaml), [`policy/specialists/evidence-stability-qualification.yaml`](policy/specialists/evidence-stability-qualification.yaml), and [`docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md) |
 | provider-access separation | [`docs/specification/provider-access-boundary.md`](docs/specification/provider-access-boundary.md) |
 | runnable implementation | [`reference/implementations/python/README.md`](reference/implementations/python/README.md) |
 | historical audits | [`docs/history/audits/`](docs/history/audits/) |

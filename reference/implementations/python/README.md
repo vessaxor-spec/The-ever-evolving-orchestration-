@@ -173,6 +173,16 @@ The `documentation` candidate has a separate controlled replay harness and opera
 
 Automatic fallback is intentionally disabled in this replay milestone. A model/provider failure is recorded rather than becoming a hidden alternate live runtime. Provider-backed replay evidence remains pending and `documentation` remains `activation_authorized: false`.
 
+## Regulated evidence stability qualification
+
+The reference package includes `teo_reference.evidence_stability`, an executable qualification harness for the bounded six-card regulated-specialist evidence pilot. The governing requirements live in `policy/specialists/evidence-stability-qualification.yaml`.
+
+The current qualification requires five complete clean authority-resolution replays, three independently executed repeatability runs, all 15 governed fail-closed mutation classes to be killed, a controlled authority-move path, and a successful external-network authority-resolution observation. The harness does not convert deterministic fixtures into a claim of live network success; the external observation is validated separately.
+
+The active seven-day authority-resolution cadence remains continuous monitoring after qualification. The qualification result is evidence only and never auto-authorizes registry expansion. Any next risk-tier batch requires explicit approval and a separate reviewed change.
+
+Historical qualification evidence is recorded in `docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`.
+
 ## End-to-end demonstration
 
 ```bash

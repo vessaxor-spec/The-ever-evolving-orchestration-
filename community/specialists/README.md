@@ -56,6 +56,12 @@ The executable `ConfigBundle` composition is the current roster truth. The canon
 
 These counts reflect current allocation overrides and active extensions. Do not infer current team ownership from the original 56-role import alone.
 
+## Regulated evidence pilot
+
+Six active specialists currently participate in the bounded regulated evidence pilot: Legal Operations, Tax Strategist, Loan Officer Assistant, Compliance Auditor, Civil Engineer, and Embedded Engineer. The pilot has completed two formal refresh cycles and its executable stability qualification without rewriting or narrowing any canonical specialist role card.
+
+The active claim registry is [`policy/specialists/evidence-pilot.yaml`](../../policy/specialists/evidence-pilot.yaml), the qualification contract is [`policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml), and the completed qualification evidence is preserved under [`docs/history/validation/`](../../docs/history/validation/). Seven-day authority resolution remains continuous monitoring. Qualification does not add specialists to the pilot automatically; expansion requires explicit next risk-tier batch approval and a separate reviewed change.
+
 ## Canonical preservation rule
 
 Each specialist Markdown file is the canonical capability definition for that specialist. TEO does not summarize, narrow, demote, simplify, or rewrite the specialist role.

@@ -6,6 +6,7 @@ Human-readable governance and maintenance guidance for evolving TEO without weak
 
 - [`progress-tracker.md`](progress-tracker.md) is the canonical operational snapshot for current release identity, roster counts, workstream status, completion estimates, validation state, and NOW/NEXT/LATER sequencing.
 - [`roadmap.md`](roadmap.md) records directional project priorities and accepted future research without creating runtime or routing authority.
+- The regulated specialist evidence milestone is summarized in the Progress Tracker and governed by [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml); dated qualification evidence remains under [`../history/validation/`](../history/validation/).
 
 ## Stewardship documents
 
