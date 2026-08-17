@@ -128,6 +128,27 @@ def test_success_requires_output_identity():
         session.accept_execution(receipt)
 
 
+def test_failed_execution_cannot_claim_successful_output_identity():
+    session = HostIntegrationProtocolSession(_dispatch())
+    instruction = session.issue_execution()
+    receipt = HostExecutionReceipt(
+        protocol_version=PROTOCOL_VERSION,
+        instruction_id=instruction.instruction_id,
+        instruction_sha256=instruction.instruction_sha256,
+        dispatch_id=instruction.dispatch_id,
+        route_role=instruction.route_role,
+        provider_family=instruction.provider_family,
+        model=instruction.model,
+        attempt=instruction.attempt,
+        status="failed",
+        output_ref="artifact://contradictory",
+        output_sha256=OUTPUT_SHA,
+        evidence=("host-observation",),
+    )
+    with pytest.raises(HostIntegrationProtocolError, match="must not claim"):
+        session.accept_execution(receipt)
+
+
 def test_execution_receipt_replay_is_rejected():
     session = HostIntegrationProtocolSession(_dispatch())
     instruction = session.issue_execution()
