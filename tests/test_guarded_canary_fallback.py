@@ -93,7 +93,7 @@ def gemini_model_failure() -> dict:
 def gemini_success() -> dict:
     return {
         "id": "int_fallback",
-        "model": "gemini-3.6-flash",
+        "model": "gemini-3.7-flash",
         "status": "completed",
         "steps": [
             {
@@ -122,7 +122,7 @@ def test_provider_failure_redispatches_to_declared_fallback_with_new_verifier(tm
     assert outcome.status == "fallback_executed"
     assert outcome.execution_succeeded is True
     assert outcome.fallback_trigger_scope == "provider"
-    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.7-flash"
     assert outcome.primary_dispatch.verification.implementation.model == "claude-sonnet-5"
     assert outcome.primary_dispatch.fallback_implementation is not None
     assert outcome.primary_dispatch.fallback_implementation.model == "claude-haiku-4-5"
@@ -154,7 +154,7 @@ def test_model_failure_redispatches_with_failed_model_blocked(tmp_path: Path) ->
     assert outcome.fallback_trigger_scope == "model"
     assert outcome.fallback_dispatch is not None
     assert outcome.fallback_dispatch.selected_implementation.model == "claude-haiku-4-5"
-    assert outcome.fallback_dispatch.verification.implementation.model == "gemini-3.6-flash"
+    assert outcome.fallback_dispatch.verification.implementation.model == "gpt-5.6-sol"
     assert len(google_calls) == 1
     assert len(anthropic_calls) == 1
 
