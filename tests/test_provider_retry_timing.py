@@ -39,7 +39,7 @@ def dispatch(provider: str = "anthropic") -> DispatchRecord:
     models = {
         "anthropic": ("claude-haiku-4-5", None),
         "openai": ("gpt-5.6-luna", "low"),
-        "google": ("gemini-3.6-flash", "medium"),
+        "google": ("gemini-3.7-flash", "medium"),
     }
     model, reasoning = models[provider]
     verifier_provider = "google" if provider != "google" else "anthropic"
