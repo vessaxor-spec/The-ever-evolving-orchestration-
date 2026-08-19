@@ -34,8 +34,11 @@ jobs:
             exit 1
           fi
 
+          echo "Live Discussion categories:"
+          jq -r '.data.repository.discussionCategories.nodes[] | "CATEGORY: \(.name) | \(.slug) | \(.id)"' <<<"$state"
+
           ensure_discussion() {
-            local slug="$1"
+            local category_name="$1"
             local title="$2"
             local body="$3"
             local existing
@@ -45,23 +48,23 @@ jobs:
 
             existing="$(jq -c --arg title "$title" '.data.repository.discussions.nodes[]? | select(.title == $title)' <<<"$state" | head -n1)"
             if [[ -n "$existing" ]]; then
-              local existing_slug
-              existing_slug="$(jq -r '.category.slug' <<<"$existing")"
-              if [[ "$existing_slug" != "$slug" ]]; then
-                echo "WRONG CATEGORY: $title expected=$slug actual=$existing_slug"
+              local existing_category
+              existing_category="$(jq -r '.category.name' <<<"$existing")"
+              if [[ "$existing_category" != "$category_name" ]]; then
+                echo "WRONG CATEGORY: $title expected=$category_name actual=$existing_category"
                 exit 1
               fi
-              echo "EXISTING: $title | $slug | $(jq -r '.url' <<<"$existing")"
+              echo "EXISTING: $title | $existing_category | $(jq -r '.category.slug' <<<"$existing") | $(jq -r '.url' <<<"$existing")"
               return 0
             fi
 
-            category_id="$(jq -r --arg slug "$slug" '.data.repository.discussionCategories.nodes[]? | select(.slug == $slug) | .id' <<<"$state" | head -n1)"
+            category_id="$(jq -r --arg name "$category_name" '.data.repository.discussionCategories.nodes[]? | select(.name == $name) | .id' <<<"$state" | head -n1)"
             if [[ -z "$category_id" || "$category_id" == "null" ]]; then
-              echo "Required Discussion category not found: $slug"
+              echo "Required Discussion category not found by name: $category_name"
               exit 1
             fi
 
-            mutation='mutation($repositoryId:ID!,$categoryId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repositoryId,categoryId:$categoryId,title:$title,body:$body}){discussion{title url category{slug}}}}'
+            mutation='mutation($repositoryId:ID!,$categoryId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repositoryId,categoryId:$categoryId,title:$title,body:$body}){discussion{title url category{name slug}}}}'
             result="$(gh api graphql \
               -f query="$mutation" \
               -f repositoryId="$repository_id" \
@@ -69,7 +72,7 @@ jobs:
               -f title="$title" \
               -f body="$body")"
 
-            echo "CREATED: $(jq -r '.data.createDiscussion.discussion.title' <<<"$result") | $(jq -r '.data.createDiscussion.discussion.category.slug' <<<"$result") | $(jq -r '.data.createDiscussion.discussion.url' <<<"$result")"
+            echo "CREATED: $(jq -r '.data.createDiscussion.discussion.title' <<<"$result") | $(jq -r '.data.createDiscussion.discussion.category.name' <<<"$result") | $(jq -r '.data.createDiscussion.discussion.category.slug' <<<"$result") | $(jq -r '.data.createDiscussion.discussion.url' <<<"$result")"
           }
 
           announcement_body="$(cat <<'EOF'
@@ -140,28 +143,28 @@ jobs:
           EOF
           )"
 
-          ensure_discussion "announcements" "TEO Discussions are open" "$announcement_body"
-          ensure_discussion "general" "Welcome — what are you working on with orchestration?" "$general_body"
-          ensure_discussion "research-exploration" "Research watch: what should TEO study next?" "$research_body"
-          ensure_discussion "ideas" "Where should TEO improve next?" "$ideas_body"
+          ensure_discussion "Announcements" "TEO Discussions are open" "$announcement_body"
+          ensure_discussion "General" "Welcome — what are you working on with orchestration?" "$general_body"
+          ensure_discussion "Research & Exploration" "Research watch: what should TEO study next?" "$research_body"
+          ensure_discussion "Ideas" "Where should TEO improve next?" "$ideas_body"
 
           verify_state="$(gh api graphql -f query="$query" -F owner="$owner" -F repo="$repo")"
           for expected in \
-            "TEO Discussions are open|announcements" \
-            "Welcome — what are you working on with orchestration?|general" \
-            "Research watch: what should TEO study next?|research-exploration" \
-            "Where should TEO improve next?|ideas"; do
+            "TEO Discussions are open|Announcements" \
+            "Welcome — what are you working on with orchestration?|General" \
+            "Research watch: what should TEO study next?|Research & Exploration" \
+            "Where should TEO improve next?|Ideas"; do
             title="${expected%%|*}"
-            slug="${expected##*|}"
+            category_name="${expected##*|}"
             match="$(jq -c --arg title "$title" '.data.repository.discussions.nodes[]? | select(.title == $title)' <<<"$verify_state" | head -n1)"
             if [[ -z "$match" ]]; then
               echo "MISSING AFTER ENSURE: $title"
               exit 1
             fi
-            actual_slug="$(jq -r '.category.slug' <<<"$match")"
-            if [[ "$actual_slug" != "$slug" ]]; then
-              echo "WRONG CATEGORY AFTER ENSURE: $title expected=$slug actual=$actual_slug"
+            actual_category="$(jq -r '.category.name' <<<"$match")"
+            if [[ "$actual_category" != "$category_name" ]]; then
+              echo "WRONG CATEGORY AFTER ENSURE: $title expected=$category_name actual=$actual_category"
               exit 1
             fi
-            echo "VERIFIED: $title | $slug | $(jq -r '.url' <<<"$match")"
+            echo "VERIFIED: $title | $actual_category | $(jq -r '.category.slug' <<<"$match") | $(jq -r '.url' <<<"$match")"
           done
