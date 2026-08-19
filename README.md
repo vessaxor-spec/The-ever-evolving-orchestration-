@@ -324,7 +324,7 @@ Useful review includes:
 - reproducibility and CI weaknesses;
 - documentation drift between policy, runtime, and prose.
 
-Use [GitHub Issues](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues) for proposals, defects, and technical discussion. Participation is governed by [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+Use [GitHub Discussions](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/discussions) for questions, early proposals, research, and technical exploration. Use [GitHub Issues](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues) for reproducible defects and accepted, scoped work. Participation is governed by [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
 Accepted historical states are preserved as immutable **Capsules** rather than rewritten after the fact. See [`community/capsules/README.md`](community/capsules/README.md).
 
