@@ -120,7 +120,7 @@ def connection(provider: str, calls: list[dict], payload: dict, *, status_code: 
 def google_payload(verdict: dict) -> dict:
     return {
         "id": "int_verify",
-        "model": "gemini-3.6-flash",
+        "model": "gemini-3.7-flash",
         "status": "completed",
         "steps": [
             {
@@ -155,20 +155,20 @@ def openai_payload(verdict: dict) -> dict:
 
 def test_primary_canary_uses_provider_diverse_sonnet_verifier() -> None:
     dispatch = engine().dispatch(task())
-    assert dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert dispatch.selected_implementation.model == "gemini-3.7-flash"
     assert dispatch.selected_implementation.provider_family == "google"
     assert dispatch.verification.implementation.model == "claude-sonnet-5"
     assert dispatch.verification.implementation.provider_family == "anthropic"
     assert dispatch.verification.implementation.reasoning == "medium"
 
 
-def test_model_scoped_fallback_gets_fresh_gemini_verifier() -> None:
+def test_model_scoped_fallback_gets_fresh_openai_verifier() -> None:
     runtime = engine()
     primary = runtime.dispatch(task())
-    fallback = runtime.dispatch(task(blocked_models=["gemini-3.5-flash-lite"]))
+    fallback = runtime.dispatch(task(blocked_models=["gemini-3.7-flash"]))
     assert fallback.selected_implementation.model == "claude-haiku-4-5"
-    assert fallback.verification.implementation.model == "gemini-3.6-flash"
-    assert fallback.verification.implementation.provider_family == "google"
+    assert fallback.verification.implementation.model == "gpt-5.6-sol"
+    assert fallback.verification.implementation.provider_family == "openai"
     assert fallback.verification.implementation.model != primary.verification.implementation.model
 
 
@@ -205,31 +205,32 @@ def test_primary_live_verifier_is_blinded_and_uses_sonnet_structured_output(tmp_
     assert body["output_config"]["effort"] == "medium"
     assert body["output_config"]["format"]["type"] == "json_schema"
     serialized = json.dumps(body)
-    assert "gemini-3.5-flash-lite" not in serialized
+    assert "gemini-3.7-flash" not in serialized
     assert "google" not in serialized.lower()
     assert "fallback" not in serialized.lower()
     assert "runtime-telemetry" not in serialized.lower()
     assert "untrusted data" in serialized.lower()
 
 
-def test_model_fallback_uses_assigned_gemini_verifier_and_effort(tmp_path: Path) -> None:
+def test_model_fallback_uses_assigned_sol_verifier_and_structured_output(tmp_path: Path) -> None:
     runtime = engine()
-    dispatch = runtime.dispatch(task(blocked_models=["gemini-3.5-flash-lite"]))
+    dispatch = runtime.dispatch(task(blocked_models=["gemini-3.7-flash"]))
     calls: list[dict] = []
     result = execute_live_verification(
         runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
-        {"google": connection("google", calls, google_payload(decision()))},
+        {"openai": connection("openai", calls, openai_payload(decision()))},
         artifact_root=tmp_path,
     )
 
     assert result.status == "passed"
-    assert result.verifier_model == "gemini-3.6-flash"
+    assert result.verifier_model == "gpt-5.6-sol"
     body = calls[0]["body"]
-    assert body["model"] == "gemini-3.6-flash"
-    assert body["generation_config"]["thinking_level"] == "medium"
-    assert body["response_format"]["type"] == "text"
+    assert body["model"] == "gpt-5.6-sol"
+    assert body["text"]["format"]["type"] == "json_schema"
+    assert body["text"]["format"]["strict"] is True
+    assert body["store"] is False
     serialized = json.dumps(body)
     assert "claude-haiku-4-5" not in serialized
     assert "anthropic" not in serialized.lower()
@@ -255,7 +256,7 @@ def test_provider_fallback_uses_assigned_sol_verifier_and_structured_output(tmp_
     assert body["text"]["format"]["strict"] is True
     assert body["store"] is False
     serialized = json.dumps(body)
-    assert "gemini-3.6-flash" not in serialized
+    assert "gemini-3.7-flash" not in serialized
     assert "google" not in serialized.lower()
 
 
@@ -367,7 +368,7 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
             method=["output_validation"],
             implementation=ImplementationChoice(
                 agent="agy",
-                model="gemini-3.6-flash",
+                model="gemini-3.7-flash",
                 profile="luna",
                 provider_family="google",
                 availability="current",
@@ -451,7 +452,7 @@ def test_guarded_outcome_uses_fallback_dispatch_fresh_verifier(tmp_path: Path) -
         dispatch_id=primary.dispatch_id,
         status="failed",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         failure=ProviderFailure(
             scope="provider",
             code="RESOURCE_EXHAUSTED",
