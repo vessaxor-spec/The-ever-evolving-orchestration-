@@ -1,6 +1,6 @@
 version: 0.3
 status: active
-reviewed_at: 2026-08-06
+reviewed_at: 2026-08-19
 
 policy: >-
   These implementation routes are first-class Research Team routes. They are
@@ -17,7 +17,7 @@ routing:
       purpose: synthesize interviews, surveys, usability findings, support evidence, reviews, and other user feedback into traceable qualitative insights with explicit uncertainty
     fast_collection:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: inventory, extract, normalize, and map high-volume feedback sources without deciding themes or product priorities
@@ -136,7 +136,7 @@ routing:
       purpose: gather current market evidence, map competitors, size bounded opportunities, and synthesize strategic signals
     fast_collection:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: collect current competitor, pricing, funding, hiring, patent, search, and category signals
