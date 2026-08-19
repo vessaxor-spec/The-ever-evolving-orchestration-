@@ -1,0 +1,57 @@
+name: Verify GitHub Discussions Seed
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/verify-discussions-seed.yml"
+      - ".github/workflows/seed-discussions-once.yml"
+
+permissions:
+  contents: read
+  discussions: read
+
+jobs:
+  verify:
+    name: Verify starter discussions
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify live Discussion titles and URLs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          owner="${REPOSITORY%%/*}"
+          repo="${REPOSITORY#*/}"
+          query='query($owner:String!,$repo:String!){repository(owner:$owner,name:$repo){discussions(first:100){nodes{title url category{name slug}}}}}'
+          state="$(gh api graphql -f query="$query" -F owner="$owner" -F repo="$repo")"
+
+          verify_discussion() {
+            local expected_title="$1"
+            local expected_slug="$2"
+            local match
+            local url
+            local slug
+
+            match="$(jq -c --arg title "$expected_title" '.data.repository.discussions.nodes[]? | select(.title == $title)' <<<"$state" | head -n1)"
+            if [[ -z "$match" ]]; then
+              echo "MISSING: $expected_title"
+              exit 1
+            fi
+
+            url="$(jq -r '.url' <<<"$match")"
+            slug="$(jq -r '.category.slug' <<<"$match")"
+            if [[ "$slug" != "$expected_slug" ]]; then
+              echo "WRONG CATEGORY: $expected_title expected=$expected_slug actual=$slug"
+              exit 1
+            fi
+
+            echo "VERIFIED: $expected_title | $slug | $url"
+          }
+
+          verify_discussion "TEO Discussions are open" "announcements"
+          verify_discussion "Welcome — what are you working on with orchestration?" "general"
+          verify_discussion "Research watch: what should TEO study next?" "research-exploration"
+          verify_discussion "Where should TEO improve next?" "ideas"
