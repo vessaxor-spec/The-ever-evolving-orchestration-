@@ -68,7 +68,7 @@ def dispatch(*, provider: str = "openai", model: str = "gpt-5.6-sol") -> Dispatc
             provider,
             reasoning="medium" if model == "claude-sonnet-5" else None,
         ),
-        fallback_implementation=choice("gemini-3.6-flash", "google"),
+        fallback_implementation=choice("gemini-3.7-flash", "google"),
         verification=VerificationPlan(
             team="verification",
             method=["output_validation"],
@@ -254,7 +254,7 @@ def _assert_no_keys(value: Any, forbidden: set[str]) -> None:
     [
         ("openai", "gpt-5.6-sol", OpenAIResponsesAdapter),
         ("anthropic", "claude-sonnet-5", AnthropicMessagesAdapter),
-        ("google", "gemini-3.6-flash", GeminiInteractionsAdapter),
+        ("google", "gemini-3.7-flash", GeminiInteractionsAdapter),
     ],
 )
 def test_bundled_adapters_do_not_forward_payload_driven_execution_expansion(
