@@ -1,0 +1,66 @@
+title: "[Research] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this category for external research, orchestration patterns, model/provider evidence, standards, papers, repositories, benchmarks, or experiments that may inform TEO.
+
+        Research discussions are evidence inputs, not automatic architecture or routing changes. If the evidence leads to a scoped implementation decision, move the resulting work into an issue or pull request.
+
+        Do not include credentials, proprietary workflows, employer-specific material, private prompts, or identifying operational data.
+
+  - type: dropdown
+    id: research-type
+    attributes:
+      label: Research type
+      options:
+        - External project or repository
+        - Paper or technical publication
+        - Model or provider capability
+        - Benchmark or evaluation
+        - Standard, framework, or practice
+        - Architecture pattern
+        - Experiment or observation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: Link the primary source, repository, paper, documentation, or reproducible evidence.
+    validations:
+      required: true
+
+  - type: textarea
+    id: finding
+    attributes:
+      label: Relevant finding
+      description: Summarize what the evidence actually shows. Separate observation from inference.
+    validations:
+      required: true
+
+  - type: textarea
+    id: teo-relevance
+    attributes:
+      label: Relevance to TEO
+      description: Explain which responsibility, routing, verification, governance, evidence, runtime, or community surface this may affect.
+    validations:
+      required: true
+
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Limitations or conflicting evidence
+      description: Record uncertainty, contrary evidence, freshness limits, or conditions under which the finding may not hold.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: public-scope
+    attributes:
+      label: Public-scope confirmation
+      options:
+        - label: This discussion contains no secrets, private prompts, proprietary processes, confidential benchmarks, or identifying operational data.
+          required: true
