@@ -16,7 +16,7 @@ from .verification_adapter import (
 
 GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1/interactions"
 SUPPORTED_MODEL_EFFORTS = {
-    "gemini-3.6-flash": {"minimal", "low", "medium", "high"},
+    "gemini-3.7-flash": {"minimal", "low", "medium", "high"},
     "gemini-3.1-pro-preview": {"low", "medium", "high"},
 }
 
@@ -62,7 +62,7 @@ class GoogleLiveVerifier:
         supported_efforts = SUPPORTED_MODEL_EFFORTS.get(request.verifier_model)
         if supported_efforts is None:
             raise LiveVerificationError(
-                "Guarded Google live verification supports Gemini 3.6 Flash and Gemini 3.1 Pro Preview"
+                "Guarded Google live verification supports Gemini 3.7 Flash and Gemini 3.1 Pro Preview"
             )
         if request.risk_level not in {"low", "medium"}:
             raise LiveVerificationError("Guarded live verification refuses high and critical risk")
