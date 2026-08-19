@@ -316,7 +316,7 @@ def test_panel_cannot_reuse_active_executor_model() -> None:
     raw["panels"][0]["observers"][0] = {
         "observer_id": "executor-reuse",
         "provider_family": "google",
-        "model": "gemini-3.7-flash",
+        "model": "gemini-3.5-flash-lite",
         "reasoning_effort": "low",
     }
     plan = panel_plan(raw)
