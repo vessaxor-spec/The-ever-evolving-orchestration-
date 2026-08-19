@@ -70,7 +70,7 @@ def dispatch(
         required_capabilities=capabilities or ["tool_execution"],
         selected_implementation=choice("gpt-5.6-sol", "openai"),
         fallback_implementation=choice(
-            "gemini-3.6-flash", "google", agent="agy"
+            "gemini-3.7-flash", "google", agent="agy"
         ),
         verification=VerificationPlan(
             team="verification",

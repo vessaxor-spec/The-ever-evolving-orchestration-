@@ -31,7 +31,7 @@ collection:
 
 verifier_routes:
   - provider_family: google
-    model: gemini-3.6-flash
+    model: gemini-3.7-flash
     reasoning: medium
   - provider_family: anthropic
     model: claude-sonnet-5

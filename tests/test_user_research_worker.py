@@ -12,7 +12,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/user-research-worker-conformance.yaml"
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -78,7 +78,7 @@ def test_user_research_dispatch_is_medium_risk_and_provider_diverse() -> None:
     assert dispatch.selected_implementation.provider_family == "anthropic"
     assert dispatch.selected_implementation.source == "routing.user_research.primary"
     assert dispatch.fallback_implementation is not None
-    assert dispatch.fallback_implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.fallback_implementation.model == "gemini-3.1-pro"
     assert dispatch.fallback_implementation.provider_family == "google"
     assert dispatch.verification.implementation.model == "gpt-5.6-sol"
     assert dispatch.verification.implementation.provider_family == "openai"
@@ -167,7 +167,7 @@ def test_user_research_route_keeps_opus_conditional() -> None:
     route = ConfigBundle.load(REPO_ROOT).implementation_routes["user_research"]
 
     assert route["primary"]["model"] == "claude-sonnet-5"
-    assert route["fallback"]["model"] == "gemini-3.1-pro-preview"
+    assert route["fallback"]["model"] == "gemini-3.1-pro"
     assert route["verifier"]["model"] == "gpt-5.6-sol"
     assert route["conditional_escalation"]["model"] == "claude-opus-5"
     assert "escalation" not in route

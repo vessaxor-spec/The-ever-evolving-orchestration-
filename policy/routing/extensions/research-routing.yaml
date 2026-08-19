@@ -17,13 +17,13 @@ routing:
       purpose: synthesize interviews, surveys, usability findings, support evidence, reviews, and other user feedback into traceable qualitative insights with explicit uncertainty
     fast_collection:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: inventory, extract, normalize, and map high-volume feedback sources without deciding themes or product priorities
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: preserve qualitative synthesis and mixed-method reasoning when the Anthropic route is unavailable
@@ -81,13 +81,13 @@ routing:
       purpose: execute SQL, Python, statistical calculations, data validation, and reproducibility checks when tools or datasets are available
     benchmark_research:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: retrieve current benchmarks, model-evaluation guidance, tool documentation, and external analytical context
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: preserve analytical continuity when the OpenAI route is unavailable
@@ -130,13 +130,13 @@ routing:
   market_research:
     primary:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: gather current market evidence, map competitors, size bounded opportunities, and synthesize strategic signals
     fast_collection:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: collect current competitor, pricing, funding, hiring, patent, search, and category signals

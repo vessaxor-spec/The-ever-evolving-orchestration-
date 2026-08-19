@@ -11,7 +11,7 @@ from teo_reference.specialist_routing import SpecialistRoutingEngine
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 POLICY_PATH = REPO_ROOT / "policy/routing/core/specialist-model-routing.yaml"
-PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro-preview"]}
+PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro"]}
 
 
 def engine() -> SpecialistRoutingEngine:
@@ -54,7 +54,7 @@ def test_security_specialist_uses_opus_xhigh_with_sol_fallback_and_gemini_verifi
     assert dispatch.fallback_implementation is not None
     assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
     assert dispatch.fallback_implementation.reasoning == "xhigh"
-    assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.verification.implementation.model == "gemini-3.1-pro"
     assert dispatch.verification.implementation.reasoning == "high"
     assert dispatch.verification.human_approval_required is True
     assert len(
@@ -87,7 +87,7 @@ def test_orchestration_evaluator_uses_sol_xhigh_with_sonnet_fallback_and_gemini_
     assert dispatch.fallback_implementation is not None
     assert dispatch.fallback_implementation.model == "claude-sonnet-5"
     assert dispatch.fallback_implementation.reasoning == "high"
-    assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.verification.implementation.model == "gemini-3.1-pro"
     assert dispatch.verification.implementation.reasoning == "high"
     assert dispatch.verification.independent is True
     assert dispatch.verification.human_approval_required is False
@@ -109,7 +109,7 @@ def test_backend_specialist_uses_terra_medium_with_flash_fallback_and_sonnet_ver
     assert dispatch.selected_implementation.model == "gpt-5.6-terra"
     assert dispatch.selected_implementation.reasoning == "medium"
     assert dispatch.fallback_implementation is not None
-    assert dispatch.fallback_implementation.model == "gemini-3.6-flash"
+    assert dispatch.fallback_implementation.model == "gemini-3.7-flash"
     assert dispatch.fallback_implementation.reasoning == "medium"
     assert dispatch.verification.implementation.model == "claude-sonnet-5"
     assert dispatch.verification.implementation.reasoning == "medium"
@@ -127,9 +127,9 @@ def test_research_specialist_uses_gemini_pro_with_sonnet_fallback_and_sol_verifi
             }
         )
     )
-    assert dispatch.selected_implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.selected_implementation.model == "gemini-3.1-pro"
     assert dispatch.selected_implementation.reasoning == "high"
-    assert dispatch.selected_implementation.availability == "preview"
+    assert dispatch.selected_implementation.availability == "stable"
     assert dispatch.fallback_implementation is not None
     assert dispatch.fallback_implementation.model == "claude-sonnet-5"
     assert dispatch.verification.implementation.model == "gpt-5.6-sol"
@@ -145,7 +145,7 @@ def test_blocked_specialist_primary_can_promote_cross_provider_fallback() -> Non
                 "specialist": "security-engineer",
                 "constraints": {
                     "blocked_providers": ["anthropic"],
-                    "accepted_preview_models": ["gemini-3.1-pro-preview"],
+                    "accepted_preview_models": ["gemini-3.1-pro"],
                 },
             }
         )

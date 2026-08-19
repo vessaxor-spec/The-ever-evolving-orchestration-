@@ -20,7 +20,7 @@ scenarios:
         specialist_risk_profile: high
         selected_implementation.model: gpt-5.6-sol
         selected_implementation.source: routing.orchestration.primary
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         verification.team: verification
         verification.implementation.model: claude-sonnet-5
         verification.independent: true
@@ -59,7 +59,7 @@ scenarios:
         specialist_risk_profile: high
         selected_implementation.model: claude-sonnet-5
         selected_implementation.source: routing.operations.primary
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
         verification.independent: true
@@ -99,7 +99,7 @@ scenarios:
         specialist_risk_profile: medium
         selected_implementation.model: claude-sonnet-5
         selected_implementation.source: routing.project_delivery.primary
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
         verification.independent: true
@@ -137,7 +137,7 @@ scenarios:
         specialist_risk_profile: critical
         selected_implementation.model: claude-sonnet-5
         selected_implementation.source: routing.incident_response.primary
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
         verification.independent: true

@@ -13,7 +13,7 @@
   "candidates": [
     {
       "candidate_id": "candidate-google-flash-lite",
-      "model": "gemini-3.5-flash-lite",
+      "model": "gemini-3.7-flash",
       "provider_family": "google",
       "reasoning_effort": "low",
       "registry_revision": "benchmark-registry-v1",

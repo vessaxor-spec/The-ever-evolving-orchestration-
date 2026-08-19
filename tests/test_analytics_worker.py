@@ -12,7 +12,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/analytics-worker-conformance.yaml"
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -78,7 +78,7 @@ def test_analytics_dispatch_is_high_risk_and_provider_diverse() -> None:
     assert dispatch.selected_implementation.provider_family == "openai"
     assert dispatch.selected_implementation.source == "routing.analytics.primary"
     assert dispatch.fallback_implementation is not None
-    assert dispatch.fallback_implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.fallback_implementation.model == "gemini-3.1-pro"
     assert dispatch.fallback_implementation.provider_family == "google"
     assert dispatch.verification.implementation.model == "claude-sonnet-5"
     assert dispatch.verification.implementation.provider_family == "anthropic"
@@ -125,7 +125,7 @@ def test_analytics_route_keeps_opus_conditional() -> None:
     route = ConfigBundle.load(REPO_ROOT).implementation_routes["analytics"]
 
     assert route["primary"]["model"] == "gpt-5.6-sol"
-    assert route["fallback"]["model"] == "gemini-3.1-pro-preview"
+    assert route["fallback"]["model"] == "gemini-3.1-pro"
     assert route["verifier"]["model"] == "claude-sonnet-5"
     assert route["conditional_escalation"]["model"] == "claude-opus-5"
     assert "escalation" not in route

@@ -40,7 +40,7 @@ panel_routes:
     reasoning: medium
     rationale: high-reasoning review model distinct from the evaluated Anthropic verifier route
   - provider_family: google
-    model: gemini-3.1-pro-preview
+    model: gemini-3.1-pro
     reasoning: high
     preview_acknowledged: true
     rationale: deep-reasoning review model distinct from the evaluated Google verifier route

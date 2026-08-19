@@ -103,7 +103,7 @@ def test_executor_derived_context_cannot_prime_independent_verifier(context_key)
     (
         ("openai", "gpt-5.6-terra"),
         ("anthropic", "claude-sonnet-5"),
-        ("google", "gemini-3.6-flash"),
+        ("google", "gemini-3.7-flash"),
     ),
 )
 def test_exact_artifact_pass_is_provider_neutral(provider, model) -> None:

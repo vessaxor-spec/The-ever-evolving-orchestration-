@@ -31,7 +31,7 @@ workers:
       - uncertainty_calibration
       - domain_adaptation
     preferred_implementations:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
       - gpt-5.6-sol
     fallbacks:

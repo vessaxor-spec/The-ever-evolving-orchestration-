@@ -30,10 +30,10 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - provider_region_service_and_quota_check
       - workload_placement_and_failure_review
@@ -76,7 +76,7 @@ workers:
       - claude-sonnet-5
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - semantic_and_optimization_review
       - differential_conformance_and_fuzz_tests
@@ -116,7 +116,7 @@ workers:
       - reproducible_analysis
       - source_validation
     preferred_implementations:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
       - gpt-5.6-sol
     fallbacks:
@@ -162,7 +162,7 @@ workers:
       - gpt-5.6-sol
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - pipeline_and_policy_validation
@@ -204,7 +204,7 @@ workers:
       - gpt-5.6-sol
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - target_build_and_static_analysis
@@ -243,10 +243,10 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - governing_code_and_edition_check
       - calculation_and_load_path_review
@@ -286,7 +286,7 @@ workers:
       - gpt-5.6-sol
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - compiler_clippy_and_test_validation
@@ -331,7 +331,7 @@ worker_overrides:
       - gpt-5.6-sol
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - platform_builds
@@ -372,7 +372,7 @@ worker_overrides:
       - gpt-5.6-sol
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - configuration_and_pipeline_validation

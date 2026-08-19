@@ -44,10 +44,10 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - system_boundary_and_stakeholder_check
       - requirement_quality_and_testability_review

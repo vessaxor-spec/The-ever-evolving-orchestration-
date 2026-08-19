@@ -70,7 +70,7 @@ def dispatch(*, dispatch_id: str = "dispatch-cross-process") -> DispatchRecord:
         required_capabilities=["tool_execution"],
         selected_implementation=choice("gpt-5.6-sol", "openai", agent="codex"),
         fallback_implementation=choice(
-            "gemini-3.6-flash", "google", agent="agy"
+            "gemini-3.7-flash", "google", agent="agy"
         ),
         verification=VerificationPlan(
             team="verification",

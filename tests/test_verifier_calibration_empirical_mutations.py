@@ -88,7 +88,7 @@ def test_empirical_policy_cannot_increase_collection_risk(tmp_path: Path) -> Non
 def test_empirical_policy_cannot_collapse_provider_diversity(tmp_path: Path) -> None:
     mutated = payload()
     mutated["verifier_routes"][1]["provider_family"] = "google"
-    mutated["verifier_routes"][1]["model"] = "gemini-3.1-pro-preview"
+    mutated["verifier_routes"][1]["model"] = "gemini-3.1-pro"
     with pytest.raises(CalibrationError, match="distinct provider families"):
         load_empirical_policy(write_policy(tmp_path, mutated))
 

@@ -54,7 +54,7 @@ def dispatch(
         specialist_risk_profile="medium",
         required_capabilities=capabilities or ["tool_execution"],
         selected_implementation=choice("gpt-5.6-sol", provider),
-        fallback_implementation=choice("gemini-3.6-flash", "google"),
+        fallback_implementation=choice("gemini-3.7-flash", "google"),
         verification=VerificationPlan(
             team="verification",
             method=["output_validation"],

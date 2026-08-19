@@ -39,11 +39,11 @@ workers:
       - traceable_writing
     preferred_implementations:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - jurisdiction_role_and_scope_check
       - governing_authority_and_version_trace

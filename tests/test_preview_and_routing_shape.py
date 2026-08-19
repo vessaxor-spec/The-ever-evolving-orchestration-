@@ -22,12 +22,9 @@ def test_preview_primary_skip_is_visible_in_dispatch_warnings() -> None:
             }
         )
     )
-    assert dispatch.selected_implementation.model == "claude-sonnet-5"
-    assert any(
-        "gemini-3.1-pro-preview" in warning
-        and "accepted_preview_models" in warning
-        for warning in dispatch.warnings
-    )
+    assert dispatch.selected_implementation.model == "gemini-3.1-pro"
+    assert dispatch.selected_implementation.availability == "stable"
+    assert not any("accepted_preview_models" in warning for warning in dispatch.warnings)
 
 
 def test_explicit_preview_acceptance_selects_declared_primary_without_skip_warning() -> None:
@@ -43,7 +40,7 @@ def test_explicit_preview_acceptance_selects_declared_primary_without_skip_warni
             }
         )
     )
-    assert dispatch.selected_implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.selected_implementation.model == "gemini-3.1-pro"
     assert not any("was skipped" in warning for warning in dispatch.warnings)
 
 

@@ -17,7 +17,7 @@ routing:
       purpose: determine applicability, evaluate control design and operating evidence, classify findings, and produce traceable compliance and governance conclusions
     authority_research:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: retrieve current laws, regulator guidance, standards, enforcement materials, framework versions, and authoritative implementation evidence
@@ -29,7 +29,7 @@ routing:
       purpose: preserve compliance reasoning, control mapping, and evidence analysis when the Anthropic route is unavailable
     verifier:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: independently verify applicability, governing authority, framework version, evidence sufficiency, finding severity, exceptions, and remediation logic

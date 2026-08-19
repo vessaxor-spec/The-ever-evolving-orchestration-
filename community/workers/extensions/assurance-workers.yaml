@@ -34,10 +34,10 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - affected_people_data_purpose_and_authority_review
       - data_and_inference_flow_trace
@@ -87,10 +87,10 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - governing_safety_basis_and_item_scope_review
       - hazard_risk_and_safety_goal_review
@@ -140,10 +140,10 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - property_source_scope_and_assumption_review
       - model_abstraction_and_bound_review
@@ -193,10 +193,10 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - authorization_scope_and_testing_permission_review
       - threat_model_and_attack_chain_review

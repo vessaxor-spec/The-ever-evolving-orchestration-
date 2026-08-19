@@ -75,7 +75,7 @@ def gemini_overloaded() -> dict:
 def gemini_success() -> dict:
     return {
         "id": "int_retry_success",
-        "model": "gemini-3.5-flash-lite",
+        "model": "gemini-3.7-flash",
         "status": "completed",
         "steps": [
             {
@@ -152,7 +152,7 @@ def test_transient_then_success_reuses_primary_dispatch_without_redispatch(tmp_p
 
     assert outcome.status == "primary_executed"
     assert outcome.execution_succeeded is True
-    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.7-flash"
     assert outcome.primary_attempts == 2
     assert outcome.primary_retry_delays_seconds == (0.5,)
     assert delays == [0.5]

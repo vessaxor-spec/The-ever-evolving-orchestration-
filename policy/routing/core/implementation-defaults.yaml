@@ -88,8 +88,8 @@ models:
 
   gemini-pro:
     provider_family: google
-    concrete_model: gemini-3.1-pro-preview
-    availability: preview
+    concrete_model: gemini-3.1-pro
+    availability: stable
     role: deep research and large-context fallback
     profile: sol
     preferred_for:
@@ -99,13 +99,12 @@ models:
       - coding fallback
       - documentation synthesis
     limitations:
-      - preview status must be visible in the dispatch record
       - should not replace executable verification for code changes
       - endpoint availability and deprecation timing may change
 
   gemini-flash:
     provider_family: google
-    concrete_model: gemini-3.6-flash
+    concrete_model: gemini-3.7-flash
     availability: stable
     role: fast mapping and multimodal processing
     profile: luna
@@ -120,7 +119,7 @@ models:
 
   gemini-flash-lite:
     provider_family: google
-    concrete_model: gemini-3.5-flash-lite
+    concrete_model: gemini-3.7-flash
     availability: stable
     role: primary economical high-volume execution
     profile: luna
@@ -211,6 +210,7 @@ models:
     profile: luna
     candidate_implementations:
       - qwen
+      - qwen-27b
       - llama
       - mistral
     required_execution_metadata:

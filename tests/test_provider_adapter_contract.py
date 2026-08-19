@@ -54,7 +54,7 @@ def dispatch() -> DispatchRecord:
             "gpt-5.6-terra", "openai", agent="codex", profile="terra"
         ),
         fallback_implementation=choice(
-            "gemini-3.1-pro-preview", "google", agent="gemini"
+            "gemini-3.1-pro", "google", agent="gemini"
         ),
         verification=VerificationPlan(
             team="verification",
@@ -245,7 +245,7 @@ def test_noncredential_token_word_is_not_rejected_by_substring_only() -> None:
 
 def test_contract_rejects_unknown_fields() -> None:
     request = ProviderExecutionRequest.from_dispatch(dispatch()).to_dict()
-    request["fallback_model"] = "gemini-3.1-pro-preview"
+    request["fallback_model"] = "gemini-3.1-pro"
     with pytest.raises(ProviderAdapterContractError, match="unsupported fields"):
         ProviderExecutionRequest.from_dict(request)
 

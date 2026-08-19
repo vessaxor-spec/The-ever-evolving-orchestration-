@@ -16,8 +16,8 @@ from .verification_adapter import (
 
 GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1/interactions"
 SUPPORTED_MODEL_EFFORTS = {
-    "gemini-3.6-flash": {"minimal", "low", "medium", "high"},
-    "gemini-3.1-pro-preview": {"low", "medium", "high"},
+    "gemini-3.7-flash": {"minimal", "low", "medium", "high"},
+    "gemini-3.1-pro": {"low", "medium", "high"},
 }
 
 

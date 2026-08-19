@@ -7,6 +7,7 @@ from typing import Mapping
 import pytest
 
 from teo_reference.config import ConfigBundle
+from teo_reference.engine import RoutingError
 from teo_reference.provider_adapter import ProviderExecutionResponse, ProviderFailure
 from teo_reference.provider_connection import HeaderProviderConnection
 from teo_reference.runtime_canary import CanaryRuntimeOutcome
@@ -117,10 +118,10 @@ def connection(provider: str, calls: list[dict], payload: dict, *, status_code: 
     )
 
 
-def google_payload(verdict: dict) -> dict:
+def google_payload(verdict: dict, model: str = "gemini-3.7-flash") -> dict:
     return {
         "id": "int_verify",
-        "model": "gemini-3.6-flash",
+        "model": model,
         "status": "completed",
         "steps": [
             {
@@ -155,7 +156,7 @@ def openai_payload(verdict: dict) -> dict:
 
 def test_primary_canary_uses_provider_diverse_sonnet_verifier() -> None:
     dispatch = engine().dispatch(task())
-    assert dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert dispatch.selected_implementation.model == "gemini-3.7-flash"
     assert dispatch.selected_implementation.provider_family == "google"
     assert dispatch.verification.implementation.model == "claude-sonnet-5"
     assert dispatch.verification.implementation.provider_family == "anthropic"
@@ -165,9 +166,9 @@ def test_primary_canary_uses_provider_diverse_sonnet_verifier() -> None:
 def test_model_scoped_fallback_gets_fresh_gemini_verifier() -> None:
     runtime = engine()
     primary = runtime.dispatch(task())
-    fallback = runtime.dispatch(task(blocked_models=["gemini-3.5-flash-lite"]))
+    fallback = runtime.dispatch(task(blocked_models=["gemini-3.7-flash"]))
     assert fallback.selected_implementation.model == "claude-haiku-4-5"
-    assert fallback.verification.implementation.model == "gemini-3.6-flash"
+    assert fallback.verification.implementation.model == "gemini-3.1-pro"
     assert fallback.verification.implementation.provider_family == "google"
     assert fallback.verification.implementation.model != primary.verification.implementation.model
 
@@ -180,6 +181,35 @@ def test_provider_scoped_fallback_gets_fresh_openai_verifier() -> None:
     assert fallback.verification.implementation.model == "gpt-5.6-sol"
     assert fallback.verification.implementation.provider_family == "openai"
     assert fallback.verification.implementation.model != primary.verification.implementation.model
+
+
+def test_cloud_throughput_outage_selects_declared_local_executor_and_claude_verifier() -> None:
+    dispatch = engine().dispatch(task(blocked_providers=["google", "openai"]))
+    assert dispatch.selected_implementation.model == "local-coder"
+    assert dispatch.selected_implementation.provider_family == "local_ollama"
+    assert dispatch.verification.implementation.model == "claude-sonnet-5"
+    assert dispatch.verification.implementation.provider_family == "anthropic"
+    assert dispatch.verification.independent is True
+
+
+def test_unloaded_local_coder_selects_declared_dense_local_model() -> None:
+    dispatch = engine().dispatch(
+        task(blocked_providers=["google", "openai"], blocked_models=["local-coder"])
+    )
+    assert dispatch.selected_implementation.model == "local-model"
+    assert dispatch.selected_implementation.provider_family == "local_ollama"
+    assert dispatch.verification.implementation.model == "claude-sonnet-5"
+    assert dispatch.verification.implementation.provider_family == "anthropic"
+
+
+def test_local_and_cloud_throughput_outage_fails_closed_without_independent_verifier() -> None:
+    with pytest.raises(RoutingError, match="independent verifier"):
+        engine().dispatch(
+            task(
+                blocked_providers=["google", "openai"],
+                blocked_models=["local-coder", "local-model"],
+            )
+        )
 
 
 def test_primary_live_verifier_is_blinded_and_uses_sonnet_structured_output(tmp_path: Path) -> None:
@@ -205,7 +235,7 @@ def test_primary_live_verifier_is_blinded_and_uses_sonnet_structured_output(tmp_
     assert body["output_config"]["effort"] == "medium"
     assert body["output_config"]["format"]["type"] == "json_schema"
     serialized = json.dumps(body)
-    assert "gemini-3.5-flash-lite" not in serialized
+    assert "gemini-3.7-flash" not in serialized
     assert "google" not in serialized.lower()
     assert "fallback" not in serialized.lower()
     assert "runtime-telemetry" not in serialized.lower()
@@ -214,20 +244,20 @@ def test_primary_live_verifier_is_blinded_and_uses_sonnet_structured_output(tmp_
 
 def test_model_fallback_uses_assigned_gemini_verifier_and_effort(tmp_path: Path) -> None:
     runtime = engine()
-    dispatch = runtime.dispatch(task(blocked_models=["gemini-3.5-flash-lite"]))
+    dispatch = runtime.dispatch(task(blocked_models=["gemini-3.7-flash"]))
     calls: list[dict] = []
     result = execute_live_verification(
         runtime,
         dispatch,
         success_response(dispatch, write_output(tmp_path)),
-        {"google": connection("google", calls, google_payload(decision()))},
+        {"google": connection("google", calls, google_payload(decision(), "gemini-3.1-pro"))},
         artifact_root=tmp_path,
     )
 
     assert result.status == "passed"
-    assert result.verifier_model == "gemini-3.6-flash"
+    assert result.verifier_model == "gemini-3.1-pro"
     body = calls[0]["body"]
-    assert body["model"] == "gemini-3.6-flash"
+    assert body["model"] == "gemini-3.1-pro"
     assert body["generation_config"]["thinking_level"] == "medium"
     assert body["response_format"]["type"] == "text"
     serialized = json.dumps(body)
@@ -255,7 +285,7 @@ def test_provider_fallback_uses_assigned_sol_verifier_and_structured_output(tmp_
     assert body["text"]["format"]["strict"] is True
     assert body["store"] is False
     serialized = json.dumps(body)
-    assert "gemini-3.6-flash" not in serialized
+    assert "gemini-3.7-flash" not in serialized
     assert "google" not in serialized.lower()
 
 
@@ -367,10 +397,10 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
             method=["output_validation"],
             implementation=ImplementationChoice(
                 agent="agy",
-                model="gemini-3.6-flash",
-                profile="luna",
+                model="gemini-3.1-pro",
+                profile="sol",
                 provider_family="google",
-                availability="current",
+                availability="stable",
                 source="test",
                 reasoning="medium",
             ),
@@ -451,7 +481,7 @@ def test_guarded_outcome_uses_fallback_dispatch_fresh_verifier(tmp_path: Path) -
         dispatch_id=primary.dispatch_id,
         status="failed",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         failure=ProviderFailure(
             scope="provider",
             code="RESOURCE_EXHAUSTED",

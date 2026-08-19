@@ -32,7 +32,7 @@ templates:
         critical: xhigh
     verifier:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       reasoning_by_risk:
         low: medium
         medium: high
@@ -64,7 +64,7 @@ templates:
         critical: xhigh
     verifier:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       reasoning_by_risk:
         low: medium
         medium: high
@@ -89,7 +89,7 @@ templates:
         critical: xhigh
     fallback:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       reasoning_by_risk:
         low: medium
         medium: medium
@@ -114,7 +114,7 @@ templates:
   gemini_research:
     primary:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       reasoning_by_risk:
         low: medium
         medium: high
@@ -163,7 +163,7 @@ templates:
         critical: xhigh
     verifier:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       reasoning_by_risk:
         low: medium
         medium: high
@@ -180,7 +180,7 @@ templates:
   gemini_flash_multimodal:
     primary:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       reasoning_by_risk:
         low: medium
         medium: medium
@@ -204,7 +204,7 @@ templates:
         critical: high
     conditional_escalation:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       reasoning: high
       use_when:
       - multimodal_interpretation_is_ambiguous
@@ -212,7 +212,7 @@ templates:
   luna_throughput:
     primary:
       agent: agy
-      model: gemini-3.5-flash-lite
+      model: gemini-3.7-flash
       reasoning_by_risk:
         low: low
         medium: medium

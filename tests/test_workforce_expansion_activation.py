@@ -14,7 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 ACTIVATION_PATH = REPO_ROOT / "policy" / "routing" / "activation" / "workforce-expansion.yaml"
 ALLOCATION_PATH = REPO_ROOT / "community" / "specialists" / "workforce-expansion-active.yaml"
 CONFORMANCE_PATH = REPO_ROOT / "reference" / "datasets" / "workforce-expansion-routing-conformance.yaml"
-PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro-preview"]}
+PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro"]}
 
 EXPECTED_SPECIALISTS = {
     "fraud-forensic-investigation-specialist": ("research", "osint"),
@@ -24,10 +24,10 @@ EXPECTED_SPECIALISTS = {
 }
 
 EXPECTED_MODELS = {
-    "fraud-forensic-investigation-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro-preview"),
-    "talent-acquisition-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro-preview"),
-    "insurance-claims-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro-preview"),
-    "orchestration-evaluation-analyst": ("gpt-5.6-sol", "claude-sonnet-5", "gemini-3.1-pro-preview"),
+    "fraud-forensic-investigation-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro"),
+    "talent-acquisition-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro"),
+    "insurance-claims-specialist": ("claude-opus-5", "gpt-5.6-sol", "gemini-3.1-pro"),
+    "orchestration-evaluation-analyst": ("gpt-5.6-sol", "claude-sonnet-5", "gemini-3.1-pro"),
 }
 
 CRITICAL_CONSEQUENCE_CASES = {

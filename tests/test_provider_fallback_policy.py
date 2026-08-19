@@ -9,7 +9,7 @@ from teo_reference.schemas import TaskRequest
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 PRIMARY_KEYS = {
     "orchestration": "primary",

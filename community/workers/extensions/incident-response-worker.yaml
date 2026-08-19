@@ -33,9 +33,9 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     verification:
       - severity_evidence_review

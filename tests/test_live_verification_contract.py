@@ -129,7 +129,7 @@ def test_blinded_prompt_marks_candidate_output_as_untrusted() -> None:
         dispatch_id="dispatch-test",
         task_id="task-test",
         verifier_provider_family="google",
-        verifier_model="gemini-3.6-flash",
+        verifier_model="gemini-3.7-flash",
         verifier_reasoning_effort="medium",
         risk_level="low",
         verification_methods=("output_validation",),

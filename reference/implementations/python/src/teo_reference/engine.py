@@ -218,6 +218,12 @@ VERIFIER_KEYS: tuple[str, ...] = (
     "synthesis",
     "escalation",
 )
+ROUTE_SECONDARY_EXECUTION_KEYS: tuple[str, ...] = (
+    "fallback",
+    "local_fallback",
+    "local_model_fallback",
+    "conditional_escalation",
+)
 
 CAPABILITY_FAMILY: tuple[tuple[set[str], str], ...] = (
     ({"coding", "debugging", "tool_execution", "executable_verification"}, "coding"),
@@ -579,30 +585,67 @@ class OrchestrationEngine:
             return None
         return None
 
-    def _resolve_primary(self, task_type: str, worker: str, task: TaskRequest) -> ImplementationChoice:
+    def _has_declared_independent_verifier(
+        self,
+        task_type: str,
+        primary: ImplementationChoice,
+        task: TaskRequest,
+    ) -> bool:
+        route = self.config.implementation_routes.get(task_type, {})
+        for key in VERIFIER_KEYS:
+            candidate = route.get(key)
+            if not isinstance(candidate, dict) or not candidate.get("model"):
+                continue
+            possible = self._choice(candidate, f"routing.{task_type}.{key}")
+            if (
+                possible.model != primary.model
+                and possible.provider_family
+                and primary.provider_family
+                and possible.provider_family != primary.provider_family
+                and self._eligible(possible, task)
+            ):
+                return True
+        return False
+
+    def _iter_primary_choices(
+        self, task_type: str, worker: str
+    ) -> Iterable[tuple[ImplementationChoice, bool]]:
         route = self.config.implementation_routes.get(task_type, {})
         for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
-                choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if self._eligible(choice, task) and self._worker_allows_model(worker, choice):
-                    return choice
-
-        for key in ("fallback", "local_fallback", "conditional_escalation"):
+                yield self._choice(candidate, f"routing.{task_type}.{key}"), True
+        for key in ROUTE_SECONDARY_EXECUTION_KEYS:
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
-                choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if self._eligible(choice, task) and self._worker_allows_model(worker, choice):
-                    return choice
-
+                yield self._choice(candidate, f"routing.{task_type}.{key}"), True
         worker_entry = self.config.worker_registry[worker]
         for source_key in ("preferred_implementations", "fallbacks"):
             for model in worker_entry.get(source_key, []):
-                choice = self._choice(
-                    {"agent": "registry", "model": model}, f"workers.{worker}.{source_key}"
+                yield (
+                    self._choice(
+                        {"agent": "registry", "model": model}, f"workers.{worker}.{source_key}"
+                    ),
+                    False,
                 )
-                if self._eligible(choice, task):
+
+    def _resolve_primary(self, task_type: str, worker: str, task: TaskRequest) -> ImplementationChoice:
+        first_eligible: ImplementationChoice | None = None
+        prefer_declared_verifier = task_type == "high_volume_simple"
+        for choice, require_worker in self._iter_primary_choices(task_type, worker):
+            if require_worker and not self._worker_allows_model(worker, choice):
+                continue
+            if not self._eligible(choice, task):
+                continue
+            if first_eligible is None:
+                first_eligible = choice
+            if prefer_declared_verifier:
+                if self._has_declared_independent_verifier(task_type, choice, task):
                     return choice
+                continue
+            return choice
+        if first_eligible is not None:
+            return first_eligible
         raise RoutingError(f"No eligible implementation found for {task_type}/{worker}")
 
     def _resolve_fallback(
@@ -616,7 +659,7 @@ class OrchestrationEngine:
     ) -> ImplementationChoice | None:
         blocked_providers = exclude_providers or set()
         route = self.config.implementation_routes.get(task_type, {})
-        for key in ("fallback", "local_fallback", "conditional_escalation"):
+        for key in ROUTE_SECONDARY_EXECUTION_KEYS:
             candidate = route.get(key)
             if isinstance(candidate, dict) and candidate.get("model"):
                 choice = self._choice(candidate, f"routing.{task_type}.{key}")

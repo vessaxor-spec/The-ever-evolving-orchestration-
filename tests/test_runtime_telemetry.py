@@ -121,7 +121,7 @@ def gemini_provider_failure() -> dict:
 def gemini_success() -> dict:
     return {
         "id": "int_telemetry",
-        "model": "gemini-3.5-flash-lite",
+        "model": "gemini-3.7-flash",
         "status": "completed",
         "steps": [{"type": "model_output", "content": [{"type": "text", "text": "label_b"}]}],
         "usage": {
@@ -300,7 +300,7 @@ def test_retry_attempts_are_logged_immediately_under_same_dispatch(tmp_path: Pat
     )
 
     assert outcome.status == "primary_executed"
-    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert outcome.primary_dispatch.selected_implementation.model == "gemini-3.7-flash"
     assert outcome.primary_attempts == 2
     assert len(sink.events) == 2
     assert [event.role for event in sink.events] == ["primary", "primary"]

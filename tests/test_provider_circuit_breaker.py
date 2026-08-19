@@ -49,7 +49,7 @@ def gemini_error(status: str, message: str = "provider error") -> dict:
 def gemini_success() -> dict:
     return {
         "id": "int_circuit",
-        "model": "gemini-3.5-flash-lite",
+        "model": "gemini-3.7-flash",
         "status": "completed",
         "steps": [
             {
@@ -112,7 +112,7 @@ def failed_response(provider: str, scope: str, code: str) -> ProviderExecutionRe
         dispatch_id="dispatch-health",
         status="failed",
         provider_family=provider,
-        model={"anthropic": "claude-haiku-4-5", "openai": "gpt-5.6-luna", "google": "gemini-3.5-flash-lite"}[provider],
+        model={"anthropic": "claude-haiku-4-5", "openai": "gpt-5.6-luna", "google": "gemini-3.7-flash"}[provider],
         failure=ProviderFailure(scope=scope, code=code, message="test failure"),  # type: ignore[arg-type]
     )
 
@@ -262,7 +262,7 @@ def _open_google_circuit(
         dispatch_id=dispatch.dispatch_id,
         status="failed",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         failure=ProviderFailure(scope="provider", code="UNAVAILABLE", message="test failure"),
     )
     for _ in range(3):
@@ -289,7 +289,7 @@ def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_c
         dispatch_id=probe_one.dispatch_id,
         status="succeeded",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         output_ref="artifact://probe-one",
     )
     first = breaker.observe(probe_one, success)
@@ -303,7 +303,7 @@ def test_half_open_requires_two_successful_probes_and_repeated_failure_extends_c
         dispatch_id=probe_two.dispatch_id,
         status="succeeded",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         output_ref="artifact://probe-two",
     )
     closed = breaker.observe(probe_two, second_success)
@@ -331,7 +331,7 @@ def test_half_open_connection_error_does_not_poison_provider_health_or_count_as_
         dispatch_id=probe.dispatch_id,
         status="failed",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         failure=ProviderFailure(
             scope="transient",
             code="connection_error",

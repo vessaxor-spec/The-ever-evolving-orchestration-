@@ -25,7 +25,7 @@ from .schemas import DispatchRecord
 GEMINI_INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1/interactions"
 CANARY_TASK_TYPES = {"high_volume_simple"}
 CANARY_RISK_LEVELS = {"low", "medium"}
-CANARY_MODELS = {"gemini-3.5-flash-lite", "gemini-3.6-flash"}
+CANARY_MODELS = {"gemini-3.7-flash", "gemini-3.1-pro"}
 GEMINI_REASONING_EFFORTS = {"minimal", "low", "medium", "high"}
 MAX_CANARY_OUTPUT_TOKENS = 1024
 

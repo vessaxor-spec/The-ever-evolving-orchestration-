@@ -133,11 +133,44 @@ models:
     evidence_type: provider_claim
     source: https://platform.claude.com/docs/en/about-claude/models/overview
 
+  gemini-3.1-pro:
+    provider: google
+    availability: stable
+    provider_description: advanced intelligence, complex problem solving, agentic work, and coding
+    teo_routing_role: deep research, long-context synthesis, and engineering fallback
+    input_modalities: [text, image, video, audio, pdf]
+    output_modalities: [text]
+    reasoning_control: thinking_level
+    reasoning_levels: [low, medium, high]
+    reasoning_default: high
+    context_window_tokens: 1048576
+    max_output_tokens: 65536
+    evidence_type: provider_claim
+    source: https://ai.google.dev/gemini-api/docs/models
+    routing_status: routed
+
+  gemini-3.7-flash:
+    provider: google
+    availability: stable
+    provider_description: current Gemini Flash throughput tier
+    teo_routing_role: primary economical throughput implementation
+    routing_status: routed
+    input_modalities: [text, image, video, audio, pdf]
+    output_modalities: [text]
+    reasoning_control: thinking_level
+    reasoning_levels: [low, medium, high]
+    reasoning_default: low
+    context_window_tokens: 1048576
+    max_output_tokens: 65536
+    evidence_type: provider_claim
+    source: https://ai.google.dev/gemini-api/docs/models
+
   gemini-3.1-pro-preview:
     provider: google
     availability: preview
     provider_description: advanced intelligence, complex problem solving, agentic work, and coding
-    teo_routing_role: deep research, long-context synthesis, and engineering fallback
+    teo_routing_role: previous-generation preview research candidate
+    routing_status: previous_generation_candidate
     input_modalities: [text, image, video, audio, pdf]
     output_modalities: [text]
     reasoning_control: thinking_level
@@ -178,8 +211,9 @@ models:
     provider: google
     availability: stable
     provider_description: fastest and lowest-cost Gemini 3.5 model for high-throughput execution
-    teo_routing_role: primary economical throughput implementation
-    routing_status: routed
+    teo_routing_role: previous-generation economical throughput implementation
+    routing_status: previous_generation_candidate
+    lifecycle_note: retained after Gemini 3.7 Flash promotion as the current high_volume_simple primary
     input_modalities: [text, image, video, audio, pdf]
     output_modalities: [text]
     reasoning_control: thinking_level
@@ -200,12 +234,27 @@ models:
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/models
 
+  local-coder:
+    provider: local_ollama
+    availability: deployment_specific
+    teo_routing_role: private or offline coding implementation
+    evidence_type: deployment_required
+    source: https://github.com/ggml-org/llama.cpp
+    required_execution_metadata:
+      - exact_model_tag_or_digest
+      - parameter_count
+      - quantization
+      - context_configuration
+      - runtime_version
+      - hardware
+      - tool_integration
+
   local-model:
     provider: local_ollama
     availability: deployment_specific
     teo_routing_role: private, offline, or economical fallback
     evidence_type: deployment_required
-    source: https://docs.ollama.com/api/introduction
+    source: https://github.com/ggml-org/llama.cpp
     required_execution_metadata:
       - exact_model_tag_or_digest
       - parameter_count

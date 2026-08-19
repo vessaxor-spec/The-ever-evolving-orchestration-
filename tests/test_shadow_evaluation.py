@@ -154,7 +154,7 @@ def independent_shadow_verifier() -> dict:
         "actor_type": "specialist",
         "actor_id": "independent-shadow-reviewer",
         "provider_family": "google",
-        "model": "gemini-3.6-flash",
+        "model": "gemini-3.7-flash",
     }
 
 

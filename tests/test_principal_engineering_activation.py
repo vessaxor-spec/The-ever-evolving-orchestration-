@@ -20,7 +20,7 @@ WARNING_BASELINE_PATH = (
     REPO_ROOT / "reference" / "datasets" / "configuration-warning-baseline.yaml"
 )
 EVIDENCE_PILOT_PATH = REPO_ROOT / "policy" / "specialists" / "evidence-pilot.yaml"
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 EXPECTED_NEW_SPECIALISTS = {
     "cloud-architect",

@@ -61,14 +61,14 @@ def google_connection(calls: list[dict]) -> HeaderProviderConnection:
         payload = json.loads(body.decode("utf-8"))
         calls.append(payload)
         model = payload["model"]
-        if model == "gemini-3.5-flash-lite":
+        if model == "gemini-3.7-flash":
             response = {
                 "id": "int_replay_execution",
                 "model": model,
                 "status": "completed",
                 "output_text": _label_from_input(payload["input"]),
             }
-        elif model == "gemini-3.6-flash":
+        elif model == "gemini-3.7-flash":
             response = {
                 "id": "int_replay_verifier",
                 "model": model,
@@ -150,7 +150,7 @@ def plan_dict() -> dict:
             {
                 "candidate_id": "canonical-flash-lite-route",
                 "provider_family": "google",
-                "model": "gemini-3.5-flash-lite",
+                "model": "gemini-3.7-flash",
                 "reasoning_effort": "low",
                 "verifier_provider_family": "anthropic",
                 "verifier_model": "claude-sonnet-5",
@@ -166,10 +166,10 @@ def plan_dict() -> dict:
                 "model": "claude-haiku-4-5",
                 "reasoning_effort": "low",
                 "verifier_provider_family": "google",
-                "verifier_model": "gemini-3.6-flash",
+                "verifier_model": "gemini-3.7-flash",
                 **common_versions,
                 "isolation": {
-                    "blocked_implementations": ["gemini-3.5-flash-lite"],
+                    "blocked_implementations": ["gemini-3.7-flash"],
                     "blocked_providers": [],
                 },
             },
@@ -212,7 +212,7 @@ def test_controlled_live_replay_executes_normal_routes_and_generates_standard_ev
 
     outcome_payloads = [record.to_dict() for record in execution.outcomes]
     assert {item["primary_route"]["implementation"]["model"] for item in outcome_payloads} == {
-        "gemini-3.5-flash-lite",
+        "gemini-3.7-flash",
         "claude-haiku-4-5",
     }
     assert all(item["final_disposition"] == "completed" for item in outcome_payloads)
@@ -238,8 +238,8 @@ def test_controlled_live_replay_executes_normal_routes_and_generates_standard_ev
     assert len(google_calls) == 8
     assert len(anthropic_calls) == 8
     assert {item["model"] for item in google_calls} == {
-        "gemini-3.5-flash-lite",
-        "gemini-3.6-flash",
+        "gemini-3.7-flash",
+        "gemini-3.7-flash",
     }
     assert {item["model"] for item in anthropic_calls} == {
         "claude-haiku-4-5",
@@ -275,7 +275,7 @@ def test_candidate_mismatch_fails_preflight_before_any_provider_call(tmp_path: P
 def test_replay_plan_cannot_block_its_declared_model_or_provider() -> None:
     raw = plan_dict()
     raw["candidates"][0]["isolation"]["blocked_implementations"] = [
-        "gemini-3.5-flash-lite"
+        "gemini-3.7-flash"
     ]
     with pytest.raises(ProviderAdapterContractError, match="cannot block its declared model"):
         replay_plan(raw)

@@ -142,7 +142,7 @@ def primary_record(output_ref: str = "file:///synthetic.txt"):
     primary = dispatch(
         "dispatch-primary",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="anthropic",
         verifier_model="claude-sonnet-5",
     )
@@ -172,7 +172,7 @@ def fallback_record():
     primary = dispatch(
         "dispatch-failed-primary",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="openai",
         verifier_model="gpt-5.6-sol",
     )
@@ -233,7 +233,7 @@ def test_primary_projection_uses_observed_active_execution_provider_not_verifier
     assert projected.execution_provenance is not None
     assert projected.execution_provenance.active_route_role == "primary"
     assert projected.execution_provenance.provider_family == "google"
-    assert projected.execution_provenance.model == "gemini-3.5-flash-lite"
+    assert projected.execution_provenance.model == "gemini-3.7-flash"
     assert projected.execution_provenance.provider_family != primary.verification.implementation.provider_family
     assert projected.execution_provenance.route_outcome_integrity_sha256 == record.to_dict()["integrity_sha256"]
 
@@ -387,4 +387,4 @@ def test_finalize_cli_can_emit_route_backed_execution_provenance(tmp_path: Path)
     assert result["status"] == "completed"
     assert result["execution_provenance"]["active_route_role"] == "primary"
     assert result["execution_provenance"]["provider_family"] == "google"
-    assert result["execution_provenance"]["model"] == "gemini-3.5-flash-lite"
+    assert result["execution_provenance"]["model"] == "gemini-3.7-flash"

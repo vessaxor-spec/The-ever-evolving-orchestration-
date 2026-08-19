@@ -14,7 +14,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/mission-control-routing-conformance.yaml"
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:

@@ -35,9 +35,9 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - handoff_contract_validation
@@ -79,9 +79,9 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     verification:
       - approval_threshold_check
@@ -125,9 +125,9 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     verification:
       - capacity_and_timeline_validation
@@ -162,9 +162,9 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     verification:
       - engineering_feasibility_review
@@ -189,7 +189,7 @@ workers:
       - gpt-5.6-terra
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - targeted_tests
@@ -211,7 +211,7 @@ workers:
       - gpt-5.6-terra
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - build_validation
@@ -234,7 +234,7 @@ workers:
       - gpt-5.6-terra
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - platform_builds
@@ -256,7 +256,7 @@ workers:
       - gpt-5.6-terra
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - configuration_validation
@@ -278,9 +278,9 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - failure_mode_review
@@ -303,7 +303,7 @@ workers:
       - gpt-5.6-terra
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - before_after_measurement
@@ -329,7 +329,7 @@ workers:
       - gpt-5.6-sol
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - targeted_tests
@@ -362,7 +362,7 @@ workers:
       - gpt-5.6-terra
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - independent_review
       - targeted_security_tests
@@ -387,7 +387,7 @@ workers:
       - gpt-5.6-sol
       - gpt-5.6-terra
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - migration_tests
@@ -410,7 +410,7 @@ workers:
       - gpt-5.6-terra
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - data_quality_tests
@@ -433,7 +433,7 @@ workers:
       - gpt-5.6-terra
       - claude-sonnet-5
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - claude-sonnet-5
     verification:
       - evaluation_suite
@@ -455,11 +455,12 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.6-flash
-      - gemini-3.5-flash-lite
+      - gemini-3.7-flash
       - claude-haiku-4-5
+      - local-coder
+      - local-model
     fallbacks:
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     verification:
       - technical_review
@@ -482,7 +483,7 @@ workers:
       - claude-sonnet-5
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - independent_test_run
       - acceptance_criteria_trace
@@ -501,10 +502,10 @@ workers:
       - visual_analysis
     preferred_implementations:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
       - gpt-5.6-sol
     fallbacks:
-      - gemini-3.6-flash
+      - gemini-3.7-flash
       - gpt-5.6-sol
     verification:
       - automated_checks
@@ -527,7 +528,7 @@ workers:
       - claude-sonnet-5
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - release_checklist
       - artifact_validation

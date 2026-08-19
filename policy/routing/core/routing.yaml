@@ -90,7 +90,7 @@ task_routing:
     reasoning: low
   fallback_classifier:
     agent: agy
-    model: gemini-3.6-flash
+    model: gemini-3.7-flash
     profile: luna
     reasoning: low
   ambiguous_task_interpreter:
@@ -121,7 +121,7 @@ routing:
       reasoning: high
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: preserve architectural synthesis when the Anthropic route is unavailable
@@ -133,7 +133,7 @@ routing:
       purpose: validate architecture against repository and implementation constraints
     context_provider:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: external research, documentation review, and large-context synthesis
@@ -158,7 +158,7 @@ routing:
   deep_research:
     primary:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
     fallback:
@@ -169,7 +169,7 @@ routing:
       purpose: continue evidence synthesis when the Google route is unavailable
     fast_collection:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: source discovery, extraction, and document mapping
@@ -215,7 +215,7 @@ routing:
         - architectural_constraints_are_present
     fallback:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: terra
       reasoning: medium
       purpose: stable cross-provider coding fallback without preview acceptance
@@ -248,7 +248,7 @@ routing:
       reasoning: high
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: continue debugging when the OpenAI execution route is unavailable
@@ -266,7 +266,7 @@ routing:
       purpose: challenge assumptions and generate competing explanations
     research_fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       use_when:
@@ -297,7 +297,7 @@ routing:
   repo_wide_refactor:
     mapper:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: map repository structure, dependencies, and affected components
@@ -319,7 +319,7 @@ routing:
       reasoning: high
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: preserve refactor continuity when the OpenAI execution route is unavailable
@@ -364,7 +364,7 @@ routing:
         - check_repository_consistency
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: preserve review continuity when the OpenAI review route is unavailable
@@ -430,7 +430,7 @@ routing:
       reasoning: high
     research_support:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: retrieve primary security documentation and current advisories
@@ -448,7 +448,7 @@ routing:
   multimodal_analysis:
     primary:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
     fallback:
@@ -459,7 +459,7 @@ routing:
       purpose: continue multimodal interpretation when the Google route is unavailable
     escalation:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
     synthesis:
@@ -482,7 +482,7 @@ routing:
   high_volume_simple:
     primary:
       agent: agy
-      model: gemini-3.5-flash-lite
+      model: gemini-3.7-flash
       profile: luna
       reasoning: low
       purpose: stable low-cost high-throughput execution
@@ -496,27 +496,36 @@ routing:
       - agent: codex
         model: gpt-5.6-luna
         profile: luna
-      - agent: agy
-        model: gemini-3.6-flash
-        profile: luna
     verifier:
       agent: claude
       model: claude-sonnet-5
       profile: sol
       reasoning: medium
-      purpose: provider-diverse semantic verification of the primary Flash-Lite route
+      purpose: provider-diverse semantic verification of the primary Gemini 3.7 Flash route
     semantic_reviewer:
       agent: agy
-      model: gemini-3.6-flash
-      profile: luna
+      model: gemini-3.1-pro
+      profile: sol
       reasoning: medium
-      purpose: fresh verification when Haiku becomes fallback executor and Google remains eligible
+      purpose: fresh Google verification with Gemini 3.1 Pro when Haiku is executor and Flash is blocked
     technical_verifier:
       agent: codex
       model: gpt-5.6-sol
       profile: sol
       reasoning: medium
       purpose: fresh provider-diverse verification when Google is unavailable or stronger review is required
+    local_fallback:
+      agent: llama
+      model: local-coder
+      profile: terra
+      reasoning: low
+      purpose: declared llama.cpp coding GGUF executor when cloud throughput cannot form an independent live pair
+    local_model_fallback:
+      agent: llama
+      model: local-model
+      profile: luna
+      reasoning: low
+      purpose: declared llama.cpp dense GGUF executor when that exclusive local slot is the loaded implementation
     escalation:
       agent: claude
       model: claude-sonnet-5
@@ -537,8 +546,8 @@ routing:
       profile: sol
       reasoning: medium
     fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
+      agent: codex
+      model: gpt-5.6-sol
       profile: sol
       reasoning: medium
       purpose: continue documentation synthesis when the Anthropic route is unavailable
@@ -547,9 +556,15 @@ routing:
       model: gpt-5.6-terra
       profile: terra
       reasoning: medium
+    synthesis:
+      agent: agy
+      model: gemini-3.1-pro
+      profile: sol
+      reasoning: medium
+      purpose: Google verification when documentation execution is on the OpenAI family
     bulk_transformation:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: low
     architecture_documentation:
@@ -565,21 +580,21 @@ routing:
 fallback_order:
   coding:
     - agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
     - agent: claude
       model: claude-sonnet-5
     - agent: codex
       model: gpt-5.6-terra
   engineering_reasoning:
     - agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
     - agent: claude
       model: claude-sonnet-5
     - agent: codex
       model: gpt-5.6-sol
   general_reasoning:
     - agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
     - agent: codex
       model: gpt-5.6-sol
     - agent: claude
@@ -590,15 +605,15 @@ fallback_order:
     - agent: codex
       model: gpt-5.6-sol
     - agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
   multimodal:
     - agent: claude
       model: claude-sonnet-5
     - agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
   throughput:
     - agent: agy
-      model: gemini-3.5-flash-lite
+      model: gemini-3.7-flash
     - agent: claude
       model: claude-haiku-4-5
     - agent: codex

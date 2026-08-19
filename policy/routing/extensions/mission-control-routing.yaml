@@ -17,13 +17,13 @@ routing:
       purpose: design and govern executable multi-agent pipelines, handoffs, state, and recovery
     context_provider:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: inspect large capability registries, protocol documentation, and pipeline context
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
     semantic_reviewer:
@@ -61,13 +61,13 @@ routing:
       purpose: coordinate operational processes, controls, dependencies, and accountable execution
     context_provider:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: inspect policy, jurisdictional, vendor, process, and operational evidence
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
     verifier:
@@ -103,7 +103,7 @@ routing:
       purpose: validate delivery plans against technical execution constraints
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
     verifier:
@@ -133,13 +133,13 @@ routing:
       purpose: coordinate severity, roles, cadence, communications, resolution readiness, and blameless learning
     context_provider:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
       purpose: inspect incident history, runbooks, on-call context, status evidence, and affected-system documentation
     fallback:
       agent: agy
-      model: gemini-3.1-pro-preview
+      model: gemini-3.1-pro
       profile: sol
       reasoning: high
     technical_verifier:

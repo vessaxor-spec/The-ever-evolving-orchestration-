@@ -34,7 +34,7 @@ def dispatch(
     )
     verifier = ImplementationChoice(
         agent="agy",
-        model="gemini-3.6-flash",
+        model="gemini-3.7-flash",
         profile="luna",
         provider_family="google",
         availability="stable",

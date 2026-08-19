@@ -12,7 +12,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET = REPO_ROOT / "reference/datasets/compliance-worker-conformance.yaml"
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -80,7 +80,7 @@ def test_compliance_dispatch_is_critical_provider_diverse_and_human_gated() -> N
     assert dispatch.fallback_implementation is not None
     assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
     assert dispatch.fallback_implementation.provider_family == "openai"
-    assert dispatch.verification.implementation.model == "gemini-3.1-pro-preview"
+    assert dispatch.verification.implementation.model == "gemini-3.1-pro"
     assert dispatch.verification.implementation.provider_family == "google"
     assert dispatch.verification.independent is True
     assert dispatch.verification.human_approval_required is True
@@ -176,6 +176,6 @@ def test_compliance_route_keeps_opus_conditional() -> None:
 
     assert route["primary"]["model"] == "claude-sonnet-5"
     assert route["fallback"]["model"] == "gpt-5.6-sol"
-    assert route["verifier"]["model"] == "gemini-3.1-pro-preview"
+    assert route["verifier"]["model"] == "gemini-3.1-pro"
     assert route["conditional_escalation"]["model"] == "claude-opus-5"
     assert "escalation" not in route

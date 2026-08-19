@@ -38,10 +38,10 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - invariant_and_failure_model_review
       - consistency_contract_review
@@ -99,10 +99,10 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - durability_and_replication_review
       - representative_restore_test
@@ -159,10 +159,10 @@ workers:
     preferred_implementations:
       - gpt-5.6-sol
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - claude-sonnet-5
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - topology_and_shared_failure_domain_review
       - route_policy_and_convergence_check
@@ -222,10 +222,10 @@ workers:
     preferred_implementations:
       - claude-sonnet-5
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     fallbacks:
       - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+      - gemini-3.1-pro
     verification:
       - platform_user_task_validation
       - self_service_without_hidden_manual_step_check

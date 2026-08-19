@@ -37,7 +37,7 @@ def test_models_yaml_provider_must_match_canonical_model_evidence() -> None:
     )
     assert any(
         issue.startswith("ERROR:")
-        and "gemini-3.6-flash provider mismatch" in issue
+        and "gemini-3.7-flash provider mismatch" in issue
         for issue in issues
     )
 

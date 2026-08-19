@@ -39,11 +39,11 @@ def dispatch(provider: str = "anthropic") -> DispatchRecord:
     models = {
         "anthropic": ("claude-haiku-4-5", None),
         "openai": ("gpt-5.6-luna", "low"),
-        "google": ("gemini-3.6-flash", "medium"),
+        "google": ("gemini-3.7-flash", "medium"),
     }
     model, reasoning = models[provider]
     verifier_provider = "google" if provider != "google" else "anthropic"
-    verifier_model = "gemini-3.1-pro-preview" if verifier_provider == "google" else "claude-sonnet-5"
+    verifier_model = "gemini-3.1-pro" if verifier_provider == "google" else "claude-sonnet-5"
     return DispatchRecord(
         task_id=f"task-retry-{provider}",
         dispatch_id=f"dispatch-retry-{provider}",

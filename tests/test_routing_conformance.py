@@ -14,7 +14,7 @@ from teo_reference.schemas import TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DATASET_ROOT = REPO_ROOT / "reference/datasets"
-PREVIEW_MODELS = ["gemini-3.1-pro-preview"]
+PREVIEW_MODELS = ["gemini-3.1-pro"]
 
 
 def load_yaml(path: Path) -> dict[str, Any]:
@@ -83,7 +83,8 @@ def test_preview_model_requires_explicit_task_authorization() -> None:
             }
         )
     )
-    assert without_acceptance.selected_implementation.model != "gemini-3.1-pro-preview"
+    assert without_acceptance.selected_implementation.model == "gemini-3.1-pro"
+    assert without_acceptance.selected_implementation.availability == "stable"
 
     with_acceptance = engine.dispatch(
         TaskRequest.from_dict(
@@ -95,8 +96,8 @@ def test_preview_model_requires_explicit_task_authorization() -> None:
             }
         )
     )
-    assert with_acceptance.selected_implementation.model == "gemini-3.1-pro-preview"
-    assert with_acceptance.selected_implementation.availability == "preview"
+    assert with_acceptance.selected_implementation.model == "gemini-3.1-pro"
+    assert with_acceptance.selected_implementation.availability == "stable"
 
 
 def test_declared_low_risk_cannot_lower_content_derived_risk_floor() -> None:

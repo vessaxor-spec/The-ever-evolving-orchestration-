@@ -60,7 +60,7 @@ def test_every_active_specialist_has_complete_authority_preserving_spawn_path(
                 "domain": worker,
                 "specialist": specialist_id,
                 "constraints": {
-                    "accepted_preview_models": ["gemini-3.1-pro-preview"],
+                    "accepted_preview_models": ["gemini-3.1-pro"],
                 },
             }
         )

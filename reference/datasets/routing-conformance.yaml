@@ -18,7 +18,7 @@ scenarios:
         selected_worker: architecture
         selected_implementation.model: claude-sonnet-5
         selected_implementation.provider_family: anthropic
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         fallback_implementation.provider_family: google
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
@@ -53,7 +53,7 @@ scenarios:
         specialist_risk_profile: medium
         selected_implementation.model: gpt-5.6-terra
         selected_implementation.provider_family: openai
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         fallback_implementation.provider_family: google
         verification.implementation.model: claude-sonnet-5
         verification.implementation.provider_family: anthropic
@@ -83,7 +83,7 @@ scenarios:
       equals:
         selected_team: engineering
         selected_worker: backend
-        selected_implementation.model: gemini-3.1-pro-preview
+        selected_implementation.model: gemini-3.1-pro
         selected_implementation.provider_family: google
         fallback_implementation.model: claude-sonnet-5
         fallback_implementation.provider_family: anthropic
@@ -113,7 +113,7 @@ scenarios:
         specialist_risk_profile: high
         selected_implementation.model: gpt-5.6-terra
         selected_implementation.provider_family: openai
-        fallback_implementation.model: gemini-3.1-pro-preview
+        fallback_implementation.model: gemini-3.1-pro
         fallback_implementation.provider_family: google
         verification.implementation.model: claude-sonnet-5
         verification.implementation.provider_family: anthropic
@@ -174,7 +174,7 @@ scenarios:
         selected_worker: research
         selected_specialist: researcher
         specialist_risk_profile: medium
-        selected_implementation.model: gemini-3.1-pro-preview
+        selected_implementation.model: gemini-3.1-pro
         selected_implementation.provider_family: google
         fallback_implementation.model: claude-sonnet-5
         fallback_implementation.provider_family: anthropic
@@ -214,7 +214,7 @@ scenarios:
         selected_worker: market_research
         selected_specialist: market-analyst
         specialist_risk_profile: medium
-        selected_implementation.model: gemini-3.1-pro-preview
+        selected_implementation.model: gemini-3.1-pro
         selected_implementation.provider_family: google
         selected_implementation.source: routing.market_research.primary
         fallback_implementation.model: gpt-5.6-sol

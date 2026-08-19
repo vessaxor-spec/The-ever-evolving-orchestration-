@@ -134,7 +134,7 @@ def test_primary_success_joins_route_attempt_verifier_and_versions_without_conte
     primary = dispatch(
         "dispatch-primary",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="anthropic",
         verifier_model="claude-sonnet-5",
     )
@@ -142,7 +142,7 @@ def test_primary_success_joins_route_attempt_verifier_and_versions_without_conte
         dispatch_id=primary.dispatch_id,
         status="succeeded",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         output_ref="file:///sensitive-output.txt",
         evidence=("google_request_id:secret",),
         usage=ProviderUsage(input_tokens=8, output_tokens=5, total_tokens=13),
@@ -197,7 +197,7 @@ def test_fallback_success_is_distinct_from_primary_success() -> None:
     primary = dispatch(
         "dispatch-failed-primary",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="openai",
         verifier_model="gpt-5.6-sol",
     )
@@ -212,7 +212,7 @@ def test_fallback_success_is_distinct_from_primary_success() -> None:
         dispatch_id=primary.dispatch_id,
         status="failed",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         failure=ProviderFailure(
             scope="provider",
             code="resource_exhausted",
@@ -278,7 +278,7 @@ def test_retry_assistance_is_preserved_without_collapsing_attempts() -> None:
     primary = dispatch(
         "dispatch-retry",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="anthropic",
         verifier_model="claude-sonnet-5",
     )
@@ -286,7 +286,7 @@ def test_retry_assistance_is_preserved_without_collapsing_attempts() -> None:
         dispatch_id=primary.dispatch_id,
         status="succeeded",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         output_ref="file:///retry.txt",
     )
     telemetry = [
@@ -331,7 +331,7 @@ def test_missing_verification_and_execution_failure_remain_explicit() -> None:
     primary = dispatch(
         "dispatch-unverified",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="anthropic",
         verifier_model="claude-sonnet-5",
     )
@@ -339,7 +339,7 @@ def test_missing_verification_and_execution_failure_remain_explicit() -> None:
         dispatch_id=primary.dispatch_id,
         status="succeeded",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         output_ref="file:///unverified.txt",
     )
     success_event = event(
@@ -366,7 +366,7 @@ def test_missing_verification_and_execution_failure_remain_explicit() -> None:
         dispatch_id=primary.dispatch_id,
         status="failed",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         failure=ProviderFailure(scope="request", code="invalid_request", message="bad"),
     )
     failure_event = event(
@@ -436,7 +436,7 @@ def test_schema_and_integrity_fail_closed_on_mutation() -> None:
     primary = dispatch(
         "dispatch-integrity",
         provider="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         verifier_provider="anthropic",
         verifier_model="claude-sonnet-5",
     )
@@ -444,7 +444,7 @@ def test_schema_and_integrity_fail_closed_on_mutation() -> None:
         dispatch_id=primary.dispatch_id,
         status="succeeded",
         provider_family="google",
-        model="gemini-3.5-flash-lite",
+        model="gemini-3.7-flash",
         output_ref="file:///integrity.txt",
     )
     telemetry = [
