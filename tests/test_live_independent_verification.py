@@ -381,7 +381,7 @@ def test_same_provider_live_verification_is_refused(tmp_path: Path) -> None:
         routing_explanation=list(base.routing_explanation),
         warnings=list(base.warnings),
     )
-    with pytest.raises(LiveVerificationError, match="provider-diverse"):
+    with pytest.raises(LiveVerificationError, match="same-model self-verification"):
         execute_live_verification(
             runtime,
             same_provider,
