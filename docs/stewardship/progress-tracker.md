@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record
-**Last reconciled:** 2026-08-17
+**Last reconciled:** 2026-08-19
 **Stable release:** `v1.0.0`
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -28,6 +28,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
 | Current validated scale | 993 tests passed, 558 tracked-file layout checks, 42 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #806 |
+| Latest model-routing validation | PR #184 exact-head CI #839: 993 tests, 558 tracked-file layout checks, 42 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass |
 | Documentation reconciliation baseline | CI #602: 802 tests, 515 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse end-to-end pass |
 | Host-integration research validation | CI #739: 964 tests, 543 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass after Fresh-AI trial 001 hardening; empirical trial 001 supports fresh-session/no-reminder routing continuity but failed full selected-executor/verifier end-to-end assimilation |
 | Host Integration Contract | Two-host architecture diversity, static bounded-context payload, process-local dispatch provenance, bundled-adapter payload self-expansion, process-local third-party adapter trust, process-local restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, exact artifact/change-set stale-PASS resistance, brokered conformant process-lifetime cross-process authority/replay resistance, static runtime-wired authority-surface reconciliation, process-lifetime recursion resistance, exact local freshness-binding, conformant process-local portfolio/task-admission authority-separation, and process-local integrated Fresh-AI assimilation/conformance plus premortem replay research slices satisfied, a Fresh-AI cross-session trial framework/validator implemented, and the non-production `teo-host-integration/0.1` execution/verification reference candidate implemented with monotonic route progression and terminal execution sequencing, with empirical trial 001 supporting fresh-session/no-reminder routing continuity; contract remains non-normative and authenticated end-to-end selected-executor/verifier proof, restart-persistent hooks, production compatibility-catalog provenance, remote/distributed freshness authenticity, downgrade/expiry, restart-durable/distributed recursion, production scheduler containment, tenant/account/credential binding, dynamic authority discovery, and production/distributed authenticity remain open |
@@ -35,6 +36,7 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Final execution provenance | Optional read-only projection from revalidated canonical Route-Outcome Evidence into `FinalOutcome`; implemented without routing, execution, host, or permission authority |
 | Regulated evidence pilot | 6 specialists, stability-qualified and intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
+| Active Gemini Flash generation | Gemini 3.7 Flash; Gemini 3.6 / 3.5 Flash generations retained only for compatibility or immutable historical evidence where required |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
@@ -101,7 +103,9 @@ Reconsider live-scope expansion task class by task class using the now-complete 
 
 Reference Implementation CI run #463 validated the original candidate-selection and executable-preflight slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
 
-The candidate preflight exposed an unintended global worker override that changed ordinary `documentation` routing. That override has now been removed. Canonical documentation routing again preserves Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, GPT-5.6 Terra as the primary verifier, and Gemini 3.6 Flash as the fresh provider-diverse verifier after Sonnet or Anthropic failure redispatch. The route-level Gemini 3.1 Pro Preview fallback remains blocked without explicit acceptance.
+The candidate preflight exposed an unintended global worker override that changed ordinary `documentation` routing. That override has now been removed. Canonical documentation routing preserves Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, GPT-5.6 Terra as the primary verifier, and Gemini 3.7 Flash as the fresh provider-diverse verifier after Sonnet or Anthropic failure redispatch. The route-level Gemini 3.1 Pro Preview fallback remains blocked without explicit acceptance.
+
+PR #184 promoted Gemini 3.7 Flash across active Flash aliases, current Worker bindings, specialist routing, empirical verifier calibration, guarded Google execution/verification adapters, and current replay fixtures. Exact-head Reference Implementation CI #839 passed 993 tests, 558 tracked-file layout checks, regulated-specialist evidence validation, 42 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse artifact-bound end-to-end example. Gemini 3.6, 3.5 Flash, and 3.5 Flash-Lite are no longer active routing generations; historical benchmark and compatibility identities remain preserved rather than rewritten.
 
 The exact staged adapter capabilities needed by that topology are now implemented without granting live authority: Claude Sonnet 5 bounded execution carries assigned effort through Anthropic `output_config.effort`; GPT-5.6 Sol is implemented by the OpenAI Responses adapter; and GPT-5.6 Terra is implemented by the strict structured-output OpenAI verifier. Existing canary wrappers and live-verification task scope remain `high_volume_simple` only.
 
@@ -237,182 +241,3 @@ R1 through R5 are complete. Current authority, research, history, routing, worke
 ### Team, worker, and specialist architecture, 100%
 
 The current target roster is active and deterministically spawnable. Future specialist additions are gap-driven extensions and do not reduce current milestone completion.
-
-### Control integrity, 90%
-
-The main invariants are implemented and heavily tested. The 2026-08-11 targeted finalization -> authority -> recovery audit proved and remediated two qualified-human temporal-causality gaps: a disposition can no longer predate its approval request, and finalization can no longer predate the current disposition it relies on. The same audit verified that bounded recovery preparation preserves effective risk and human-approval requirements and added regression guards against future recovery-based authority leakage. See [`../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
-
-The follow-on targeted mutation audit tested ten materially distinct weaknesses across chronology, exact authority binding, expiry equality boundaries, effective-risk preservation, and human-approval preservation. Four mutants initially survived because existing tests did not distinguish exact expiry boundaries or caller-declared risk from dispatch-elevated effective risk. Production behavior was already correct, so remediation added focused evidence rather than changing runtime code. CI #521 killed 10 of 10 targeted mutants after remediation. See [`../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md`](../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md).
-
-The later Task 002 remediation added normative exact artifact-bound finalization. Artifact-backed PASS now requires verifier-observed canonical local identity, SHA-256, byte length, an explicit authorized artifact root, and finalization-time revalidation. The calibrated external verifier independently falsified the remediation and returned PASS, then carried that PASS forward after a current-main refresh that left the normative implementation byte-identical. See [`../../research/runtime/2026-08-14-external-verifier-assessment-artifact-bound-finalization.md`](../../research/runtime/2026-08-14-external-verifier-assessment-artifact-bound-finalization.md).
-
-The remaining ten percent represents continuing mutation depth, finalization-path resistance, authority-leakage checks, recovery gaps, and new failure modes uncovered by future audits. It is intentionally not scored as permanently complete because control integrity is an ongoing adversarial discipline.
-
-### Verifier calibration evidence, 70%
-
-The fixed corpus, deterministic checks, empirical instrumentation, provider-diverse observations, blinded review tooling, and machine-panel path exist. Additional repeatability, route-specific, adversarial, and accumulated empirical evidence remains useful. Independent human calibration remains optional research and is not a release or routing gate.
-
-Task 002 is now closed as a scoped normative remediation: PR #154 implemented exact artifact-bound finalization, CI #634 validated the refreshed integration, and the calibrated External Independent Technical Verifier returned PASS on the original remediation plus a narrow PASS carrying that verdict to exact refreshed head `8e0d324a82568ab9fb52b097e3559add2111cb34`.
-
-The calibrated External Independent Technical Verifier is paused between material gates rather than used as a routine approval layer. Re-engage that verifier when a consequential boundary needs fresh independent falsification, especially when: Host Integration research is proposed for normative promotion; finalization, authority, or recovery architecture changes materially; the Task Intent & Action Authority Contract reaches implementation; live-execution authority is proposed to widen; Mission Control and another evidence source materially disagree; or a consequential release or architecture claim warrants external challenge. Each future verdict remains untrusted external evidence until reconciled against current repository truth and does not create governance, policy-write, routing, release-approval, live-execution, architecture-change, or qualified-human approval authority.
-
-Benchmark Lab measures multi-verifier disagreement for controlled evaluations, but that diagnostic capability does not by itself complete the broader verifier-calibration evidence program.
-
-### Regulated specialist evidence pilot, 100%
-
-Formal refresh cycle 2 completed on 2026-08-16 across the exact six-card pilot. All seven consequential claims were re-reviewed against their declared tier-1 authorities: six were reaffirmed, one authority moved within the same standards body, zero authoritative conflicts were found, and no specialist card changed. The embedded-engineer ISO/IEC 9899:2024 source moved from the GitHub-runner-blocked `www.iso.org` catalog endpoint to the exact official `committee.iso.org` page without changing the claim, standard identity, verification ownership, or fail-closed resolver semantics. Formal refresh cycle 1 completed on 2026-08-11 and remains preserved as the prior historical cycle, including its Rule 37(e) claim correction.
-
-The refresh now has append-only machine-readable history with contiguous cycle sequencing, active-registry blob binding, exact claim coverage, ownership/source consistency, maintenance counters, and mutation checks that reject forged history, missing claims, broken registry-hash continuity, or premature expansion authorization. This preserves proof of repeated maintenance instead of overwriting prior verification dates in the active registry.
-
-Reference Implementation CI run #535 validated the refresh-cycle implementation with 680 passing tests, 487 tracked-file layout checks, regulated specialist evidence structural validation, 41 parsed JSON Schemas, valid linked configuration with zero issues, and the provider-diverse end-to-end example.
-
-The pilot has completed **2 of 2 required formal refresh cycles**. Before cycle 2, the pilot stood at **1 of 2 required formal refresh cycles**. The former 30-day elapsed-time stewardship wait has been replaced by an executable stability qualification because elapsed calendar time is not itself evidence of maintainability. The qualification passed five complete clean authority-resolution replays across all seven claims, three deterministic repeatability runs, **15 of 15 governed fail-closed mutations**, and a controlled authority-move path without changing the bound claim statement or verification ownership. The external-network dimension is supplied by GitHub-hosted Ubuntu 24.04 `ISO Resolution Probe` run #5 (run ID `31961987236`), where the unchanged production evidence resolver resolved all seven declared authorities after the ISO repair. The seven-day source-resolution cadence remains mandatory continuous drift detection; it is not a countdown or a pre-expansion waiting period.
-
-This completes the current six-card regulated evidence pilot milestone. Qualification does not auto-authorize expansion. No next risk-tier batch has been approved, so expansion remains unauthorized. Any registry expansion requires explicit next risk-tier batch approval and a separate bounded reviewed change. See [`../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md) and [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml).
-
-### Route-outcome evidence, 100%
-
-The canonical executable route-outcome join is implemented with strict schema validation, primary/fallback lineage, retry preservation, independent-verification linkage, version context, explicit unknown cost, content minimization, provenance, integrity checks, abandoned-outcome support, append-only reference persistence, deterministic conformance tests, and reproducible analyst-ready fixtures. Reference Implementation CI run #407 validated the milestone with 546 passing tests, 414 tracked-file layout checks, regulated evidence validation, 19 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
-
-Future distributed persistence, continuous evaluation feeds, and source-backed cost calculation are separate declared workstreams and do not keep this milestone open.
-
-### Benchmark and Outcome Lab, 100%
-
-The current milestone is complete.
-
-The controlled-evaluation foundation provides fixed synthetic fixtures, a versioned experiment manifest, explicit harness identity, balanced repeated trials, strict cohort comparability, offline executor-only isolation, route/model/reasoning/verifier/runtime/policy/registry/tool binding, primary-versus-fallback and retry dependence, descriptive regression signals, Wilson uncertainty intervals, latency and normalized-usage summaries, explicit missingness, reproducible integrity-protected reports, JSONL persistence, and deterministic conformance coverage.
-
-Controlled live replay adds a schema-validated replay plan, system-to-system claim boundary, additive route-isolation constraints, no-network normal-routing preflight, exact candidate and assigned-verifier matching, active retry-budget alignment, isolated per-trial circuit state, guarded canary execution, live assigned verification, canonical route-outcome generation, replay-plan digest binding, and live capability-context comparability without rewriting source fixtures. Reference Implementation CI run #423 validated that gate with 562 passing tests, 428 tracked-file layout checks, regulated evidence validation, 23 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
-
-Multi-verifier disagreement adds versioned provider-diverse panel plans, blinded structured observations, exact trial/output/outcome binding, explicit missing-observation insufficiency, status/criterion/human-reason disagreement measurement, and a hard rule that panel voting cannot override the canonical runtime verifier or route-outcome disposition.
-
-Consequential conclusion control adds integrity-protected conclusion, independent-verification, and review-handoff records. Consequential comparative or regression conclusions require measured disagreement and independent challenge. Model-originated conclusions require provider-diverse verification. Review handoffs have no policy-write authority and explicitly do not satisfy qualified-human approval.
-
-Reference Implementation CI run #429 validated the completed executable milestone with 574 passing tests, 437 tracked-file layout checks, regulated evidence validation, 28 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
-
-Compatible maintenance, larger fixture banks, additional observational evidence, and integration into Shadow Route Evaluation may continue without reopening this completed milestone.
-
-### Source-backed cost attribution, 100%
-
-The current milestone is complete.
-
-The executable contract provides strict pricing-evidence and route-cost schemas, integrity-protected first-party pricing records, explicit billable-surface identity, effective-dated price selection, overlap rejection, decimal arithmetic, primary/retry/fallback decomposition, separate verifier cost, and `known`, `partial`, or `unknown` attribution semantics.
-
-The first-party evidence set covers the standard paid API surfaces currently relevant to the reference runtime and verifier paths for OpenAI, Anthropic, and Google. Provider-explicit effective windows are preserved where available. Current-only evidence is marked `verified_from` rather than backdated. Unsupported long-context, cache, tool, storage, regional, processing-tier, or additional-charge dimensions fail closed instead of being guessed.
-
-Provider connection mechanism remains outside routing and is not treated as a billing identity. A subscription, OAuth-backed CLI, connector, or other surface is attributed only when evidence exists for that explicit commercial surface. API list prices are never inferred solely from provider and model identity.
-
-Execution usage remains in canonical Route-Outcome Evidence. The live verification path preserves normalized verifier usage through an additive evidence helper while keeping the existing `VerificationResult` compatibility API unchanged. Pricing changes do not rewrite historical route outcomes.
-
-Reference Implementation CI run #437 validated the executable milestone with 585 passing tests, 444 tracked-file layout checks, regulated evidence validation, 30 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
-
-Future pricing refreshes, negotiated or subscription billing surfaces, additional provider-native charge dimensions, and downstream use in Shadow Route Evaluation are compatible maintenance or separate governed extensions and do not keep this milestone open.
-
-### Shadow route evaluation, 100%
-
-The current milestone is complete.
-
-The governed shadow-evaluation layer binds benchmark manifests, benchmark reports, Route-Outcome Evidence, source-backed cost records, and consequential benchmark conclusion challenge records by immutable record identity and integrity hash. Consequential evaluation requires the exact conclusion, independent verification, and review handoff chain bound back to the exact benchmark report.
-
-The evaluator records the concrete provider/model operating `orchestration-evaluation-analyst`, checks evidence sufficiency before recommendation, preserves verified quality, primary reliability, retry dependence, fallback dependence, verifier disagreement, latency, regression, and source-backed cost as separate signals, and emits only the five bounded specialist #82 states.
-
-Anti-Goodhart controls prevent lower cost alone from creating a change candidate and prevent a final-quality gain from being promoted when retry or fallback dependence worsens. Regression signals preempt promotion. Unresolved human-authority or missing-verification outcomes surface as policy/control concerns. A `SHADOW_CHANGE_CANDIDATE` is explicitly shadow-only and is neither a causal superiority claim nor deployment authorization.
-
-Every recommendation denies policy-write, live-routing, live-scope, risk-lowering, capability-bypass, verifier-bypass, preview-acceptance, provider-access-change, and qualified-human-approval authority. Model-originated recommendations require provider-diverse independent challenge before a handoff can advance to `mission_control_or_maintainer_review`. The handoff still has no policy-write or live-routing authority and cannot satisfy qualified-human approval.
-
-Reference Implementation CI run #445 validated the executable milestone with 602 passing tests, 451 tracked-file layout checks, regulated evidence validation, 34 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
-
-Future policy adaptation remains a separate governed stage requiring Mission Control and maintainer decision, reviewed policy change, CI, deployment, post-change evaluation, and rollback if regression.
-
-### Qualified-human approval lifecycle, 100%
-
-The current milestone is complete.
-
-The executable lifecycle provides integrity-protected authority-grant, approval-request, disposition, and human-finalization records. Requests can be created only for dispatches already marked `human_approval_required` and exact Route-Outcome Evidence in the `awaiting_human` disposition. Each request binds the exact dispatch digest, task identity, task type, effective risk, authority requirement, verification evidence, and applicable review evidence.
-
-Human decision records require a separately integrity-protected authority grant that covers the required authority class, authority requirement, effective risk, task type, and decision timestamp. The initial `requested` state and the `approved`, `rejected`, `unable_to_determine`, `expired`, and `revoked` lifecycle states are explicitly represented through the request plus append-only dispositions. A disposition cannot become effective before the bound request exists; subsequent dispositions cannot move backwards in time. An approval cannot outlive its request or authority grant.
-
-Model, specialist, verifier, Mission Control, and maintainer actor types cannot impersonate the human actor contract. A maintainer may act only if independently qualified through a scoped human authority grant. Benchmark, shadow, Mission Control, and maintainer review evidence can support an approval request but cannot satisfy qualified-human approval.
-
-Terminal human finalization revalidates the exact dispatch, Route-Outcome Evidence, approval request, linear disposition chain, authority-grant scope, request validity, approval validity, temporal causality, expiry, and revocation state. It cannot predate the request or the current disposition it relies on. It completes only a current valid scoped approval and otherwise blocks with an explicit reason. The original Route-Outcome Evidence remains `awaiting_human` and is not rewritten.
-
-Identity, model selection, provider access, and billing identity remain outside approval qualification and routing. The lifecycle has no policy-write, live-routing, or live-scope-change authority.
-
-Reference Implementation CI run #451 validated the original executable milestone with 626 passing tests, 458 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The later control-integrity hardening described above adds temporal-causality protection without reopening or widening the lifecycle's declared authority milestone.
-
-This milestone implements authority evidence for requirements existing policy already imposes. It does not broaden which tasks require qualified-human approval and does not widen live execution.
-
-### Live execution expansion, 65%
-
-The first bounded expansion candidate is `documentation`, low or medium effective risk only. Candidate selection, a machine-readable staged policy, no-network route preflight, corrected fallback/fresh-verifier topology, direct adapter readiness, and a controlled staged replay harness are validated while active live authority remains unchanged.
-
-The former `runtime-worker-overrides.yaml` behavior unintentionally mutated the shared documentation worker. That global implementation-order override has been removed. Ordinary documentation dispatch now records Claude Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, and GPT-5.6 Terra as the primary verifier. Model- or provider-scoped Sonnet recovery redispatch selects GPT-5.6 Sol with Gemini 3.6 Flash as a fresh provider-diverse verifier.
-
-Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the provider-adapter layer. The active provider canary wrappers and live-verification task scope remain limited to `high_volume_simple`, so adapter support does not create documentation live authority.
-
-The staged replay layer now validates the entire replay plan before network access, preserves exact candidate routing and effective risk, reuses the active retry policy, isolates circuit state per trial, executes the staged Sonnet primary through the provider adapter, invokes the exact assigned Terra verifier, holds replay telemetry only in memory, and creates canonical integrity-protected Route-Outcome Evidence plus a staged replay record. Its operator CLI requires explicit live-execution acknowledgement and keeps provider access outside routing semantics.
-
-Automatic fallback is disabled in this replay milestone. Model- or provider-scoped execution failure is recorded rather than automatically redispatched. Deliberate fallback, rollback, and recovery execution remains a distinct later evidence gate.
-
-Reference Implementation CI run #488 validated the durable replay-harness state with 651 passing tests, 472 tracked-file layout checks, regulated evidence validation, 40 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The CI provider calls are deterministic fake transports used for conformance. They are not empirical provider-backed replay observations.
-
-Provider-backed controlled documentation replay evidence therefore remains pending. `policy/runtime/live-execution-expansion.yaml` must continue to leave `controlled_replay` unset until a real operator execution produces the exact integrity-protected replay record and canonical Route-Outcome Evidence set. Downstream Shadow Route Evaluation, rollback/recovery evidence, and independent review of any later active-scope policy change also remain required.
-
-No live scope has widened. `documentation` remains `activation_authorized: false`; `high_volume_simple` at low or medium effective risk remains the only accepted guarded live execution class, and high or critical live execution remains unauthorized.
-
-### Distributed runtime hardening, 20%
-
-The reference semantics for recovery, circuit state, telemetry, audit, execution, evaluation, cost evidence, shadow recommendation, qualified-human authority evidence, and route-backed final execution provenance are proven in the current single-process reference architecture. Distributed coordination, persistence, access control, retention, authenticity, replay resistance, and streaming remain later work.
-
-### Licensing and contribution terms, 10%
-
-The public stewardship posture exists, but no open-source reuse license has been selected. External reuse and contribution terms remain pending.
-
-## Update protocol
-
-Update this tracker when a merged change materially affects:
-
-- current roster counts;
-- stable or development release identity;
-- completion criteria;
-- workstream status or percentage;
-- NOW, NEXT, or LATER ordering;
-- live-execution scope;
-- regulated-pilot scope;
-- accepted strategic direction;
-- current validation scale or another current-state claim used elsewhere in active documentation.
-
-Every update should be grounded in merged repository state, executable validation, accepted research, or explicit maintainer decision. Do not update percentages merely because time passed or a model/provider release occurred.
-
-When parallel sessions are active, reconcile against current `main` before editing this tracker so already-completed work is not reintroduced as pending.
-
-## Related records
-
-- [`roadmap.md`](roadmap.md): canonical stewardship roadmap
-- [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
-- [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
-- [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md): non-normative isolated-execution, checkpoint, rollback, and recovery-verification research roadmap
-- [`../../research/roadmaps/task-intent-action-authority-contract.md`](../../research/roadmaps/task-intent-action-authority-contract.md): non-normative request-intent, assessment-versus-action, delegation, and state-change authority research roadmap
-- [`../../research/runtime/2026-08-13-external-verifier-calibration.md`](../../research/runtime/2026-08-13-external-verifier-calibration.md): paired positive/negative-control calibration and evidence-only verifier classification
-- [`../../research/runtime/2026-08-13-external-verifier-assessment-final-execution-provenance.md`](../../research/runtime/2026-08-13-external-verifier-assessment-final-execution-provenance.md): first post-calibration substantive external-verifier assessment
-- [`../../research/runtime/2026-08-14-external-verifier-assessment-artifact-bound-finalization.md`](../../research/runtime/2026-08-14-external-verifier-assessment-artifact-bound-finalization.md): Task 002 normative artifact-bound finalization PASS, residual limits, exact-head refresh reconciliation, and merged disposition
-- [`../../research/runtime/2026-08-12-host-integration-validation-round-1.md`](../../research/runtime/2026-08-12-host-integration-validation-round-1.md): first implementation-backed external-host validation round
-- [`../../research/runtime/2026-08-12-host-integration-validation-round-2.md`](../../research/runtime/2026-08-12-host-integration-validation-round-2.md): second structurally different host validation and architecture-diversity gate decision
-- [`../../research/runtime/host-integration-context-economics-2026-08-12.md`](../../research/runtime/host-integration-context-economics-2026-08-12.md): static bounded-context specialist-payload measurement and remaining empirical context-economics gate
-- [`../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md`](../../research/runtime/host-integration-dispatch-adapter-mutation-2026-08-12.md): dispatch-provenance and bundled-adapter payload self-expansion adversarial evidence
-- [`../../research/runtime/host-integration-third-party-adapter-trust-2026-08-12.md`](../../research/runtime/host-integration-third-party-adapter-trust-2026-08-12.md): process-local third-party adapter registration, provenance-binding, and non-self-authorization adversarial evidence
-- [`../../research/runtime/host-integration-authority-intersection-2026-08-12.md`](../../research/runtime/host-integration-authority-intersection-2026-08-12.md): restrictive host/TEO authority intersection and exact host execution-scope binding adversarial evidence
-- [`../../research/runtime/host-integration-execution-envelope-integrity-2026-08-12.md`](../../research/runtime/host-integration-execution-envelope-integrity-2026-08-12.md): exact process-local action target, parameter, side-effect, prerequisite, and retry-envelope adversarial evidence
-- [`../../research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](../../research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md): verifier-context independence, exact artifact/change-set binding, and stale-PASS resistance adversarial evidence
-- [`../../research/runtime/host-integration-cross-process-authority-2026-08-13.md`](../../research/runtime/host-integration-cross-process-authority-2026-08-13.md): brokered conformant process-lifetime cross-process authority/replay evidence and remaining production/distributed boundary
-- [`../../research/runtime/host-integration-authority-surface-reconciliation-2026-08-14.md`](../../research/runtime/host-integration-authority-surface-reconciliation-2026-08-14.md): runtime-derived static authority-surface reconciliation, red-canary correction, CI #644 evidence, and remaining dynamic executable-hook boundary
-- [`../../research/runtime/host-integration-recursion-resistance-2026-08-14.md`](../../research/runtime/host-integration-recursion-resistance-2026-08-14.md): process-lifetime recursion admission, security-review hardening, CI #658 evidence, and remaining restart/distributed/scheduler boundary
-- [`../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md`](../../research/runtime/2026-08-10-live-execution-expansion-candidate-selection.md): staged `documentation` live-scope candidate research and blockers
-- [`../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md`](../../research/runtime/2026-08-11-documentation-live-topology-adapter-readiness.md): repaired documentation fallback, fresh-verifier, and staged adapter-readiness evidence
-- [`../../research/runtime/2026-08-11-documentation-controlled-replay.md`](../../research/runtime/2026-08-11-documentation-controlled-replay.md): staged replay harness, evidence boundary, and pending provider-backed replay gate
-- [`../../policy/runtime/live-execution-expansion.yaml`](../../policy/runtime/live-execution-expansion.yaml): machine-readable staged live-scope candidate gate
-- [`../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](../history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md): practical regulated-evidence stability qualification and gate disposition
-- [`../../policy/specialists/evidence-stability-qualification.yaml`](../../policy/specialists/evidence-stability-qualification.yaml): executable stability qualification requirements and continuous-monitoring boundary
-- [`docs/releases/v1.0.0.md`](../releases/v1.0.0.md): immutable functional-v1 release contract
-- [`docs/releases/v1-readiness.md`](../releases/v1-readiness.md): current release/readiness boundary
-- [`docs/history/audits/post-v1-hard-audit-2026-08-10.md`](../history/audits/post-v1-hard-audit-2026-08-10.md): durable post-v1 hard audit
