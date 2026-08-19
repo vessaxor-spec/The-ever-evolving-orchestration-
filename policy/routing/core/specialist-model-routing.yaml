@@ -1,6 +1,6 @@
 version: 1.1
 status: active
-reviewed_at: '2026-08-10'
+reviewed_at: '2026-08-19'
 policy: Specialist-aware implementation refinement is additive. Team and worker routing resolve first. Specialist routing
   may refine model and reasoning effort only; it cannot change team authority, specialist capability, qualified-human requirements,
   or independent verification.
@@ -89,7 +89,7 @@ templates:
         critical: xhigh
     fallback:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       reasoning_by_risk:
         low: medium
         medium: medium
@@ -180,7 +180,7 @@ templates:
   gemini_flash_multimodal:
     primary:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       reasoning_by_risk:
         low: medium
         medium: medium
@@ -212,7 +212,7 @@ templates:
   luna_throughput:
     primary:
       agent: agy
-      model: gemini-3.5-flash-lite
+      model: gemini-3.7-flash
       reasoning_by_risk:
         low: low
         medium: medium

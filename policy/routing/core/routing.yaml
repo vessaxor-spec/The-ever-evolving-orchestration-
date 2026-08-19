@@ -1,6 +1,6 @@
 version: 0.6
 status: active
-reviewed_at: 2026-08-09
+reviewed_at: 2026-08-19
 model_registry: policy/routing/core/implementation-defaults.yaml
 provider_evidence: registry/models/models.yaml
 
@@ -90,7 +90,7 @@ task_routing:
     reasoning: low
   fallback_classifier:
     agent: agy
-    model: gemini-3.6-flash
+    model: gemini-3.7-flash
     profile: luna
     reasoning: low
   ambiguous_task_interpreter:
@@ -169,7 +169,7 @@ routing:
       purpose: continue evidence synthesis when the Google route is unavailable
     fast_collection:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: source discovery, extraction, and document mapping
@@ -215,10 +215,10 @@ routing:
         - architectural_constraints_are_present
     fallback:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: terra
       reasoning: medium
-      purpose: stable cross-provider coding fallback without preview acceptance
+      purpose: current cross-provider coding fallback without preview acceptance
 
     review_when:
       - public_api_changed
@@ -297,7 +297,7 @@ routing:
   repo_wide_refactor:
     mapper:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
       purpose: map repository structure, dependencies, and affected components
@@ -448,7 +448,7 @@ routing:
   multimodal_analysis:
     primary:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
     fallback:
@@ -482,10 +482,10 @@ routing:
   high_volume_simple:
     primary:
       agent: agy
-      model: gemini-3.5-flash-lite
+      model: gemini-3.7-flash
       profile: luna
       reasoning: low
-      purpose: stable low-cost high-throughput execution
+      purpose: current Flash high-throughput execution
     fallback:
       agent: claude
       model: claude-haiku-4-5
@@ -496,21 +496,18 @@ routing:
       - agent: codex
         model: gpt-5.6-luna
         profile: luna
-      - agent: agy
-        model: gemini-3.6-flash
-        profile: luna
     verifier:
       agent: claude
       model: claude-sonnet-5
       profile: sol
       reasoning: medium
-      purpose: provider-diverse semantic verification of the primary Flash-Lite route
+      purpose: provider-diverse semantic verification of the primary Gemini 3.7 Flash route
     semantic_reviewer:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: medium
-      purpose: fresh verification when Haiku becomes fallback executor and Google remains eligible
+      purpose: fresh Google verification when Haiku becomes fallback executor and Google remains eligible
     technical_verifier:
       agent: codex
       model: gpt-5.6-sol
@@ -549,7 +546,7 @@ routing:
       reasoning: medium
     bulk_transformation:
       agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
       profile: luna
       reasoning: low
     architecture_documentation:
@@ -595,10 +592,10 @@ fallback_order:
     - agent: claude
       model: claude-sonnet-5
     - agent: agy
-      model: gemini-3.6-flash
+      model: gemini-3.7-flash
   throughput:
     - agent: agy
-      model: gemini-3.5-flash-lite
+      model: gemini-3.7-flash
     - agent: claude
       model: claude-haiku-4-5
     - agent: codex

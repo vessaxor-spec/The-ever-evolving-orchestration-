@@ -1,6 +1,6 @@
 version: 1.0
 status: active
-reviewed_at: 2026-08-07
+reviewed_at: 2026-08-19
 policy: >-
   These implementation routes are conservative team-level entry routes for the
   explicit specialist spawn paths. Once a specialist is matched, the active
@@ -11,49 +11,49 @@ routing:
   specialist_mission_control:
     primary: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
     fallback: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_planning:
     primary: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
     fallback: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_engineering:
     primary: {agent: codex, model: gpt-5.6-terra, profile: terra, reasoning: high}
-    fallback: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    fallback: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
     verifier: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
 
   specialist_platform_reliability:
     primary: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
     fallback: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_systems_engineering:
     primary: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
     fallback: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_physical_systems:
     primary: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
     fallback: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_research:
     primary: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
     fallback: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_assurance:
     primary: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
     fallback: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_review:
     primary: {agent: codex, model: gpt-5.6-sol, profile: sol, reasoning: high}
     fallback: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}
 
   specialist_verification:
     primary: {agent: codex, model: gpt-5.6-terra, profile: terra, reasoning: high}
     fallback: {agent: claude, model: claude-sonnet-5, profile: sol, reasoning: high}
-    verifier: {agent: agy, model: gemini-3.6-flash, profile: luna, reasoning: medium}
+    verifier: {agent: agy, model: gemini-3.7-flash, profile: luna, reasoning: medium}

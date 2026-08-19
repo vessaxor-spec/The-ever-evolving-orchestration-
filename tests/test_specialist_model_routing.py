@@ -109,7 +109,7 @@ def test_backend_specialist_uses_terra_medium_with_flash_fallback_and_sonnet_ver
     assert dispatch.selected_implementation.model == "gpt-5.6-terra"
     assert dispatch.selected_implementation.reasoning == "medium"
     assert dispatch.fallback_implementation is not None
-    assert dispatch.fallback_implementation.model == "gemini-3.6-flash"
+    assert dispatch.fallback_implementation.model == "gemini-3.7-flash"
     assert dispatch.fallback_implementation.reasoning == "medium"
     assert dispatch.verification.implementation.model == "claude-sonnet-5"
     assert dispatch.verification.implementation.reasoning == "medium"

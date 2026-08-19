@@ -1,6 +1,6 @@
 version: "1.0"
 status: active
-reviewed_at: 2026-08-07
+reviewed_at: 2026-08-19
 
 base_calibration:
   policy: policy/verification/verifier-calibration.yaml
@@ -31,7 +31,7 @@ collection:
 
 verifier_routes:
   - provider_family: google
-    model: gemini-3.6-flash
+    model: gemini-3.7-flash
     reasoning: medium
   - provider_family: anthropic
     model: claude-sonnet-5

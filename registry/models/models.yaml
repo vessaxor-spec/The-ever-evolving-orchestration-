@@ -1,6 +1,6 @@
 version: 0.3
 status: public
-reviewed_at: 2026-08-10
+reviewed_at: 2026-08-19
 
 registry_rules:
   - provider_claims_are_not_teo_benchmark_results
@@ -151,11 +151,29 @@ models:
       - preview availability and deprecation timing can change
       - production use requires explicit preview acceptance
 
+  gemini-3.7-flash:
+    provider: google
+    availability: current
+    provider_description: current Flash workhorse for coding, agents, web development, and complex knowledge work
+    teo_routing_role: repository mapping, multimodal triage, extraction, bounded coding, and high-volume processing
+    routing_status: routed
+    input_modalities: [text, image, video, audio, pdf]
+    output_modalities: [text]
+    reasoning_control: thinking_level
+    reasoning_levels: [minimal, low, medium, high]
+    reasoning_default: medium
+    context_window_tokens: 1048576
+    max_output_tokens: 65536
+    evidence_type: provider_claim
+    source: https://ai.google.dev/gemini-api/docs/models
+    lifecycle_note: released 2026-08-13 and promoted as the active Flash generation; exact provider identifier and availability must still be rechecked before execution
+
   gemini-3.6-flash:
     provider: google
-    availability: stable
-    provider_description: balances speed and intelligence for agentic and multimodal tasks
-    teo_routing_role: repository mapping, multimodal triage, extraction, bounded coding, and high-volume processing
+    availability: previous_generation
+    provider_description: predecessor Flash generation for agentic and multimodal tasks
+    teo_routing_role: compatibility and historical replay only
+    routing_status: previous_generation_candidate
     input_modalities: [text, image, video, audio, pdf]
     output_modalities: [text]
     reasoning_control: thinking_level
@@ -165,21 +183,24 @@ models:
     max_output_tokens: 65536
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash
+    lifecycle_note: superseded on active TEO routes by Gemini 3.7 Flash; retained only where compatibility or immutable historical evidence requires it
 
   gemini-3.5-flash:
     provider: google
-    availability: stable
-    provider_description: sustained frontier performance on agentic and coding tasks
-    teo_routing_role: candidate higher-intelligence Flash implementation
+    availability: previous_generation
+    provider_description: prior Flash generation for agentic and coding tasks
+    teo_routing_role: compatibility and historical replay only
+    routing_status: previous_generation_candidate
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/models
+    lifecycle_note: not eligible for new active TEO routing after Gemini 3.7 Flash promotion
 
   gemini-3.5-flash-lite:
     provider: google
-    availability: stable
-    provider_description: fastest and lowest-cost Gemini 3.5 model for high-throughput execution
-    teo_routing_role: primary economical throughput implementation
-    routing_status: routed
+    availability: previous_generation
+    provider_description: prior economical high-throughput Flash-Lite implementation
+    teo_routing_role: compatibility and historical replay only
+    routing_status: previous_generation_candidate
     input_modalities: [text, image, video, audio, pdf]
     output_modalities: [text]
     reasoning_control: thinking_level
@@ -189,6 +210,7 @@ models:
     max_output_tokens: 65536
     evidence_type: provider_claim
     source: https://ai.google.dev/gemini-api/docs/latest-model
+    lifecycle_note: superseded on active TEO throughput routes by Gemini 3.7 Flash; retained only for compatibility and immutable historical evidence
 
   gemini-3.1-flash-lite:
     provider: google

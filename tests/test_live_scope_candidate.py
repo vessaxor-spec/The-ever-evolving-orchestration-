@@ -62,8 +62,7 @@ def test_runtime_override_no_longer_mutates_shared_documentation_worker() -> Non
     assert worker["preferred_implementations"] == [
         "claude-sonnet-5",
         "gpt-5.6-sol",
-        "gemini-3.6-flash",
-        "gemini-3.5-flash-lite",
+        "gemini-3.7-flash",
         "claude-haiku-4-5",
     ]
     assert worker["fallbacks"] == ["gemini-3.1-pro-preview", "gpt-5.6-sol"]
@@ -74,7 +73,7 @@ def test_throughput_primary_and_fresh_verifier_rotation_survive_override_removal
     task = throughput_task()
     primary = routing_engine.dispatch(task)
 
-    assert primary.selected_implementation.model == "gemini-3.5-flash-lite"
+    assert primary.selected_implementation.model == "gemini-3.7-flash"
     assert primary.selected_implementation.provider_family == "google"
     assert primary.fallback_implementation is not None
     assert primary.fallback_implementation.model == "claude-haiku-4-5"
@@ -87,8 +86,8 @@ def test_throughput_primary_and_fresh_verifier_rotation_survive_override_removal
     )
     assert model_redispatch.selected_implementation.model == "claude-haiku-4-5"
     assert model_redispatch.selected_implementation.provider_family == "anthropic"
-    assert model_redispatch.verification.implementation.model == "gemini-3.6-flash"
-    assert model_redispatch.verification.implementation.provider_family == "google"
+    assert model_redispatch.verification.implementation.model == "gpt-5.6-sol"
+    assert model_redispatch.verification.implementation.provider_family == "openai"
 
     provider_redispatch = routing_engine.dispatch(
         _copy_task_for_redispatch(task, primary, "provider")
@@ -126,7 +125,7 @@ def test_documentation_preflight_reports_repaired_topology_and_remaining_evidenc
         assert redispatch["primary_provider_family"] == "openai"
         assert redispatch["primary_model"] == "gpt-5.6-sol"
         assert redispatch["verifier_provider_family"] == "google"
-        assert redispatch["verifier_model"] == "gemini-3.6-flash"
+        assert redispatch["verifier_model"] == "gemini-3.7-flash"
         assert redispatch["verifier_reasoning_effort"] == "medium"
 
     assert gates["active_scope_unchanged"] is True

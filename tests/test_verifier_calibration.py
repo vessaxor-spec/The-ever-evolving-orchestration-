@@ -50,7 +50,7 @@ def observation(
     gold: dict,
     *,
     provider: str = "google",
-    model: str = "gemini-3.6-flash",
+    model: str = "gemini-3.7-flash",
     reasoning: str | None = "medium",
     run_id: str = "run-1",
     observed_at: str = "2026-08-07T13:00:00Z",
@@ -179,7 +179,7 @@ def test_perfect_observations_produce_zero_conditional_error_without_claiming_qu
     assert all(value == 1.0 for value in report.criterion_accuracy.values())
     assert report.repeatability_agreement_rate is None
     assert report.cross_verifier_disagreement_cases == []
-    assert report.verifier_routes == ["google/gemini-3.6-flash/medium"]
+    assert report.verifier_routes == ["google/gemini-3.7-flash/medium"]
     assert report.verifier_provider_families == ["google"]
     assert report.observation_window_start == "2026-08-07T13:01:00Z"
     assert report.observation_window_end == "2026-08-07T13:08:00Z"
@@ -265,7 +265,7 @@ def test_repeatability_cross_verifier_disagreement_and_execution_paths_are_measu
     assert report.by_execution_path["fallback"]["observations"] == 1
     assert report.verifier_routes == [
         "anthropic/claude-sonnet-5/medium",
-        "google/gemini-3.6-flash/medium",
+        "google/gemini-3.7-flash/medium",
     ]
 
 
@@ -276,7 +276,7 @@ def test_observation_contract_rejects_content_and_unknown_fields(tmp_path: Path)
             {
                 "case_id": "correct-two-labels",
                 "verifier_provider_family": "google",
-                "verifier_model": "gemini-3.6-flash",
+                "verifier_model": "gemini-3.7-flash",
                 "verifier_reasoning": "medium",
                 "run_id": "run-1",
                 "observed_at": "2026-08-07T13:00:00Z",
@@ -310,7 +310,7 @@ def test_parser_rejects_schema_incompatible_type_or_time_coercion(field, value, 
     payload = {
         "case_id": "correct-two-labels",
         "verifier_provider_family": "google",
-        "verifier_model": "gemini-3.6-flash",
+        "verifier_model": "gemini-3.7-flash",
         "verifier_reasoning": "medium",
         "run_id": "run-1",
         "observed_at": "2026-08-07T13:00:00Z",
@@ -330,7 +330,7 @@ def test_parser_rejects_missing_required_observation_fields() -> None:
     payload = {
         "case_id": "correct-two-labels",
         "verifier_provider_family": "google",
-        "verifier_model": "gemini-3.6-flash",
+        "verifier_model": "gemini-3.7-flash",
         "verifier_reasoning": "medium",
         "run_id": "run-1",
         "rubric_version": "1.0",
@@ -361,7 +361,7 @@ def test_observation_json_schema_is_strict_content_free_and_route_consistent() -
     valid = {
         "case_id": "correct-two-labels",
         "verifier_provider_family": "google",
-        "verifier_model": "gemini-3.6-flash",
+        "verifier_model": "gemini-3.7-flash",
         "verifier_reasoning": "medium",
         "run_id": "run-1",
         "observed_at": "2026-08-07T13:00:00Z",
@@ -457,8 +457,8 @@ def test_three_routes_from_one_provider_do_not_satisfy_provider_diversity() -> N
     policy = load_calibration_policy(POLICY_PATH)
     cases = load_gold_cases(GOLD_PATH, policy=policy)
     routes = [
-        ("google", "gemini-3.6-flash", "low"),
-        ("google", "gemini-3.6-flash", "medium"),
+        ("google", "gemini-3.7-flash", "low"),
+        ("google", "gemini-3.7-flash", "medium"),
         ("google", "gemini-3.1-pro-preview", "high"),
     ]
     observations = []
@@ -487,7 +487,7 @@ def test_evidence_readiness_can_confirm_data_coverage_but_never_self_authorize()
     policy = load_calibration_policy(POLICY_PATH)
     cases = load_gold_cases(GOLD_PATH, policy=policy)
     routes = [
-        ("google", "gemini-3.6-flash", "medium"),
+        ("google", "gemini-3.7-flash", "medium"),
         ("anthropic", "claude-sonnet-5", "medium"),
         ("openai", "gpt-5.6-sol", "high"),
     ]

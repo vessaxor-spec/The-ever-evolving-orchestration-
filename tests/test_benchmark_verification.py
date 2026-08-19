@@ -137,7 +137,7 @@ def google_connection(calls: list[dict]) -> HeaderProviderConnection:
     ):
         payload = json.loads(body.decode("utf-8"))
         calls.append(payload)
-        assert payload["model"] == "gemini-3.6-flash"
+        assert payload["model"] == "gemini-3.7-flash"
         prompt = payload["input"]
         decision = uncertain_decision() if "CANDIDATE OUTPUT:\nbeta" in prompt else passed_decision()
         response = {
@@ -198,7 +198,7 @@ def panel_plan_dict() -> dict:
                     {
                         "observer_id": "google-flash-observer",
                         "provider_family": "google",
-                        "model": "gemini-3.6-flash",
+                        "model": "gemini-3.7-flash",
                         "reasoning_effort": "medium",
                     },
                 ],

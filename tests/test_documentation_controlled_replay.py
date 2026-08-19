@@ -260,7 +260,7 @@ def test_staged_documentation_replay_generates_canonical_route_outcomes_without_
     assert record["candidate_route"]["primary_verifier"]["model"] == "gpt-5.6-terra"
     assert (
         record["candidate_route"]["failure_redispatch_verifier"]["model"]
-        == "gemini-3.6-flash"
+        == "gemini-3.7-flash"
     )
     assert any(
         "does not authorize documentation live execution" in item
