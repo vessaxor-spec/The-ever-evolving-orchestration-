@@ -61,22 +61,14 @@ def google_connection(calls: list[dict]) -> HeaderProviderConnection:
         payload = json.loads(body.decode("utf-8"))
         calls.append(payload)
         model = payload["model"]
-        if model == "gemini-3.5-flash-lite":
-            response = {
-                "id": "int_replay_execution",
-                "model": model,
-                "status": "completed",
-                "output_text": _label_from_input(payload["input"]),
-            }
-        elif model == "gemini-3.6-flash":
-            response = {
-                "id": "int_replay_verifier",
-                "model": model,
-                "status": "completed",
-                "output_text": json.dumps(verifier_decision()),
-            }
-        else:
+        if model != "gemini-3.7-flash":
             raise AssertionError(f"unexpected Google model {model}")
+        response = {
+            "id": "int_replay_execution",
+            "model": model,
+            "status": "completed",
+            "output_text": _label_from_input(payload["input"]),
+        }
         return 200, {"x-request-id": "req_google_replay"}, json.dumps(response).encode("utf-8")
 
     return HeaderProviderConnection(
@@ -118,6 +110,34 @@ def anthropic_connection(calls: list[dict]) -> HeaderProviderConnection:
     )
 
 
+def openai_connection(calls: list[dict]) -> HeaderProviderConnection:
+    def transport(
+        url: str,
+        method: str,
+        body: bytes,
+        headers: Mapping[str, str],
+        timeout: float,
+    ):
+        payload = json.loads(body.decode("utf-8"))
+        calls.append(payload)
+        model = payload["model"]
+        if model != "gpt-5.6-sol":
+            raise AssertionError(f"unexpected OpenAI model {model}")
+        response = {
+            "id": "resp_replay_verifier",
+            "model": model,
+            "status": "completed",
+            "output_text": json.dumps(verifier_decision()),
+        }
+        return 200, {"x-request-id": "req_openai_replay"}, json.dumps(response).encode("utf-8")
+
+    return HeaderProviderConnection(
+        provider_family="openai",
+        authorization_headers={"authorization": "Bearer test-openai-token"},
+        transport=transport,
+    )
+
+
 def plan_dict() -> dict:
     common_versions = {
         "runtime_version": "1.0.1.dev0",
@@ -148,9 +168,9 @@ def plan_dict() -> dict:
         },
         "candidates": [
             {
-                "candidate_id": "canonical-flash-lite-route",
+                "candidate_id": "canonical-flash-route",
                 "provider_family": "google",
-                "model": "gemini-3.5-flash-lite",
+                "model": "gemini-3.7-flash",
                 "reasoning_effort": "low",
                 "verifier_provider_family": "anthropic",
                 "verifier_model": "claude-sonnet-5",
@@ -165,11 +185,11 @@ def plan_dict() -> dict:
                 "provider_family": "anthropic",
                 "model": "claude-haiku-4-5",
                 "reasoning_effort": "low",
-                "verifier_provider_family": "google",
-                "verifier_model": "gemini-3.6-flash",
+                "verifier_provider_family": "openai",
+                "verifier_model": "gpt-5.6-sol",
                 **common_versions,
                 "isolation": {
-                    "blocked_implementations": ["gemini-3.5-flash-lite"],
+                    "blocked_implementations": ["gemini-3.7-flash"],
                     "blocked_providers": [],
                 },
             },
@@ -186,6 +206,7 @@ def test_controlled_live_replay_executes_normal_routes_and_generates_standard_ev
 ) -> None:
     google_calls: list[dict] = []
     anthropic_calls: list[dict] = []
+    openai_calls: list[dict] = []
     plan = replay_plan()
 
     execution = run_controlled_replay(
@@ -195,6 +216,7 @@ def test_controlled_live_replay_executes_normal_routes_and_generates_standard_ev
         {
             "google": google_connection(google_calls),
             "anthropic": anthropic_connection(anthropic_calls),
+            "openai": openai_connection(openai_calls),
         },
         repo_root=REPO_ROOT,
         artifact_root=tmp_path / "replay-artifacts",
@@ -212,7 +234,7 @@ def test_controlled_live_replay_executes_normal_routes_and_generates_standard_ev
 
     outcome_payloads = [record.to_dict() for record in execution.outcomes]
     assert {item["primary_route"]["implementation"]["model"] for item in outcome_payloads} == {
-        "gemini-3.5-flash-lite",
+        "gemini-3.7-flash",
         "claude-haiku-4-5",
     }
     assert all(item["final_disposition"] == "completed" for item in outcome_payloads)
@@ -235,16 +257,15 @@ def test_controlled_live_replay_executes_normal_routes_and_generates_standard_ev
     assert not any("live replay execution are not yet implemented" in item for item in result["limitations"])
     assert any("did not acquire route-selection authority" in item for item in result["limitations"])
 
-    assert len(google_calls) == 8
+    assert len(google_calls) == 4
     assert len(anthropic_calls) == 8
-    assert {item["model"] for item in google_calls} == {
-        "gemini-3.5-flash-lite",
-        "gemini-3.6-flash",
-    }
+    assert len(openai_calls) == 4
+    assert {item["model"] for item in google_calls} == {"gemini-3.7-flash"}
     assert {item["model"] for item in anthropic_calls} == {
         "claude-haiku-4-5",
         "claude-sonnet-5",
     }
+    assert {item["model"] for item in openai_calls} == {"gpt-5.6-sol"}
 
 
 def test_candidate_mismatch_fails_preflight_before_any_provider_call(tmp_path: Path) -> None:
@@ -254,6 +275,7 @@ def test_candidate_mismatch_fails_preflight_before_any_provider_call(tmp_path: P
     plan = replay_plan(raw)
     google_calls: list[dict] = []
     anthropic_calls: list[dict] = []
+    openai_calls: list[dict] = []
 
     with pytest.raises(ProviderAdapterContractError, match="preflight did not resolve"):
         run_controlled_replay(
@@ -263,6 +285,7 @@ def test_candidate_mismatch_fails_preflight_before_any_provider_call(tmp_path: P
             {
                 "google": google_connection(google_calls),
                 "anthropic": anthropic_connection(anthropic_calls),
+                "openai": openai_connection(openai_calls),
             },
             repo_root=REPO_ROOT,
             artifact_root=tmp_path,
@@ -270,12 +293,13 @@ def test_candidate_mismatch_fails_preflight_before_any_provider_call(tmp_path: P
 
     assert google_calls == []
     assert anthropic_calls == []
+    assert openai_calls == []
 
 
 def test_replay_plan_cannot_block_its_declared_model_or_provider() -> None:
     raw = plan_dict()
     raw["candidates"][0]["isolation"]["blocked_implementations"] = [
-        "gemini-3.5-flash-lite"
+        "gemini-3.7-flash"
     ]
     with pytest.raises(ProviderAdapterContractError, match="cannot block its declared model"):
         replay_plan(raw)
@@ -301,6 +325,7 @@ def test_replay_harness_attempt_budget_must_match_active_runtime_before_network(
     plan = replay_plan(raw)
     google_calls: list[dict] = []
     anthropic_calls: list[dict] = []
+    openai_calls: list[dict] = []
 
     with pytest.raises(ProviderAdapterContractError, match="max_attempts must match"):
         run_controlled_replay(
@@ -310,6 +335,7 @@ def test_replay_harness_attempt_budget_must_match_active_runtime_before_network(
             {
                 "google": google_connection(google_calls),
                 "anthropic": anthropic_connection(anthropic_calls),
+                "openai": openai_connection(openai_calls),
             },
             repo_root=REPO_ROOT,
             artifact_root=tmp_path,
@@ -317,6 +343,7 @@ def test_replay_harness_attempt_budget_must_match_active_runtime_before_network(
 
     assert google_calls == []
     assert anthropic_calls == []
+    assert openai_calls == []
 
 
 def test_replay_plan_requires_provider_diverse_verification() -> None:
