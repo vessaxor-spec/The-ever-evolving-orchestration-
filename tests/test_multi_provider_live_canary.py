@@ -132,14 +132,14 @@ def test_openai_canary_uses_responses_api_and_explicit_reasoning_effort(tmp_path
 def test_gemini_canary_uses_stable_interactions_api_and_thinking_level(tmp_path: Path) -> None:
     calls: list[dict] = []
     response = execute_gemini_canary_once(
-        dispatch("google", "gemini-3.6-flash", "medium"),
+        dispatch("google", "gemini-3.7-flash", "medium"),
         connection(
             "google",
             calls,
             200,
             {
                 "id": "int_123",
-                "model": "gemini-3.6-flash",
+                "model": "gemini-3.7-flash",
                 "status": "completed",
                 "steps": [
                     {
@@ -155,7 +155,7 @@ def test_gemini_canary_uses_stable_interactions_api_and_thinking_level(tmp_path:
     assert len(calls) == 1
     assert calls[0]["url"] == GEMINI_INTERACTIONS_URL
     assert calls[0]["method"] == "POST"
-    assert calls[0]["body"]["model"] == "gemini-3.6-flash"
+    assert calls[0]["body"]["model"] == "gemini-3.7-flash"
     assert calls[0]["body"]["store"] is False
     assert calls[0]["body"]["generation_config"] == {
         "max_output_tokens": 512,
@@ -182,7 +182,7 @@ def test_gemini_rejects_provider_unsupported_xhigh_effort_before_invocation(tmp_
     calls: list[dict] = []
     with pytest.raises(ProviderAdapterContractError, match="does not support"):
         execute_gemini_canary_once(
-            dispatch("google", "gemini-3.6-flash", "xhigh"),
+            dispatch("google", "gemini-3.7-flash", "xhigh"),
             connection("google", calls, 200, {}),
             artifact_dir=tmp_path,
         )
@@ -193,7 +193,7 @@ def test_gemini_rejects_provider_unsupported_xhigh_effort_before_invocation(tmp_
     ("provider_family", "model", "executor"),
     [
         ("openai", "gpt-5.6-luna", execute_openai_canary_once),
-        ("google", "gemini-3.6-flash", execute_gemini_canary_once),
+        ("google", "gemini-3.7-flash", execute_gemini_canary_once),
     ],
 )
 def test_new_canaries_refuse_high_risk_before_invocation(
@@ -232,7 +232,7 @@ def test_openai_rate_limit_is_provider_scoped_and_not_retried(tmp_path: Path) ->
 def test_gemini_unavailable_is_transient_and_not_retried(tmp_path: Path) -> None:
     calls: list[dict] = []
     response = execute_gemini_canary_once(
-        dispatch("google", "gemini-3.6-flash", "medium"),
+        dispatch("google", "gemini-3.7-flash", "medium"),
         connection(
             "google",
             calls,
@@ -263,7 +263,7 @@ def test_gemini_unavailable_is_transient_and_not_retried(tmp_path: Path) -> None
         ),
         (
             "google",
-            "gemini-3.6-flash",
+            "gemini-3.7-flash",
             "gemini-3.1-pro-preview",
             execute_gemini_canary_once,
             {
