@@ -15,7 +15,7 @@ workers:
     responsibilities: [workflow_automation, integration_design, failure_handling, testing]
     required_capabilities: [coding, high_reasoning, tool_execution, testing]
     preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
-    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    fallbacks: [gemini-3.7-flash, claude-sonnet-5]
     verification: [targeted_tests, integration_validation, independent_review]
     escalation: [production_side_effect, irreversible_automation, authority_boundary_change]
 
@@ -25,7 +25,7 @@ workers:
     responsibilities: [protocol_implementation, smart_contract_engineering, integration, testing]
     required_capabilities: [coding, high_reasoning, tool_execution, testing]
     preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
-    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    fallbacks: [gemini-3.7-flash, claude-sonnet-5]
     verification: [targeted_tests, adversarial_review, independent_review]
     escalation: [asset_loss_risk, irreversible_state_change, security_critical]
 
@@ -35,7 +35,7 @@ workers:
     responsibilities: [gameplay_systems, runtime_integration, performance, testing]
     required_capabilities: [coding, high_reasoning, tool_execution, testing]
     preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
-    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    fallbacks: [gemini-3.7-flash, claude-sonnet-5]
     verification: [build_validation, runtime_tests, regression_review]
     escalation: [platform_contract_change, destructive_migration]
 
@@ -45,7 +45,7 @@ workers:
     responsibilities: [terminal_interface_implementation, interaction_behavior, accessibility, testing]
     required_capabilities: [coding, high_reasoning, tool_execution, testing]
     preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
-    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    fallbacks: [gemini-3.7-flash, claude-sonnet-5]
     verification: [build_validation, interaction_tests, accessibility_review]
     escalation: [security_sensitive_terminal_action, destructive_command_path]
 
@@ -55,7 +55,7 @@ workers:
     responsibilities: [xr_architecture, device_integration, interaction_implementation, testing]
     required_capabilities: [coding, high_reasoning, tool_execution, testing]
     preferred_implementations: [gpt-5.6-terra, gpt-5.6-sol, claude-sonnet-5]
-    fallbacks: [gemini-3.6-flash, claude-sonnet-5]
+    fallbacks: [gemini-3.7-flash, claude-sonnet-5]
     verification: [device_or_emulator_tests, interaction_validation, regression_review]
     escalation: [safety_sensitive_interaction, privacy_sensitive_sensor_use]
 
@@ -64,8 +64,8 @@ workers:
     owning_team: planning
     responsibilities: [brand_system_planning, design_direction, consistency, handoff]
     required_capabilities: [planning, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [brief_alignment, consistency_review, independent_review]
     escalation: [regulated_claim, trademark_or_legal_conflict]
 
@@ -74,8 +74,8 @@ workers:
     owning_team: planning
     responsibilities: [market_strategy, channel_planning, dependency_analysis, measurement_plan]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [source_review, assumption_review, independent_review]
     escalation: [regulated_market, tax_or_legal_dependency]
 
@@ -84,8 +84,8 @@ workers:
     owning_team: planning
     responsibilities: [customer_outcome_planning, adoption_strategy, escalation_design, measurement]
     required_capabilities: [planning, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [customer_context_review, metric_trace, independent_review]
     escalation: [contractual_commitment, regulated_customer_data]
 
@@ -94,8 +94,8 @@ workers:
     owning_team: planning
     responsibilities: [learning_objectives, instructional_design, assessment_design, evaluation]
     required_capabilities: [planning, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [objective_alignment, assessment_review, independent_review]
     escalation: [regulated_training, safety_critical_instruction]
 
@@ -104,8 +104,8 @@ workers:
     owning_team: planning
     responsibilities: [search_strategy, targeting, measurement, optimization_plan]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [platform_policy_review, measurement_review, independent_review]
     escalation: [regulated_advertising, material_budget_change]
 
@@ -114,8 +114,8 @@ workers:
     owning_team: planning
     responsibilities: [social_ad_strategy, audience_planning, measurement, optimization_plan]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [platform_policy_review, measurement_review, independent_review]
     escalation: [regulated_advertising, material_budget_change]
 
@@ -124,8 +124,8 @@ workers:
     owning_team: planning
     responsibilities: [product_strategy, prioritization, requirements, outcome_definition]
     required_capabilities: [planning, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [requirement_trace, tradeoff_review, independent_review]
     escalation: [irreversible_product_commitment, regulated_product_behavior]
 
@@ -134,8 +134,8 @@ workers:
     owning_team: planning
     responsibilities: [media_strategy, inventory_strategy, targeting, measurement]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [platform_policy_review, measurement_review, independent_review]
     escalation: [regulated_advertising, material_budget_change]
 
@@ -144,8 +144,8 @@ workers:
     owning_team: planning
     responsibilities: [regional_strategy, localization, channel_planning, measurement]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [local_source_review, applicability_review, independent_review]
     escalation: [regulatory_uncertainty, unsupported_local_claim]
 
@@ -154,8 +154,8 @@ workers:
     owning_team: planning
     responsibilities: [enablement_strategy, coaching_design, asset_planning, measurement]
     required_capabilities: [planning, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [objective_alignment, evidence_review, independent_review]
     escalation: [regulated_claim, contractual_commitment]
 
@@ -164,8 +164,8 @@ workers:
     owning_team: planning
     responsibilities: [sales_strategy, segmentation, coverage_planning, measurement]
     required_capabilities: [planning, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [assumption_review, metric_trace, independent_review]
     escalation: [material_commercial_commitment, regulated_market]
 
@@ -174,8 +174,8 @@ workers:
     owning_team: planning
     responsibilities: [social_strategy, content_planning, channel_governance, measurement]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [platform_policy_review, brand_review, independent_review]
     escalation: [regulated_claim, reputational_crisis]
 
@@ -184,8 +184,8 @@ workers:
     owning_team: planning
     responsibilities: [solution_design, requirement_mapping, integration_planning, validation]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [requirement_trace, feasibility_review, independent_review]
     escalation: [unsupported_product_commitment, security_or_compliance_dependency]
 
@@ -194,8 +194,8 @@ workers:
     owning_team: planning
     responsibilities: [supply_chain_strategy, dependency_mapping, resilience, measurement]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [dependency_review, evidence_review, independent_review]
     escalation: [critical_supplier_dependency, regulatory_or_trade_constraint]
 
@@ -204,8 +204,8 @@ workers:
     owning_team: planning
     responsibilities: [prompt_system_design, media_workflow_planning, tool_constraint_review, quality_control]
     required_capabilities: [planning, high_reasoning, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.6-flash]
-    fallbacks: [gpt-5.6-sol, gemini-3.6-flash]
+    preferred_implementations: [claude-sonnet-5, gpt-5.6-sol, gemini-3.7-flash]
+    fallbacks: [gpt-5.6-sol, gemini-3.7-flash]
     verification: [tool_freshness_check, output_review, independent_review]
     escalation: [rights_or_identity_risk, unsupported_tool_claim]
 
@@ -214,8 +214,8 @@ workers:
     owning_team: research
     responsibilities: [content_research, synthesis, drafting, evidence_trace]
     required_capabilities: [research, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
-    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    preferred_implementations: [claude-sonnet-5, gemini-3.7-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.7-flash, gpt-5.6-sol]
     verification: [source_review, factual_review, independent_review]
     escalation: [regulated_claim, unsupported_material_fact]
 
@@ -224,8 +224,8 @@ workers:
     owning_team: research
     responsibilities: [financial_research, quantitative_analysis, evidence_synthesis, uncertainty]
     required_capabilities: [research, source_grounding, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
-    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    preferred_implementations: [claude-sonnet-5, gemini-3.7-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.7-flash, gpt-5.6-sol]
     verification: [source_review, calculation_review, independent_review]
     escalation: [investment_or_transaction_authority, unsupported_financial_claim]
 
@@ -234,8 +234,8 @@ workers:
     owning_team: research
     responsibilities: [knowledge_structure, provenance, retrieval_design, synthesis]
     required_capabilities: [research, source_grounding, structured_output]
-    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
-    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    preferred_implementations: [claude-sonnet-5, gemini-3.7-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.7-flash, gpt-5.6-sol]
     verification: [source_trace, structure_review, independent_review]
     escalation: [conflicting_authoritative_sources, sensitive_information_scope]
 
@@ -244,8 +244,8 @@ workers:
     owning_team: research
     responsibilities: [source_discovery, source_validation, synthesis, uncertainty]
     required_capabilities: [research, source_grounding, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
-    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    preferred_implementations: [claude-sonnet-5, gemini-3.7-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.7-flash, gpt-5.6-sol]
     verification: [source_trace, contradiction_review, independent_review]
     escalation: [privacy_or_safety_risk, unsupported_identity_claim]
 
@@ -254,8 +254,8 @@ workers:
     owning_team: research
     responsibilities: [market_research, property_evidence, applicability, synthesis]
     required_capabilities: [research, source_grounding, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
-    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    preferred_implementations: [claude-sonnet-5, gemini-3.7-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.7-flash, gpt-5.6-sol]
     verification: [source_review, jurisdiction_review, independent_review]
     escalation: [legal_or_financial_advice_boundary, material_transaction_claim]
 
@@ -264,8 +264,8 @@ workers:
     owning_team: research
     responsibilities: [revenue_analysis, forecasting, driver_analysis, evidence_synthesis]
     required_capabilities: [research, high_reasoning, structured_output]
-    preferred_implementations: [claude-sonnet-5, gemini-3.6-flash, gpt-5.6-sol]
-    fallbacks: [gemini-3.6-flash, gpt-5.6-sol]
+    preferred_implementations: [claude-sonnet-5, gemini-3.7-flash, gpt-5.6-sol]
+    fallbacks: [gemini-3.7-flash, gpt-5.6-sol]
     verification: [calculation_review, assumption_review, independent_review]
     escalation: [material_financial_decision, unsupported_forecast]
 
@@ -274,8 +274,8 @@ workers:
     owning_team: review
     responsibilities: [legal_operations_review, applicability, evidence_assessment, escalation]
     required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [primary_authority_review, independent_review, qualified_human_review]
     escalation: [consequential_legal_conclusion, conflicting_authority]
 
@@ -284,8 +284,8 @@ workers:
     owning_team: review
     responsibilities: [lending_review, regulatory_applicability, evidence_assessment, escalation]
     required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [primary_authority_review, independent_review, qualified_human_review]
     escalation: [consequential_credit_decision, conflicting_authority]
 
@@ -294,8 +294,8 @@ workers:
     owning_team: review
     responsibilities: [malware_analysis, behavior_review, evidence_assessment, defensive_guidance]
     required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [artifact_review, independent_security_review, scope_check]
     escalation: [active_intrusion, destructive_or_offensive_action]
 
@@ -304,8 +304,8 @@ workers:
     owning_team: review
     responsibilities: [threat_analysis, abuse_case_review, control_challenge, remediation_review]
     required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [authorization_check, independent_security_review, evidence_trace]
     escalation: [critical_vulnerability, active_testing_request, production_access]
 
@@ -314,8 +314,8 @@ workers:
     owning_team: review
     responsibilities: [seo_review, source_validation, claim_review, measurement_review]
     required_capabilities: [semantic_review, evidence_verification, source_grounding, structured_output]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [current_source_review, claim_review, independent_review]
     escalation: [unsupported_platform_claim, regulated_content]
 
@@ -324,8 +324,8 @@ workers:
     owning_team: review
     responsibilities: [tax_review, jurisdiction, applicability, evidence_assessment]
     required_capabilities: [semantic_review, adversarial_review, evidence_verification, source_grounding]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [primary_authority_review, independent_review, qualified_human_review]
     escalation: [consequential_tax_conclusion, conflicting_authority]
 
@@ -334,8 +334,8 @@ workers:
     owning_team: review
     responsibilities: [ux_review, accessibility_review, interaction_review, evidence_assessment]
     required_capabilities: [semantic_review, adversarial_review, evidence_verification, structured_output]
-    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-sol, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [requirement_trace, accessibility_review, independent_review]
     escalation: [safety_critical_interface, regulated_accessibility_requirement]
 
@@ -344,7 +344,7 @@ workers:
     owning_team: verification
     responsibilities: [documentation_validation, source_checking, technical_accuracy, acceptance_trace]
     required_capabilities: [evidence_verification, source_grounding, structured_output]
-    preferred_implementations: [gpt-5.6-terra, claude-sonnet-5, gemini-3.6-flash]
-    fallbacks: [claude-sonnet-5, gemini-3.6-flash]
+    preferred_implementations: [gpt-5.6-terra, claude-sonnet-5, gemini-3.7-flash]
+    fallbacks: [claude-sonnet-5, gemini-3.7-flash]
     verification: [source_check, technical_review, acceptance_criteria_trace]
     escalation: [unsupported_technical_claim, conflicting_primary_sources]
