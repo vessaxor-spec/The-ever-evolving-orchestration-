@@ -20,16 +20,42 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - group: runtime-dispatch
-            command: pytest -q tests/test_runtime_dispatch_binding.py
-          - group: specialist-model
-            command: pytest -q tests/test_specialist_model_routing.py
-          - group: provider-fallback
-            command: pytest -q tests/test_provider_fallback_policy.py
-          - group: reference-router
-            command: pytest -q tests/test_reference_router.py
-          - group: remainder
-            command: pytest -q --ignore=tests/test_runtime_dispatch_binding.py --ignore=tests/test_specialist_model_routing.py --ignore=tests/test_provider_fallback_policy.py --ignore=tests/test_reference_router.py
+          - group: fallback-provider-block
+            node: tests/test_provider_fallback_policy.py::test_provider_scoped_blocking_moves_dispatch_across_provider_boundary
+          - group: runtime-injected-choice
+            node: tests/test_runtime_dispatch_binding.py::test_dispatch_uses_injected_runtime_selector_instead_of_static_first_match
+          - group: runtime-deny-wins
+            node: tests/test_runtime_dispatch_binding.py::test_blocked_provider_remains_deny_wins_even_when_injected_selector_prefers_it
+          - group: runtime-three-roles
+            node: tests/test_runtime_dispatch_binding.py::test_fallback_and_verifier_are_reselected_through_runtime_lifecycle
+          - group: runtime-no-legacy
+            node: tests/test_runtime_dispatch_binding.py::test_dispatch_does_not_call_legacy_direct_resolvers
+          - group: runtime-pin
+            node: tests/test_runtime_dispatch_binding.py::test_scoped_pin_can_change_dispatch_only_within_runtime_authority
+          - group: runtime-strict-calibration
+            node: tests/test_runtime_dispatch_binding.py::test_compatibility_selector_fails_closed_when_empirical_calibration_is_required
+          - group: runtime-specialist-injection
+            node: tests/test_runtime_dispatch_binding.py::test_specialist_preferences_do_not_overwrite_injected_runtime_selection
+          - group: runtime-reasoning-binding
+            node: tests/test_runtime_dispatch_binding.py::test_specialist_reasoning_is_bound_before_calibration_and_preserved_in_dispatch
+          - group: runtime-compat-truth
+            node: tests/test_runtime_dispatch_binding.py::test_configured_bridge_is_explicitly_user_declared_and_not_empirical_calibration
+          - group: runtime-explanation
+            node: tests/test_runtime_dispatch_binding.py::test_runtime_binding_explanation_replaces_static_first_match_claim
+          - group: specialist-security
+            node: tests/test_specialist_model_routing.py::test_security_specialist_uses_opus_xhigh_with_sol_fallback_and_gemini_verifier
+          - group: specialist-orchestration-evaluator
+            node: tests/test_specialist_model_routing.py::test_orchestration_evaluator_uses_sol_xhigh_with_sonnet_fallback_and_gemini_verifier
+          - group: specialist-backend
+            node: tests/test_specialist_model_routing.py::test_backend_specialist_uses_terra_medium_with_flash_fallback_and_sonnet_verifier
+          - group: specialist-researcher
+            node: tests/test_specialist_model_routing.py::test_research_specialist_uses_gemini_pro_with_sonnet_fallback_and_sol_verifier
+          - group: specialist-blocked-primary
+            node: tests/test_specialist_model_routing.py::test_blocked_specialist_primary_can_promote_cross_provider_fallback
+          - group: specialist-non-specialist
+            node: tests/test_specialist_model_routing.py::test_non_specialist_route_preserves_existing_model_and_exposes_existing_reasoning
+          - group: specialist-metadata-stability
+            node: tests/test_specialist_model_routing.py::test_specialist_model_refinement_never_changes_team_worker_or_specialist_source
     steps:
       - name: Check out repository
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
@@ -44,5 +70,5 @@ jobs:
           python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
           python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
           python -m pip install --disable-pip-version-check --no-build-isolation --no-deps -e .
-      - name: Run isolated tests
-        run: ${{ matrix.command }}
+      - name: Run isolated test
+        run: pytest -q ${{ matrix.node }}
