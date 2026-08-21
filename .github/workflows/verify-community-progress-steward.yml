@@ -1,0 +1,76 @@
+name: Verify Community Progress Steward
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/verify-community-progress-steward.yml"
+
+permissions:
+  contents: read
+  discussions: read
+
+jobs:
+  verify:
+    name: Verify Discussion 191 project-status reply
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        # actions/checkout v6.1.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Verify current NOW digest is live in Discussion 191
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          digest="$(python - <<'PY'
+          import hashlib
+          import re
+          from pathlib import Path
+
+          tracker = Path("docs/stewardship/progress-tracker.md").read_text(encoding="utf-8")
+          match = re.search(
+              r"^## NOW\s*$\n(?P<body>.*?)(?=^##\s|\Z)",
+              tracker,
+              flags=re.MULTILINE | re.DOTALL,
+          )
+          if not match:
+              raise SystemExit("Canonical Progress Tracker has no parseable ## NOW section")
+          now_section = match.group("body").strip()
+          print(hashlib.sha256(now_section.encode("utf-8")).hexdigest())
+          PY
+          )"
+
+          marker="<!-- teo-community-progress-sha256:${digest} -->"
+          owner="${REPOSITORY%%/*}"
+          repo="${REPOSITORY#*/}"
+          query='query($owner:String!,$repo:String!,$number:Int!){repository(owner:$owner,name:$repo){discussion(number:$number){comments(last:100){nodes{body url author{login}}}}}}'
+          state="$(gh api graphql -f query="$query" -F owner="$owner" -F repo="$repo" -F number=191)"
+          match="$(jq -c --arg marker "$marker" '.data.repository.discussion.comments.nodes[]? | select(.body | contains($marker))' <<<"$state" | head -n1)"
+
+          if [[ -z "$match" ]]; then
+            echo "No Discussion #191 comment represents the current canonical NOW digest"
+            exit 1
+          fi
+
+          body="$(jq -r '.body' <<<"$match")"
+          for required in \
+            "What TEO is working on now" \
+            "Current focus:" \
+            "Feedback we would value:" \
+            "Canonical Progress Tracker" \
+            "Critical feedback and contrary evidence are especially useful"; do
+            if [[ "$body" != *"$required"* ]]; then
+              echo "Required community-update content missing: $required"
+              exit 1
+            fi
+          done
+
+          echo "VERIFIED_URL=$(jq -r '.url' <<<"$match")"
+          echo "VERIFIED_AUTHOR=$(jq -r '.author.login' <<<"$match")"
+          echo "VERIFIED_DIGEST=$digest"
