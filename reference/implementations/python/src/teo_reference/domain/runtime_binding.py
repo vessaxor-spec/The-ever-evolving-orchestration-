@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from math import isfinite
 from dataclasses import dataclass, field
+from math import isfinite
 from typing import Literal, Mapping, Sequence
 
 InventoryState = Literal[
@@ -202,84 +202,13 @@ class EligibilityEvidence:
     runtime_constraints_satisfied: bool | None = None
 
 
-@dataclass(frozen=True, slots=True)
-class EligibleImplementation:
-    discovered: DiscoveredImplementation
-    evidence: EligibilityEvidence
-    state: Literal["eligible"] = "eligible"
-
-    @property
-    def implementation(self) -> RuntimeImplementation:
-        return self.discovered.implementation
-
-
-@dataclass(frozen=True, slots=True)
-class EligibilityDecision:
-    eligible: EligibleImplementation | None
-    reasons: tuple[str, ...]
-
-    @property
-    def permitted(self) -> bool:
-        return self.eligible is not None
-
-
-@dataclass(frozen=True, slots=True)
-class CalibrationRecord:
-    configuration_fingerprint: str
-    status: CalibrationStatus
-    evidence_ref: str
-    calibrated_at: str | None = None
-    valid_until: str | None = None
-
-    def __post_init__(self) -> None:
-        _require_text(self.configuration_fingerprint, "configuration_fingerprint")
-        _require_text(self.evidence_ref, "evidence_ref")
-        if self.status not in {"passed", "not_required"}:
-            raise RuntimeBindingError(
-                f"unsupported calibration status: {self.status}"
-            )
-
-
-@dataclass(frozen=True, slots=True)
-class CalibratedImplementation:
-    eligible: EligibleImplementation
-    calibration: CalibrationRecord
-    state: Literal["calibrated"] = "calibrated"
-
-    @property
-    def implementation(self) -> RuntimeImplementation:
-        return self.eligible.implementation
-
-
-@dataclass(frozen=True, slots=True)
-class SelectedImplementation:
-    calibrated: CalibratedImplementation
-    fitness_score: float
-    selection_reason: str
-    state: Literal["selected"] = "selected"
-
-    @property
-    def implementation(self) -> RuntimeImplementation:
-        return self.calibrated.implementation
-
-
-def discover(implementation: RuntimeImplementation) -> DiscoveredImplementation:
-    """Record inventory presence without creating eligibility or execution authority."""
-
-    return DiscoveredImplementation(implementation=implementation)
-
-
-def evaluate_eligibility(
+def _eligibility_reasons(
     discovered: DiscoveredImplementation,
     *,
     authority: AuthorityScope,
     requirements: EligibilityRequirements,
     evidence: EligibilityEvidence,
-) -> EligibilityDecision:
-    if not isinstance(discovered, DiscoveredImplementation):
-        raise RuntimeBindingError(
-            "eligibility evaluation requires a discovered implementation"
-        )
+) -> tuple[str, ...]:
     implementation = discovered.implementation
     reasons: list[str] = []
 
@@ -323,10 +252,142 @@ def evaluate_eligibility(
         elif value is False:
             reasons.append(f"mandatory eligibility constraint failed: {name}")
 
+    return tuple(reasons)
+
+
+@dataclass(frozen=True, slots=True)
+class EligibleImplementation:
+    discovered: DiscoveredImplementation
+    authority: AuthorityScope
+    requirements: EligibilityRequirements
+    evidence: EligibilityEvidence
+    state: Literal["eligible"] = "eligible"
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.discovered, DiscoveredImplementation):
+            raise RuntimeBindingError(
+                "eligible state requires a discovered implementation"
+            )
+        reasons = _eligibility_reasons(
+            self.discovered,
+            authority=self.authority,
+            requirements=self.requirements,
+            evidence=self.evidence,
+        )
+        if reasons:
+            raise RuntimeBindingError(
+                "eligible state cannot be constructed: " + "; ".join(reasons)
+            )
+
+    @property
+    def implementation(self) -> RuntimeImplementation:
+        return self.discovered.implementation
+
+
+@dataclass(frozen=True, slots=True)
+class EligibilityDecision:
+    eligible: EligibleImplementation | None
+    reasons: tuple[str, ...]
+
+    @property
+    def permitted(self) -> bool:
+        return self.eligible is not None
+
+
+@dataclass(frozen=True, slots=True)
+class CalibrationRecord:
+    configuration_fingerprint: str
+    status: CalibrationStatus
+    evidence_ref: str
+    calibrated_at: str | None = None
+    valid_until: str | None = None
+
+    def __post_init__(self) -> None:
+        _require_text(self.configuration_fingerprint, "configuration_fingerprint")
+        _require_text(self.evidence_ref, "evidence_ref")
+        if self.status not in {"passed", "not_required"}:
+            raise RuntimeBindingError(
+                f"unsupported calibration status: {self.status}"
+            )
+
+
+@dataclass(frozen=True, slots=True)
+class CalibratedImplementation:
+    eligible: EligibleImplementation
+    calibration: CalibrationRecord
+    state: Literal["calibrated"] = "calibrated"
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.eligible, EligibleImplementation):
+            raise RuntimeBindingError(
+                "calibrated state requires an eligible implementation"
+            )
+        expected = self.eligible.implementation.configuration.fingerprint
+        if self.calibration.configuration_fingerprint != expected:
+            raise RuntimeBindingError(
+                "calibration fingerprint does not match the eligible execution configuration"
+            )
+
+    @property
+    def implementation(self) -> RuntimeImplementation:
+        return self.eligible.implementation
+
+
+@dataclass(frozen=True, slots=True)
+class SelectedImplementation:
+    calibrated: CalibratedImplementation
+    fitness_score: float
+    selection_reason: str
+    state: Literal["selected"] = "selected"
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.calibrated, CalibratedImplementation):
+            raise RuntimeBindingError(
+                "selected state requires a calibrated implementation"
+            )
+        if self.calibrated.implementation.inventory_state == "unavailable":
+            raise RuntimeBindingError("unavailable implementation cannot be selected")
+        if not isfinite(float(self.fitness_score)):
+            raise RuntimeBindingError("selected fitness_score must be finite")
+        _require_text(self.selection_reason, "selection_reason")
+
+    @property
+    def implementation(self) -> RuntimeImplementation:
+        return self.calibrated.implementation
+
+
+def discover(implementation: RuntimeImplementation) -> DiscoveredImplementation:
+    """Record inventory presence without creating eligibility or execution authority."""
+
+    return DiscoveredImplementation(implementation=implementation)
+
+
+def evaluate_eligibility(
+    discovered: DiscoveredImplementation,
+    *,
+    authority: AuthorityScope,
+    requirements: EligibilityRequirements,
+    evidence: EligibilityEvidence,
+) -> EligibilityDecision:
+    if not isinstance(discovered, DiscoveredImplementation):
+        raise RuntimeBindingError(
+            "eligibility evaluation requires a discovered implementation"
+        )
+    reasons = _eligibility_reasons(
+        discovered,
+        authority=authority,
+        requirements=requirements,
+        evidence=evidence,
+    )
     if reasons:
-        return EligibilityDecision(eligible=None, reasons=tuple(reasons))
+        return EligibilityDecision(eligible=None, reasons=reasons)
     return EligibilityDecision(
-        eligible=EligibleImplementation(discovered=discovered, evidence=evidence),
+        eligible=EligibleImplementation(
+            discovered=discovered,
+            authority=authority,
+            requirements=requirements,
+            evidence=evidence,
+        ),
         reasons=(),
     )
 
@@ -339,11 +400,6 @@ def apply_calibration(
 
     if not isinstance(eligible, EligibleImplementation):
         raise RuntimeBindingError("calibration requires an eligible implementation")
-    expected = eligible.implementation.configuration.fingerprint
-    if calibration.configuration_fingerprint != expected:
-        raise RuntimeBindingError(
-            "calibration fingerprint does not match the eligible execution configuration"
-        )
     return CalibratedImplementation(eligible=eligible, calibration=calibration)
 
 
