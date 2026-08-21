@@ -25,6 +25,7 @@ All notable public changes to TEO are recorded here.
 - non-normative Execution Environment & Recovery Contract research for isolated execution, checkpoint binding, rollback, recovery verification, and simulation-to-promotion boundaries
 - optional route-backed `FinalOutcome.execution_provenance`, projected only from revalidated canonical Route-Outcome Evidence and carrying no routing or execution authority
 - non-normative Task Intent & Action Authority Contract research for preserving assessment, preparation, execution, verification, delegated, and side-effect authority ceilings
+- behavior-preserving Python clean-architecture migration record under `docs/architecture/`, with mechanically checked dependency direction and explicit compatibility/rollback requirements
 
 ### Changed
 
@@ -35,14 +36,17 @@ All notable public changes to TEO are recorded here.
 - direct current routing and worker authority now reports `active`, while cryptographically pinned staged workers preserve their original artifact status and receive current authority through the activation manifest
 - current development builds identify as `1.0.1.dev0` so post-release `main` does not claim the exact immutable `1.0.0` package identity
 - the Gemini 3.1 Flash-Lite compatibility note now reflects completed Gemini 3.5 Flash-Lite promotion and current provider deprecation guidance
-- bounded `high_volume_simple` execution now preserves the Flash-Lite -> Haiku recovery topology with fresh provider-diverse verifier rotation
-- the shared documentation worker no longer receives a global runtime implementation-order override; staged documentation routing preserves Sonnet 5 primary, GPT-5.6 Sol fallback, GPT-5.6 Terra primary verification, and Gemini 3.6 Flash fresh verification after recovery redispatch
+- bounded `high_volume_simple` execution has since advanced to Gemini 3.7 Flash primary with Claude Haiku 4.5 cross-provider recovery and fresh provider-diverse verifier rotation
+- the shared documentation worker no longer receives a global runtime implementation-order override; staged documentation routing preserves Sonnet 5 primary, GPT-5.6 Sol fallback, GPT-5.6 Terra primary verification, and Gemini 3.7 Flash fresh verification after recovery redispatch
 - control-integrity tests now cover exact qualified-human chronology/expiry boundaries and effective-risk preservation across recovery preparation
 - current stewardship documentation distinguishes accepted substantive runtime baselines, later research/evidence validations, and non-normative future research without allowing documentation to create authority
 - the former 30-day elapsed-time regulated-evidence wait is replaced by executable stability qualification while the seven-day authority-resolution cadence remains mandatory continuous drift monitoring and explicit next-batch approval remains separate
+- clean-architecture Tranche 1 moved deterministic task classification and monotonic risk assessment behind the pure `teo_reference.domain.routing` boundary while preserving the engine compatibility surface
+- clean-architecture Tranche 2 moved finalization behind `FinalizationService` and `ArtifactIntegrityPort`, retained the existing local-filesystem behavior behind an adapter, preserved `OrchestrationEngine.finalize()`, `RoutingError`, `artifact_root`, and exact artifact-binding fail-closed semantics, and left routing/provider/live-scope behavior unchanged
 
 ### Validation
 
+- clean-architecture Tranche 2 passed Reference Implementation CI #869 with **1,008 tests**, **574 tracked-file layout checks**, **42 parsed JSON Schemas**, regulated-specialist evidence validation, zero linked-config issues, and the provider-diverse artifact-bound end-to-end lifecycle; the validated tree is identical to merged `main@467c706d6f1077371928e3fcbe3f32f5ec51fb19`
 - reconstructed Host Integration Protocol 0.1 candidate passed clean CI #806 with 993 tests, 558 tracked-file layout checks, 42 parsed JSON Schemas, regulated-specialist evidence validation, zero linked-config issues, and provider-diverse end-to-end verification; targeted mutation run `32066827411` killed 5 of 5 sequencing/type-control mutants without widening live or production authority
 - repository layout tests reject undeclared root files, unscoped research, routing-policy drift, nested specialist identities, invalid capsule naming, regression to retired R2 paths, retired R3 documentation locations, retired R4 routing locations, and retired R5 worker and implementation locations
 - active-authority integrity tests distinguish direct `active` authority from byte-preserved staged worker definitions activated through the principal-engineering manifest
@@ -57,6 +61,8 @@ All notable public changes to TEO are recorded here.
 Phases 1 through 5 and the functional `v1.0.0` reference release are complete. Current `main` is the compatible `1.0.1.dev0` development line.
 
 The canonical `NOW` workstream is evidence-governed live execution expansion at 65%. `documentation` remains a staged evaluation candidate with `activation_authorized: false`; provider-backed controlled replay is the next empirical live-expansion gate and is intentionally deferred until legitimate provider access is supplied through an appropriate execution boundary.
+
+A parallel behavior-preserving Python clean-architecture migration is in progress under Issue #197. **Tranches 1 and 2 of 7 are merged; Tranche 3 (dispatch application service and selectors/resolvers) is next.** This maintenance track does not displace the canonical live-expansion priority or widen routing, risk, provider, verification, evidence, or live authority.
 
 The bounded low or medium risk `high_volume_simple` canary remains the only accepted live execution scope. High and critical live execution remain unauthorized.
 
