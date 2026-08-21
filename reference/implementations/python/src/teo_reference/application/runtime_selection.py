@@ -4,18 +4,8 @@ from dataclasses import dataclass
 from math import isfinite
 from typing import Sequence
 
-from ..domain.runtime_binding import (
-    AuthorityScope,
-    CalibratedImplementation,
-    RuntimeImplementation,
-    select_best,
-)
-from ..domain.runtime_selection import (
-    RuntimeSelectionDecision,
-    RuntimeSelectionError,
-    RuntimeSelectionPin,
-    RuntimeSelectionRequest,
-)
+from ..domain.runtime_binding import AuthorityScope, CalibratedImplementation, RuntimeImplementation, select_best
+from ..domain.runtime_selection import RuntimeSelectionDecision, RuntimeSelectionError, RuntimeSelectionPin, RuntimeSelectionRequest
 from ..ports.runtime_calibration import RuntimeCalibrationRecordPort
 from ..ports.runtime_eligibility import RuntimeEligibilityEvidencePort
 from ..ports.runtime_inventory import RuntimeInventoryPort
@@ -33,14 +23,7 @@ class _SnapshotInventory:
 
 
 class RuntimeSelectionService:
-    """Select best fit only after discovery, eligibility, and calibration.
-
-    The service snapshots inventory once, derives the effective authority set only
-    from explicit request policy, enforces exact requested execution controls,
-    evaluates eligibility and calibration, applies exact scoped pins without widening
-    authority, and then ranks the remaining calibrated candidates through a
-    provider-neutral fitness port.
-    """
+    """Select best fit only after discovery, eligibility, and calibration."""
 
     def __init__(
         self,
@@ -57,21 +40,12 @@ class RuntimeSelectionService:
         self._fitness = fitness
         self._pins = tuple(pins)
         if any(not isinstance(pin, RuntimeSelectionPin) for pin in self._pins):
-            raise RuntimeSelectionError(
-                "runtime selection pins must be RuntimeSelectionPin values"
-            )
+            raise RuntimeSelectionError("runtime selection pins must be RuntimeSelectionPin values")
 
     @staticmethod
-    def _authorized(
-        implementation: RuntimeImplementation,
-        request: RuntimeSelectionRequest,
-    ) -> bool:
+    def _authorized(implementation: RuntimeImplementation, request: RuntimeSelectionRequest) -> bool:
         configuration = implementation.configuration
-        if (
-            request.authorized_implementation_ids
-            and implementation.implementation_id
-            not in request.authorized_implementation_ids
-        ):
+        if request.authorized_implementation_ids and implementation.implementation_id not in request.authorized_implementation_ids:
             return False
         if request.authorized_models and configuration.model not in request.authorized_models:
             return False
@@ -79,16 +53,13 @@ class RuntimeSelectionService:
             return False
         if configuration.model in request.excluded_models:
             return False
-        if (
-            configuration.provider_family
-            and configuration.provider_family in request.excluded_providers
-        ):
+        if configuration.provider_family and configuration.provider_family in request.excluded_providers:
             return False
-        if request.required_reasoning_controls:
-            actual = dict(configuration.reasoning_controls)
-            for key, expected in request.required_reasoning_controls:
-                if actual.get(key) != expected:
-                    return False
+        required_effort = request.reasoning_effort_for(configuration.model)
+        if required_effort is not None:
+            actual_effort = dict(configuration.reasoning_controls).get("effort")
+            if actual_effort != required_effort:
+                return False
         return True
 
     def _snapshot(self) -> tuple[RuntimeImplementation, ...]:
@@ -96,14 +67,11 @@ class RuntimeSelectionService:
         by_id: dict[str, RuntimeImplementation] = {}
         for implementation in raw:
             if not isinstance(implementation, RuntimeImplementation):
-                raise RuntimeSelectionError(
-                    "runtime inventory returned a non-RuntimeImplementation value"
-                )
+                raise RuntimeSelectionError("runtime inventory returned a non-RuntimeImplementation value")
             implementation_id = implementation.implementation_id
             if implementation_id in by_id:
                 raise RuntimeSelectionError(
-                    "runtime selection requires unique implementation ids: "
-                    f"{implementation_id}"
+                    "runtime selection requires unique implementation ids: " + implementation_id
                 )
             by_id[implementation_id] = implementation
         return tuple(by_id[key] for key in sorted(by_id))
@@ -115,9 +83,7 @@ class RuntimeSelectionService:
             if pin.active_for(
                 request.scope,
                 evaluated_at=request.evaluated_at,
-                satisfied_removal_conditions=(
-                    request.satisfied_pin_removal_conditions
-                ),
+                satisfied_removal_conditions=request.satisfied_pin_removal_conditions,
             )
         )
         if len(active) > 1:
@@ -129,29 +95,19 @@ class RuntimeSelectionService:
 
     def select(self, request: RuntimeSelectionRequest) -> RuntimeSelectionDecision:
         if not isinstance(request, RuntimeSelectionRequest):
-            raise RuntimeSelectionError(
-                "runtime selection requires a RuntimeSelectionRequest"
-            )
+            raise RuntimeSelectionError("runtime selection requires a RuntimeSelectionRequest")
 
         inventory = self._snapshot()
         authorized_ids = frozenset(
-            item.implementation_id
-            for item in inventory
-            if self._authorized(item, request)
+            item.implementation_id for item in inventory if self._authorized(item, request)
         )
         authority = AuthorityScope(authorized_ids)
 
         eligibility = RuntimeEligibilityService(
-            _SnapshotInventory(inventory),
-            self._eligibility_evidence,
-        ).evaluate(
-            authority=authority,
-            requirements=request.eligibility_requirements,
-        )
+            _SnapshotInventory(inventory), self._eligibility_evidence
+        ).evaluate(authority=authority, requirements=request.eligibility_requirements)
         eligible_candidates = tuple(
-            item.decision.eligible
-            for item in eligibility.eligible
-            if item.decision.eligible is not None
+            item.decision.eligible for item in eligibility.eligible if item.decision.eligible is not None
         )
 
         calibration = RuntimeCalibrationService(self._calibration_records).evaluate(
@@ -160,9 +116,7 @@ class RuntimeSelectionService:
             evaluated_at=request.evaluated_at,
         )
         calibrated_candidates = tuple(
-            item.calibrated
-            for item in calibration.calibrated
-            if item.calibrated is not None
+            item.calibrated for item in calibration.calibrated if item.calibrated is not None
         )
 
         pin = self._active_pin(request)
@@ -171,15 +125,13 @@ class RuntimeSelectionService:
                 (
                     candidate
                     for candidate in calibrated_candidates
-                    if candidate.implementation.implementation_id
-                    == pin.implementation_id
+                    if candidate.implementation.implementation_id == pin.implementation_id
                 ),
                 None,
             )
             if target is None:
                 raise RuntimeSelectionError(
-                    f"runtime pin {pin.pin_id} target is not currently authorized, "
-                    "eligible, calibrated, and execution-config compatible"
+                    f"runtime pin {pin.pin_id} target is not currently authorized, eligible, calibrated, and execution-config compatible"
                 )
             selected = select_best(
                 [target],
@@ -201,12 +153,10 @@ class RuntimeSelectionService:
             for item in calibration.rejected:
                 reasons.extend(item.reasons)
             detail = "; ".join(dict.fromkeys(reasons)) or (
-                "no candidate satisfied authority, execution configuration, "
-                "eligibility, and calibration"
+                "no candidate satisfied authority, execution configuration, eligibility, and calibration"
             )
             raise RuntimeSelectionError(
-                "no authorized eligible calibrated runtime implementation is selectable: "
-                + detail
+                "no authorized eligible calibrated runtime implementation is selectable: " + detail
             )
 
         fitness_scores: dict[str, float] = {}
@@ -214,9 +164,7 @@ class RuntimeSelectionService:
             implementation_id = candidate.implementation.implementation_id
             score = float(self._fitness.score(candidate, request))
             if not isfinite(score):
-                raise RuntimeSelectionError(
-                    f"runtime fitness score must be finite: {implementation_id}"
-                )
+                raise RuntimeSelectionError(f"runtime fitness score must be finite: {implementation_id}")
             fitness_scores[implementation_id] = score
 
         selected = select_best(
