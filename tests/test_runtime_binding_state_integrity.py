@@ -5,6 +5,7 @@ import pytest
 from teo_reference.domain.runtime_binding import (
     AuthorityScope,
     CalibrationRecord,
+    CalibrationRequirements,
     CalibratedImplementation,
     EligibleImplementation,
     EligibilityEvidence,
@@ -12,6 +13,8 @@ from teo_reference.domain.runtime_binding import (
     ExecutionConfigurationIdentity,
     RuntimeBindingError,
     RuntimeImplementation,
+    SelectedImplementation,
+    apply_calibration,
     discover,
     evaluate_eligibility,
 )
@@ -40,6 +43,30 @@ def _evidence() -> EligibilityEvidence:
     )
 
 
+def _eligible() -> EligibleImplementation:
+    implementation = _implementation()
+    decision = evaluate_eligibility(
+        discover(implementation),
+        authority=AuthorityScope(frozenset({"impl-a"})),
+        requirements=EligibilityRequirements(
+            required_capabilities=frozenset({"coding"})
+        ),
+        evidence=_evidence(),
+    )
+    assert decision.eligible is not None
+    return decision.eligible
+
+
+def _fresh_record(eligible: EligibleImplementation) -> CalibrationRecord:
+    return CalibrationRecord(
+        configuration_fingerprint=eligible.implementation.configuration.fingerprint,
+        status="passed",
+        evidence_ref="benchmark://fresh",
+        calibrated_at="2026-08-21T11:00:00+00:00",
+        valid_until="2026-08-21T13:00:00+00:00",
+    )
+
+
 def test_eligible_state_constructor_cannot_bypass_authority() -> None:
     discovered = discover(_implementation())
 
@@ -58,27 +85,57 @@ def test_eligible_state_constructor_cannot_bypass_authority() -> None:
 
 
 def test_calibrated_state_constructor_cannot_bypass_configuration_binding() -> None:
-    implementation = _implementation()
-    decision = evaluate_eligibility(
-        discover(implementation),
-        authority=AuthorityScope(frozenset({"impl-a"})),
-        requirements=EligibilityRequirements(
-            required_capabilities=frozenset({"coding"})
-        ),
-        evidence=_evidence(),
-    )
-    assert decision.eligible is not None
-
+    eligible = _eligible()
     changed = _implementation(quantization="q4")
+
     with pytest.raises(
         RuntimeBindingError,
         match="calibration fingerprint does not match",
     ):
         CalibratedImplementation(
-            eligible=decision.eligible,
+            eligible=eligible,
             calibration=CalibrationRecord(
                 configuration_fingerprint=changed.configuration.fingerprint,
                 status="passed",
                 evidence_ref="benchmark://wrong-configuration",
+                calibrated_at="2026-08-21T11:00:00+00:00",
             ),
+            requirements=CalibrationRequirements(required=True),
+            evaluated_at="2026-08-21T12:00:00+00:00",
+        )
+
+
+def test_calibrated_state_constructor_cannot_bypass_staleness() -> None:
+    eligible = _eligible()
+
+    with pytest.raises(
+        RuntimeBindingError,
+        match="stale at evaluated_at",
+    ):
+        CalibratedImplementation(
+            eligible=eligible,
+            calibration=_fresh_record(eligible),
+            requirements=CalibrationRequirements(required=True),
+            evaluated_at="2026-08-21T13:00:00+00:00",
+        )
+
+
+def test_selected_state_constructor_rechecks_calibration_at_selection_time() -> None:
+    eligible = _eligible()
+    calibrated = apply_calibration(
+        eligible,
+        _fresh_record(eligible),
+        requirements=CalibrationRequirements(required=True),
+        evaluated_at="2026-08-21T12:00:00+00:00",
+    )
+
+    with pytest.raises(
+        RuntimeBindingError,
+        match="selected state cannot be constructed",
+    ):
+        SelectedImplementation(
+            calibrated=calibrated,
+            fitness_score=1.0,
+            selection_reason="would otherwise win",
+            evaluated_at="2026-08-21T13:00:00+00:00",
         )
