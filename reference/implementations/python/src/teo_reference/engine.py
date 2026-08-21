@@ -7,13 +7,9 @@ from uuid import uuid4
 
 from .artifact_integrity import ArtifactIntegrityError, revalidate_verified_artifact
 from .config import ConfigBundle
-from .domain.routing import (
-    RISK_PATTERNS,
-    TASK_PATTERNS,
-    RoutingError,
-    assess_risk,
-    classify_task,
-)
+from .domain.routing import RISK_PATTERNS as RISK_PATTERNS
+from .domain.routing import TASK_PATTERNS as TASK_PATTERNS
+from .domain.routing import RoutingPolicyError, assess_risk, classify_task
 from .schemas import (
     DispatchRecord,
     ExecutionResult,
@@ -107,6 +103,10 @@ CAPABILITY_FAMILY: tuple[tuple[set[str], str], ...] = (
     ({"synthesis", "technical_accuracy", "clear_writing"}, "general_reasoning"),
     ({"visual_reasoning", "visual_analysis"}, "multimodal"),
 )
+
+
+class RoutingError(RuntimeError):
+    pass
 
 
 def _unique(values: Iterable[str]) -> list[str]:
@@ -270,7 +270,10 @@ class OrchestrationEngine:
         )
 
     def _classify_task(self, task: TaskRequest) -> tuple[str, str]:
-        return classify_task(task, supported_task_types=self.config.team_routes)
+        try:
+            return classify_task(task, supported_task_types=self.config.team_routes)
+        except RoutingPolicyError as exc:
+            raise RoutingError(str(exc)) from None
 
     def _assess_risk(self, task: TaskRequest) -> tuple[str, str]:
         return assess_risk(task, risk_order=RISK_ORDER)
