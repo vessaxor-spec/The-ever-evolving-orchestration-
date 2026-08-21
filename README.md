@@ -122,6 +122,8 @@ TEO has crossed the functional-v1 boundary and is now in post-v1 stewardship and
 | Stable release | [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0), `reference_operational` |
 | Development line | `teo-reference-router==1.0.1.dev0` |
 | Repository architecture | R1 through R5 complete and CI-governed |
+| Python reference architecture | behavior-preserving clean-architecture migration in progress; Tranches 1 and 2 of 7 merged, Tranche 3 next |
+| Current development-tree validation | CI #869: 1,008 tests, 574 tracked-file layout checks, 42 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | Regulated specialist evidence | six-card pilot stability-qualified; seven-day authority monitoring remains active; expansion requires explicit next risk-tier batch approval |
@@ -130,6 +132,8 @@ TEO has crossed the functional-v1 boundary and is now in post-v1 stewardship and
 | Canonical current status | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
 
 The current reference system includes deterministic routing, risk controls, specialist bindings, capability checks, provider-diverse recovery, fresh-verifier rotation, guarded provider execution, content-free runtime telemetry, evidence-aware finalization, and qualified-human authority where policy requires it.
+
+The Python reference implementation is being refactored incrementally rather than through a bulk reorganization. PR #196 extracted deterministic classification/risk policy into a pure domain boundary; PR #198 extracted finalization behind an application service and artifact-integrity port while preserving the existing `OrchestrationEngine.finalize()` and `RoutingError` compatibility surface. The migration is tracked in [`docs/architecture/python-clean-architecture-migration.md`](docs/architecture/python-clean-architecture-migration.md) and does not alter live scope, routing policy, risk semantics, provider selection, or evidence authority.
 
 The bounded regulated-specialist evidence pilot has completed **2 of 2 formal refresh cycles** and the executable **stability qualification**. The qualification performed **five complete clean authority-resolution replays**, **three independent repeatability runs**, **15 of 15 governed fail-closed mutations**, a controlled authority-move path, and an external-network observation that resolved all seven declared authorities. The seven-day source-resolution cadence remains continuous drift monitoring, not an elapsed-time waiting gate. Qualification does not auto-authorize expansion; an explicit next risk-tier batch approval and separate reviewed change are still required.
 
@@ -151,7 +155,9 @@ The repository's current validation counts, evidence milestones, and exact resea
 
 TEO currently has **ten active organizational teams**, **84 workers**, **82 preserved specialist role cards**, and dedicated Mission Control workers for orchestration, operations, project delivery, and incident response. The Mission Control worker identities are `orchestration`, `operations`, `project_delivery`, and `incident_response`. The active specialist topology includes [`community/specialists/workforce-expansion-active.yaml`](community/specialists/workforce-expansion-active.yaml). Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** have completed their current declared milestones.
 
-The accepted substantive runtime-control baseline remains **Reference Implementation CI #514** with **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle. The documentation reconciliation baseline is **CI #602** with **802 automated tests** and **515 tracked-file layout checks**. The latest Host Integration research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks**. The regulated-evidence stability qualification was accepted with **967 automated tests**, **551 tracked-file layout checks**, **41 JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound reference lifecycle. These baselines prove their declared checks, not broader provider-backed production claims.
+The accepted substantive runtime-control baseline remains **Reference Implementation CI #514** with **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle. The documentation reconciliation baseline is **CI #602** with **802 automated tests** and **515 tracked-file layout checks**. The latest Host Integration research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks**. The regulated-evidence stability qualification was accepted with **967 automated tests**, **551 tracked-file layout checks**, **41 JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound reference lifecycle. These historical baselines prove their declared checks, not broader provider-backed production claims.
+
+The current development-tree validation is **Reference Implementation CI #869** with **1,008 automated tests**, **574 tracked-file layout checks**, **42 JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound end-to-end lifecycle. CI #869 validated the exact tree later squash-merged as `main@467c706d6f1077371928e3fcbe3f32f5ec51fb19`.
 
 The regulated pilot itself is now **stability-qualified**. Its current evidence consists of **five complete clean authority-resolution replays**, **three independent repeatability runs**, **15 of 15 governed fail-closed mutations**, a controlled authority move, and a GitHub-hosted external-network observation that resolved **7 of 7 declared authorities**. Continuous resolution remains on a **seven-day source-resolution cadence**, and any expansion still requires **explicit next risk-tier batch approval**.
 
@@ -173,6 +179,8 @@ Key research records include:
 Empirical trial 001 supports fresh-session, no-reminder **routing continuity** but not full end-to-end assimilation. The hardened validator therefore limits research simulation to `routing_continuity_only` unless authenticated selected-versus-observed executor and verifier identity plus digest binding are proven. The earlier **red-canary CI #676** is preserved as evidence from the exact local freshness binding slice rather than hidden as a clean-history rewrite.
 
 The current canonical workstream is **evidence-governed live execution expansion**, **now at 65%**. **`documentation` is the first staged candidate**; its provider-diverse topology and **staged replay harness are validated**, but **provider-backed replay evidence is still pending** and it has **no live-execution authority**. **The next gate is provider-backed controlled documentation replay evidence**. The low or medium risk `high_volume_simple` canary remains the only accepted live execution scope.
+
+The parallel Python clean-architecture migration is **2 of 7 bounded tranches complete**. Tranche 1 established the pure routing-policy domain boundary; Tranche 2 established the finalization application/artifact-integrity port boundary. **Tranche 3 is dispatch application-service extraction.** This is internal maintainability work and does not displace the canonical live-expansion priority.
 
 The targeted **control-integrity audit** closed a qualified-human **temporal-causality** gap and added recovery-authority regression coverage. **Control Integrity remains intentionally scored at 90%** because mutation depth remains an ongoing discipline. **Issue #100** repository branch-retention cleanup **is complete** and is not a runtime or routing blocker.
 
@@ -262,6 +270,7 @@ Repository placement is governed by [`policy/governance/repository-layout.yaml`]
 | functional-v1 boundary | [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md) and [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) |
 | current operational state | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
 | strategic direction | [`docs/stewardship/roadmap.md`](docs/stewardship/roadmap.md) |
+| Python internal architecture migration | [`docs/architecture/python-clean-architecture-migration.md`](docs/architecture/python-clean-architecture-migration.md) |
 | canonical routing | [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml) |
 | regulated specialist evidence | [`policy/specialists/evidence-pilot.yaml`](policy/specialists/evidence-pilot.yaml), [`policy/specialists/evidence-stability-qualification.yaml`](policy/specialists/evidence-stability-qualification.yaml), and [`docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md) |
 | provider-access separation | [`docs/specification/provider-access-boundary.md`](docs/specification/provider-access-boundary.md) |
@@ -304,7 +313,7 @@ The original foundation milestones are complete:
 - runnable reference control plane;
 - functional `v1.0.0` release.
 
-Post-v1 work is focused on **control integrity, evidence quality, governed live-scope expansion, calibration, regulated evidence freshness, and future distributed-runtime hardening**.
+Post-v1 work is focused on **control integrity, evidence quality, governed live-scope expansion, calibration, regulated evidence freshness, behavior-preserving reference-implementation maintainability, and future distributed-runtime hardening**.
 
 The current `NOW / NEXT / LATER` sequencing and completion estimates are maintained in the [`Progress Tracker`](docs/stewardship/progress-tracker.md). Strategic direction is maintained in the [`Roadmap`](docs/stewardship/roadmap.md).
 
