@@ -2,7 +2,7 @@
 
 TEO has completed the foundation, team architecture, routing validation, registry population, reference control-plane, operational-evidence, shadow-evaluation, and qualified-human authority milestones declared to date.
 
-The current roadmap is focused on proving and operating the decision system rather than adding model/provider abstractions for their own sake.
+The current roadmap is focused on proving and operating the decision system while improving the internal maintainability of the Python reference implementation without changing product behavior or authority.
 
 For the current operational state, completion estimates, active milestone, and NOW/NEXT/LATER sequencing, see [`progress-tracker.md`](progress-tracker.md). This roadmap defines direction; the progress tracker records execution state.
 
@@ -37,6 +37,20 @@ For the current operational state, completion estimates, active milestone, and N
 - keep caller/user identifiers out of default telemetry
 - enforce JSON Schemas at external control-plane boundaries
 - keep machine-readable policy and implementation behavior mutation-tested
+
+### Python reference clean-architecture migration
+
+The Python reference implementation is undergoing a behavior-preserving, tranche-based internal architecture migration documented in [`../architecture/python-clean-architecture-migration.md`](../architecture/python-clean-architecture-migration.md) and tracked by Issue #197.
+
+Current merged state:
+
+- **Tranche 1 / PR #196:** deterministic task classification and monotonic risk assessment were extracted from `engine.py` into the pure `teo_reference.domain.routing` boundary.
+- **Tranche 2 / PR #198:** finalization was extracted behind `teo_reference.application.finalization.FinalizationService` and `ArtifactIntegrityPort`, with the existing local-filesystem integrity behavior retained behind an adapter and the established engine/API compatibility surface preserved.
+- **Tranche 3 is next:** extract dispatch orchestration, selectors, and resolvers behind an application service while preserving canonical dispatch records, routing explanations, errors, provider diversity, preview gating, specialist risk elevation, capability constraints, and verifier planning.
+
+Reference Implementation CI #869 validated the merged Tranche 2 tree with 1,008 tests, 574 tracked-file layout checks, 42 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound end-to-end lifecycle.
+
+This migration is compatible post-v1 maintenance. It does **not** change the current operational priority, live-execution scope, routing policy, provider/model assignment, risk semantics, qualified-human authority, or evidence requirements. Each tranche must be independently revertible and CI-qualified before acceptance.
 
 ### Verifier calibration evidence
 
@@ -97,9 +111,9 @@ The repaired staged route is:
 - provider-diverse non-preview routine fallback: GPT-5.6 Sol;
 - primary verifier: GPT-5.6 Terra at medium effort;
 - model/provider failure redispatch executor: GPT-5.6 Sol;
-- fresh redispatch verifier: Gemini 3.6 Flash at medium effort.
+- fresh redispatch verifier: Gemini 3.7 Flash at medium effort.
 
-The previous runtime worker override no longer mutates the shared documentation worker. The existing `high_volume_simple` Flash-Lite -> Haiku recovery and fresh-verifier rotation remain protected by regression tests.
+The previous runtime worker override no longer mutates the shared documentation worker. The current `high_volume_simple` route uses Gemini 3.7 Flash with Claude Haiku 4.5 recovery and fresh provider-diverse verifier rotation; regression tests protect that topology.
 
 Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the adapter layer without widening the active canary wrappers or live-verification task scope. Implemented capability is not live-execution authority.
 
@@ -210,4 +224,4 @@ High and critical live execution remains outside the current guarded runtime.
 
 Finalize licensing and contribution terms before representing TEO as open source or inviting external code contribution under reuse rights that have not yet been granted.
 
-The roadmap is directional. Routing, authority, verification, and evidence quality remain the priority.
+The roadmap is directional. Routing, authority, verification, evidence quality, and behavior-preserving maintainability remain the priority.
