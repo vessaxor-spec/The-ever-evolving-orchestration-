@@ -111,7 +111,7 @@ Implemented in the first migration PR:
 
 - extract task-classification rules from `engine.py` into `domain/routing.py`;
 - extract monotonic risk assessment from `engine.py` into the same pure domain module;
-- keep `teo_reference.engine.RoutingError`, `TASK_PATTERNS`, and `RISK_PATTERNS` import-compatible by re-exporting the domain definitions;
+- preserve the existing `teo_reference.engine.RoutingError` type and keep `TASK_PATTERNS` and `RISK_PATTERNS` available from `teo_reference.engine` as compatibility exports;
 - make the engine delegate to pure policies;
 - add direct behavior tests and an architectural fitness test prohibiting outer-layer imports from the new domain module.
 
