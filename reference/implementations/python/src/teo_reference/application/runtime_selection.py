@@ -36,9 +36,10 @@ class RuntimeSelectionService:
     """Select best fit only after discovery, eligibility, and calibration.
 
     The service snapshots inventory once, derives the effective authority set only
-    from explicit request policy, evaluates eligibility and calibration, applies
-    exact scoped pins without widening authority, and then ranks the remaining
-    calibrated candidates through a provider-neutral fitness port.
+    from explicit request policy, enforces exact requested execution controls,
+    evaluates eligibility and calibration, applies exact scoped pins without widening
+    authority, and then ranks the remaining calibrated candidates through a
+    provider-neutral fitness port.
     """
 
     def __init__(
@@ -56,7 +57,9 @@ class RuntimeSelectionService:
         self._fitness = fitness
         self._pins = tuple(pins)
         if any(not isinstance(pin, RuntimeSelectionPin) for pin in self._pins):
-            raise RuntimeSelectionError("runtime selection pins must be RuntimeSelectionPin values")
+            raise RuntimeSelectionError(
+                "runtime selection pins must be RuntimeSelectionPin values"
+            )
 
     @staticmethod
     def _authorized(
@@ -81,6 +84,11 @@ class RuntimeSelectionService:
             and configuration.provider_family in request.excluded_providers
         ):
             return False
+        if request.required_reasoning_controls:
+            actual = dict(configuration.reasoning_controls)
+            for key, expected in request.required_reasoning_controls:
+                if actual.get(key) != expected:
+                    return False
         return True
 
     def _snapshot(self) -> tuple[RuntimeImplementation, ...]:
@@ -171,7 +179,7 @@ class RuntimeSelectionService:
             if target is None:
                 raise RuntimeSelectionError(
                     f"runtime pin {pin.pin_id} target is not currently authorized, "
-                    "eligible, and calibrated"
+                    "eligible, calibrated, and execution-config compatible"
                 )
             selected = select_best(
                 [target],
@@ -192,7 +200,10 @@ class RuntimeSelectionService:
                 reasons.extend(item.decision.reasons)
             for item in calibration.rejected:
                 reasons.extend(item.reasons)
-            detail = "; ".join(dict.fromkeys(reasons)) or "no calibrated candidates"
+            detail = "; ".join(dict.fromkeys(reasons)) or (
+                "no candidate satisfied authority, execution configuration, "
+                "eligibility, and calibration"
+            )
             raise RuntimeSelectionError(
                 "no authorized eligible calibrated runtime implementation is selectable: "
                 + detail
