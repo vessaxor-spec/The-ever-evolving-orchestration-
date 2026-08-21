@@ -10,11 +10,11 @@ class RoutingTask(Protocol):
     risk_level: str | None
 
 
-class RoutingError(RuntimeError):
+class RoutingPolicyError(RuntimeError):
     """Raised when deterministic domain routing cannot produce a valid decision."""
 
 
-TASK_PATTERNS: tuple[tuple[str, tuple[str, ...]], ...] = (
+TASK_PATTERNS: list[tuple[str, tuple[str, ...]]] = [
     (
         "orchestration",
         (
@@ -161,9 +161,9 @@ TASK_PATTERNS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("documentation", ("documentation", "readme", "write docs", "document")),
     ("release", ("release", "publish version", "ship version")),
     ("high_volume_simple", ("classify", "extract", "transform", "bulk", "high volume")),
-)
+]
 
-RISK_PATTERNS: Mapping[str, tuple[str, ...]] = {
+RISK_PATTERNS: dict[str, tuple[str, ...]] = {
     "critical": ("production credentials", "critical infrastructure", "medical diagnosis", "execute trade", "weapons"),
     "high": (
         "production",
@@ -190,14 +190,14 @@ def classify_task(
     """Classify a task using only explicit input and deterministic domain rules."""
     if task.task_type:
         if task.task_type not in supported_task_types:
-            raise RoutingError(f"Unsupported explicit task type: {task.task_type}")
+            raise RoutingPolicyError(f"Unsupported explicit task type: {task.task_type}")
         return task.task_type, f"Explicit task type {task.task_type} was accepted."
 
     text = task.task.lower()
     for task_type, patterns in TASK_PATTERNS:
         if any(pattern in text for pattern in patterns):
             return task_type, f"Task classified as {task_type} by deterministic keyword rules."
-    raise RoutingError("Task type is ambiguous; supply task_type rather than allowing an invented route")
+    raise RoutingPolicyError("Task type is ambiguous; supply task_type rather than allowing an invented route")
 
 
 def assess_risk(
