@@ -123,6 +123,12 @@ Do not move, rewrite, reformat, correct, or normalize accepted capsule files as 
 
 It already provides a coherent home for public fixtures and datasets used by examples, evaluation, and conformance. A rename would create broad path churn without improving authority clarity.
 
+## Python package internal architecture rule
+
+The behavior-preserving Python clean-architecture migration may create internal package namespaces such as `domain/`, `application/`, `ports/`, and `adapters/` under `reference/implementations/python/src/teo_reference/`. These are implementation dependency boundaries inside the existing `reference/` authority zone; they do **not** create new repository-level authority zones or parallel sources of truth.
+
+The migration is governed by [`../architecture/python-clean-architecture-migration.md`](../architecture/python-clean-architecture-migration.md). Existing compatibility modules remain in place until an explicit API decision permits reduction. Internal file movement is incomplete unless import compatibility, dependency direction, tests, repository-layout validation, and canonical documentation remain aligned.
+
 ## Temporary exceptions
 
 A temporary exception must include:
@@ -153,7 +159,7 @@ The validator fails when, among other cases:
 
 ## Migration discipline
 
-The approved sequence is:
+The completed repository information-architecture sequence is:
 
 1. R1: layout constitution
 2. R2: root and research normalization
@@ -161,7 +167,9 @@ The approved sequence is:
 4. R4: policy topology
 5. R5: worker and implementation topology
 
-Each phase must be independently reviewable and must update path consumers atomically.
+The current Python clean-architecture migration is separate from R1-R5: it reorganizes implementation dependencies **within** the existing reference zone and must not be represented as a new repository-layout phase.
+
+Each migration phase or tranche must be independently reviewable and must update path consumers atomically.
 
 A file move is incomplete until all applicable runtime loaders, tests, CI workflows, links, examples, conformance fixtures, and agent instructions resolve the new path.
 
