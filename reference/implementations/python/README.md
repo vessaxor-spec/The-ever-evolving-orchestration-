@@ -4,16 +4,30 @@ This is the runnable reference control plane for The Ever-Evolving Orchestration
 
 The router itself remains provider-neutral. Live provider execution is optional and occurs only through the provider-adapter boundary after routing has already selected the authorized provider family, model, and reasoning effort.
 
+## Current internal architecture migration
+
+The Python package is undergoing a behavior-preserving clean-architecture migration. Existing public imports and CLI behavior remain compatibility surfaces while responsibilities move behind explicit domain, application, port, and adapter boundaries.
+
+Current merged state:
+
+- **Tranche 1 / PR #196:** deterministic task classification and monotonic risk assessment delegate to `teo_reference.domain.routing`.
+- **Tranche 2 / PR #198:** `OrchestrationEngine.finalize()` delegates to `teo_reference.application.finalization.FinalizationService`; artifact revalidation is accessed through `teo_reference.ports.artifact.ArtifactIntegrityPort`, with the existing local-filesystem implementation behind `teo_reference.adapters.filesystem.FilesystemArtifactIntegrityAdapter`.
+- **Next / Tranche 3:** dispatch orchestration, selectors, and resolvers move behind an application service while preserving dispatch output, routing, provider diversity, risk semantics, and error compatibility.
+
+The detailed migration contract and rollback rules are in `docs/architecture/python-clean-architecture-migration.md`. Reference Implementation CI #869 validated the Tranche 2 tree with 1,008 tests, 574 tracked-file layout checks, 42 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound end-to-end lifecycle.
+
+## Current guarded live topology
+
 The current bounded `high_volume_simple` live canary at low or medium effective risk uses the following governed topology:
 
-- primary executor: Google Gemini 3.5 Flash-Lite
+- primary executor: Google Gemini 3.7 Flash
 - primary verifier: Anthropic Claude Sonnet 5
-- first cross-provider recovery executor after eligible Flash-Lite/model or Google/provider failure: Anthropic Claude Haiku 4.5
-- fresh verifier after Haiku execution when Google remains eligible: Google Gemini 3.6 Flash
+- first cross-provider recovery executor after eligible Gemini/model or Google/provider failure: Anthropic Claude Haiku 4.5
+- fresh verifier after Haiku execution when Google remains eligible: Google Gemini 3.7 Flash
 - fresh verifier after Haiku execution when Google is provider-blocked: OpenAI GPT-5.6 Sol
 - independent economical OpenAI alternative: GPT-5.6 Luna
 
-The provider-adapter layer also implements the exact staged capabilities needed by the `documentation` evaluation candidate: Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification. Those capabilities are **not** documentation live-execution authority. The guarded runtime and live-verification task scope remain limited to `high_volume_simple` until a separate reviewed activation change satisfies every live-expansion gate.
+The provider-adapter layer also implements the exact staged capabilities needed by the `documentation` evaluation candidate: Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification. The current failure-redispatch verifier for that staged candidate is Gemini 3.7 Flash. Those capabilities are **not** documentation live-execution authority. The guarded runtime and live-verification task scope remain limited to `high_volume_simple` until a separate reviewed activation change satisfies every live-expansion gate.
 
 Each provider adapter performs one provider attempt only. Adapters do not own retry, fallback, circuit state, telemetry persistence, verification, escalation, or human approval.
 
@@ -154,6 +168,8 @@ teo --repo-root . finalize \
 
 Execution and verification records must reference the dispatch ID. The verifier must match the assigned verification implementation and must remain independent from the selected worker implementation.
 
+Artifact-backed successful verification must also preserve the exact verifier-observed artifact identity and an authorized artifact root. Internally, that revalidation now flows through the artifact-integrity port introduced by clean-architecture Tranche 2; the CLI and public finalization contract are unchanged.
+
 When the caller also has the canonical Route-Outcome Evidence record for the final active dispatch, it may request the compatible execution-provenance projection:
 
 ```bash
@@ -205,4 +221,4 @@ python reference/examples/run_example.py
 pytest
 ```
 
-The documentation-reconciliation baseline CI #602 passed 802 automated tests. The canonical current state and historical validation milestones are tracked in `docs/stewardship/progress-tracker.md`.
+The current development-tree validation baseline is Reference Implementation CI #869: **1,008 automated tests**, **574 tracked-file layout checks**, **42 parsed JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and a provider-diverse artifact-bound end-to-end lifecycle. Historical validation milestones remain recorded in `docs/stewardship/progress-tracker.md` rather than being rewritten.
