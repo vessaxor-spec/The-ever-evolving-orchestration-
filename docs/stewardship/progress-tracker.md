@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record
-**Last reconciled:** 2026-08-17
+**Last reconciled:** 2026-08-21
 **Stable release:** `v1.0.0`
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -27,11 +27,12 @@ This tracker does not create runtime, routing, release, or governance authority.
 | Active specialists | 82 |
 | Mission Control workers | 4 |
 | Latest activation milestone | `orchestration-evaluation-analyst` active on `Research -> analytics` |
-| Current validated scale | 993 tests passed, 558 tracked-file layout checks, 42 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #806 |
+| Current validated scale | 1,008 tests passed, 574 tracked-file layout checks, 42 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #869 on the exact tree later merged as `main@467c706d6f1077371928e3fcbe3f32f5ec51fb19` |
 | Documentation reconciliation baseline | CI #602: 802 tests, 515 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse end-to-end pass |
 | Host-integration research validation | CI #739: 964 tests, 543 tracked-file layout checks, 41 schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass after Fresh-AI trial 001 hardening; empirical trial 001 supports fresh-session/no-reminder routing continuity but failed full selected-executor/verifier end-to-end assimilation |
+| Python clean-architecture migration | In progress under Issue #197; Tranche 1 / PR #196 and Tranche 2 / PR #198 are merged; Tranche 3 dispatch application-service extraction is next; public behavior and authority remain unchanged |
 | Host Integration Contract | Two-host architecture diversity, static bounded-context payload, process-local dispatch provenance, bundled-adapter payload self-expansion, process-local third-party adapter trust, process-local restrictive host/TEO authority intersection and host execution-scope binding, exact host execution-envelope integrity, verifier-context independence, exact artifact/change-set stale-PASS resistance, brokered conformant process-lifetime cross-process authority/replay resistance, static runtime-wired authority-surface reconciliation, process-lifetime recursion resistance, exact local freshness-binding, conformant process-local portfolio/task-admission authority-separation, and process-local integrated Fresh-AI assimilation/conformance plus premortem replay research slices satisfied, a Fresh-AI cross-session trial framework/validator implemented, and the non-production `teo-host-integration/0.1` execution/verification reference candidate implemented with monotonic route progression and terminal execution sequencing, with empirical trial 001 supporting fresh-session/no-reminder routing continuity; contract remains non-normative and authenticated end-to-end selected-executor/verifier proof, restart-persistent hooks, production compatibility-catalog provenance, remote/distributed freshness authenticity, downgrade/expiry, restart-durable/distributed recursion, production scheduler containment, tenant/account/credential binding, dynamic authority discovery, and production/distributed authenticity remain open |
-| Artifact-bound finalization | PR #154 merged; verifier-observed local `file://` identity, SHA-256, and byte length are revalidated under an explicit authorized artifact root before artifact-backed PASS can complete; independently verified |
+| Artifact-bound finalization | PR #154 merged; verifier-observed local `file://` identity, SHA-256, and byte length are revalidated under an explicit authorized artifact root before artifact-backed PASS can complete; clean-architecture Tranche 2 preserves this behavior behind an application service and artifact-integrity port |
 | Final execution provenance | Optional read-only projection from revalidated canonical Route-Outcome Evidence into `FinalOutcome`; implemented without routing, execution, host, or permission authority |
 | Regulated evidence pilot | 6 specialists, stability-qualified and intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
@@ -71,6 +72,7 @@ Rules:
 | Core architecture and governance | Complete | 100% | Functional v1 reference contract | Maintain invariants through compatible evolution |
 | Repository information architecture | Complete | 100% | R1 through R5 | Preserve governed placement and lifecycle boundaries |
 | Team, worker, and specialist architecture | Operational | 100% | 10 teams, 84 workers, 82 active specialists | Add roles only after proven responsibility-gap and authority review |
+| Python reference clean-architecture migration | In progress | 29% | 2 of 7 bounded tranches merged; domain routing and finalization/artifact boundaries established | Tranche 3 dispatch application service with behavior/API parity and full CI |
 | Control integrity | Operational | 90% | Post-v1 hardening with conformance, mutation resistance, and exact artifact-bound finalization | Continue closing uncovered finalization, authority, and recovery mutation gaps as discovered |
 | Verifier calibration evidence | In progress | 70% | Deterministic and empirical verifier evidence | Strengthen repeatability, disagreement, adversarial, and route-specific evidence |
 | Regulated specialist evidence pilot | Complete | 100% | Six-card pilot passed executable stability qualification | Maintain seven-day drift monitoring; any expansion requires explicit next risk-tier batch approval |
@@ -91,6 +93,8 @@ The Task Intent & Action Authority Contract is also a non-normative future resea
 
 Final execution provenance is a compatible evidence extension rather than a separate scored workstream. It projects only already-validated Route-Outcome Evidence into a host-consumable `FinalOutcome` and cannot create routing, request-action, host, capability, or live-execution authority.
 
+The Python clean-architecture migration is a scored post-v1 maintenance workstream because it has an explicit seven-tranche completion definition. It does not become a second product roadmap or authority plane; its progress measures only the approved internal architecture migration and remains subordinate to behavior/API compatibility and canonical CI evidence.
+
 ## NOW
 
 ### Evidence-governed live execution expansion
@@ -101,11 +105,11 @@ Reconsider live-scope expansion task class by task class using the now-complete 
 
 Reference Implementation CI run #463 validated the original candidate-selection and executable-preflight slice with 634 passing tests, 463 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example.
 
-The candidate preflight exposed an unintended global worker override that changed ordinary `documentation` routing. That override has now been removed. Canonical documentation routing again preserves Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, GPT-5.6 Terra as the primary verifier, and Gemini 3.6 Flash as the fresh provider-diverse verifier after Sonnet or Anthropic failure redispatch. The route-level Gemini 3.1 Pro Preview fallback remains blocked without explicit acceptance.
+The candidate preflight exposed an unintended global worker override that changed ordinary `documentation` routing. That override has now been removed. Canonical documentation routing again preserves Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, GPT-5.6 Terra as the primary verifier, and Gemini 3.7 Flash as the fresh provider-diverse verifier after Sonnet or Anthropic failure redispatch. The route-level Gemini 3.1 Pro Preview fallback remains blocked without explicit acceptance.
 
 The exact staged adapter capabilities needed by that topology are now implemented without granting live authority: Claude Sonnet 5 bounded execution carries assigned effort through Anthropic `output_config.effort`; GPT-5.6 Sol is implemented by the OpenAI Responses adapter; and GPT-5.6 Terra is implemented by the strict structured-output OpenAI verifier. Existing canary wrappers and live-verification task scope remain `high_volume_simple` only.
 
-Reference Implementation CI run #473 validated this topology and adapter-readiness gate with 641 passing tests, 465 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The same suite also proves the existing Flash-Lite -> Haiku throughput recovery and fresh-verifier rotation remain intact after removal of the global worker override.
+Reference Implementation CI run #473 validated this topology and adapter-readiness gate with 641 passing tests, 465 tracked-file layout checks, regulated evidence validation, 38 parsed JSON Schemas, valid linked configuration, and the provider-diverse end-to-end example. The same suite also proved the earlier Flash-Lite -> Haiku throughput recovery and fresh-verifier rotation before the later Gemini 3.7 Flash promotion; current routing is governed by the active 2026-08-19 policy and associated regression tests.
 
 The staged documentation replay harness is now implemented. It provides strict replay-plan and replay-record schemas, whole-plan no-network routing preflight, exact candidate-route checks, active retry-policy alignment, isolated per-trial circuit state, assigned Terra verification, in-memory replay telemetry, canonical Route-Outcome Evidence generation, and an operator CLI with explicit `--execute-live` acknowledgement. Automatic fallback is intentionally disabled in this replay milestone so a staged evidence runner cannot become a hidden alternate live runtime. Provider-scoped recovery, rollback, and deliberate fallback execution remain separate later gates.
 
@@ -169,9 +173,25 @@ The provider-backed `documentation` replay is intentionally deferred as an open 
 
 The current `high_volume_simple` low or medium risk canary remains the only accepted live execution scope until a separate bounded activation change satisfies every applicable criterion. `documentation` remains `activation_authorized: false`. Shadow evaluation, rollback/recovery evidence, and independent review of any later active-scope change remain subsequent gates. High and critical live execution remains unauthorized.
 
+### Parallel compatible maintenance — Python reference clean architecture
+
+The internal Python architecture migration may continue in parallel while provider-backed `documentation` replay is deferred because it does not widen live authority or replace the canonical operational priority.
+
+Merged evidence:
+
+- PR #196 / `a63887179a1ff3adfa7d7119a7db1a5f598a0f86`: classification and monotonic risk policy extracted to a pure domain boundary with dependency-direction fitness tests.
+- PR #198 / `467c706d6f1077371928e3fcbe3f32f5ec51fb19`: finalization extracted behind `FinalizationService` and `ArtifactIntegrityPort`; the existing filesystem integrity implementation remains behind the default adapter; public finalization behavior and `RoutingError` compatibility remain intact.
+- Reference Implementation CI #869: 1,008 tests, 574 tracked-file layout checks, 42 parsed JSON Schemas, valid linked configuration, regulated-specialist evidence validation, and provider-diverse artifact-bound end-to-end PASS on the exact tree now present on `main`.
+
+Next gate: **Tranche 3 — dispatch application service**. It must preserve exact dispatch behavior, risk elevation, worker/specialist/capability resolution, preview blocking, primary/fallback eligibility, provider-diverse verification, warnings/explanations, and existing public error behavior before it can merge.
+
+The migration plan is canonicalized in [`../architecture/python-clean-architecture-migration.md`](../architecture/python-clean-architecture-migration.md). No tranche may mix model-routing, live-scope, authority, or product behavior changes with architecture extraction.
+
 ## NEXT
 
-No additional workstream is promoted ahead of the current evidence-governed live execution expansion milestone. While its provider-backed replay gate is deferred, provider-independent control-integrity, evidence-maintenance, and non-normative Host Integration adversarial research may continue without changing the sequencing or live-authority boundary. The next live-expansion sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
+No additional operational workstream is promoted ahead of the current evidence-governed live execution expansion milestone. While its provider-backed replay gate is deferred, provider-independent control-integrity, evidence-maintenance, the behavior-preserving Python clean-architecture migration, and non-normative Host Integration adversarial research may continue without changing the sequencing or live-authority boundary. The next live-expansion sequencing decision should be made from repository evidence after provider-backed controlled `documentation` replay and its downstream shadow, recovery, and review gates have either supported or rejected activation.
+
+For the Python architecture maintenance track specifically, the next bounded action is Tranche 3 dispatch application-service extraction. Tranche 4 specialist-routing composition must not begin from assumption; it should be reconsidered only after Tranche 3 is merged and repository truth is recalibrated.
 
 ## LATER
 
@@ -238,6 +258,16 @@ R1 through R5 are complete. Current authority, research, history, routing, worke
 
 The current target roster is active and deterministically spawnable. Future specialist additions are gap-driven extensions and do not reduce current milestone completion.
 
+### Python reference clean-architecture migration, 29%
+
+Two of seven approved bounded tranches are merged.
+
+Tranche 1 established the pure domain boundary for deterministic task classification and monotonic risk assessment while preserving `engine.py` compatibility exports. Tranche 2 established the finalization application-service and artifact-integrity port/adapter boundary while preserving exact artifact-root binding, public finalization API behavior, and `RoutingError` compatibility.
+
+The migration remains at 29% because Tranches 3 through 7 are materially distinct and unmerged: dispatch service extraction, specialist-routing composition, configuration separation, outer-layer provider/verifier/runtime/evaluation namespaces, and explicit compatibility-surface reduction. Completion is evidence-based, not inferred from file count.
+
+Tranche 3 is the next gate. Acceptance requires behavior parity, dependency-direction checks, full canonical CI, repository-layout conformance, and preservation of provider-diverse verification, preview fail-closed behavior, effective-risk semantics, and public interfaces. See [`../architecture/python-clean-architecture-migration.md`](../architecture/python-clean-architecture-migration.md).
+
 ### Control integrity, 90%
 
 The main invariants are implemented and heavily tested. The 2026-08-11 targeted finalization -> authority -> recovery audit proved and remediated two qualified-human temporal-causality gaps: a disposition can no longer predate its approval request, and finalization can no longer predate the current disposition it relies on. The same audit verified that bounded recovery preparation preserves effective risk and human-approval requirements and added regression guards against future recovery-based authority leakage. See [`../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md`](../history/audits/control-integrity-authority-recovery-audit-2026-08-11.md).
@@ -245,6 +275,8 @@ The main invariants are implemented and heavily tested. The 2026-08-11 targeted 
 The follow-on targeted mutation audit tested ten materially distinct weaknesses across chronology, exact authority binding, expiry equality boundaries, effective-risk preservation, and human-approval preservation. Four mutants initially survived because existing tests did not distinguish exact expiry boundaries or caller-declared risk from dispatch-elevated effective risk. Production behavior was already correct, so remediation added focused evidence rather than changing runtime code. CI #521 killed 10 of 10 targeted mutants after remediation. See [`../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md`](../history/audits/control-integrity-mutation-audit-finalization-authority-recovery-2026-08-11.md).
 
 The later Task 002 remediation added normative exact artifact-bound finalization. Artifact-backed PASS now requires verifier-observed canonical local identity, SHA-256, byte length, an explicit authorized artifact root, and finalization-time revalidation. The calibrated external verifier independently falsified the remediation and returned PASS, then carried that PASS forward after a current-main refresh that left the normative implementation byte-identical. See [`../../research/runtime/2026-08-14-external-verifier-assessment-artifact-bound-finalization.md`](../../research/runtime/2026-08-14-external-verifier-assessment-artifact-bound-finalization.md).
+
+Clean-architecture Tranche 2 changed the internal dependency direction of finalization without changing those normative semantics: finalization now reaches artifact integrity through an injected port and default filesystem adapter, while existing external behavior remains regression-protected. CI #869 passed 1,008 tests on the exact merged tree.
 
 The remaining ten percent represents continuing mutation depth, finalization-path resistance, authority-leakage checks, recovery gaps, and new failure modes uncovered by future audits. It is intentionally not scored as permanently complete because control integrity is an ongoing adversarial discipline.
 
@@ -346,9 +378,11 @@ This milestone implements authority evidence for requirements existing policy al
 
 The first bounded expansion candidate is `documentation`, low or medium effective risk only. Candidate selection, a machine-readable staged policy, no-network route preflight, corrected fallback/fresh-verifier topology, direct adapter readiness, and a controlled staged replay harness are validated while active live authority remains unchanged.
 
-The former `runtime-worker-overrides.yaml` behavior unintentionally mutated the shared documentation worker. That global implementation-order override has been removed. Ordinary documentation dispatch now records Claude Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, and GPT-5.6 Terra as the primary verifier. Model- or provider-scoped Sonnet recovery redispatch selects GPT-5.6 Sol with Gemini 3.6 Flash as a fresh provider-diverse verifier.
+The former `runtime-worker-overrides.yaml` behavior unintentionally mutated the shared documentation worker. That global implementation-order override has been removed. Ordinary documentation dispatch now records Claude Sonnet 5 as primary, GPT-5.6 Sol as the provider-diverse non-preview routine fallback, and GPT-5.6 Terra as the primary verifier. Model- or provider-scoped Sonnet recovery redispatch selects GPT-5.6 Sol with Gemini 3.7 Flash as a fresh provider-diverse verifier.
 
 Claude Sonnet 5 execution, GPT-5.6 Sol execution, and GPT-5.6 Terra verification are implemented at the provider-adapter layer. The active provider canary wrappers and live-verification task scope remain limited to `high_volume_simple`, so adapter support does not create documentation live authority.
+
+The current bounded `high_volume_simple` route uses Gemini 3.7 Flash as primary execution, Claude Haiku 4.5 as the cross-provider recovery executor, Claude Sonnet 5 as the primary verifier, and fresh provider-diverse verifier rotation after fallback. This current routing state supersedes older active-prose references to Gemini 3.5 Flash-Lite while dated historical validation records remain unchanged.
 
 The staged replay layer now validates the entire replay plan before network access, preserves exact candidate routing and effective risk, reuses the active retry policy, isolates circuit state per trial, executes the staged Sonnet primary through the provider adapter, invokes the exact assigned Terra verifier, holds replay telemetry only in memory, and creates canonical integrity-protected Route-Outcome Evidence plus a staged replay record. Its operator CLI requires explicit live-execution acknowledgement and keeps provider access outside routing semantics.
 
@@ -389,6 +423,7 @@ When parallel sessions are active, reconcile against current `main` before editi
 ## Related records
 
 - [`roadmap.md`](roadmap.md): canonical stewardship roadmap
+- [`../architecture/python-clean-architecture-migration.md`](../architecture/python-clean-architecture-migration.md): behavior-preserving Python reference architecture migration, merged tranche state, dependency rules, and rollback contract
 - [`research/roadmaps/intelligence-control-plane.md`](../../research/roadmaps/intelligence-control-plane.md): longer-horizon intelligence-control-plane research
 - [`../../research/roadmaps/host-integration-contract.md`](../../research/roadmaps/host-integration-contract.md): non-normative Host Integration Contract research roadmap
 - [`../../research/roadmaps/execution-environment-recovery-contract.md`](../../research/roadmaps/execution-environment-recovery-contract.md): non-normative isolated-execution, checkpoint, rollback, and recovery-verification research roadmap
