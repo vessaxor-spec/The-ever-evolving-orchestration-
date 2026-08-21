@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
 from math import isfinite
 from typing import Sequence
@@ -57,8 +58,14 @@ class RuntimeSelectionService:
             return False
         required_effort = request.reasoning_effort_for(configuration.model)
         if required_effort is not None:
-            actual_effort = dict(configuration.reasoning_controls).get("effort")
-            if actual_effort != required_effort:
+            encoded_effort = dict(configuration.reasoning_controls).get("effort")
+            if encoded_effort is None:
+                return False
+            try:
+                actual_effort = json.loads(encoded_effort)
+            except (TypeError, json.JSONDecodeError):
+                return False
+            if str(actual_effort) != required_effort:
                 return False
         return True
 
