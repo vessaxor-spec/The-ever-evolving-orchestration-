@@ -11,6 +11,7 @@ Reference architecture for applying TEO policy across Mission Control, teams, wo
 - [`../../policy/runtime/`](../../policy/runtime/) contains guarded execution, retry, recovery, telemetry, and live-scope controls.
 - [`../specification/`](../specification/) contains the human-readable execution, verification, evidence, provider, and finalization contracts.
 - [`../stewardship/progress-tracker.md`](../stewardship/progress-tracker.md) is the canonical current-state and sequencing record.
+- [`python-clean-architecture-migration.md`](python-clean-architecture-migration.md) defines the behavior-preserving internal architecture migration for the Python reference implementation.
 
 The active responsibility chain remains:
 
@@ -33,6 +34,12 @@ Provider access and authentication remain outside model-fitness routing. Host-na
 ## Cross-boundary evidence
 
 [`../specification/final-execution-provenance.md`](../specification/final-execution-provenance.md) defines the optional read-only projection from validated Route-Outcome Evidence into `FinalOutcome`. The projection identifies the route that actually completed execution; it does not create routing, action, or permission authority.
+
+## Python reference implementation boundaries
+
+The Python reference implementation is migrating incrementally toward explicit domain, application, port, and adapter boundaries. Existing public import paths remain compatibility surfaces during that migration. Architectural extraction must not alter routing policy, effective-risk semantics, provider diversity, verification authority, evidence requirements, live scope, or finalization behavior.
+
+The migration is intentionally tranche-based. A file move alone does not count as architectural progress; each tranche requires behavioral regression coverage and dependency-direction checks.
 
 ## Non-normative architecture research
 

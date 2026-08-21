@@ -7,6 +7,9 @@ from uuid import uuid4
 
 from .artifact_integrity import ArtifactIntegrityError, revalidate_verified_artifact
 from .config import ConfigBundle
+from .domain.routing import RISK_PATTERNS as RISK_PATTERNS
+from .domain.routing import TASK_PATTERNS as TASK_PATTERNS
+from .domain.routing import RoutingPolicyError, assess_risk, classify_task
 from .schemas import (
     DispatchRecord,
     ExecutionResult,
@@ -18,173 +21,6 @@ from .schemas import (
     VerificationResult,
     utc_now,
 )
-
-TASK_PATTERNS: list[tuple[str, tuple[str, ...]]] = [
-    (
-        "orchestration",
-        (
-            "agent orchestration",
-            "multi-agent pipeline",
-            "multi agent pipeline",
-            "handoff contract",
-            "agent activation protocol",
-            "mcp server",
-        ),
-    ),
-    (
-        "operations",
-        (
-            "operations plan",
-            "operational plan",
-            "onboarding workflow",
-            "accounts payable",
-            "vendor performance",
-            "operational kpi",
-            "process optimization",
-            "recruitment operations",
-        ),
-    ),
-    (
-        "project_delivery",
-        (
-            "project plan",
-            "delivery plan",
-            "critical path",
-            "risk register",
-            "raci matrix",
-            "scope negotiation",
-            "project status report",
-        ),
-    ),
-    (
-        "incident_response",
-        (
-            "incident response",
-            "incident commander",
-            "production outage",
-            "sev1",
-            "sev2",
-            "war room",
-            "post-mortem",
-            "postmortem",
-            "on-call rotation",
-        ),
-    ),
-    (
-        "user_research",
-        (
-            "user research",
-            "feedback synthesis",
-            "synthesize feedback",
-            "synthesise feedback",
-            "interview transcript",
-            "interview transcripts",
-            "survey responses",
-            "usability findings",
-            "user pain points",
-            "voice of customer",
-            "customer feedback",
-            "support tickets into themes",
-            "affinity map",
-            "jobs to be done",
-            "jtbd",
-            "persona from feedback",
-            "nps detractors",
-        ),
-    ),
-    (
-        "compliance_review",
-        (
-            "compliance audit",
-            "compliance review",
-            "soc 2",
-            "soc2",
-            "iso 27001",
-            "iso 27701",
-            "pci dss",
-            "pci-dss",
-            "gdpr compliance",
-            "ccpa compliance",
-            "hipaa compliance",
-            "privacy impact assessment",
-            "data protection impact assessment",
-            "dpia",
-            "control mapping",
-            "operating effectiveness",
-            "audit evidence",
-            "ai act compliance",
-            "agentic trust",
-            "privacy policy based on data flow",
-        ),
-    ),
-    (
-        "market_research",
-        (
-            "market research",
-            "competitive landscape",
-            "competitive positioning",
-            "market sizing",
-            "tam sam som",
-            "weak signals",
-            "category lifecycle",
-            "go-to-market timing",
-            "market opportunity",
-            "ai search visibility",
-            "agentic search visibility",
-        ),
-    ),
-    (
-        "analytics",
-        (
-            "data analysis",
-            "analyze the dataset",
-            "analyse the dataset",
-            "statistical analysis",
-            "statistical significance",
-            "confidence interval",
-            "regression analysis",
-            "a/b test",
-            "ab test",
-            "cohort retention",
-            "funnel analysis",
-            "churn analysis",
-            "pipeline velocity",
-            "forecast accuracy",
-            "model qa",
-            "data leakage",
-            "demographic bias",
-        ),
-    ),
-    ("security_review", ("security review", "threat model", "vulnerability", "authentication", "authorization")),
-    ("code_review", ("code review", "review this diff", "review the pull request", "review pr")),
-    ("deep_debugging", ("debug", "root cause", "failing test", "failure", "incident")),
-    ("repo_wide_refactor", ("repo-wide", "repository-wide", "refactor", "migration")),
-    ("daily_coding", ("implement", "build", "code", "fix", "add feature", "create cli")),
-    ("architecture_design", ("architecture", "system design", "design a system", "tradeoff")),
-    ("deep_research", ("research", "compare sources", "literature", "investigate")),
-    ("multimodal_analysis", ("image", "diagram", "video", "audio", "multimodal")),
-    ("documentation", ("documentation", "readme", "write docs", "document")),
-    ("release", ("release", "publish version", "ship version")),
-    ("high_volume_simple", ("classify", "extract", "transform", "bulk", "high volume")),
-]
-
-RISK_PATTERNS: dict[str, tuple[str, ...]] = {
-    "critical": ("production credentials", "critical infrastructure", "medical diagnosis", "execute trade", "weapons"),
-    "high": (
-        "production",
-        "security",
-        "authentication",
-        "authorization",
-        "permission",
-        "financial",
-        "payment",
-        "personal data",
-        "migration",
-        "delete",
-        "irreversible",
-    ),
-    "medium": ("public api", "database", "deployment", "dependency", "customer", "external"),
-}
 
 ROUTE_IMPLEMENTATION_KEYS: dict[str, tuple[str, ...]] = {
     "orchestration": ("primary",),
@@ -434,54 +270,13 @@ class OrchestrationEngine:
         )
 
     def _classify_task(self, task: TaskRequest) -> tuple[str, str]:
-        if task.task_type:
-            if task.task_type not in self.config.team_routes:
-                raise RoutingError(f"Unsupported explicit task type: {task.task_type}")
-            return task.task_type, f"Explicit task type {task.task_type} was accepted."
-        text = task.task.lower()
-        for task_type, patterns in TASK_PATTERNS:
-            if any(pattern in text for pattern in patterns):
-                return task_type, f"Task classified as {task_type} by deterministic keyword rules."
-        raise RoutingError("Task type is ambiguous; supply task_type rather than allowing an invented route")
+        try:
+            return classify_task(task, supported_task_types=self.config.team_routes)
+        except RoutingPolicyError as exc:
+            raise RoutingError(str(exc)) from None
 
-    def _assess_risk(self, task: TaskRequest):
-        text = task.task.lower()
-        content_risk = "low"
-        content_trigger: str | None = None
-        for risk in ("critical", "high", "medium"):
-            matched = next((pattern for pattern in RISK_PATTERNS[risk] if pattern in text), None)
-            if matched:
-                content_risk = risk
-                content_trigger = matched
-                break
-
-        declared_risk = task.risk_level or "low"
-        effective_risk = (
-            declared_risk
-            if RISK_ORDER[declared_risk] >= RISK_ORDER[content_risk]
-            else content_risk
-        )
-
-        if task.risk_level and RISK_ORDER[task.risk_level] < RISK_ORDER[content_risk]:
-            return (
-                effective_risk,
-                f"Declared risk {task.risk_level} could not lower the content-derived {content_risk} risk floor"
-                + (f" triggered by {content_trigger!r}." if content_trigger else "."),
-            )
-        if task.risk_level and RISK_ORDER[task.risk_level] > RISK_ORDER[content_risk]:
-            return (
-                effective_risk,
-                f"Declared risk {task.risk_level} elevated the content-derived {content_risk} risk floor.",
-            )
-        if task.risk_level:
-            return effective_risk, f"Declared risk {task.risk_level} matched the effective risk floor."
-        if content_risk != "low":
-            return (
-                content_risk,
-                f"Risk assessed as {content_risk} from task content"
-                + (f" using trigger {content_trigger!r}." if content_trigger else "."),
-            )
-        return "low", "Risk assessed as low because no higher-risk trigger was detected."
+    def _assess_risk(self, task: TaskRequest) -> tuple[str, str]:
+        return assess_risk(task, risk_order=RISK_ORDER)
 
     def _resolve_worker(self, route: dict[str, Any], task: TaskRequest) -> str:
         worker = str(route["primary_worker"])
