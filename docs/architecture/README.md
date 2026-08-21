@@ -39,6 +39,15 @@ Provider access and authentication remain outside model-fitness routing. Host-na
 
 The Python reference implementation is migrating incrementally toward explicit domain, application, port, and adapter boundaries. Existing public import paths remain compatibility surfaces during that migration. Architectural extraction must not alter routing policy, effective-risk semantics, provider diversity, verification authority, evidence requirements, live scope, or finalization behavior.
 
+Current merged state on 2026-08-21:
+
+- **Tranche 1 / PR #196:** deterministic classification and monotonic risk assessment are delegated from `engine.py` into the pure `teo_reference.domain.routing` boundary.
+- **Tranche 2 / PR #198:** finalization is delegated to `teo_reference.application.finalization.FinalizationService`; artifact revalidation is accessed through `teo_reference.ports.artifact.ArtifactIntegrityPort`, with the existing local-filesystem behavior retained behind `teo_reference.adapters.filesystem.FilesystemArtifactIntegrityAdapter`.
+- Existing `teo_reference.engine` entry points and the public `RoutingError` compatibility surface remain intact.
+- **Next:** Tranche 3 extracts dispatch orchestration, selectors, and resolvers behind an application service without changing routing or authority behavior.
+
+The merged Tranche 2 tree was validated by Reference Implementation CI #869 with **1,008 tests**, **574 tracked-file layout checks**, **42 JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound end-to-end lifecycle. The validated tree is byte-identical to merged `main@467c706d6f1077371928e3fcbe3f32f5ec51fb19`.
+
 The migration is intentionally tranche-based. A file move alone does not count as architectural progress; each tranche requires behavioral regression coverage and dependency-direction checks.
 
 ## Non-normative architecture research
