@@ -1,0 +1,179 @@
+name: Community Progress Steward
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/stewardship/progress-tracker.md"
+      - ".github/workflows/community-progress-steward.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  discussions: write
+
+concurrency:
+  group: community-progress-steward
+  cancel-in-progress: false
+
+jobs:
+  engage:
+    name: Post material TEO progress update
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        # actions/checkout v6.1.0
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+
+      - name: Build deterministic community update
+        env:
+          REPOSITORY: ${{ github.repository }}
+          REVISION: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import os
+          import re
+          from pathlib import Path
+
+          tracker_path = Path("docs/stewardship/progress-tracker.md")
+          tracker = tracker_path.read_text(encoding="utf-8")
+
+          now_match = re.search(
+              r"^## NOW\s*$\n(?P<body>.*?)(?=^##\s|\Z)",
+              tracker,
+              flags=re.MULTILINE | re.DOTALL,
+          )
+          if not now_match:
+              raise SystemExit("Canonical Progress Tracker has no parseable ## NOW section")
+
+          now_section = now_match.group("body").strip()
+          focus_match = re.search(r"^###\s+(.+?)\s*$", now_section, flags=re.MULTILINE)
+          if not focus_match:
+              raise SystemExit("Canonical ## NOW section has no current focus heading")
+
+          focus = focus_match.group(1).strip()
+          focus_start = focus_match.end()
+          next_focus = re.search(r"^###\s+", now_section[focus_start:], flags=re.MULTILINE)
+          focus_end = focus_start + next_focus.start() if next_focus else len(now_section)
+          focus_body = now_section[focus_start:focus_end].strip()
+
+          paragraphs = [
+              paragraph.strip()
+              for paragraph in re.split(r"\n\s*\n", focus_body)
+              if paragraph.strip()
+          ]
+          narrative = [
+              paragraph
+              for paragraph in paragraphs
+              if not paragraph.startswith("-") and not paragraph.startswith("|")
+          ]
+          if not narrative:
+              raise SystemExit("Current focus has no narrative summary")
+
+          summary = narrative[:2]
+          all_now_paragraphs = [
+              paragraph.strip()
+              for paragraph in re.split(r"\n\s*\n", now_section)
+              if paragraph.strip()
+          ]
+          next_gate = next(
+              (
+                  paragraph
+                  for paragraph in all_now_paragraphs
+                  if "next evidence gate" in paragraph.lower()
+              ),
+              None,
+          )
+
+          digest = hashlib.sha256(now_section.encode("utf-8")).hexdigest()
+          marker = f"<!-- teo-community-progress-sha256:{digest} -->"
+
+          repository = os.environ["REPOSITORY"]
+          revision = os.environ["REVISION"]
+          tracker_url = (
+              f"https://github.com/{repository}/blob/{revision}/"
+              "docs/stewardship/progress-tracker.md"
+          )
+          commit_url = f"https://github.com/{repository}/commit/{revision}"
+
+          lines = [
+              marker,
+              "### What TEO is working on now",
+              "",
+              "I will start with what TEO is working on.",
+              "",
+              f"**Current focus:** {focus}",
+              "",
+          ]
+          for paragraph in summary:
+              lines.extend([paragraph, ""])
+
+          if next_gate and next_gate not in summary:
+              lines.extend([next_gate, ""])
+
+          lines.extend(
+              [
+                  "**Feedback we would value:**",
+                  "",
+                  "- Where do orchestration systems become difficult to trust or verify?",
+                  "- How should routing decisions remain separate from execution authority?",
+                  "- Where does provider or model neutrality break down in practice?",
+                  "- What recovery, rollback, or stale-evidence failures have you encountered?",
+                  "- Which parts of TEO look unnecessarily complicated, incomplete, or based on a weak assumption?",
+                  "",
+                  "If you are building or evaluating an orchestration system, tell us what you are working on, what is currently difficult, and what evidence would change your view. Critical feedback and contrary evidence are especially useful.",
+                  "",
+                  f"[Canonical Progress Tracker]({tracker_url}) | [Source commit]({commit_url})",
+                  "",
+                  "<sub>This project-status reply is posted automatically only when the canonical TEO `## NOW` section changes.</sub>",
+              ]
+          )
+
+          Path("community-update.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          Path("community-update.marker").write_text(marker, encoding="utf-8")
+          PY
+
+      - name: Post update only when this NOW state is new
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DISCUSSION_NUMBER: "191"
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          owner="${REPOSITORY%%/*}"
+          repo="${REPOSITORY#*/}"
+          marker="$(cat community-update.marker)"
+
+          query='query($owner:String!,$repo:String!,$number:Int!){repository(owner:$owner,name:$repo){discussion(number:$number){id comments(last:100){nodes{body url}}}}}'
+          state="$(gh api graphql -f query="$query" -F owner="$owner" -F repo="$repo" -F number="$DISCUSSION_NUMBER")"
+          discussion_id="$(jq -r '.data.repository.discussion.id' <<<"$state")"
+
+          if [[ -z "$discussion_id" || "$discussion_id" == "null" ]]; then
+            echo "Discussion #$DISCUSSION_NUMBER could not be resolved"
+            exit 1
+          fi
+
+          if jq -e --arg marker "$marker" '.data.repository.discussion.comments.nodes[]? | select(.body | contains($marker))' <<<"$state" >/dev/null; then
+            echo "Current canonical NOW state is already represented in Discussion #$DISCUSSION_NUMBER"
+            exit 0
+          fi
+
+          body="$(cat community-update.md)"
+          mutation='mutation($discussionId:ID!,$body:String!){addDiscussionComment(input:{discussionId:$discussionId,body:$body}){comment{url}}}'
+
+          gh api graphql \
+            -f query="$mutation" \
+            -f discussionId="$discussion_id" \
+            -f body="$body" \
+            --jq '.data.addDiscussionComment.comment.url'
