@@ -2,16 +2,20 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 from uuid import uuid4
 
+from .adapters.configured_runtime_selection import ConfiguredRuntimeSelectionAdapter
 from .adapters.filesystem import FilesystemArtifactIntegrityAdapter
 from .application.finalization import FinalizationError, FinalizationService
 from .config import ConfigBundle
 from .domain.routing import RISK_PATTERNS as RISK_PATTERNS
 from .domain.routing import TASK_PATTERNS as TASK_PATTERNS
 from .domain.routing import RoutingPolicyError, assess_risk, classify_task
+from .domain.runtime_binding import CalibrationRequirements, EligibilityRequirements
+from .domain.runtime_selection import RuntimeSelectionRequest, RuntimeSelectionScope
 from .ports.artifact import ArtifactIntegrityPort
+from .ports.runtime_selection import RuntimeSelectionPort
 from .schemas import (
     DispatchRecord,
     ExecutionResult,
@@ -121,15 +125,33 @@ class OrchestrationEngine:
         config: ConfigBundle,
         *,
         artifact_integrity: ArtifactIntegrityPort | None = None,
+        runtime_selector: RuntimeSelectionPort | None = None,
+        runtime_calibration_requirements: CalibrationRequirements | None = None,
     ):
         self.config = config
         self._finalization = FinalizationService(
             artifact_integrity or FilesystemArtifactIntegrityAdapter()
         )
+        self._runtime_selector = runtime_selector or ConfiguredRuntimeSelectionAdapter(
+            config.model_registry
+        )
+        self._runtime_calibration_requirements = (
+            runtime_calibration_requirements or CalibrationRequirements(required=False)
+        )
 
     @classmethod
-    def from_repo(cls, repo_root: str) -> "OrchestrationEngine":
-        return cls(ConfigBundle.load(repo_root))
+    def from_repo(
+        cls,
+        repo_root: str,
+        *,
+        runtime_selector: RuntimeSelectionPort | None = None,
+        runtime_calibration_requirements: CalibrationRequirements | None = None,
+    ) -> "OrchestrationEngine":
+        return cls(
+            ConfigBundle.load(repo_root),
+            runtime_selector=runtime_selector,
+            runtime_calibration_requirements=runtime_calibration_requirements,
+        )
 
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
         task_type, classification_reason = self._classify_task(task)
@@ -148,12 +170,43 @@ class OrchestrationEngine:
                 risk_reason += (
                     f" Specialist {specialist[0]} elevated the effective risk to {specialist_risk}."
                 )
+        specialist_name = specialist[0] if specialist else None
+        risk, refinement_reason = self._refine_effective_risk(task, specialist_name, risk)
+        if refinement_reason:
+            risk_reason += " " + refinement_reason
+
         capabilities = self._resolve_capabilities(task, worker)
-        primary = self._resolve_primary(task_type, worker, task)
+        evaluated_at = utc_now()
+        primary = self._select_runtime_choice(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            role="primary",
+            risk=risk,
+            capabilities=capabilities,
+            specialist=specialist_name,
+            evaluated_at=evaluated_at,
+        )
         primary_policy_warning = self._primary_policy_warning(task_type, worker, task, primary)
-        fallback = self._resolve_fallback(task_type, worker, capabilities, task, exclude={primary.model})
+        fallback = self._select_fallback_runtime(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            risk=risk,
+            capabilities=capabilities,
+            specialist=specialist_name,
+            primary=primary,
+            evaluated_at=evaluated_at,
+        )
         verification = self._verification_plan(
-            task_type, risk, task, primary, worker, specialist[1] if specialist else None
+            task_type,
+            risk,
+            task,
+            primary,
+            worker,
+            specialist[1] if specialist else None,
+            specialist_name=specialist_name,
+            evaluated_at=evaluated_at,
         )
 
         warnings = [primary_policy_warning] if primary_policy_warning else []
@@ -173,19 +226,23 @@ class OrchestrationEngine:
                 f"Specialist {specialist[0]} matched team {team} and worker binding {worker}."
             )
         explanation.append(
-            f"Implementation {primary.model} selected from the {task_type} implementation route."
+            f"Runtime binding selected {primary.model} for execution after authority, "
+            "eligibility, calibration, and fitness evaluation."
         )
+        if fallback:
+            explanation.append(
+                f"Runtime binding selected {fallback.model} as the constrained fallback."
+            )
         explanation.append(
             f"Independent verification assigned to {verification.implementation.model} with "
             f"{', '.join(verification.method)}."
         )
 
-        specialist_name = specialist[0] if specialist else None
         specialist_entry = specialist[1] if specialist else None
         return DispatchRecord(
             task_id=task.task_id,
             dispatch_id=f"dispatch-{uuid4().hex[:12]}",
-            created_at=utc_now(),
+            created_at=evaluated_at,
             task=task.task,
             task_type=task_type,
             risk_level=risk,
@@ -229,6 +286,14 @@ class OrchestrationEngine:
     def _assess_risk(self, task: TaskRequest) -> tuple[str, str]:
         return assess_risk(task, risk_order=RISK_ORDER)
 
+    def _refine_effective_risk(
+        self,
+        task: TaskRequest,
+        specialist: str | None,
+        risk: str,
+    ) -> tuple[str, str | None]:
+        return risk, None
+
     def _resolve_worker(self, route: dict[str, Any], task: TaskRequest) -> str:
         worker = str(route["primary_worker"])
         overrides = route.get("worker_override_by_context", {})
@@ -260,7 +325,11 @@ class OrchestrationEngine:
         for name, entry in registry.items():
             if entry.get("primary_team") != team or entry.get("worker_binding") != worker:
                 continue
-            tokens = [token for token in name.split("-") if token not in {"engineer", "specialist", "analyst"}]
+            tokens = [
+                token
+                for token in name.split("-")
+                if token not in {"engineer", "specialist", "analyst"}
+            ]
             if name in normalized or (tokens and all(token in normalized for token in tokens)):
                 candidates.append((name, entry))
         if len(candidates) == 1:
@@ -283,7 +352,10 @@ class OrchestrationEngine:
                     f"Selected worker {worker} cannot satisfy required capability {capability} for team {worker_team}"
                 )
         return _unique(
-            [*worker_entry.get("required_capabilities", []), *task.constraints.required_capabilities]
+            [
+                *worker_entry.get("required_capabilities", []),
+                *task.constraints.required_capabilities,
+            ]
         )
 
     def _worker_allows_model(self, worker: str, choice: ImplementationChoice) -> bool:
@@ -325,75 +397,196 @@ class OrchestrationEngine:
             return None
         return None
 
-    def _resolve_primary(self, task_type: str, worker: str, task: TaskRequest) -> ImplementationChoice:
-        route = self.config.implementation_routes.get(task_type, {})
-        for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
-            candidate = route.get(key)
-            if isinstance(candidate, dict) and candidate.get("model"):
-                choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if self._eligible(choice, task) and self._worker_allows_model(worker, choice):
-                    return choice
+    @staticmethod
+    def _candidate(candidate: dict[str, Any], source: str) -> dict[str, Any]:
+        return {
+            "agent": candidate.get("agent", "registry"),
+            "model": candidate.get("model"),
+            "profile": candidate.get("profile"),
+            "reasoning": candidate.get("reasoning"),
+            "source": source,
+        }
 
-        for key in ("fallback", "local_fallback", "conditional_escalation"):
-            candidate = route.get(key)
-            if isinstance(candidate, dict) and candidate.get("model"):
-                choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if self._eligible(choice, task) and self._worker_allows_model(worker, choice):
-                    return choice
-
-        worker_entry = self.config.worker_registry[worker]
-        for source_key in ("preferred_implementations", "fallbacks"):
-            for model in worker_entry.get(source_key, []):
-                choice = self._choice(
-                    {"agent": "registry", "model": model}, f"workers.{worker}.{source_key}"
-                )
-                if self._eligible(choice, task):
-                    return choice
-        raise RoutingError(f"No eligible implementation found for {task_type}/{worker}")
-
-    def _resolve_fallback(
+    def _base_selection_preferences(
         self,
+        *,
         task_type: str,
         worker: str,
+        role: str,
         capabilities: list[str],
-        task: TaskRequest,
-        exclude: set[str],
-        exclude_providers: set[str] | None = None,
-    ) -> ImplementationChoice | None:
-        blocked_providers = exclude_providers or set()
+    ) -> list[dict[str, Any]]:
         route = self.config.implementation_routes.get(task_type, {})
-        for key in ("fallback", "local_fallback", "conditional_escalation"):
-            candidate = route.get(key)
+        preferences: list[dict[str, Any]] = []
+
+        def add(candidate: Any, source: str) -> None:
             if isinstance(candidate, dict) and candidate.get("model"):
-                choice = self._choice(candidate, f"routing.{task_type}.{key}")
-                if (
-                    choice.model not in exclude
-                    and choice.provider_family not in blocked_providers
-                    and self._eligible(choice, task)
-                    and self._worker_allows_model(worker, choice)
-                ):
-                    return choice
+                preferences.append(self._candidate(candidate, source))
 
-        for model in self.config.worker_registry[worker].get("fallbacks", []):
-            choice = self._choice({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
-            if (
-                choice.model not in exclude
-                and choice.provider_family not in blocked_providers
-                and self._eligible(choice, task)
-            ):
-                return choice
+        if role == "primary":
+            for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
+                add(route.get(key), f"routing.{task_type}.{key}")
+            for key in ("fallback", "local_fallback", "conditional_escalation"):
+                add(route.get(key), f"routing.{task_type}.{key}")
+            worker_entry = self.config.worker_registry[worker]
+            for source_key in ("preferred_implementations", "fallbacks"):
+                for model in worker_entry.get(source_key, []):
+                    add({"agent": "registry", "model": model}, f"workers.{worker}.{source_key}")
+        elif role == "fallback":
+            for key in ("fallback", "local_fallback", "conditional_escalation"):
+                add(route.get(key), f"routing.{task_type}.{key}")
+            for model in self.config.worker_registry[worker].get("fallbacks", []):
+                add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
+            family = self._fallback_family(capabilities)
+            for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
+                add(candidate, f"fallback_order.{family}")
+        elif role == "verifier":
+            for key in VERIFIER_KEYS:
+                add(route.get(key), f"routing.{task_type}.{key}")
+            for key in ("fallback", "local_fallback", "conditional_escalation"):
+                add(route.get(key), f"routing.{task_type}.{key}")
+            for model in self.config.worker_registry[worker].get("fallbacks", []):
+                add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
+            for candidate in self.config.routing.get("fallback_order", {}).get("general_reasoning", []):
+                add(candidate, "fallback_order.general_reasoning")
+        else:
+            raise RoutingError(f"Unsupported runtime selection role: {role}")
 
-        family = self._fallback_family(capabilities)
-        for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
-            choice = self._choice(candidate, f"fallback_order.{family}")
-            if (
-                choice.model not in exclude
-                and choice.provider_family not in blocked_providers
-                and self._eligible(choice, task)
-                and self._worker_allows_model(worker, choice)
-            ):
-                return choice
-        return None
+        return self._dedupe_preferences(preferences)
+
+    @staticmethod
+    def _dedupe_preferences(preferences: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
+        seen: set[str] = set()
+        result: list[dict[str, Any]] = []
+        for item in preferences:
+            model = str(item.get("model") or "")
+            if not model or model in seen:
+                continue
+            seen.add(model)
+            result.append(dict(item))
+        return result
+
+    def _selection_preferences(
+        self,
+        *,
+        task: TaskRequest,
+        task_type: str,
+        worker: str,
+        role: str,
+        risk: str,
+        capabilities: list[str],
+        specialist: str | None,
+    ) -> list[dict[str, Any]]:
+        return self._base_selection_preferences(
+            task_type=task_type,
+            worker=worker,
+            role=role,
+            capabilities=capabilities,
+        )
+
+    def _select_runtime_choice(
+        self,
+        *,
+        task: TaskRequest,
+        task_type: str,
+        worker: str,
+        role: str,
+        risk: str,
+        capabilities: list[str],
+        specialist: str | None,
+        evaluated_at: str,
+        exclude_models: set[str] | None = None,
+        exclude_providers: set[str] | None = None,
+    ) -> ImplementationChoice:
+        preferences = self._selection_preferences(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            role=role,
+            risk=risk,
+            capabilities=capabilities,
+            specialist=specialist,
+        )
+        if not preferences:
+            raise RoutingError(
+                f"No transitional runtime authority/preferences are defined for {task_type}/{worker}/{role}"
+            )
+
+        authorized_models = frozenset(str(item["model"]) for item in preferences)
+        blocked_models = set(task.constraints.blocked_implementations)
+        blocked_models.update(exclude_models or set())
+        for model in authorized_models:
+            entry = self._model_entry(model)
+            if entry.get("availability") == "preview" and model not in task.constraints.accepted_preview_models:
+                blocked_models.add(model)
+        blocked_providers = set(task.constraints.blocked_providers)
+        blocked_providers.update(exclude_providers or set())
+
+        reasoning_by_model: list[tuple[str, str]] = []
+        for item in preferences:
+            reasoning = item.get("reasoning")
+            if reasoning:
+                reasoning_by_model.append((str(item["model"]), str(reasoning)))
+
+        request = RuntimeSelectionRequest(
+            scope=RuntimeSelectionScope(
+                task_id=task.task_id,
+                task_type=task_type,
+                worker=worker,
+                role=role,
+            ),
+            eligibility_requirements=EligibilityRequirements(required_capabilities=frozenset(capabilities)),
+            calibration_requirements=self._runtime_calibration_requirements,
+            evaluated_at=evaluated_at,
+            authorized_models=authorized_models,
+            excluded_models=frozenset(blocked_models),
+            excluded_providers=frozenset(blocked_providers),
+            preferred_models=tuple(str(item["model"]) for item in preferences),
+            reasoning_effort_by_model=tuple(reasoning_by_model),
+        )
+        try:
+            decision = self._runtime_selector.select(request)
+        except RuntimeError as exc:
+            raise RoutingError(str(exc)) from exc
+
+        selected = decision.selected.implementation
+        model = selected.configuration.model
+        metadata = next(
+            (item for item in preferences if str(item["model"]) == model),
+            {"agent": "runtime", "model": model, "source": "runtime-selection"},
+        )
+        choice = self._choice(metadata, str(metadata.get("source") or "runtime-selection"))
+        effort = dict(selected.configuration.reasoning_controls).get("effort")
+        if effort:
+            choice.reasoning = effort
+        return choice
+
+    def _select_fallback_runtime(
+        self,
+        *,
+        task: TaskRequest,
+        task_type: str,
+        worker: str,
+        risk: str,
+        capabilities: list[str],
+        specialist: str | None,
+        primary: ImplementationChoice,
+        evaluated_at: str,
+    ) -> ImplementationChoice | None:
+        try:
+            return self._select_runtime_choice(
+                task=task,
+                task_type=task_type,
+                worker=worker,
+                role="fallback",
+                risk=risk,
+                capabilities=capabilities,
+                specialist=specialist,
+                evaluated_at=evaluated_at,
+                exclude_models={primary.model},
+                exclude_providers={primary.provider_family} if primary.provider_family else set(),
+            )
+        except RoutingError:
+            return None
 
     def _verification_plan(
         self,
@@ -403,51 +596,43 @@ class OrchestrationEngine:
         primary: ImplementationChoice,
         worker: str,
         specialist_entry: dict[str, Any] | None,
+        *,
+        specialist_name: str | None = None,
+        evaluated_at: str | None = None,
     ) -> VerificationPlan:
         policy = self.config.routing.get("verification_policy", {}).get(risk, {})
         methods = list(policy.get("minimum", ["output_validation"]))
-        route = self.config.implementation_routes.get(task_type, {})
-        choice: ImplementationChoice | None = None
-        for key in VERIFIER_KEYS:
-            candidate = route.get(key)
-            if isinstance(candidate, dict) and candidate.get("model"):
-                possible = self._choice(candidate, f"routing.{task_type}.{key}")
-                if (
-                    possible.model != primary.model
-                    and possible.provider_family
-                    and primary.provider_family
-                    and possible.provider_family != primary.provider_family
-                    and self._eligible(possible, task)
-                ):
-                    choice = possible
-                    break
-        if choice is None:
-            capabilities = ["high_reasoning"]
-            excluded_providers = {primary.provider_family} if primary.provider_family else set()
-            choice = self._resolve_fallback(
-                task_type,
-                worker,
-                capabilities,
-                task,
-                {primary.model},
-                excluded_providers,
+        specialist_risk = (specialist_entry or {}).get("risk_profile")
+        effective_risk = risk
+        if specialist_risk in RISK_ORDER and RISK_ORDER[specialist_risk] > RISK_ORDER[risk]:
+            effective_risk = str(specialist_risk)
+            methods = list(
+                self.config.routing.get("verification_policy", {})
+                .get(effective_risk, {})
+                .get("minimum", methods)
             )
+
+        when = evaluated_at or utc_now()
+        choice = self._select_runtime_choice(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            role="verifier",
+            risk=effective_risk,
+            capabilities=["high_reasoning"],
+            specialist=specialist_name,
+            evaluated_at=when,
+            exclude_models={primary.model},
+            exclude_providers={primary.provider_family} if primary.provider_family else set(),
+        )
         if (
-            choice is None
-            or choice.model == primary.model
+            choice.model == primary.model
             or not choice.provider_family
             or not primary.provider_family
             or choice.provider_family == primary.provider_family
         ):
             raise RoutingError("No provider-diverse independent verifier is available for the selected implementation")
 
-        specialist_risk = (specialist_entry or {}).get("risk_profile")
-        effective_risk = risk
-        if specialist_risk in RISK_ORDER and RISK_ORDER[specialist_risk] > RISK_ORDER[risk]:
-            effective_risk = specialist_risk
-            methods = list(
-                self.config.routing.get("verification_policy", {}).get(effective_risk, {}).get("minimum", methods)
-            )
         human = task.constraints.require_human_approval or effective_risk == "critical"
         return VerificationPlan(
             team=str(self.config.team_routes[task_type].get("verification_team", "verification")),
@@ -461,6 +646,7 @@ class OrchestrationEngine:
         model = str(candidate["model"])
         registry_entry = self._model_entry(model)
         profile = candidate.get("profile") or registry_entry.get("profile")
+        reasoning = candidate.get("reasoning")
         return ImplementationChoice(
             agent=str(candidate.get("agent", "registry")),
             model=model,
@@ -468,6 +654,7 @@ class OrchestrationEngine:
             provider_family=str(registry_entry.get("provider_family")) if registry_entry.get("provider_family") else None,
             availability=str(registry_entry.get("availability")) if registry_entry.get("availability") else None,
             source=source,
+            reasoning=str(reasoning) if reasoning else None,
         )
 
     def _model_entry(self, model: str) -> dict[str, Any]:
@@ -480,6 +667,10 @@ class OrchestrationEngine:
         return {}
 
     def _eligible(self, choice: ImplementationChoice, task: TaskRequest) -> bool:
+        """Compatibility predicate retained for older outer adapters/tests.
+
+        Production dispatch selection no longer calls this method directly.
+        """
         if choice.model in task.constraints.blocked_implementations:
             return False
         if choice.provider_family and choice.provider_family in task.constraints.blocked_providers:
@@ -487,6 +678,43 @@ class OrchestrationEngine:
         if choice.availability == "preview" and choice.model not in task.constraints.accepted_preview_models:
             return False
         return True
+
+    def _resolve_primary(self, task_type: str, worker: str, task: TaskRequest) -> ImplementationChoice:
+        capabilities = self._resolve_capabilities(task, worker)
+        return self._select_runtime_choice(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            role="primary",
+            risk=task.risk_level,
+            capabilities=capabilities,
+            specialist=task.specialist,
+            evaluated_at=utc_now(),
+        )
+
+    def _resolve_fallback(
+        self,
+        task_type: str,
+        worker: str,
+        capabilities: list[str],
+        task: TaskRequest,
+        exclude: set[str],
+        exclude_providers: set[str] | None = None,
+    ) -> ImplementationChoice | None:
+        primary_model = next(iter(exclude), "")
+        primary = self._choice({"agent": "runtime", "model": primary_model}, "compatibility-exclusion")
+        if exclude_providers:
+            primary.provider_family = next(iter(exclude_providers), primary.provider_family)
+        return self._select_fallback_runtime(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            risk=task.risk_level,
+            capabilities=capabilities,
+            specialist=task.specialist,
+            primary=primary,
+            evaluated_at=utc_now(),
+        )
 
     @staticmethod
     def _fallback_family(capabilities: list[str]) -> str:
