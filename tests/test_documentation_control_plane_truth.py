@@ -10,10 +10,10 @@ EXPECTED_SPECIALIST_COUNT = 82
 EXPECTED_ACCEPTED_SUBSTANTIVE_TESTS = 657
 EXPECTED_ACCEPTED_SUBSTANTIVE_TRACKED_FILES = 477
 EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN = 514
-EXPECTED_CURRENT_VALIDATED_TESTS = 993
-EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 558
+EXPECTED_CURRENT_VALIDATED_TESTS = 1008
+EXPECTED_CURRENT_VALIDATED_TRACKED_FILES = 574
 EXPECTED_CURRENT_VALIDATED_SCHEMAS = 42
-EXPECTED_CURRENT_VALIDATED_CI_RUN = 806
+EXPECTED_CURRENT_VALIDATED_CI_RUN = 869
 EXPECTED_RECONCILIATION_CI_RUN = 602
 EXPECTED_RECONCILIATION_TESTS = 802
 EXPECTED_RECONCILIATION_TRACKED_FILES = 515
@@ -114,7 +114,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         f"CI #{EXPECTED_RECONCILIATION_CI_RUN}",
         f"{EXPECTED_HOST_INTEGRATION_TESTS} automated tests",
         f"{EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
-        f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}",
+        f"{EXPECTED_CURRENT_VALIDATED_TESTS} automated tests",
+        f"{EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
+        f"Reference Implementation CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN}",
         "brokered conformant process-lifetime",
         "static runtime-wired authority-surface reconciliation",
         "process-lifetime recursion resistance",
@@ -143,6 +145,9 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         "provider-backed replay evidence is still pending",
         "no live-execution authority",
         "The next gate is provider-backed controlled documentation replay evidence",
+        "clean-architecture migration in progress",
+        "Tranches 1 and 2 of 7 merged, Tranche 3 next",
+        "docs/architecture/python-clean-architecture-migration.md",
         "control-integrity audit",
         "temporal-causality",
         "Control Integrity remains intentionally scored at 90%",
@@ -180,14 +185,16 @@ def test_root_readme_preserves_current_control_plane_truth() -> None:
         REPO_ROOT / "docs" / "specification" / "live-independent-verification.md"
     ).read_text(encoding="utf-8")
     for phrase in (
-        "Primary bounded route:\n\n```text\nGemini 3.5 Flash-Lite execution\n  -> Claude Sonnet 5 verification\n```",
-        "Model-specific fallback after Gemini 3.5 Flash-Lite is blocked while Anthropic remains eligible:\n\n```text\nClaude Haiku 4.5 execution\n  -> Gemini 3.6 Flash verification\n```",
+        "Primary bounded route:\n\n```text\nGemini 3.7 Flash execution\n  -> Claude Sonnet 5 verification\n```",
+        "Model-specific fallback after Gemini 3.7 Flash is blocked while Anthropic remains eligible:\n\n```text\nClaude Haiku 4.5 execution\n  -> Gemini 3.7 Flash verification\n```",
         "Google provider-family failure:\n\n```text\nClaude Haiku 4.5 execution\n  -> GPT-5.6 Sol verification\n```",
         "The live verifier does not choose these routes. Routing recomputes eligibility and records the assignment before verification executes.",
     ):
         assert phrase in live_spec
 
     for stale in (
+        "Primary bounded route:\n\n```text\nGemini 3.5 Flash-Lite execution\n  -> Claude Sonnet 5 verification\n```",
+        "Model-specific fallback after Gemini 3.5 Flash-Lite is blocked while Anthropic remains eligible:\n\n```text\nClaude Haiku 4.5 execution\n  -> Gemini 3.6 Flash verification\n```",
         "Primary bounded route:\n\n```text\nClaude Haiku 4.5 execution\n  -> Gemini 3.6 Flash verification\n```",
         "Model-specific fallback to Gemini while Anthropic remains eligible:\n\n```text\nGemini 3.6 Flash execution\n  -> Claude Sonnet 5 verification\n```",
         "Anthropic provider-family failure:\n\n```text\nGemini 3.6 Flash execution\n  -> GPT-5.6 Sol verification\n```",
@@ -205,7 +212,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "| Workers | 84 |",
         "| Active specialists | 82 |",
         "| Mission Control workers | 4 |",
-        f"| Current validated scale | {EXPECTED_CURRENT_VALIDATED_TESTS} tests passed, {EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks, {EXPECTED_CURRENT_VALIDATED_SCHEMAS} schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN} |",
+        f"| Current validated scale | {EXPECTED_CURRENT_VALIDATED_TESTS} tests passed, {EXPECTED_CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks, {EXPECTED_CURRENT_VALIDATED_SCHEMAS} schemas, valid linked configuration, regulated-specialist evidence pass, provider-diverse artifact-bound end-to-end pass; established by CI #{EXPECTED_CURRENT_VALIDATED_CI_RUN} on the exact tree later merged as `main@467c706d6f1077371928e3fcbe3f32f5ec51fb19` |",
         f"CI #{EXPECTED_RECONCILIATION_CI_RUN}: {EXPECTED_RECONCILIATION_TESTS} tests, {EXPECTED_RECONCILIATION_TRACKED_FILES} tracked-file layout checks",
         f"CI #{EXPECTED_HOST_INTEGRATION_CI_RUN}: {EXPECTED_HOST_INTEGRATION_TESTS} tests, {EXPECTED_HOST_INTEGRATION_TRACKED_FILES} tracked-file layout checks",
         "restrictive host/TEO authority intersection and host execution-scope binding",
@@ -243,6 +250,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "assimilation is not installation",
         "two distinct task IDs",
         "| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |",
+        "| Python reference clean-architecture migration | In progress | 29% |",
         "| Control integrity | Operational | 90% |",
         "| Regulated specialist evidence pilot | Complete | 100% |",
         "| Route-outcome evidence | Complete | 100% |",
@@ -268,6 +276,8 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "The staged documentation replay harness is now implemented",
         "The next material gate is a real provider-backed controlled replay",
         "provider-backed `documentation` replay is intentionally deferred as an open action item",
+        "### Parallel compatible maintenance — Python reference clean architecture",
+        "Tranche 3 — dispatch application service",
         "control-integrity audit",
         "temporal-causality",
         "targeted mutation audit",
@@ -287,7 +297,7 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
         "Clean corrected Reference Implementation CI #703 passed **915 tests**, **535 tracked-file layout checks**",
         "production-grade remote or distributed dispatch/exact-action authenticity and replay",
         "## NEXT",
-        "No additional workstream is promoted",
+        "No additional operational workstream is promoted",
         "## LATER",
         "next bounded provider-independent Host Integration gate should be selected from the remaining roadmap evidence",
     ):
@@ -301,12 +311,13 @@ def test_progress_tracker_matches_executable_roster_and_current_priority() -> No
     assert "High and critical live execution remains unauthorized" in now_section
     assert "former `runtime-worker-overrides.yaml` behavior" in text
     assert "GPT-5.6 Sol as the provider-diverse non-preview routine fallback" in now_section
-    assert "Gemini 3.6 Flash as the fresh provider-diverse verifier" in now_section
+    assert "Gemini 3.7 Flash as the fresh provider-diverse verifier" in now_section
     assert "Existing canary wrappers and live-verification task scope remain `high_volume_simple` only" in now_section
     assert "CI uses deterministic fake provider transports" in now_section
     assert "controlled_replay` evidence pointer" in now_section
-    assert "No additional workstream is promoted" in next_section
+    assert "No additional operational workstream is promoted" in next_section
     assert "provider-backed controlled `documentation` replay" in next_section
+    assert "Tranche 3 dispatch application-service extraction" in next_section
     assert "Direct outcome-to-self-modifying-routing authority" in text
     assert "Reference Implementation CI run #488" in text
     assert f"Reference Implementation CI run #{EXPECTED_ACCEPTED_SUBSTANTIVE_CI_RUN}" in text
@@ -403,10 +414,12 @@ def test_roadmap_links_progress_tracker_and_preserves_current_roster_truth() -> 
     assert "`documentation` is the first staged candidate" in text
     assert "live activation is not authorized" in text
     assert "provider-diverse non-preview routine fallback: GPT-5.6 Sol" in text
-    assert "fresh redispatch verifier: Gemini 3.6 Flash" in text
+    assert "fresh redispatch verifier: Gemini 3.7 Flash" in text
     assert "staged replay harness are complete" in text
     assert "The next evidence gate is **provider-backed controlled documentation replay**" in text
     assert "CI conformance with deterministic fake transports does not count as empirical provider-backed evidence" in text
+    assert "Python reference clean-architecture migration" in text
+    assert "Tranche 3 is next" in text
     assert "`teo-host-integration/0.1` reference candidate" in text
     assert "explicitly non-normative and non-production" in text
     assert "remains the only accepted live execution scope" in text
