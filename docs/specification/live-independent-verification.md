@@ -79,15 +79,15 @@ Current provider implementations are `GoogleLiveVerifier`, `AnthropicLiveVerifie
 Primary bounded route:
 
 ```text
-Gemini 3.5 Flash-Lite execution
+Gemini 3.7 Flash execution
   -> Claude Sonnet 5 verification
 ```
 
-Model-specific fallback after Gemini 3.5 Flash-Lite is blocked while Anthropic remains eligible:
+Model-specific fallback after Gemini 3.7 Flash is blocked while Anthropic remains eligible:
 
 ```text
 Claude Haiku 4.5 execution
-  -> Gemini 3.6 Flash verification
+  -> Gemini 3.7 Flash verification
 ```
 
 Google provider-family failure:
@@ -98,6 +98,8 @@ Claude Haiku 4.5 execution
 ```
 
 The live verifier does not choose these routes. Routing recomputes eligibility and records the assignment before verification executes.
+
+These routes describe current active policy. Earlier Flash-Lite and Gemini 3.6 Flash verifier topologies remain preserved only in dated historical validation records where they describe the state actually tested at that time.
 
 ## Artifact provenance boundary
 
