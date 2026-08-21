@@ -8,6 +8,7 @@ import pytest
 from teo_reference.domain.runtime_binding import (
     AuthorityScope,
     CalibrationRecord,
+    CalibrationRequirements,
     CalibratedImplementation,
     DiscoveredImplementation,
     EligibilityEvidence,
@@ -21,6 +22,8 @@ from teo_reference.domain.runtime_binding import (
     select_best,
 )
 from teo_reference.ports.runtime_inventory import RuntimeInventoryPort
+
+_EVALUATED_AT = "2026-08-21T12:00:00+00:00"
 
 
 def _configuration(
@@ -92,7 +95,14 @@ def _calibrated(
             ),
             status="passed",
             evidence_ref="benchmark://runtime-binding/test",
+            calibrated_at="2026-08-21T11:00:00+00:00",
+            valid_until="2026-08-22T11:00:00+00:00",
         ),
+        requirements=CalibrationRequirements(
+            required=True,
+            max_age_seconds=86400,
+        ),
+        evaluated_at=_EVALUATED_AT,
     )
 
 
@@ -183,7 +193,10 @@ def test_calibration_is_bound_to_exact_execution_configuration() -> None:
                 configuration_fingerprint=changed_configuration.fingerprint,
                 status="passed",
                 evidence_ref="benchmark://wrong-configuration",
+                calibrated_at="2026-08-21T11:00:00+00:00",
             ),
+            requirements=CalibrationRequirements(required=True),
+            evaluated_at=_EVALUATED_AT,
         )
 
 
@@ -199,6 +212,8 @@ def test_explicit_not_required_calibration_still_binds_configuration_identity() 
             status="not_required",
             evidence_ref="policy://calibration/not-required",
         ),
+        requirements=CalibrationRequirements(required=False),
+        evaluated_at=_EVALUATED_AT,
     )
 
     assert calibrated.state == "calibrated"
@@ -216,6 +231,7 @@ def test_selection_requires_calibrated_candidates() -> None:
             [eligible],
             fitness_scores={eligible.implementation.implementation_id: 1.0},
             selection_reason="test",
+            evaluated_at=_EVALUATED_AT,
         )
 
 
@@ -227,11 +243,13 @@ def test_selection_chooses_best_fit_only_after_calibration() -> None:
         [first, second],
         fitness_scores={"impl-a": 0.7, "impl-b": 0.9},
         selection_reason="highest policy-constrained fitness",
+        evaluated_at=_EVALUATED_AT,
     )
 
     assert selected.state == "selected"
     assert selected.implementation.implementation_id == "impl-b"
     assert selected.fitness_score == 0.9
+    assert selected.evaluated_at == _EVALUATED_AT
 
 
 def test_execution_configuration_fingerprint_changes_with_material_runtime_settings() -> None:
@@ -270,6 +288,7 @@ def test_runtime_binding_domain_has_no_outer_layer_imports() -> None:
     allowed_roots = {
         "__future__",
         "dataclasses",
+        "datetime",
         "hashlib",
         "json",
         "math",

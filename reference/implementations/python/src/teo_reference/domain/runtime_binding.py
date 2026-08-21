@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from math import isfinite
 from typing import Literal, Mapping, Sequence
 
@@ -33,6 +34,18 @@ def _require_text(value: str | None, name: str) -> str:
     if not text:
         raise RuntimeBindingError(f"{name} is required")
     return text
+
+
+def _parse_instant(value: str | None, name: str) -> datetime:
+    text = _require_text(value, name)
+    normalized = text[:-1] + "+00:00" if text.endswith("Z") else text
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError as exc:
+        raise RuntimeBindingError(f"{name} must be an ISO-8601 timestamp") from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise RuntimeBindingError(f"{name} must include an explicit timezone offset")
+    return parsed.astimezone(timezone.utc)
 
 
 def _normalized_pairs(values: Mapping[str, object] | None) -> tuple[tuple[str, str], ...]:
@@ -295,6 +308,22 @@ class EligibilityDecision:
 
 
 @dataclass(frozen=True, slots=True)
+class CalibrationRequirements:
+    """Policy requirements for promoting one eligible configuration to calibrated."""
+
+    required: bool = True
+    max_age_seconds: int | None = None
+    require_valid_until: bool = False
+
+    def __post_init__(self) -> None:
+        if self.max_age_seconds is not None:
+            if isinstance(self.max_age_seconds, bool) or self.max_age_seconds <= 0:
+                raise RuntimeBindingError(
+                    "max_age_seconds must be a positive integer when provided"
+                )
+
+
+@dataclass(frozen=True, slots=True)
 class CalibrationRecord:
     configuration_fingerprint: str
     status: CalibrationStatus
@@ -309,12 +338,81 @@ class CalibrationRecord:
             raise RuntimeBindingError(
                 f"unsupported calibration status: {self.status}"
             )
+        calibrated_at = (
+            _parse_instant(self.calibrated_at, "calibrated_at")
+            if self.calibrated_at is not None
+            else None
+        )
+        valid_until = (
+            _parse_instant(self.valid_until, "valid_until")
+            if self.valid_until is not None
+            else None
+        )
+        if (
+            calibrated_at is not None
+            and valid_until is not None
+            and valid_until <= calibrated_at
+        ):
+            raise RuntimeBindingError("valid_until must be later than calibrated_at")
+
+
+def _calibration_reasons(
+    eligible: EligibleImplementation,
+    *,
+    calibration: CalibrationRecord,
+    requirements: CalibrationRequirements,
+    evaluated_at: str,
+) -> tuple[str, ...]:
+    evaluated = _parse_instant(evaluated_at, "evaluated_at")
+    expected = eligible.implementation.configuration.fingerprint
+    reasons: list[str] = []
+
+    if calibration.configuration_fingerprint != expected:
+        reasons.append(
+            "calibration fingerprint does not match the eligible execution configuration"
+        )
+
+    calibrated = (
+        _parse_instant(calibration.calibrated_at, "calibrated_at")
+        if calibration.calibrated_at is not None
+        else None
+    )
+    expires = (
+        _parse_instant(calibration.valid_until, "valid_until")
+        if calibration.valid_until is not None
+        else None
+    )
+
+    if requirements.require_valid_until and expires is None:
+        reasons.append("calibration policy requires an explicit valid_until")
+
+    if calibrated is not None and calibrated > evaluated:
+        reasons.append("calibration evidence is dated after evaluated_at")
+
+    if expires is not None and evaluated >= expires:
+        reasons.append("calibration evidence is stale at evaluated_at")
+
+    if calibration.status == "passed":
+        if calibrated is None:
+            reasons.append("passed calibration requires calibrated_at")
+        elif (
+            requirements.max_age_seconds is not None
+            and evaluated
+            >= calibrated + timedelta(seconds=requirements.max_age_seconds)
+        ):
+            reasons.append("calibration evidence exceeds the maximum allowed age")
+    elif requirements.required:
+        reasons.append("calibration is required by policy")
+
+    return tuple(reasons)
 
 
 @dataclass(frozen=True, slots=True)
 class CalibratedImplementation:
     eligible: EligibleImplementation
     calibration: CalibrationRecord
+    requirements: CalibrationRequirements
+    evaluated_at: str
     state: Literal["calibrated"] = "calibrated"
 
     def __post_init__(self) -> None:
@@ -322,10 +420,21 @@ class CalibratedImplementation:
             raise RuntimeBindingError(
                 "calibrated state requires an eligible implementation"
             )
-        expected = self.eligible.implementation.configuration.fingerprint
-        if self.calibration.configuration_fingerprint != expected:
+        if not isinstance(self.calibration, CalibrationRecord):
+            raise RuntimeBindingError("calibrated state requires a CalibrationRecord")
+        if not isinstance(self.requirements, CalibrationRequirements):
             raise RuntimeBindingError(
-                "calibration fingerprint does not match the eligible execution configuration"
+                "calibrated state requires CalibrationRequirements"
+            )
+        reasons = _calibration_reasons(
+            self.eligible,
+            calibration=self.calibration,
+            requirements=self.requirements,
+            evaluated_at=self.evaluated_at,
+        )
+        if reasons:
+            raise RuntimeBindingError(
+                "calibrated state cannot be constructed: " + "; ".join(reasons)
             )
 
     @property
@@ -338,6 +447,7 @@ class SelectedImplementation:
     calibrated: CalibratedImplementation
     fitness_score: float
     selection_reason: str
+    evaluated_at: str
     state: Literal["selected"] = "selected"
 
     def __post_init__(self) -> None:
@@ -350,6 +460,17 @@ class SelectedImplementation:
         if not isfinite(float(self.fitness_score)):
             raise RuntimeBindingError("selected fitness_score must be finite")
         _require_text(self.selection_reason, "selection_reason")
+        freshness_reasons = _calibration_reasons(
+            self.calibrated.eligible,
+            calibration=self.calibrated.calibration,
+            requirements=self.calibrated.requirements,
+            evaluated_at=self.evaluated_at,
+        )
+        if freshness_reasons:
+            raise RuntimeBindingError(
+                "selected state cannot be constructed from stale or invalid calibration: "
+                + "; ".join(freshness_reasons)
+            )
 
     @property
     def implementation(self) -> RuntimeImplementation:
@@ -395,12 +516,20 @@ def evaluate_eligibility(
 def apply_calibration(
     eligible: EligibleImplementation,
     calibration: CalibrationRecord,
+    *,
+    requirements: CalibrationRequirements,
+    evaluated_at: str,
 ) -> CalibratedImplementation:
-    """Advance only exact execution configurations through the calibration stage."""
+    """Promote only fresh, policy-satisfying calibration for the exact configuration."""
 
     if not isinstance(eligible, EligibleImplementation):
         raise RuntimeBindingError("calibration requires an eligible implementation")
-    return CalibratedImplementation(eligible=eligible, calibration=calibration)
+    return CalibratedImplementation(
+        eligible=eligible,
+        calibration=calibration,
+        requirements=requirements,
+        evaluated_at=evaluated_at,
+    )
 
 
 def select_best(
@@ -408,10 +537,12 @@ def select_best(
     *,
     fitness_scores: Mapping[str, float],
     selection_reason: str,
+    evaluated_at: str,
 ) -> SelectedImplementation:
-    """Select the best fit without creating authority or bypassing lifecycle stages."""
+    """Select best fit only from candidates still calibration-valid at selection time."""
 
     _require_text(selection_reason, "selection_reason")
+    _parse_instant(evaluated_at, "evaluated_at")
     if not candidates:
         raise RuntimeBindingError(
             "selection requires at least one calibrated candidate"
@@ -424,6 +555,18 @@ def select_best(
         implementation = candidate.implementation
         if implementation.inventory_state == "unavailable":
             raise RuntimeBindingError("unavailable implementation cannot be selected")
+        freshness_reasons = _calibration_reasons(
+            candidate.eligible,
+            calibration=candidate.calibration,
+            requirements=candidate.requirements,
+            evaluated_at=evaluated_at,
+        )
+        if freshness_reasons:
+            raise RuntimeBindingError(
+                "calibrated candidate is not valid at selection time: "
+                f"{implementation.implementation_id}: "
+                + "; ".join(freshness_reasons)
+            )
         implementation_id = implementation.implementation_id
         if implementation_id not in fitness_scores:
             raise RuntimeBindingError(
@@ -441,4 +584,5 @@ def select_best(
         calibrated=selected,
         fitness_score=score,
         selection_reason=selection_reason,
+        evaluated_at=evaluated_at,
     )
