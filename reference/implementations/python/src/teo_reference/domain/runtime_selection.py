@@ -129,6 +129,7 @@ class RuntimeSelectionRequest:
     excluded_models: frozenset[str] = field(default_factory=frozenset)
     excluded_providers: frozenset[str] = field(default_factory=frozenset)
     preferred_models: tuple[str, ...] = ()
+    required_reasoning_controls: tuple[tuple[str, str], ...] = ()
     satisfied_pin_removal_conditions: frozenset[str] = field(default_factory=frozenset)
 
     def __post_init__(self) -> None:
@@ -149,6 +150,19 @@ class RuntimeSelectionRequest:
             )
         if len(set(self.preferred_models)) != len(self.preferred_models):
             raise RuntimeSelectionError("preferred_models must not contain duplicates")
+        if len(set(self.required_reasoning_controls)) != len(
+            self.required_reasoning_controls
+        ):
+            raise RuntimeSelectionError(
+                "required_reasoning_controls must not contain duplicates"
+            )
+        if any(
+            not str(key).strip() or not str(value).strip()
+            for key, value in self.required_reasoning_controls
+        ):
+            raise RuntimeSelectionError(
+                "required_reasoning_controls cannot contain empty keys or values"
+            )
         for name, values in (
             ("authorized_implementation_ids", self.authorized_implementation_ids),
             ("authorized_models", self.authorized_models),
