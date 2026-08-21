@@ -26,6 +26,21 @@ The repository Discussion settings should use the following categories. The slug
 
 Polls are intentionally not part of the initial TEO discussion structure. Add them only when community participation makes voting materially useful.
 
+## Community progress steward
+
+Discussion #191 is the standing public conversation for what people are working on with orchestration. TEO should participate in that conversation by stating its own current work before asking others to share theirs.
+
+`.github/workflows/community-progress-steward.yml` provides that project-status participation. It is deliberately deterministic rather than an autonomous conversational bot:
+
+- it runs only after `docs/stewardship/progress-tracker.md` changes on `main`, when the steward workflow itself changes, or when a maintainer explicitly dispatches it;
+- it reads the canonical `## NOW` section and posts the current focus and next evidence gate to Discussion #191;
+- every update links to the exact Progress Tracker revision and source commit;
+- it hashes the full `## NOW` section and records that digest in a hidden comment marker so the same canonical state is not posted twice;
+- it asks for concrete feedback, contrary evidence, failure cases, and challenges to TEO assumptions;
+- it does not generate replies to community comments and does not create routing, runtime, governance, model/provider, specialist, live-execution, approval, issue, or implementation authority.
+
+Incoming community comments remain subject to maintainer or Mission Control review before any substantive response or repository action. Automation should surface genuine project state, not manufacture activity.
+
 ## Discussion lifecycle
 
 1. Start in the narrowest relevant Discussion category.
