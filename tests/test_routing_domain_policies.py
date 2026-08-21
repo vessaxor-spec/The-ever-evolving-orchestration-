@@ -2,15 +2,16 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from teo_reference.domain.routing import RoutingPolicyError, assess_risk, classify_task
-from teo_reference.engine import RISK_PATTERNS, TASK_PATTERNS, RoutingError
+from teo_reference.engine import RISK_PATTERNS, TASK_PATTERNS, OrchestrationEngine, RoutingError
 from teo_reference.schemas import RISK_ORDER, TaskRequest
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DOMAIN_ROUTING = (
+DOMAIN_ROOT = (
     REPO_ROOT
     / "reference"
     / "implementations"
@@ -18,7 +19,6 @@ DOMAIN_ROUTING = (
     / "src"
     / "teo_reference"
     / "domain"
-    / "routing.py"
 )
 
 
@@ -83,21 +83,41 @@ def test_engine_compatibility_surface_is_preserved() -> None:
     assert isinstance(TASK_PATTERNS, list)
     assert isinstance(RISK_PATTERNS, dict)
 
+    engine = OrchestrationEngine(SimpleNamespace(team_routes={"daily_coding": {}}))  # type: ignore[arg-type]
+    with pytest.raises(RoutingError, match="Task type is ambiguous"):
+        engine._classify_task(TaskRequest(task="Consider this request"))
 
-def test_domain_routing_has_no_outer_layer_imports() -> None:
-    tree = ast.parse(DOMAIN_ROUTING.read_text(encoding="utf-8"))
-    forbidden = (
-        "teo_reference.config",
-        "teo_reference.provider",
-        "teo_reference.runtime",
-        "teo_reference.artifact",
-        "teo_reference.verification",
-    )
-    imported: list[str] = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imported.extend(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            imported.append(node.module)
 
-    assert not [name for name in imported if name.startswith(forbidden)]
+def _resolve_import(path: Path, node: ast.ImportFrom) -> str | None:
+    if node.level == 0:
+        return node.module
+
+    relative_parent = path.relative_to(DOMAIN_ROOT).parent
+    package_parts = ["teo_reference", "domain", *relative_parent.parts]
+    keep = len(package_parts) - (node.level - 1)
+    if keep < 0:
+        return node.module
+    target = package_parts[:keep]
+    if node.module:
+        target.extend(node.module.split("."))
+    return ".".join(target)
+
+
+def test_domain_package_cannot_depend_on_outer_teo_layers() -> None:
+    leaks: list[str] = []
+    for path in sorted(DOMAIN_ROOT.rglob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        imports: list[str] = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                imports.extend(alias.name for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                resolved = _resolve_import(path, node)
+                if resolved:
+                    imports.append(resolved)
+
+        for module in imports:
+            if module.startswith("teo_reference.") and not module.startswith("teo_reference.domain"):
+                leaks.append(f"{path.relative_to(REPO_ROOT)} -> {module}")
+
+    assert leaks == []
