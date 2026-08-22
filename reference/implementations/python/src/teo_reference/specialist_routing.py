@@ -153,6 +153,30 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             f"Specialist {specialist} consequence rule elevated effective risk to critical using trigger {matched!r}.",
         )
 
+    def _documentation_recovery_verifier_preferences(
+        self,
+        *,
+        worker: str,
+    ) -> list[dict[str, Any]]:
+        """Secondary verifier candidates preserving the staged documentation recovery contract.
+
+        These entries widen neither task authority nor live scope. They only retain the
+        pre-RMI documentation worker recovery pool inside the normal runtime-selection
+        lifecycle. Explicit route verifiers remain preferred; these candidates matter
+        only when exclusions or task constraints make those choices ineligible.
+        """
+        worker_entry = self.config.worker_registry[worker]
+        return [
+            {
+                "agent": "registry",
+                "model": model,
+                "profile": None,
+                "reasoning": "medium",
+                "source": f"workers.{worker}.preferred_implementations.documentation_recovery",
+            }
+            for model in worker_entry.get("preferred_implementations", [])
+        ]
+
     def _selection_preferences(
         self,
         *,
@@ -173,6 +197,12 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             capabilities=capabilities,
             specialist=specialist,
         )
+        if task_type == "documentation" and role == "verifier":
+            base.extend(
+                self._documentation_recovery_verifier_preferences(worker=worker)
+            )
+            base = self._dedupe_preferences(base)
+
         if not specialist:
             return base
 
