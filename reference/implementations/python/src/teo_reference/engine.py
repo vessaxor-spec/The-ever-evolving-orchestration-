@@ -427,46 +427,49 @@ class OrchestrationEngine:
     ) -> list[dict[str, Any]]:
         route = self.config.implementation_routes.get(task_type, {})
         preferences: list[dict[str, Any]] = []
+        deferred: list[dict[str, Any]] = []
 
-        def add(candidate: Any, source: str, *, require_worker_allow: bool = False) -> None:
+        def add(candidate: Any, source: str, *, defer_if_worker_disallowed: bool = False) -> None:
             if not isinstance(candidate, dict) or not candidate.get("model"):
                 return
             preference = self._candidate(candidate, source)
-            if require_worker_allow:
+            if defer_if_worker_disallowed:
                 choice = self._choice(preference, source)
                 if not self._worker_allows_model(worker, choice):
+                    deferred.append(preference)
                     return
             preferences.append(preference)
 
         if role == "primary":
             for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
-                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
+                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
+                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
             worker_entry = self.config.worker_registry[worker]
             for source_key in ("preferred_implementations", "fallbacks"):
                 for model in worker_entry.get(source_key, []):
                     add({"agent": "registry", "model": model}, f"workers.{worker}.{source_key}")
         elif role == "fallback":
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
+                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
             for model in self.config.worker_registry[worker].get("fallbacks", []):
                 add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
             family = self._fallback_family(capabilities)
             for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
-                add(candidate, f"fallback_order.{family}", require_worker_allow=True)
+                add(candidate, f"fallback_order.{family}", defer_if_worker_disallowed=True)
         elif role == "verifier":
             for key in VERIFIER_KEYS:
                 add(route.get(key), f"routing.{task_type}.{key}")
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
+                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
             for model in self.config.worker_registry[worker].get("fallbacks", []):
                 add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
             for candidate in self.config.routing.get("fallback_order", {}).get("general_reasoning", []):
-                add(candidate, "fallback_order.general_reasoning", require_worker_allow=True)
+                add(candidate, "fallback_order.general_reasoning", defer_if_worker_disallowed=True)
         else:
             raise RoutingError(f"Unsupported runtime selection role: {role}")
 
+        preferences.extend(deferred)
         return self._dedupe_preferences(preferences)
 
     @staticmethod
