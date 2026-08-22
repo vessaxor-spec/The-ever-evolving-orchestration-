@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 from typing import Any, Iterable, Sequence
@@ -132,9 +133,7 @@ class OrchestrationEngine:
         self._finalization = FinalizationService(
             artifact_integrity or FilesystemArtifactIntegrityAdapter()
         )
-        self._runtime_selector = runtime_selector or ConfiguredRuntimeSelectionAdapter(
-            config.model_registry
-        )
+        self._runtime_selector = runtime_selector
         self._runtime_calibration_requirements = (
             runtime_calibration_requirements or CalibrationRequirements(required=False)
         )
@@ -152,6 +151,17 @@ class OrchestrationEngine:
             runtime_selector=runtime_selector,
             runtime_calibration_requirements=runtime_calibration_requirements,
         )
+
+    def _runtime_selection_port(self) -> RuntimeSelectionPort:
+        if self._runtime_selector is not None:
+            return self._runtime_selector
+        registry = getattr(self.config, "model_registry", None)
+        if registry is None:
+            raise RoutingError(
+                "Runtime dispatch requires model_registry when no runtime selector is injected"
+            )
+        self._runtime_selector = ConfiguredRuntimeSelectionAdapter(registry)
+        return self._runtime_selector
 
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
         task_type, classification_reason = self._classify_task(task)
@@ -418,36 +428,42 @@ class OrchestrationEngine:
         route = self.config.implementation_routes.get(task_type, {})
         preferences: list[dict[str, Any]] = []
 
-        def add(candidate: Any, source: str) -> None:
-            if isinstance(candidate, dict) and candidate.get("model"):
-                preferences.append(self._candidate(candidate, source))
+        def add(candidate: Any, source: str, *, require_worker_allow: bool = False) -> None:
+            if not isinstance(candidate, dict) or not candidate.get("model"):
+                return
+            preference = self._candidate(candidate, source)
+            if require_worker_allow:
+                choice = self._choice(preference, source)
+                if not self._worker_allows_model(worker, choice):
+                    return
+            preferences.append(preference)
 
         if role == "primary":
             for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
-                add(route.get(key), f"routing.{task_type}.{key}")
+                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}")
+                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
             worker_entry = self.config.worker_registry[worker]
             for source_key in ("preferred_implementations", "fallbacks"):
                 for model in worker_entry.get(source_key, []):
                     add({"agent": "registry", "model": model}, f"workers.{worker}.{source_key}")
         elif role == "fallback":
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}")
+                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
             for model in self.config.worker_registry[worker].get("fallbacks", []):
                 add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
             family = self._fallback_family(capabilities)
             for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
-                add(candidate, f"fallback_order.{family}")
+                add(candidate, f"fallback_order.{family}", require_worker_allow=True)
         elif role == "verifier":
             for key in VERIFIER_KEYS:
                 add(route.get(key), f"routing.{task_type}.{key}")
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}")
+                add(route.get(key), f"routing.{task_type}.{key}", require_worker_allow=True)
             for model in self.config.worker_registry[worker].get("fallbacks", []):
                 add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
             for candidate in self.config.routing.get("fallback_order", {}).get("general_reasoning", []):
-                add(candidate, "fallback_order.general_reasoning")
+                add(candidate, "fallback_order.general_reasoning", require_worker_allow=True)
         else:
             raise RoutingError(f"Unsupported runtime selection role: {role}")
 
@@ -482,6 +498,18 @@ class OrchestrationEngine:
             role=role,
             capabilities=capabilities,
         )
+
+    @staticmethod
+    def _logical_reasoning_effort(encoded_effort: str | None) -> str | None:
+        if encoded_effort is None:
+            return None
+        try:
+            value = json.loads(encoded_effort)
+        except (TypeError, json.JSONDecodeError) as exc:
+            raise RoutingError("Selected runtime reasoning effort is not valid normalized JSON") from exc
+        if not isinstance(value, str) or not value.strip():
+            raise RoutingError("Selected runtime reasoning effort must decode to a non-empty string")
+        return value
 
     def _select_runtime_choice(
         self,
@@ -544,7 +572,7 @@ class OrchestrationEngine:
             reasoning_effort_by_model=tuple(reasoning_by_model),
         )
         try:
-            decision = self._runtime_selector.select(request)
+            decision = self._runtime_selection_port().select(request)
         except RuntimeError as exc:
             raise RoutingError(str(exc)) from exc
 
@@ -555,7 +583,9 @@ class OrchestrationEngine:
             {"agent": "runtime", "model": model, "source": "runtime-selection"},
         )
         choice = self._choice(metadata, str(metadata.get("source") or "runtime-selection"))
-        effort = dict(selected.configuration.reasoning_controls).get("effort")
+        effort = self._logical_reasoning_effort(
+            dict(selected.configuration.reasoning_controls).get("effort")
+        )
         if effort:
             choice.reasoning = effort
         return choice
