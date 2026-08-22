@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import replace
 from pathlib import Path
 
@@ -184,9 +185,10 @@ def test_specialist_reasoning_is_bound_before_calibration_and_preserved_in_dispa
     primary_request = selector.requests[0]
     primary_decision = selector.decisions[0]
     assert primary_request.reasoning_effort_for("gpt-5.6-terra") == "medium"
-    assert dict(
+    encoded_effort = dict(
         primary_decision.selected.implementation.configuration.reasoning_controls
-    )["effort"] == "medium"
+    )["effort"]
+    assert json.loads(encoded_effort) == "medium"
     assert dispatch.selected_implementation.reasoning == "medium"
 
 
