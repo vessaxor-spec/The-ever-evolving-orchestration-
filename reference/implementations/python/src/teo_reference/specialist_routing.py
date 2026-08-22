@@ -6,7 +6,7 @@ from typing import Any
 import yaml
 
 from .engine import OrchestrationEngine as BaseOrchestrationEngine, RoutingError
-from .schemas import DispatchRecord, ImplementationChoice, RISK_ORDER, TaskRequest, VerificationPlan
+from .schemas import RISK_ORDER, TaskRequest
 
 SPECIALIST_MODEL_POLICY = "policy/routing/core/specialist-model-routing.yaml"
 
@@ -16,15 +16,16 @@ class SpecialistRoutingError(RoutingError):
 
 
 class SpecialistRoutingEngine(BaseOrchestrationEngine):
-    """TEO router with additive specialist-aware model and effort refinement.
+    """TEO router with specialist policy expressed as pre-selection constraints.
 
-    Team, worker, specialist and effective-risk resolution are delegated to the
-    canonical router first. This layer may refine only implementation, routine
-    fallback, verifier and reasoning effort after a specialist has been selected.
+    Specialist policy may elevate effective risk and supply ordered implementation/
+    reasoning preferences. Actual primary, fallback, and verifier choices remain owned
+    by the runtime selection lifecycle; this layer no longer overwrites a completed
+    DispatchRecord with static model choices.
     """
 
-    def __init__(self, config):
-        super().__init__(config)
+    def __init__(self, config, **kwargs):
+        super().__init__(config, **kwargs)
         self._specialist_model_policy = self._load_specialist_model_policy()
         self._validate_specialist_model_policy()
 
@@ -60,7 +61,8 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             if extra:
                 details.append("extra=" + ",".join(extra))
             raise SpecialistRoutingError(
-                "Specialist model-routing coverage must exactly match the active registry: " + "; ".join(details)
+                "Specialist model-routing coverage must exactly match the active registry: "
+                + "; ".join(details)
             )
 
         for specialist, assignment in assignments.items():
@@ -100,69 +102,36 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
         template_name = str(assignment["template"])
         return template_name, self._specialist_model_policy["templates"][template_name]
 
-    def _specialist_choice(
-        self,
+    @staticmethod
+    def _specialist_preference(
         candidate: dict[str, Any],
         risk: str,
         source: str,
-    ) -> ImplementationChoice:
-        model = str(candidate["model"])
-        registry_entry = self._model_entry(model)
-        profile = candidate.get("profile") or registry_entry.get("profile")
+    ) -> dict[str, Any]:
         reasoning = candidate.get("reasoning")
         by_risk = candidate.get("reasoning_by_risk")
         if isinstance(by_risk, dict) and by_risk.get(risk):
             reasoning = by_risk[risk]
-        return ImplementationChoice(
-            agent=str(candidate.get("agent", "registry")),
-            model=model,
-            profile=str(profile) if profile else None,
-            provider_family=str(registry_entry.get("provider_family")) if registry_entry.get("provider_family") else None,
-            availability=str(registry_entry.get("availability")) if registry_entry.get("availability") else None,
-            source=source,
-            reasoning=str(reasoning) if reasoning else None,
-        )
+        return {
+            "agent": candidate.get("agent", "registry"),
+            "model": candidate.get("model"),
+            "profile": candidate.get("profile"),
+            "reasoning": reasoning,
+            "source": source,
+        }
 
-    def _reasoning_from_source(self, choice: ImplementationChoice, task_type: str) -> str | None:
-        if choice.reasoning:
-            return choice.reasoning
-        prefix = f"routing.{task_type}."
-        if choice.source.startswith(prefix):
-            key = choice.source[len(prefix):]
-            candidate = self.config.implementation_routes.get(task_type, {}).get(key)
-            if isinstance(candidate, dict) and candidate.get("model") == choice.model and candidate.get("reasoning"):
-                return str(candidate["reasoning"])
-        if choice.source.startswith("fallback_order."):
-            family = choice.source.split(".", 1)[1]
-            for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
-                if isinstance(candidate, dict) and candidate.get("model") == choice.model and candidate.get("reasoning"):
-                    return str(candidate["reasoning"])
-        return None
-
-    def _attach_base_reasoning(self, dispatch: DispatchRecord) -> None:
-        dispatch.selected_implementation.reasoning = self._reasoning_from_source(
-            dispatch.selected_implementation, dispatch.task_type
-        )
-        if dispatch.fallback_implementation:
-            dispatch.fallback_implementation.reasoning = self._reasoning_from_source(
-                dispatch.fallback_implementation, dispatch.task_type
-            )
-        dispatch.verification.implementation.reasoning = self._reasoning_from_source(
-            dispatch.verification.implementation, dispatch.task_type
-        )
-
-    def _apply_specialist_consequence_risk(
+    def _refine_effective_risk(
         self,
-        dispatch: DispatchRecord,
         task: TaskRequest,
-    ) -> None:
-        specialist = dispatch.selected_specialist
+        specialist: str | None,
+        risk: str,
+    ) -> tuple[str, str | None]:
         if not specialist:
-            return
+            return risk, None
         entry = self.config.specialist_registry.get(specialist, {})
         escalation = entry.get("risk_escalation", {})
         if not isinstance(escalation, dict):
-            return
+            return risk, None
         patterns = escalation.get("critical_patterns", [])
         if not isinstance(patterns, list):
             raise SpecialistRoutingError(
@@ -177,222 +146,87 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             ),
             None,
         )
-        if not matched or RISK_ORDER[dispatch.risk_level] >= RISK_ORDER["critical"]:
-            return
-
-        dispatch.risk_level = "critical"
-        critical_methods = self.config.routing.get("verification_policy", {}).get(
-            "critical", {}
-        ).get("minimum", [])
-        dispatch.verification.method = list(
-            dict.fromkeys([*dispatch.verification.method, *critical_methods])
-        )
-        dispatch.verification.human_approval_required = True
-        dispatch.routing_explanation.append(
-            f"Specialist {specialist} consequence rule elevated effective risk to critical using trigger {matched!r}."
+        if not matched or RISK_ORDER[risk] >= RISK_ORDER["critical"]:
+            return risk, None
+        return (
+            "critical",
+            f"Specialist {specialist} consequence rule elevated effective risk to critical using trigger {matched!r}.",
         )
 
-    def _documentation_recovery_verification_plan(
+    def _documentation_recovery_verifier_preferences(
         self,
-        risk: str,
-        task: TaskRequest,
-        primary: ImplementationChoice,
+        *,
         worker: str,
-        specialist_entry: dict[str, Any] | None,
-    ) -> VerificationPlan:
-        """Choose a fresh provider-diverse verifier from the canonical worker pool.
+    ) -> list[dict[str, Any]]:
+        """Secondary verifier candidates preserving the staged documentation recovery contract.
 
-        This path is used only when the documentation route's declared technical
-        verifier becomes ineligible after a canonical redispatch. It never changes
-        the primary execution route, accepts preview models, or weakens risk policy.
+        These entries widen neither task authority nor live scope. They only retain the
+        pre-RMI documentation worker recovery pool inside the normal runtime-selection
+        lifecycle. Explicit route verifiers remain preferred; these candidates matter
+        only when exclusions or task constraints make those choices ineligible.
         """
-        methods = list(
-            self.config.routing.get("verification_policy", {})
-            .get(risk, {})
-            .get("minimum", ["output_validation"])
-        )
-        specialist_risk = (specialist_entry or {}).get("risk_profile")
-        effective_risk = risk
-        if specialist_risk in RISK_ORDER and RISK_ORDER[specialist_risk] > RISK_ORDER[risk]:
-            effective_risk = str(specialist_risk)
-            methods = list(
-                self.config.routing.get("verification_policy", {})
-                .get(effective_risk, {})
-                .get("minimum", methods)
-            )
-
         worker_entry = self.config.worker_registry[worker]
-        seen: set[str] = set()
-        for source_key in ("preferred_implementations", "fallbacks"):
-            for model in worker_entry.get(source_key, []):
-                choice = self._choice(
-                    {"agent": "registry", "model": model},
-                    f"workers.{worker}.{source_key}",
-                )
-                if choice.model in seen:
-                    continue
-                seen.add(choice.model)
-                if choice.model == primary.model or not self._eligible(choice, task):
-                    continue
-                if not choice.provider_family or choice.provider_family == primary.provider_family:
-                    continue
-                choice.reasoning = self._reasoning_from_source(choice, "documentation") or "medium"
-                return VerificationPlan(
-                    team=str(
-                        self.config.team_routes["documentation"].get(
-                            "verification_team", "verification"
-                        )
-                    ),
-                    method=list(dict.fromkeys(methods)),
-                    implementation=choice,
-                    independent=True,
-                    human_approval_required=(
-                        task.constraints.require_human_approval or effective_risk == "critical"
-                    ),
-                )
+        return [
+            {
+                "agent": "registry",
+                "model": model,
+                "profile": None,
+                "reasoning": "medium",
+                "source": f"workers.{worker}.preferred_implementations.documentation_recovery",
+            }
+            for model in worker_entry.get("preferred_implementations", [])
+        ]
 
-        raise SpecialistRoutingError(
-            "No provider-diverse recovery verifier is available for documentation redispatch"
-        )
-
-    def _verification_plan(
+    def _selection_preferences(
         self,
-        task_type: str,
-        risk: str,
+        *,
         task: TaskRequest,
-        primary: ImplementationChoice,
+        task_type: str,
         worker: str,
-        specialist_entry: dict[str, Any] | None,
-    ) -> VerificationPlan:
-        try:
-            plan = super()._verification_plan(
-                task_type,
-                risk,
-                task,
-                primary,
-                worker,
-                specialist_entry,
-            )
-        except RoutingError:
-            if task_type != "documentation":
-                raise
-            plan = self._documentation_recovery_verification_plan(
-                risk,
-                task,
-                primary,
-                worker,
-                specialist_entry,
-            )
-
-        if task_type != "high_volume_simple":
-            return plan
-        if (
-            plan.implementation.model != primary.model
-            and plan.implementation.provider_family
-            and plan.implementation.provider_family != primary.provider_family
-        ):
-            return plan
-
-        candidates: list[ImplementationChoice] = []
-        worker_entry = self.config.worker_registry[worker]
-        for source_key in ("preferred_implementations", "fallbacks"):
-            for model in worker_entry.get(source_key, []):
-                candidates.append(
-                    self._choice(
-                        {"agent": "registry", "model": model},
-                        f"workers.{worker}.{source_key}",
-                    )
-                )
-        for candidate in self.config.routing.get("fallback_order", {}).get("general_reasoning", []):
-            if isinstance(candidate, dict) and candidate.get("model"):
-                candidates.append(self._choice(candidate, "fallback_order.general_reasoning"))
-
-        seen: set[str] = set()
-        for choice in candidates:
-            if choice.model in seen:
-                continue
-            seen.add(choice.model)
-            if choice.model == primary.model or not self._eligible(choice, task):
-                continue
-            if not choice.provider_family or choice.provider_family == primary.provider_family:
-                continue
-            choice.reasoning = self._reasoning_from_source(choice, task_type) or "medium"
-            return VerificationPlan(
-                team=plan.team,
-                method=list(plan.method),
-                implementation=choice,
-                independent=True,
-                human_approval_required=plan.human_approval_required,
-            )
-
-        raise SpecialistRoutingError(
-            "No provider-diverse verifier is available for guarded high_volume_simple execution"
+        role: str,
+        risk: str,
+        capabilities: list[str],
+        specialist: str | None,
+    ) -> list[dict[str, Any]]:
+        base = super()._selection_preferences(
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            role=role,
+            risk=risk,
+            capabilities=capabilities,
+            specialist=specialist,
         )
+        if task_type == "documentation" and role == "verifier":
+            base.extend(
+                self._documentation_recovery_verifier_preferences(worker=worker)
+            )
+            base = self._dedupe_preferences(base)
 
-    def dispatch(self, task: TaskRequest) -> DispatchRecord:
-        dispatch = super().dispatch(task)
-        self._attach_base_reasoning(dispatch)
-        specialist = dispatch.selected_specialist
         if not specialist:
-            return dispatch
+            return base
 
-        self._apply_specialist_consequence_risk(dispatch, task)
         template_name, template = self._template_for(specialist)
         source = f"{SPECIALIST_MODEL_POLICY}.templates.{template_name}"
-        primary = self._specialist_choice(template["primary"], dispatch.risk_level, source + ".primary")
-        fallback = self._specialist_choice(template["fallback"], dispatch.risk_level, source + ".fallback")
-        verifier = self._specialist_choice(template["verifier"], dispatch.risk_level, source + ".verifier")
+        preferences: list[dict[str, Any]] = []
 
-        if not self._eligible(primary, task):
-            if self._eligible(fallback, task):
-                primary = fallback
-                base_fallback = dispatch.fallback_implementation
-                fallback = (
-                    base_fallback
-                    if base_fallback
-                    and base_fallback.model != primary.model
-                    and self._eligible(base_fallback, task)
-                    else None
-                )
-            else:
-                dispatch.routing_explanation.append(
-                    f"Specialist model policy {template_name} was blocked by task constraints; canonical eligible routing was preserved."
-                )
-                return dispatch
-        elif not self._eligible(fallback, task):
-            fallback = dispatch.fallback_implementation
-            if fallback and (fallback.model == primary.model or not self._eligible(fallback, task)):
-                fallback = None
-
-        if verifier.model == primary.model or not self._eligible(verifier, task):
-            base_verifier = dispatch.verification.implementation
-            if base_verifier.model == primary.model or not self._eligible(base_verifier, task):
-                raise SpecialistRoutingError(
-                    f"No independent eligible verifier remains for specialist {specialist}"
-                )
-            verifier = base_verifier
-
-        if fallback and fallback.provider_family == primary.provider_family:
-            raise SpecialistRoutingError(
-                f"Specialist route {specialist} lost cross-provider routine fallback diversity"
+        if role == "primary":
+            preferences.append(
+                self._specialist_preference(template["primary"], risk, source + ".primary")
             )
-        if verifier.provider_family == primary.provider_family:
-            raise SpecialistRoutingError(
-                f"Specialist route {specialist} lost provider-independent verification"
+            preferences.append(
+                self._specialist_preference(template["fallback"], risk, source + ".fallback")
             )
+        elif role == "fallback":
+            preferences.append(
+                self._specialist_preference(template["fallback"], risk, source + ".fallback")
+            )
+        elif role == "verifier":
+            preferences.append(
+                self._specialist_preference(template["verifier"], risk, source + ".verifier")
+            )
+        else:
+            raise SpecialistRoutingError(f"Unsupported specialist runtime selection role: {role}")
 
-        dispatch.selected_implementation = primary
-        dispatch.fallback_implementation = fallback
-        dispatch.verification.implementation = verifier
-        effort = primary.reasoning or "provider-default"
-        dispatch.routing_explanation.append(
-            f"Specialist model policy {template_name} refined execution to {primary.model} at {effort} reasoning effort."
-        )
-        if fallback:
-            dispatch.routing_explanation.append(
-                f"Routine fallback remains cross-provider on {fallback.model}."
-            )
-        dispatch.routing_explanation.append(
-            f"Independent specialist-model verification assigned to {verifier.model}."
-        )
-        return dispatch
+        preferences.extend(base)
+        return self._dedupe_preferences(preferences)
