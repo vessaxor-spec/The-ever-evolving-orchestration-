@@ -20,8 +20,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  rmi7_apply_migration:
-    name: Apply inspected RMI-7 migration
+  rmi7_apply_rewire:
+    name: Apply RMI-7 runtime rewiring
     if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/runtime-model-neutral-responsibility' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -30,10 +30,10 @@ jobs:
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           ref: feature/runtime-model-neutral-responsibility
-      - name: Detect whether migration is already applied
+      - name: Detect whether runtime rewiring is already applied
         id: detect
         run: |
-          if test -f policy/routing/core/runtime-compatibility-defaults.yaml; then
+          if grep -q 'runtime_compatibility: dict' reference/implementations/python/src/teo_reference/config.py; then
             echo 'needed=false' >> "$GITHUB_OUTPUT"
           else
             echo 'needed=true' >> "$GITHUB_OUTPUT"
@@ -43,28 +43,19 @@ jobs:
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: "3.11.15"
-          cache: pip
-          cache-dependency-path: ci/requirements-ci.lock
-      - name: Install pinned migration dependency
+      - name: Apply exact-source runtime rewiring
         if: ${{ steps.detect.outputs.needed == 'true' }}
         run: |
-          python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
-          python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
-      - name: Run deterministic RMI-7 configuration migration
-        if: ${{ steps.detect.outputs.needed == 'true' }}
-        run: |
-          python ci/rmi7_migrate_model_neutrality.py
+          python ci/rmi7_rewire_runtime.py
           git diff --check
-          test -f policy/routing/core/runtime-compatibility-defaults.yaml
-          test -f policy/routing/core/specialist-selection-policy.yaml
-          test ! -e policy/routing/core/specialist-model-routing.yaml
-      - name: Commit inspected migration output
+          python -m compileall -q reference/implementations/python/src
+      - name: Commit runtime rewiring
         if: ${{ steps.detect.outputs.needed == 'true' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add community/workers policy/routing
-          git commit -m "rmi7: migrate responsibility config to model-neutral surfaces"
+          git add reference/implementations/python/src/teo_reference/config.py reference/implementations/python/src/teo_reference/engine.py reference/implementations/python/src/teo_reference/specialist_routing.py
+          git commit -m "rmi7: bind runtime defaults outside responsibility routes"
           git push origin HEAD:feature/runtime-model-neutral-responsibility
 
   validate:
