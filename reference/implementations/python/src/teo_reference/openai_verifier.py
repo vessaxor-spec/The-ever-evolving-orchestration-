@@ -119,8 +119,12 @@ class OpenAILiveVerifier:
                 f"Assigned OpenAI verifier failed with HTTP {response.status_code}"
             )
         provider_model = response_payload.get("model")
-        if isinstance(provider_model, str) and provider_model != request.verifier_model:
-            raise LiveVerificationError("OpenAI verifier response changed the assigned verifier model")
+        observed_model = (
+            provider_model.strip()
+            if isinstance(provider_model, str) and provider_model.strip()
+            else request.verifier_model
+        )
+        model_observed = isinstance(provider_model, str) and bool(provider_model.strip())
         if response_payload.get("status") in {"failed", "cancelled", "incomplete"}:
             raise LiveVerificationError(
                 f"OpenAI verifier response ended with status {response_payload.get('status')}"
@@ -137,10 +141,13 @@ class OpenAILiveVerifier:
             evidence.append(f"openai_verifier_response_id:{response_id}")
         if request_id:
             evidence.append(f"openai_verifier_request_id:{request_id}")
+        if model_observed:
+            evidence.append(f"openai_verifier_response_model:{observed_model}")
         return LiveVerificationResponse(
             decision=decision,
             provider_family=self.provider_family,
-            model=request.verifier_model,
+            model=observed_model,
             evidence=tuple(evidence),
             usage=usage,
+            model_observed=model_observed,
         )
