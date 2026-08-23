@@ -4,13 +4,8 @@ from pathlib import Path
 from typing import Iterable
 
 from ...ports.artifact import ArtifactIntegrityPort, ArtifactIntegrityPortError
-from ...schemas import (
-    DispatchRecord,
-    ExecutionResult,
-    FinalOutcome,
-    VerificationResult,
-    utc_now,
-)
+from ...runtime_identity import compare_runtime_identity
+from ...schemas import DispatchRecord, ExecutionResult, FinalOutcome, VerificationResult, utc_now
 
 
 class FinalizationError(RuntimeError):
@@ -41,10 +36,7 @@ class FinalizationService:
             )
         if verification.verifier_model != dispatch.verification.implementation.model:
             raise FinalizationError("Verification was not performed by the assigned verifier")
-        if (
-            dispatch.verification.independent
-            and verification.verifier_model == dispatch.selected_implementation.model
-        ):
+        if dispatch.verification.independent and verification.verifier_model == dispatch.selected_implementation.model:
             raise FinalizationError("Independent verification cannot use the selected execution model")
         if (
             dispatch.verification.independent
@@ -56,6 +48,28 @@ class FinalizationService:
             raise FinalizationError(
                 "Independent verification cannot use the selected execution provider family"
             )
+
+        if execution.observed_identity is not None:
+            execution_identity_status = compare_runtime_identity(
+                expected_provider_family=dispatch.selected_implementation.provider_family,
+                expected_model=dispatch.selected_implementation.model,
+                observed=execution.observed_identity,
+            )
+            if execution_identity_status != "match":
+                raise FinalizationError(
+                    f"Observed executor runtime identity is {execution_identity_status}; finalization fails closed"
+                )
+
+        if verification.observed_identity is not None:
+            verifier_identity_status = compare_runtime_identity(
+                expected_provider_family=dispatch.verification.implementation.provider_family,
+                expected_model=dispatch.verification.implementation.model,
+                observed=verification.observed_identity,
+            )
+            if verifier_identity_status != "match":
+                raise FinalizationError(
+                    f"Observed verifier runtime identity is {verifier_identity_status}; finalization fails closed"
+                )
 
         if verification.verified_artifact is not None and not execution.output_ref:
             raise FinalizationError("Verification artifact binding has no execution output artifact")
