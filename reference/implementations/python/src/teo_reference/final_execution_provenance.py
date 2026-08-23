@@ -21,12 +21,11 @@ def attach_execution_provenance(
     *,
     repo_root: str | Path,
 ) -> FinalOutcome:
-    """Attach a compact read-only projection of validated Route-Outcome Evidence.
+    """Attach validated observed runtime identity from Route-Outcome evidence.
 
-    The projection proves the successful active execution route that TEO observed. It
-    never selects a provider, widens authority, or substitutes dispatch intent for
-    runtime evidence. Existing FinalOutcome values remain valid without this optional
-    projection.
+    New Route-Outcome records keep intended and observed identity separate. Historical
+    records without the RMI-6 identity extension remain readable, but any explicit
+    mismatch or unconfirmed live identity is ineligible for verified final provenance.
     """
 
     raw = route_outcome.to_dict() if isinstance(route_outcome, RouteOutcomeRecord) else dict(route_outcome)
@@ -54,19 +53,46 @@ def attach_execution_provenance(
         )
 
     implementation = active_route["implementation"]
-    provider_family = str(implementation.get("provider_family") or "").strip()
-    model = str(implementation.get("model") or "").strip()
+    intended_provider_family = str(implementation.get("provider_family") or "").strip()
+    intended_model = str(implementation.get("model") or "").strip()
+    executor_identity_status = implementation.get("identity_status")
+    observed_executor = implementation.get("observed_identity")
+    if executor_identity_status is not None and executor_identity_status != "match":
+        raise ProviderAdapterContractError(
+            "Final execution provenance refuses non-matching observed executor identity"
+        )
+    if isinstance(observed_executor, dict):
+        provider_family = str(observed_executor.get("provider_family") or "").strip()
+        model = str(observed_executor.get("model") or "").strip()
+        configuration_identity_observed = bool(observed_executor.get("configuration_observed"))
+    else:
+        provider_family = intended_provider_family
+        model = intended_model
+        configuration_identity_observed = False
     if not provider_family or not model:
         raise ProviderAdapterContractError(
             "Final execution provenance requires provider and model identity"
         )
     if model != outcome.selected_model:
         raise ProviderAdapterContractError(
-            "Final outcome selected model does not match Route-Outcome active model"
+            "Final outcome selected model does not match observed Route-Outcome active model"
         )
 
     verifier = active_route["verifier"]
-    verifier_model = str(verifier.get("model") or "").strip()
+    intended_verifier_model = str(verifier.get("model") or "").strip()
+    verifier_identity_status = verifier.get("identity_status")
+    observed_verifier = verifier.get("observed_identity")
+    if verifier_identity_status is not None and observed_verifier is not None and verifier_identity_status != "match":
+        raise ProviderAdapterContractError(
+            "Final execution provenance refuses non-matching observed verifier identity"
+        )
+    if isinstance(observed_verifier, dict):
+        observed_verifier_provider_family = str(observed_verifier.get("provider_family") or "").strip()
+        observed_verifier_model = str(observed_verifier.get("model") or "").strip()
+    else:
+        observed_verifier_provider_family = None
+        observed_verifier_model = None
+    verifier_model = observed_verifier_model or intended_verifier_model
     if not verifier_model or verifier_model != outcome.verifier_model:
         raise ProviderAdapterContractError(
             "Final outcome verifier model does not match Route-Outcome evidence"
@@ -106,6 +132,13 @@ def attach_execution_provenance(
         final_disposition=disposition,
         fallback_assisted=bool(validated["fallback_assisted"]),
         retry_assisted=bool(validated["retry_assisted"]),
+        intended_provider_family=intended_provider_family or None,
+        intended_model=intended_model or None,
+        executor_identity_status=str(executor_identity_status) if executor_identity_status is not None else None,
+        observed_verifier_provider_family=observed_verifier_provider_family,
+        observed_verifier_model=observed_verifier_model,
+        verifier_identity_status=str(verifier_identity_status) if verifier_identity_status is not None else None,
+        configuration_identity_observed=configuration_identity_observed,
     )
     if outcome.execution_provenance is not None and outcome.execution_provenance != provenance:
         raise ProviderAdapterContractError(
