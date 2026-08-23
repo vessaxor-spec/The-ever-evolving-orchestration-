@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from math import isfinite
 from typing import Any, Literal, Mapping, Protocol
 
+from .runtime_identity import IdentityStatus, RuntimeIdentityObservation, compare_runtime_identity
 from .schemas import DispatchRecord, ExecutionResult, ExecutionStatus, RiskLevel
 
 CONTRACT_VERSION = "1"
@@ -13,31 +14,14 @@ ReasoningEffort = Literal["none", "minimal", "low", "medium", "high", "xhigh", "
 FAILURE_SCOPES = {"request", "transient", "model", "provider", "capability"}
 REASONING_EFFORTS = {"none", "minimal", "low", "medium", "high", "xhigh", "max"}
 _CREDENTIAL_FIELDS = {
-    "api_key",
-    "apikey",
-    "authorization",
-    "authorization_code",
-    "bearer_token",
-    "client_secret",
-    "credential",
-    "credentials",
-    "password",
-    "private_key",
-    "refresh_token",
-    "secret",
-    "service_account_key",
-    "session_token",
-    "token",
+    "api_key", "apikey", "authorization", "authorization_code", "bearer_token",
+    "client_secret", "credential", "credentials", "password", "private_key",
+    "refresh_token", "secret", "service_account_key", "session_token", "token",
     "access_token",
 }
 _CREDENTIAL_SUFFIXES = (
-    "_api_key",
-    "_credential",
-    "_credentials",
-    "_password",
-    "_private_key",
-    "_secret",
-    "_token",
+    "_api_key", "_credential", "_credentials", "_password", "_private_key",
+    "_secret", "_token",
 )
 
 
@@ -103,11 +87,7 @@ def _optional_non_negative_int(value: Any, name: str) -> int | None:
 
 @dataclass(frozen=True, slots=True)
 class ProviderUsage:
-    """Provider-neutral usage evidence for one provider attempt.
-
-    Input and output totals follow OpenTelemetry GenAI semantics where practical.
-    Provider-specific usage is normalized only when a stable equivalent exists.
-    """
+    """Provider-neutral usage evidence for one provider attempt."""
 
     input_tokens: int | None = None
     output_tokens: int | None = None
@@ -119,12 +99,8 @@ class ProviderUsage:
 
     def __post_init__(self) -> None:
         for name in (
-            "input_tokens",
-            "output_tokens",
-            "cached_input_tokens",
-            "cache_creation_input_tokens",
-            "reasoning_output_tokens",
-            "tool_tokens",
+            "input_tokens", "output_tokens", "cached_input_tokens",
+            "cache_creation_input_tokens", "reasoning_output_tokens", "tool_tokens",
             "total_tokens",
         ):
             _optional_non_negative_int(getattr(self, name), f"usage.{name}")
@@ -142,12 +118,8 @@ class ProviderUsage:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ProviderUsage":
         allowed = {
-            "input_tokens",
-            "output_tokens",
-            "cached_input_tokens",
-            "cache_creation_input_tokens",
-            "reasoning_output_tokens",
-            "tool_tokens",
+            "input_tokens", "output_tokens", "cached_input_tokens",
+            "cache_creation_input_tokens", "reasoning_output_tokens", "tool_tokens",
             "total_tokens",
         }
         _reject_unknown(data, allowed, "usage")
@@ -260,15 +232,8 @@ class ProviderExecutionRequest:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ProviderExecutionRequest":
         allowed = {
-            "contract_version",
-            "dispatch_id",
-            "task_id",
-            "provider_family",
-            "model",
-            "risk_level",
-            "required_capabilities",
-            "input_payload",
-            "reasoning_effort",
+            "contract_version", "dispatch_id", "task_id", "provider_family", "model",
+            "risk_level", "required_capabilities", "input_payload", "reasoning_effort",
         }
         _reject_unknown(data, allowed, "provider execution request")
         payload = data.get("input_payload")
@@ -312,6 +277,7 @@ class ProviderExecutionResponse:
     failure: ProviderFailure | None = None
     retry_after_seconds: float | None = None
     usage: ProviderUsage | None = None
+    model_observed: bool = True
     contract_version: Literal["1"] = "1"
 
     def __post_init__(self) -> None:
@@ -341,19 +307,20 @@ class ProviderExecutionResponse:
         elif self.output_ref is not None:
             raise ProviderAdapterContractError("Failed execution cannot publish an accepted output_ref")
 
+    def observed_identity(self) -> RuntimeIdentityObservation:
+        return RuntimeIdentityObservation(
+            provider_family=self.provider_family,
+            model=self.model,
+            source="provider_response" if self.model_observed else "provider_adapter",
+            model_observed=self.model_observed,
+        )
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ProviderExecutionResponse":
         allowed = {
-            "contract_version",
-            "dispatch_id",
-            "status",
-            "provider_family",
-            "model",
-            "output_ref",
-            "evidence",
-            "failure",
-            "retry_after_seconds",
-            "usage",
+            "contract_version", "dispatch_id", "status", "provider_family", "model",
+            "output_ref", "evidence", "failure", "retry_after_seconds", "usage",
+            "model_observed",
         }
         _reject_unknown(data, allowed, "provider execution response")
         failure_data = data.get("failure")
@@ -374,6 +341,7 @@ class ProviderExecutionResponse:
             failure=ProviderFailure.from_dict(failure_data) if failure_data is not None else None,
             retry_after_seconds=float(retry_after) if retry_after is not None else None,
             usage=ProviderUsage.from_dict(usage_data) if usage_data is not None else None,
+            model_observed=bool(data.get("model_observed", True)),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -388,6 +356,7 @@ class ProviderExecutionResponse:
             "failure": self.failure.to_dict() if self.failure else None,
             "retry_after_seconds": self.retry_after_seconds,
             "usage": self.usage.to_dict() if self.usage else None,
+            "model_observed": self.model_observed,
         }
 
     def to_execution_result(self) -> ExecutionResult:
@@ -397,6 +366,7 @@ class ProviderExecutionResponse:
             output_ref=self.output_ref,
             evidence=list(self.evidence),
             failed_attempts=1 if self.status == "failed" else 0,
+            observed_identity=self.observed_identity(),
         )
 
 
@@ -412,17 +382,29 @@ def validate_provider_response(
     dispatch: DispatchRecord,
     request: ProviderExecutionRequest,
     response: ProviderExecutionResponse,
-) -> None:
-    expected_provider = dispatch.selected_implementation.provider_family
-    expected_model = dispatch.selected_implementation.model
+    *,
+    enforce_identity: bool = False,
+) -> IdentityStatus:
+    """Validate response lineage while preserving independently observed identity.
+
+    Identity mismatch is returned as evidence by default so runtime/finalization layers can
+    record it before failing closed. Legacy single-attempt callers can request strict
+    rejection with ``enforce_identity=True``.
+    """
     if response.dispatch_id != dispatch.dispatch_id or response.dispatch_id != request.dispatch_id:
         raise ProviderAdapterContractError("Provider response does not reference the active dispatch")
-    if response.provider_family != expected_provider or response.provider_family != request.provider_family:
-        raise ProviderAdapterContractError("Provider response changed the selected provider family")
-    if response.model != expected_model or response.model != request.model:
-        raise ProviderAdapterContractError("Provider response changed the selected implementation model")
     if response.contract_version != request.contract_version:
         raise ProviderAdapterContractError("Provider response changed the adapter contract version")
+    status = compare_runtime_identity(
+        expected_provider_family=dispatch.selected_implementation.provider_family,
+        expected_model=dispatch.selected_implementation.model,
+        observed=response.observed_identity(),
+    )
+    if enforce_identity and status != "match":
+        raise ProviderAdapterContractError(
+            f"Provider response runtime identity is {status} relative to the active dispatch"
+        )
+    return status
 
 
 def execute_provider_once(
@@ -441,5 +423,5 @@ def execute_provider_once(
         raise ProviderAdapterContractError(
             "Adapter must return ProviderExecutionResponse rather than a provider-native payload"
         )
-    validate_provider_response(dispatch, request, response)
+    validate_provider_response(dispatch, request, response, enforce_identity=False)
     return response.to_execution_result()
