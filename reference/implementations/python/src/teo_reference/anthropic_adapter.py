@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -250,6 +251,7 @@ def execute_anthropic_canary_once(
     *,
     artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic",
     timeout_seconds: float = 30.0,
+    enforce_identity: bool = True,
 ) -> ProviderExecutionResponse:
     """Execute one live Anthropic canary attempt while preserving TEO routing authority."""
     if dispatch.task_type not in CANARY_TASK_TYPES:
@@ -263,8 +265,23 @@ def execute_anthropic_canary_once(
 
     adapter = AnthropicMessagesAdapter(connection, artifact_dir=artifact_dir, timeout_seconds=timeout_seconds)
     request = ProviderExecutionRequest.from_dispatch(dispatch, input_payload)
-    response = adapter.execute(request)
-    if not isinstance(response, ProviderExecutionResponse):
+    raw_response = adapter.execute(request)
+    if not isinstance(raw_response, ProviderExecutionResponse):
         raise ProviderAdapterContractError("Anthropic adapter must return ProviderExecutionResponse rather than provider-native data")
-    validate_provider_response(dispatch, request, response, enforce_identity=False)
+    raw_observed_model = raw_response.model if raw_response.model_observed else None
+    observed_model = (
+        request.model
+        if raw_observed_model is not None and _provider_model_matches(request.model, raw_observed_model)
+        else raw_observed_model
+    )
+    response = replace(
+        raw_response,
+        model=request.model,
+        observed_model=observed_model,
+    )
+    identity_status = validate_provider_response(dispatch, request, response, enforce_identity=False)
+    if enforce_identity and identity_status == "mismatch":
+        raise ProviderAdapterContractError(
+            "Anthropic response reported a model outside the dispatch-authorized model or alias set"
+        )
     return response
