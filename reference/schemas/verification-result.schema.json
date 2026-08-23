@@ -21,6 +21,43 @@
       },
       "required": ["output_ref", "sha256", "size_bytes"],
       "additionalProperties": false
+    },
+    "observed_identity": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "provider_family",
+            "model",
+            "source",
+            "model_observed",
+            "configuration_fingerprint",
+            "configuration_observed"
+          ],
+          "properties": {
+            "provider_family": {"type": "string", "minLength": 1},
+            "model": {"type": "string", "minLength": 1},
+            "source": {
+              "enum": [
+                "provider_response",
+                "provider_adapter",
+                "verifier_response",
+                "verifier_adapter"
+              ]
+            },
+            "model_observed": {"type": "boolean"},
+            "configuration_fingerprint": {
+              "oneOf": [
+                {"type": "null"},
+                {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+              ]
+            },
+            "configuration_observed": {"type": "boolean"}
+          }
+        }
+      ]
     }
   }
 }
