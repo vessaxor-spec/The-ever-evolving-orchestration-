@@ -20,6 +20,43 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  rmi7_migration_artifact:
+    name: Export RMI-7 migration artifact
+    if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/runtime-model-neutral-responsibility' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11.15"
+          cache: pip
+          cache-dependency-path: ci/requirements-ci.lock
+      - name: Install pinned migration dependency
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
+          python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
+      - name: Run deterministic RMI-7 configuration migration
+        run: |
+          python ci/rmi7_migrate_model_neutrality.py
+          git diff --check
+          test -f policy/routing/core/runtime-compatibility-defaults.yaml
+          test -f policy/routing/core/specialist-selection-policy.yaml
+          test ! -e policy/routing/core/specialist-model-routing.yaml
+          mkdir -p /tmp/rmi7-output
+          cp -a community/workers /tmp/rmi7-output/workers
+          cp -a policy/routing /tmp/rmi7-output/routing
+          printf '%s\n' 'policy/routing/core/specialist-model-routing.yaml' > /tmp/rmi7-output/deletions.txt
+      - name: Upload deterministic migration output
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rmi7-model-neutral-migration
+          path: /tmp/rmi7-output
+          if-no-files-found: error
+          retention-days: 1
+
   validate:
     name: Validate reference router
     runs-on: ubuntu-24.04
