@@ -14,11 +14,7 @@ from .provider_adapter import (
     retry_after_seconds_from_headers,
     validate_provider_response,
 )
-from .provider_connection import (
-    ProviderConnection,
-    ProviderConnectionError,
-    ProviderConnectionRequest,
-)
+from .provider_connection import ProviderConnection, ProviderConnectionError, ProviderConnectionRequest
 from .schemas import DispatchRecord
 
 ANTHROPIC_MESSAGES_URL = "https://api.anthropic.com/v1/messages"
@@ -49,9 +45,7 @@ def _error_details(payload: dict[str, Any] | None) -> tuple[str, str]:
         return "unknown_provider_error", "Anthropic returned an unreadable error response"
     error = payload.get("error")
     if isinstance(error, dict):
-        error_type = str(error.get("type") or "unknown_provider_error")
-        message = str(error.get("message") or "Anthropic returned an error")
-        return error_type, message
+        return str(error.get("type") or "unknown_provider_error"), str(error.get("message") or "Anthropic returned an error")
     return str(payload.get("type") or "unknown_provider_error"), "Anthropic returned an error"
 
 
@@ -89,9 +83,7 @@ def _extract_text(payload: dict[str, Any]) -> str:
 
 
 def _provider_model_matches(requested_model: str, provider_model: str | None) -> bool:
-    if not provider_model:
-        return True
-    if requested_model == provider_model:
+    if not provider_model or requested_model == provider_model:
         return True
     haiku_aliases = {"claude-haiku-4-5", "claude-haiku-4-5-20251001"}
     return requested_model in haiku_aliases and provider_model in haiku_aliases
@@ -112,18 +104,11 @@ def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
     cache_read = _non_negative_int(raw.get("cache_read_input_tokens"))
     output = _non_negative_int(raw.get("output_tokens"))
     output_details = raw.get("output_tokens_details")
-    reasoning = (
-        _non_negative_int(output_details.get("thinking_tokens"))
-        if isinstance(output_details, dict)
-        else None
-    )
+    reasoning = _non_negative_int(output_details.get("thinking_tokens")) if isinstance(output_details, dict) else None
     input_components = [item for item in (uncached, cache_create, cache_read) if item is not None]
     total_input = sum(input_components) if input_components else None
     total = total_input + output if total_input is not None and output is not None else None
-    if all(
-        item is None
-        for item in (total_input, output, cache_read, cache_create, reasoning, total)
-    ):
+    if all(item is None for item in (total_input, output, cache_read, cache_create, reasoning, total)):
         return None
     return ProviderUsage(
         input_tokens=total_input,
@@ -136,24 +121,13 @@ def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
 
 
 class AnthropicMessagesAdapter:
-    """Single-attempt Anthropic Messages adapter for implemented guarded models.
-
-    The adapter can implement models before a task class is authorized to use them.
-    Runtime wrappers and live-scope policy remain the authority boundary.
-    """
+    """Single-attempt Anthropic Messages adapter for implemented guarded models."""
 
     provider_family = "anthropic"
 
-    def __init__(
-        self,
-        connection: ProviderConnection,
-        artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic",
-        timeout_seconds: float = 30.0,
-    ) -> None:
+    def __init__(self, connection: ProviderConnection, artifact_dir: str | Path = ".teo/runtime/artifacts/anthropic", timeout_seconds: float = 30.0) -> None:
         if connection.provider_family != self.provider_family:
-            raise ProviderAdapterContractError(
-                "Anthropic adapter requires an Anthropic provider connection"
-            )
+            raise ProviderAdapterContractError("Anthropic adapter requires an Anthropic provider connection")
         self._connection = connection
         self._artifact_dir = Path(artifact_dir)
         self._timeout_seconds = float(timeout_seconds)
@@ -162,39 +136,24 @@ class AnthropicMessagesAdapter:
         if request.provider_family != self.provider_family:
             raise ProviderAdapterContractError("Anthropic adapter received a non-Anthropic request")
         if request.risk_level not in CANARY_RISK_LEVELS:
-            raise ProviderAdapterContractError(
-                "Anthropic guarded execution is restricted to low and medium risk"
-            )
+            raise ProviderAdapterContractError("Anthropic guarded execution is restricted to low and medium risk")
         if request.model not in IMPLEMENTED_MODELS:
-            raise ProviderAdapterContractError(
-                "Anthropic guarded adapter does not implement the requested model"
-            )
-        if request.model == "claude-sonnet-5":
-            if request.reasoning_effort not in SONNET_5_EFFORTS:
-                raise ProviderAdapterContractError(
-                    "Claude Sonnet 5 guarded execution requires an explicit supported effort"
-                )
+            raise ProviderAdapterContractError("Anthropic guarded adapter does not implement the requested model")
+        if request.model == "claude-sonnet-5" and request.reasoning_effort not in SONNET_5_EFFORTS:
+            raise ProviderAdapterContractError("Claude Sonnet 5 guarded execution requires an explicit supported effort")
 
         task = request.input_payload.get("task")
         if not isinstance(task, str) or not task.strip():
             raise ProviderAdapterContractError("Anthropic canary input_payload.task must be non-empty text")
-
         raw_max_tokens = request.input_payload.get("max_output_tokens", 512)
         if not isinstance(raw_max_tokens, int) or isinstance(raw_max_tokens, bool):
             raise ProviderAdapterContractError("max_output_tokens must be an integer")
         if raw_max_tokens < 1 or raw_max_tokens > MAX_CANARY_OUTPUT_TOKENS:
-            raise ProviderAdapterContractError(
-                f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for guarded execution"
-            )
+            raise ProviderAdapterContractError(f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for guarded execution")
 
-        payload: dict[str, Any] = {
-            "model": request.model,
-            "max_tokens": raw_max_tokens,
-            "messages": [{"role": "user", "content": task}],
-        }
+        payload: dict[str, Any] = {"model": request.model, "max_tokens": raw_max_tokens, "messages": [{"role": "user", "content": task}]}
         if request.model == "claude-sonnet-5":
             payload["output_config"] = {"effort": request.reasoning_effort}
-        body = json.dumps(payload).encode("utf-8")
 
         try:
             connection_response = self._connection.invoke(
@@ -202,11 +161,8 @@ class AnthropicMessagesAdapter:
                     operation="messages.create",
                     url=ANTHROPIC_MESSAGES_URL,
                     method="POST",
-                    headers={
-                        "content-type": "application/json",
-                        "anthropic-version": ANTHROPIC_VERSION,
-                    },
-                    body=body,
+                    headers={"content-type": "application/json", "anthropic-version": ANTHROPIC_VERSION},
+                    body=json.dumps(payload).encode("utf-8"),
                     timeout_seconds=self._timeout_seconds,
                 )
             )
@@ -216,86 +172,72 @@ class AnthropicMessagesAdapter:
                 status="failed",
                 provider_family=request.provider_family,
                 model=request.model,
-                failure=ProviderFailure(
-                    scope="transient",
-                    code="connection_error",
-                    message=str(exc),
-                ),
+                model_observed=False,
+                failure=ProviderFailure(scope="transient", code="connection_error", message=str(exc)),
             )
 
         status_code = connection_response.status_code
         response_headers = connection_response.headers
-        response_body = connection_response.body
-        payload = _decode_json(response_body)
+        response_payload = _decode_json(connection_response.body)
         request_id = response_headers.get("request-id") or response_headers.get("request_id")
-        if not request_id and payload:
-            request_id = payload.get("request_id") if isinstance(payload.get("request_id"), str) else None
-        usage = _extract_usage(payload) if payload else None
+        if not request_id and response_payload:
+            request_id = response_payload.get("request_id") if isinstance(response_payload.get("request_id"), str) else None
+        usage = _extract_usage(response_payload) if response_payload else None
 
         if 200 <= status_code < 300:
-            if payload is None:
+            if response_payload is None:
                 return ProviderExecutionResponse(
                     dispatch_id=request.dispatch_id,
                     status="failed",
                     provider_family=request.provider_family,
                     model=request.model,
-                    failure=ProviderFailure(
-                        scope="provider",
-                        code="invalid_provider_response",
-                        message="Anthropic returned a non-JSON success response",
-                    ),
+                    model_observed=False,
+                    failure=ProviderFailure(scope="provider", code="invalid_provider_response", message="Anthropic returned a non-JSON success response"),
                 )
-            provider_model = payload.get("model") if isinstance(payload.get("model"), str) else None
-            if not _provider_model_matches(request.model, provider_model):
-                raise ProviderAdapterContractError(
-                    "Anthropic response reported a model outside the dispatch-authorized model or alias set"
-                )
-            text = _extract_text(payload)
+            provider_model = response_payload.get("model")
+            observed_model = provider_model.strip() if isinstance(provider_model, str) and provider_model.strip() else request.model
+            model_observed = isinstance(provider_model, str) and bool(provider_model.strip())
+            text = _extract_text(response_payload)
             if not text:
                 return ProviderExecutionResponse(
                     dispatch_id=request.dispatch_id,
                     status="failed",
                     provider_family=request.provider_family,
-                    model=request.model,
-                    failure=ProviderFailure(
-                        scope="capability",
-                        code="no_text_output",
-                        message="Anthropic returned no text content for the guarded task",
-                    ),
+                    model=observed_model,
+                    model_observed=model_observed,
+                    failure=ProviderFailure(scope="capability", code="no_text_output", message="Anthropic returned no text content for the guarded task"),
                     usage=usage,
                 )
             self._artifact_dir.mkdir(parents=True, exist_ok=True)
             artifact_path = self._artifact_dir / f"{_safe_artifact_name(request.dispatch_id)}.txt"
             artifact_path.write_text(text + "\n", encoding="utf-8")
-            evidence = []
+            evidence: list[str] = []
             if request_id:
                 evidence.append(f"anthropic_request_id:{request_id}")
-            if provider_model:
-                evidence.append(f"anthropic_response_model:{provider_model}")
+            if model_observed:
+                evidence.append(f"anthropic_response_model:{observed_model}")
             if request.model == "claude-sonnet-5" and request.reasoning_effort:
                 evidence.append(f"teo_reasoning_effort:{request.reasoning_effort}")
             return ProviderExecutionResponse(
                 dispatch_id=request.dispatch_id,
                 status="succeeded",
                 provider_family=request.provider_family,
-                model=request.model,
+                model=observed_model,
+                model_observed=model_observed,
                 output_ref=artifact_path.resolve().as_uri(),
                 evidence=tuple(evidence),
                 usage=usage,
             )
 
-        error_type, message = _error_details(payload)
+        error_type, message = _error_details(response_payload)
         return ProviderExecutionResponse(
             dispatch_id=request.dispatch_id,
             status="failed",
             provider_family=request.provider_family,
             model=request.model,
+            model_observed=False,
             evidence=(f"anthropic_request_id:{request_id}",) if request_id else (),
-            failure=ProviderFailure(
-                scope=_failure_scope(status_code, error_type),  # type: ignore[arg-type]
-                code=error_type,
-                message=message,
-            ),
+            failure=ProviderFailure(scope=_failure_scope(status_code, error_type), code=error_type, message=message),  # type: ignore[arg-type]
             retry_after_seconds=retry_after_seconds_from_headers(response_headers),
             usage=usage,
         )
@@ -311,32 +253,18 @@ def execute_anthropic_canary_once(
 ) -> ProviderExecutionResponse:
     """Execute one live Anthropic canary attempt while preserving TEO routing authority."""
     if dispatch.task_type not in CANARY_TASK_TYPES:
-        raise ProviderAdapterContractError(
-            "Live Anthropic canary is authorized only for high_volume_simple dispatches"
-        )
+        raise ProviderAdapterContractError("Live Anthropic canary is authorized only for high_volume_simple dispatches")
     if dispatch.risk_level not in CANARY_RISK_LEVELS:
-        raise ProviderAdapterContractError(
-            "Live Anthropic canary refuses high and critical risk dispatches"
-        )
+        raise ProviderAdapterContractError("Live Anthropic canary refuses high and critical risk dispatches")
     if dispatch.selected_implementation.provider_family != "anthropic":
-        raise ProviderAdapterContractError(
-            "Live Anthropic canary requires an Anthropic-selected dispatch"
-        )
+        raise ProviderAdapterContractError("Live Anthropic canary requires an Anthropic-selected dispatch")
     if dispatch.selected_implementation.model not in CANARY_MODELS:
-        raise ProviderAdapterContractError(
-            "Live Anthropic canary requires a Claude Haiku 4.5 selected implementation"
-        )
+        raise ProviderAdapterContractError("Live Anthropic canary requires a Claude Haiku 4.5 selected implementation")
 
-    adapter = AnthropicMessagesAdapter(
-        connection,
-        artifact_dir=artifact_dir,
-        timeout_seconds=timeout_seconds,
-    )
+    adapter = AnthropicMessagesAdapter(connection, artifact_dir=artifact_dir, timeout_seconds=timeout_seconds)
     request = ProviderExecutionRequest.from_dispatch(dispatch, input_payload)
     response = adapter.execute(request)
     if not isinstance(response, ProviderExecutionResponse):
-        raise ProviderAdapterContractError(
-            "Anthropic adapter must return ProviderExecutionResponse rather than provider-native data"
-        )
-    validate_provider_response(dispatch, request, response)
+        raise ProviderAdapterContractError("Anthropic adapter must return ProviderExecutionResponse rather than provider-native data")
+    validate_provider_response(dispatch, request, response, enforce_identity=False)
     return response
