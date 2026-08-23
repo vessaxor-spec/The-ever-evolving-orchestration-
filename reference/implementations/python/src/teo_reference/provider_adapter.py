@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from math import isfinite
 from typing import Any, Literal, Mapping, Protocol
 
+from .runtime_identity import IdentityStatus, RuntimeIdentityObservation, compare_runtime_identity
 from .schemas import DispatchRecord, ExecutionResult, ExecutionStatus, RiskLevel
 
 CONTRACT_VERSION = "1"
@@ -303,6 +304,8 @@ class ProviderExecutionRequest:
 
 @dataclass(frozen=True, slots=True)
 class ProviderExecutionResponse:
+    """Normalized provider response with selected and observed model identity kept separate."""
+
     dispatch_id: str
     status: ExecutionStatus
     provider_family: str
@@ -312,6 +315,8 @@ class ProviderExecutionResponse:
     failure: ProviderFailure | None = None
     retry_after_seconds: float | None = None
     usage: ProviderUsage | None = None
+    observed_model: str | None = None
+    model_observed: bool = True
     contract_version: Literal["1"] = "1"
 
     def __post_init__(self) -> None:
@@ -322,6 +327,8 @@ class ProviderExecutionResponse:
         _require_text(self.dispatch_id, "dispatch_id")
         _require_text(self.provider_family, "provider_family")
         _require_text(self.model, "model")
+        if self.observed_model is not None:
+            _require_text(self.observed_model, "observed_model")
         if self.status not in {"succeeded", "failed"}:
             raise ProviderAdapterContractError(f"Unsupported execution status: {self.status}")
         if self.retry_after_seconds is not None:
@@ -341,6 +348,14 @@ class ProviderExecutionResponse:
         elif self.output_ref is not None:
             raise ProviderAdapterContractError("Failed execution cannot publish an accepted output_ref")
 
+    def observed_identity(self) -> RuntimeIdentityObservation:
+        return RuntimeIdentityObservation(
+            provider_family=self.provider_family,
+            model=self.observed_model or self.model,
+            source="provider_response" if self.model_observed else "provider_adapter",
+            model_observed=self.model_observed,
+        )
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ProviderExecutionResponse":
         allowed = {
@@ -354,6 +369,8 @@ class ProviderExecutionResponse:
             "failure",
             "retry_after_seconds",
             "usage",
+            "observed_model",
+            "model_observed",
         }
         _reject_unknown(data, allowed, "provider execution response")
         failure_data = data.get("failure")
@@ -363,6 +380,7 @@ class ProviderExecutionResponse:
         if usage_data is not None and not isinstance(usage_data, dict):
             raise ProviderAdapterContractError("usage must be an object or null")
         retry_after = data.get("retry_after_seconds")
+        observed_model = data.get("observed_model")
         return cls(
             contract_version=str(data.get("contract_version")),  # type: ignore[arg-type]
             dispatch_id=_require_text(data.get("dispatch_id"), "dispatch_id"),
@@ -374,6 +392,8 @@ class ProviderExecutionResponse:
             failure=ProviderFailure.from_dict(failure_data) if failure_data is not None else None,
             retry_after_seconds=float(retry_after) if retry_after is not None else None,
             usage=ProviderUsage.from_dict(usage_data) if usage_data is not None else None,
+            observed_model=str(observed_model) if observed_model is not None else None,
+            model_observed=bool(data.get("model_observed", True)),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -388,6 +408,8 @@ class ProviderExecutionResponse:
             "failure": self.failure.to_dict() if self.failure else None,
             "retry_after_seconds": self.retry_after_seconds,
             "usage": self.usage.to_dict() if self.usage else None,
+            "observed_model": self.observed_model,
+            "model_observed": self.model_observed,
         }
 
     def to_execution_result(self) -> ExecutionResult:
@@ -397,6 +419,7 @@ class ProviderExecutionResponse:
             output_ref=self.output_ref,
             evidence=list(self.evidence),
             failed_attempts=1 if self.status == "failed" else 0,
+            observed_identity=self.observed_identity(),
         )
 
 
@@ -412,7 +435,11 @@ def validate_provider_response(
     dispatch: DispatchRecord,
     request: ProviderExecutionRequest,
     response: ProviderExecutionResponse,
-) -> None:
+    *,
+    enforce_identity: bool = False,
+) -> IdentityStatus:
+    """Validate normalized lineage and compare independent runtime identity evidence."""
+
     expected_provider = dispatch.selected_implementation.provider_family
     expected_model = dispatch.selected_implementation.model
     if response.dispatch_id != dispatch.dispatch_id or response.dispatch_id != request.dispatch_id:
@@ -423,6 +450,16 @@ def validate_provider_response(
         raise ProviderAdapterContractError("Provider response changed the selected implementation model")
     if response.contract_version != request.contract_version:
         raise ProviderAdapterContractError("Provider response changed the adapter contract version")
+    status = compare_runtime_identity(
+        expected_provider_family=expected_provider,
+        expected_model=expected_model,
+        observed=response.observed_identity(),
+    )
+    if enforce_identity and status == "mismatch":
+        raise ProviderAdapterContractError(
+            "Provider response observed runtime identity differs from the selected implementation"
+        )
+    return status
 
 
 def execute_provider_once(
@@ -441,5 +478,5 @@ def execute_provider_once(
         raise ProviderAdapterContractError(
             "Adapter must return ProviderExecutionResponse rather than a provider-native payload"
         )
-    validate_provider_response(dispatch, request, response)
+    validate_provider_response(dispatch, request, response, enforce_identity=True)
     return response.to_execution_result()

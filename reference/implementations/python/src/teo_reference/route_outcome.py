@@ -11,6 +11,7 @@ from jsonschema import Draft202012Validator
 
 from .provider_adapter import ProviderAdapterContractError, ProviderExecutionResponse
 from .runtime_canary import CanaryRuntimeOutcome
+from .runtime_identity import RuntimeIdentityObservation, compare_runtime_identity
 from .runtime_telemetry import RuntimeTelemetryEvent
 from .schemas import DispatchRecord, VerificationResult
 
@@ -57,12 +58,7 @@ class RouteOutcomeRecord:
     payload: dict[str, Any]
 
     @classmethod
-    def from_dict(
-        cls,
-        data: dict[str, Any],
-        *,
-        repo_root: str | Path,
-    ) -> "RouteOutcomeRecord":
+    def from_dict(cls, data: dict[str, Any], *, repo_root: str | Path) -> "RouteOutcomeRecord":
         _validate_schema(data, repo_root)
         _validate_route_semantics(data)
         expected = str(data["integrity_sha256"])
@@ -99,6 +95,17 @@ def _validate_schema(data: dict[str, Any], repo_root: str | Path) -> None:
         )
 
 
+def _identity_status_from_payload(expected: dict[str, Any], observed: dict[str, Any] | None) -> str:
+    if observed is None:
+        return "unconfirmed"
+    observation = RuntimeIdentityObservation.from_dict(observed)
+    return compare_runtime_identity(
+        expected_provider_family=expected.get("provider_family"),
+        expected_model=str(expected.get("model") or ""),
+        observed=observation,
+    )
+
+
 def _validate_route_semantics(data: dict[str, Any]) -> None:
     primary = data["primary_route"]
     fallback = data["fallback_route"]
@@ -118,14 +125,56 @@ def _validate_route_semantics(data: dict[str, Any]) -> None:
             raise ProviderAdapterContractError(
                 "Route outcome attempts must be contiguous and start at one"
             )
-        for attempt in attempts:
-            if attempt["model"] != route["implementation"]["model"]:
+
+        implementation = route["implementation"]
+        has_identity_contract = "identity_status" in implementation
+        if has_identity_contract:
+            actual_status = _identity_status_from_payload(
+                implementation,
+                implementation.get("observed_identity"),
+            )
+            if implementation["identity_status"] != actual_status:
                 raise ProviderAdapterContractError(
-                    "Route outcome attempt model does not match route implementation"
+                    "Route outcome implementation identity_status does not match observed identity"
                 )
-            if attempt["provider_family"] != route["implementation"]["provider_family"]:
+        for attempt in attempts:
+            if "identity_status" in attempt:
+                if attempt.get("intended_model") != implementation["model"]:
+                    raise ProviderAdapterContractError(
+                        "Route outcome attempt intended model does not match route implementation"
+                    )
+                if attempt.get("intended_provider_family") != implementation["provider_family"]:
+                    raise ProviderAdapterContractError(
+                        "Route outcome attempt intended provider does not match route implementation"
+                    )
+                if attempt["provider_family"] != implementation["provider_family"]:
+                    expected_status = "mismatch"
+                elif not attempt.get("model_observed", False):
+                    expected_status = "unconfirmed"
+                elif attempt["model"] != implementation["model"]:
+                    expected_status = "mismatch"
+                else:
+                    expected_status = "match"
+                if attempt["identity_status"] != expected_status:
+                    raise ProviderAdapterContractError(
+                        "Route outcome attempt identity_status does not match intended/observed identity"
+                    )
+            else:
+                if attempt["model"] != implementation["model"]:
+                    raise ProviderAdapterContractError(
+                        "Legacy route outcome attempt model does not match route implementation"
+                    )
+                if attempt["provider_family"] != implementation["provider_family"]:
+                    raise ProviderAdapterContractError(
+                        "Legacy route outcome attempt provider does not match route implementation"
+                    )
+
+        verifier = route["verifier"]
+        if "identity_status" in verifier:
+            actual_status = _identity_status_from_payload(verifier, verifier.get("observed_identity"))
+            if verifier["identity_status"] != actual_status:
                 raise ProviderAdapterContractError(
-                    "Route outcome attempt provider does not match route implementation"
+                    "Route outcome verifier identity_status does not match observed identity"
                 )
 
     active = data["active_route_role"]
@@ -134,9 +183,7 @@ def _validate_route_semantics(data: dict[str, Any]) -> None:
             "Route outcome fallback_assisted does not match active route"
         )
     if active == "fallback" and fallback is None:
-        raise ProviderAdapterContractError(
-            "Fallback-assisted route outcome requires fallback_route"
-        )
+        raise ProviderAdapterContractError("Fallback-assisted route outcome requires fallback_route")
     retry_assisted = primary["retry_used"] or bool(fallback and fallback["retry_used"])
     if data["retry_assisted"] != retry_assisted:
         raise ProviderAdapterContractError(
@@ -162,9 +209,7 @@ def _validate_route_semantics(data: dict[str, Any]) -> None:
     verification_status = data["verification_status"]
 
     if active_route is not None and active_route["execution_status"] != "succeeded":
-        raise ProviderAdapterContractError(
-            "Route outcome active route must have succeeded execution"
-        )
+        raise ProviderAdapterContractError("Route outcome active route must have succeeded execution")
     if verification_dispatch is not None:
         if active_route is None or verification_dispatch != active_route["dispatch_id"]:
             raise ProviderAdapterContractError(
@@ -180,6 +225,11 @@ def _validate_route_semantics(data: dict[str, Any]) -> None:
         if active_route is None or verification_status is not None or verification_dispatch is not None:
             raise ProviderAdapterContractError(
                 "verification_missing requires an unverified successful active route"
+            )
+    elif disposition in {"identity_mismatch", "identity_unconfirmed"}:
+        if active_route is None:
+            raise ProviderAdapterContractError(
+                "Identity-integrity disposition requires a successful active route"
             )
     elif disposition == "execution_failed":
         if active_route is not None or verification_status is not None or verification_dispatch is not None:
@@ -203,16 +253,27 @@ def _validate_route_semantics(data: dict[str, Any]) -> None:
             "Human-approval-required route outcome cannot be completed by model verification"
         )
 
+    if active_route is not None and "executor_identity_status" in data["provenance"]:
+        if data["provenance"]["executor_identity_status"] != active_route["implementation"].get(
+            "identity_status", "unconfirmed"
+        ):
+            raise ProviderAdapterContractError(
+                "Route outcome provenance executor identity status does not match active route"
+            )
+        if data["provenance"].get("verifier_identity_status") != active_route["verifier"].get(
+            "identity_status", "unconfirmed"
+        ):
+            raise ProviderAdapterContractError(
+                "Route outcome provenance verifier identity status does not match active route"
+            )
+
 
 def _integrity_sha256(data: dict[str, Any]) -> str:
     canonical = dict(data)
     canonical.pop("integrity_sha256", None)
-    encoded = json.dumps(
-        canonical,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-    ).encode("utf-8")
+    encoded = json.dumps(canonical, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode(
+        "utf-8"
+    )
     return hashlib.sha256(encoded).hexdigest()
 
 
@@ -229,6 +290,11 @@ def _attempt_payload(event: RuntimeTelemetryEvent) -> dict[str, Any]:
         "duration_ms": event.duration_ms,
         "retry_after_seconds": event.retry_after_seconds,
         "usage": event.usage.to_dict() if event.usage else None,
+        "intended_provider_family": event.intended_provider_family,
+        "intended_model": event.intended_model,
+        "identity_status": event.identity_status,
+        "model_observed": event.model_observed,
+        "configuration_identity_observed": event.configuration_identity_observed,
     }
 
 
@@ -251,13 +317,13 @@ def _events_for_dispatch(
             raise ProviderAdapterContractError("Route outcome telemetry role does not match lineage")
         if event.task_type != dispatch.task_type or event.risk_level != dispatch.risk_level:
             raise ProviderAdapterContractError("Route outcome telemetry changed task or risk identity")
-        if event.provider_family != dispatch.selected_implementation.provider_family:
+        if event.intended_provider_family is not None and event.intended_provider_family != dispatch.selected_implementation.provider_family:
             raise ProviderAdapterContractError(
-                "Route outcome telemetry changed the dispatch-selected provider"
+                "Route outcome telemetry intended provider does not match dispatch intent"
             )
-        if event.model != dispatch.selected_implementation.model:
+        if event.intended_model is not None and event.intended_model != dispatch.selected_implementation.model:
             raise ProviderAdapterContractError(
-                "Route outcome telemetry changed the dispatch-selected model"
+                "Route outcome telemetry intended model does not match dispatch intent"
             )
         if event.verifier_model != dispatch.verification.implementation.model:
             raise ProviderAdapterContractError(
@@ -277,6 +343,12 @@ def _route_payload(
     events = _events_for_dispatch(telemetry_events, dispatch, role=role)
     failure = response.failure if response is not None else None
     status = execution_status or (response.status if response is not None else "abandoned")
+    observation = response.observed_identity() if response is not None else None
+    identity_status = compare_runtime_identity(
+        expected_provider_family=dispatch.selected_implementation.provider_family,
+        expected_model=dispatch.selected_implementation.model,
+        observed=observation,
+    )
     return {
         "dispatch_id": dispatch.dispatch_id,
         "role": role,
@@ -288,10 +360,14 @@ def _route_payload(
             "provider_family": dispatch.selected_implementation.provider_family,
             "model": dispatch.selected_implementation.model,
             "reasoning_effort": dispatch.selected_implementation.reasoning,
+            "observed_identity": observation.to_dict() if observation else None,
+            "identity_status": identity_status,
         },
         "verifier": {
             "provider_family": dispatch.verification.implementation.provider_family,
             "model": dispatch.verification.implementation.model,
+            "observed_identity": None,
+            "identity_status": "unconfirmed",
         },
         "attempts": [_attempt_payload(event) for event in events],
         "attempt_count": len(events),
@@ -307,11 +383,7 @@ def _outcome_id(primary_dispatch_id: str, fallback_dispatch_id: str | None) -> s
     return f"outcome-{hashlib.sha256(seed).hexdigest()[:20]}"
 
 
-def _finalize_payload(
-    payload: dict[str, Any],
-    *,
-    repo_root: str | Path,
-) -> RouteOutcomeRecord:
+def _finalize_payload(payload: dict[str, Any], *, repo_root: str | Path) -> RouteOutcomeRecord:
     payload["integrity_sha256"] = _integrity_sha256(payload)
     return RouteOutcomeRecord.from_dict(payload, repo_root=repo_root)
 
@@ -363,9 +435,11 @@ def build_guarded_canary_route_outcome(
             )
 
     active_dispatch: DispatchRecord | None = None
+    active_route: dict[str, Any] | None = None
     active_role: RouteRole | None = None
     if outcome.status == "primary_executed" and outcome.primary_response.status == "succeeded":
         active_dispatch = outcome.primary_dispatch
+        active_route = primary_route
         active_role = "primary"
     elif (
         outcome.status == "fallback_executed"
@@ -374,33 +448,53 @@ def build_guarded_canary_route_outcome(
         and outcome.fallback_response.status == "succeeded"
     ):
         active_dispatch = outcome.fallback_dispatch
+        active_route = fallback_route
         active_role = "fallback"
 
     verification_status: str | None = None
     verification_dispatch_id: str | None = None
-    human_approval_required = bool(
-        active_dispatch and active_dispatch.verification.human_approval_required
-    )
-    if active_dispatch is None:
-        if verification is not None:
-            raise ProviderAdapterContractError(
-                "Failed execution route outcome cannot include verification"
-            )
-        final_disposition = "execution_failed"
-    elif verification is None:
-        final_disposition = "verification_missing"
-    else:
+    human_approval_required = bool(active_dispatch and active_dispatch.verification.human_approval_required)
+    verifier_identity_present = False
+    if active_dispatch is not None and active_route is not None and verification is not None:
         if verification.dispatch_id != active_dispatch.dispatch_id:
             raise ProviderAdapterContractError(
                 "Route outcome verification does not belong to the active dispatch"
             )
         if verification.verifier_model != active_dispatch.verification.implementation.model:
             raise ProviderAdapterContractError(
-                "Route outcome verification was not performed by the assigned verifier"
+                "Route outcome verification assigned model does not match the active verifier"
+            )
+        if verification.observed_identity is not None:
+            verifier_identity_present = True
+            active_route["verifier"]["observed_identity"] = verification.observed_identity.to_dict()
+            active_route["verifier"]["identity_status"] = compare_runtime_identity(
+                expected_provider_family=active_dispatch.verification.implementation.provider_family,
+                expected_model=active_dispatch.verification.implementation.model,
+                observed=verification.observed_identity,
             )
         verification_status = verification.status
         verification_dispatch_id = verification.dispatch_id
-        if verification.status == "failed":
+
+    if active_dispatch is None or active_route is None:
+        if verification is not None:
+            raise ProviderAdapterContractError(
+                "Failed execution route outcome cannot include verification"
+            )
+        final_disposition = "execution_failed"
+    else:
+        executor_identity_status = active_route["implementation"]["identity_status"]
+        verifier_identity_status = active_route["verifier"]["identity_status"]
+        if executor_identity_status == "mismatch":
+            final_disposition = "identity_mismatch"
+        elif executor_identity_status == "unconfirmed":
+            final_disposition = "identity_unconfirmed"
+        elif verification is None:
+            final_disposition = "verification_missing"
+        elif verifier_identity_present and verifier_identity_status == "mismatch":
+            final_disposition = "identity_mismatch"
+        elif verifier_identity_present and verifier_identity_status == "unconfirmed":
+            final_disposition = "identity_unconfirmed"
+        elif verification.status == "failed":
             final_disposition = "verification_failed"
         elif verification.status == "needs_human" or human_approval_required:
             final_disposition = "awaiting_human"
@@ -410,8 +504,17 @@ def build_guarded_canary_route_outcome(
     source_dispatch_ids = [outcome.primary_dispatch.dispatch_id]
     if outcome.fallback_dispatch is not None:
         source_dispatch_ids.append(outcome.fallback_dispatch.dispatch_id)
-    retry_assisted = bool(primary_route["retry_used"]) or bool(
-        fallback_route and fallback_route["retry_used"]
+    retry_assisted = bool(primary_route["retry_used"]) or bool(fallback_route and fallback_route["retry_used"])
+    executor_identity_status = (
+        active_route["implementation"]["identity_status"] if active_route is not None else None
+    )
+    verifier_identity_status = (
+        active_route["verifier"]["identity_status"] if active_route is not None else None
+    )
+    configuration_identity_observed = bool(
+        active_route
+        and active_route["implementation"].get("observed_identity")
+        and active_route["implementation"]["observed_identity"].get("configuration_observed")
     )
 
     payload = {
@@ -433,16 +536,14 @@ def build_guarded_canary_route_outcome(
         "fallback_assisted": active_role == "fallback",
         "retry_assisted": retry_assisted,
         "versions": versions.to_dict(),
-        "cost": {
-            "status": "unknown",
-            "amount": None,
-            "currency": None,
-            "source": None,
-        },
+        "cost": {"status": "unknown", "amount": None, "currency": None, "source": None},
         "provenance": {
             "source_dispatch_ids": source_dispatch_ids,
             "verification_dispatch_id": verification_dispatch_id,
             "telemetry_event_count": len(telemetry_events),
+            "executor_identity_status": executor_identity_status,
+            "verifier_identity_status": verifier_identity_status,
+            "configuration_identity_observed": configuration_identity_observed,
         },
         "abandonment_reason": None,
         "integrity_sha256": "",
@@ -491,16 +592,14 @@ def build_abandoned_route_outcome(
         "fallback_assisted": False,
         "retry_assisted": bool(route["retry_used"]),
         "versions": versions.to_dict(),
-        "cost": {
-            "status": "unknown",
-            "amount": None,
-            "currency": None,
-            "source": None,
-        },
+        "cost": {"status": "unknown", "amount": None, "currency": None, "source": None},
         "provenance": {
             "source_dispatch_ids": [dispatch.dispatch_id],
             "verification_dispatch_id": None,
             "telemetry_event_count": len(telemetry_events),
+            "executor_identity_status": None,
+            "verifier_identity_status": None,
+            "configuration_identity_observed": False,
         },
         "abandonment_reason": reason,
         "integrity_sha256": "",
@@ -516,18 +615,13 @@ class JsonlRouteOutcomeSink:
         self.repo_root = Path(repo_root)
 
     def append(self, record: RouteOutcomeRecord) -> None:
-        validated = RouteOutcomeRecord.from_dict(
-            record.to_dict(),
-            repo_root=self.repo_root,
-        )
+        validated = RouteOutcomeRecord.from_dict(record.to_dict(), repo_root=self.repo_root)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         try:
             with self.path.open("a", encoding="utf-8") as handle:
                 handle.write(json.dumps(validated.to_dict(), sort_keys=True) + "\n")
         except OSError as exc:
-            raise ProviderAdapterContractError(
-                "Route outcome evidence could not be persisted"
-            ) from exc
+            raise ProviderAdapterContractError("Route outcome evidence could not be persisted") from exc
 
     def read_all(self) -> list[RouteOutcomeRecord]:
         if not self.path.exists():
@@ -535,9 +629,7 @@ class JsonlRouteOutcomeSink:
         try:
             lines = self.path.read_text(encoding="utf-8").splitlines()
         except OSError as exc:
-            raise ProviderAdapterContractError(
-                "Route outcome evidence could not be read"
-            ) from exc
+            raise ProviderAdapterContractError("Route outcome evidence could not be read") from exc
         records: list[RouteOutcomeRecord] = []
         for line in lines:
             if not line.strip():
@@ -545,14 +637,8 @@ class JsonlRouteOutcomeSink:
             try:
                 raw = json.loads(line)
             except json.JSONDecodeError as exc:
-                raise ProviderAdapterContractError(
-                    "Route outcome evidence contains invalid JSONL"
-                ) from exc
+                raise ProviderAdapterContractError("Route outcome evidence contains invalid JSONL") from exc
             if not isinstance(raw, dict):
-                raise ProviderAdapterContractError(
-                    "Route outcome evidence line must be an object"
-                )
-            records.append(
-                RouteOutcomeRecord.from_dict(raw, repo_root=self.repo_root)
-            )
+                raise ProviderAdapterContractError("Route outcome evidence line must be an object")
+            records.append(RouteOutcomeRecord.from_dict(raw, repo_root=self.repo_root))
         return records

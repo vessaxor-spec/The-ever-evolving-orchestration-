@@ -8,6 +8,7 @@ from typing import Any, Literal, Mapping, Protocol
 from .artifact_integrity import ArtifactIntegrityError, read_verified_text_artifact
 from .provider_adapter import ProviderAdapterContractError, ProviderUsage
 from .provider_connection import ProviderConnection
+from .runtime_identity import RuntimeIdentityObservation
 from .schemas import DispatchRecord, VerificationResult, VerifiedArtifact
 
 VerificationCheckId = Literal[
@@ -89,10 +90,7 @@ class LiveVerificationDecision:
         if any(value not in {"pass", "fail", "uncertain"} for value in verdicts.values()):
             raise LiveVerificationError("Live verification contains an unsupported criterion verdict")
         if self.human_reason not in {
-            "none",
-            "insufficient_evidence",
-            "ambiguous_task",
-            "unverifiable_output",
+            "none", "insufficient_evidence", "ambiguous_task", "unverifiable_output",
             "conflicting_evidence",
         }:
             raise LiveVerificationError("Live verification contains an unsupported human reason")
@@ -127,12 +125,8 @@ class LiveVerificationDecision:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "LiveVerificationDecision":
         expected = {
-            "status",
-            "output_present",
-            "task_adherence",
-            "format_consistency",
-            "unsupported_claims_absent",
-            "human_reason",
+            "status", "output_present", "task_adherence", "format_consistency",
+            "unsupported_claims_absent", "human_reason",
         }
         unknown = sorted(set(data) - expected)
         missing = sorted(expected - set(data))
@@ -159,6 +153,7 @@ class LiveVerificationDecision:
         *,
         evidence: list[str],
         verified_artifact: VerifiedArtifact | None = None,
+        observed_identity: RuntimeIdentityObservation | None = None,
     ) -> VerificationResult:
         checks = [f"{name}:{verdict}" for name, verdict in self.verdicts.items()]
         notes = (
@@ -174,6 +169,7 @@ class LiveVerificationDecision:
             evidence=evidence,
             notes=notes,
             verified_artifact=verified_artifact,
+            observed_identity=observed_identity,
         )
 
 
@@ -241,6 +237,15 @@ class LiveVerificationResponse:
     model: str
     evidence: tuple[str, ...] = ()
     usage: ProviderUsage | None = None
+    model_observed: bool = True
+
+    def observed_identity(self) -> RuntimeIdentityObservation:
+        return RuntimeIdentityObservation(
+            provider_family=self.provider_family,
+            model=self.model,
+            source="verifier_response" if self.model_observed else "verifier_adapter",
+            model_observed=self.model_observed,
+        )
 
 
 class LiveVerifierAdapter(Protocol):

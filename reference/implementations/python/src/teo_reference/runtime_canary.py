@@ -127,18 +127,21 @@ def _execute_dispatch(
             dispatch,
             connection,
             artifact_dir=root / "anthropic",
+            enforce_identity=False,
         )
     if provider == "openai":
         return execute_openai_canary_once(
             dispatch,
             connection,
             artifact_dir=root / "openai",
+            enforce_identity=False,
         )
     if provider == "google":
         return execute_gemini_canary_once(
             dispatch,
             connection,
             artifact_dir=root / "google",
+            enforce_identity=False,
         )
     raise ProviderAdapterContractError(
         f"Guarded live canary has no adapter for provider {provider}"

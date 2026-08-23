@@ -6,6 +6,8 @@ from datetime import UTC, datetime
 from typing import Any, Literal
 from uuid import uuid4
 
+from .runtime_identity import RuntimeIdentityObservation
+
 RiskLevel = Literal["low", "medium", "high", "critical"]
 VerificationStatus = Literal["passed", "failed", "needs_human"]
 ExecutionStatus = Literal["succeeded", "failed"]
@@ -128,18 +130,27 @@ class ExecutionResult:
     output_ref: str | None = None
     evidence: list[str] = field(default_factory=list)
     failed_attempts: int = 0
+    observed_identity: RuntimeIdentityObservation | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "ExecutionResult":
         status = str(_require(data.get("status"), "execution.status"))
         if status not in {"succeeded", "failed"}:
             raise ValueError(f"Unsupported execution status: {status}")
+        identity_data = data.get("observed_identity")
+        if identity_data is not None and not isinstance(identity_data, dict):
+            raise ValueError("execution.observed_identity must be an object or null")
         return cls(
             dispatch_id=str(_require(data.get("dispatch_id"), "execution.dispatch_id")),
             status=status,  # type: ignore[arg-type]
             output_ref=str(data["output_ref"]) if data.get("output_ref") else None,
             evidence=list(data.get("evidence", [])),
             failed_attempts=int(data.get("failed_attempts", 0)),
+            observed_identity=(
+                RuntimeIdentityObservation.from_dict(identity_data)
+                if identity_data is not None
+                else None
+            ),
         )
 
 
@@ -175,6 +186,7 @@ class VerificationResult:
     evidence: list[str] = field(default_factory=list)
     notes: str | None = None
     verified_artifact: VerifiedArtifact | None = None
+    observed_identity: RuntimeIdentityObservation | None = None
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "VerificationResult":
@@ -184,6 +196,9 @@ class VerificationResult:
         artifact_data = data.get("verified_artifact")
         if artifact_data is not None and not isinstance(artifact_data, dict):
             raise ValueError("verification.verified_artifact must be an object or null")
+        identity_data = data.get("observed_identity")
+        if identity_data is not None and not isinstance(identity_data, dict):
+            raise ValueError("verification.observed_identity must be an object or null")
         return cls(
             dispatch_id=str(_require(data.get("dispatch_id"), "verification.dispatch_id")),
             status=status,  # type: ignore[arg-type]
@@ -193,6 +208,11 @@ class VerificationResult:
             notes=str(data["notes"]) if data.get("notes") else None,
             verified_artifact=(
                 VerifiedArtifact.from_dict(artifact_data) if artifact_data is not None else None
+            ),
+            observed_identity=(
+                RuntimeIdentityObservation.from_dict(identity_data)
+                if identity_data is not None
+                else None
             ),
         )
 
@@ -211,6 +231,13 @@ class ExecutionProvenance:
     final_disposition: str
     fallback_assisted: bool
     retry_assisted: bool
+    intended_provider_family: str | None = None
+    intended_model: str | None = None
+    executor_identity_status: str | None = None
+    observed_verifier_provider_family: str | None = None
+    observed_verifier_model: str | None = None
+    verifier_identity_status: str | None = None
+    configuration_identity_observed: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

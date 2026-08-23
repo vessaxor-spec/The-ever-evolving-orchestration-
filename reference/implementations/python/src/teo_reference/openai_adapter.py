@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -14,11 +15,7 @@ from .provider_adapter import (
     retry_after_seconds_from_headers,
     validate_provider_response,
 )
-from .provider_connection import (
-    ProviderConnection,
-    ProviderConnectionError,
-    ProviderConnectionRequest,
-)
+from .provider_connection import ProviderConnection, ProviderConnectionError, ProviderConnectionRequest
 from .schemas import DispatchRecord
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
@@ -47,7 +44,6 @@ def _extract_text(payload: dict[str, Any]) -> str:
     direct = payload.get("output_text")
     if isinstance(direct, str) and direct.strip():
         return direct.strip()
-
     parts: list[str] = []
     output = payload.get("output")
     if not isinstance(output, list):
@@ -59,11 +55,7 @@ def _extract_text(payload: dict[str, Any]) -> str:
         if not isinstance(content, list):
             continue
         for block in content:
-            if (
-                isinstance(block, dict)
-                and block.get("type") == "output_text"
-                and isinstance(block.get("text"), str)
-            ):
+            if isinstance(block, dict) and block.get("type") == "output_text" and isinstance(block.get("text"), str):
                 parts.append(block["text"])
     return "\n".join(part for part in parts if part).strip()
 
@@ -81,19 +73,14 @@ def _error_details(payload: dict[str, Any] | None) -> tuple[str, str]:
 
 def _failure_scope(status_code: int, code: str) -> str:
     normalized = code.lower()
-    if status_code in {400, 409, 422} or normalized in {
-        "invalid_request_error",
-        "invalid_request",
-        "bad_request",
-    }:
+    if status_code in {400, 409, 422} or normalized in {"invalid_request_error", "invalid_request", "bad_request"}:
         return "request"
     if status_code == 404 or "model_not_found" in normalized:
         return "model"
     if status_code == 413 or "context_length" in normalized or "too_large" in normalized:
         return "capability"
     if status_code in {401, 402, 403, 429} or any(
-        token in normalized
-        for token in ("authentication", "permission", "billing", "quota", "rate_limit")
+        token in normalized for token in ("authentication", "permission", "billing", "quota", "rate_limit")
     ):
         return "provider"
     if status_code in {408, 425, 500, 502, 503, 504} or "timeout" in normalized:
@@ -118,25 +105,10 @@ def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
     total_tokens = _non_negative_int(raw.get("total_tokens"))
     input_details = raw.get("input_tokens_details")
     output_details = raw.get("output_tokens_details")
-    cached = (
-        _non_negative_int(input_details.get("cached_tokens"))
-        if isinstance(input_details, dict)
-        else None
-    )
-    cache_write = (
-        _non_negative_int(input_details.get("cache_write_tokens"))
-        if isinstance(input_details, dict)
-        else None
-    )
-    reasoning = (
-        _non_negative_int(output_details.get("reasoning_tokens"))
-        if isinstance(output_details, dict)
-        else None
-    )
-    if all(
-        item is None
-        for item in (input_tokens, output_tokens, cached, cache_write, reasoning, total_tokens)
-    ):
+    cached = _non_negative_int(input_details.get("cached_tokens")) if isinstance(input_details, dict) else None
+    cache_write = _non_negative_int(input_details.get("cache_write_tokens")) if isinstance(input_details, dict) else None
+    reasoning = _non_negative_int(output_details.get("reasoning_tokens")) if isinstance(output_details, dict) else None
+    if all(item is None for item in (input_tokens, output_tokens, cached, cache_write, reasoning, total_tokens)):
         return None
     return ProviderUsage(
         input_tokens=input_tokens,
@@ -149,24 +121,13 @@ def _extract_usage(payload: dict[str, Any]) -> ProviderUsage | None:
 
 
 class OpenAIResponsesAdapter:
-    """Single-attempt OpenAI Responses adapter for implemented guarded models.
-
-    Implemented model support is intentionally broader than active canary authority.
-    Runtime wrappers and live-scope policy remain the execution authorization boundary.
-    """
+    """Single-attempt OpenAI Responses adapter for implemented guarded models."""
 
     provider_family = "openai"
 
-    def __init__(
-        self,
-        connection: ProviderConnection,
-        artifact_dir: str | Path = ".teo/runtime/artifacts/openai",
-        timeout_seconds: float = 30.0,
-    ) -> None:
+    def __init__(self, connection: ProviderConnection, artifact_dir: str | Path = ".teo/runtime/artifacts/openai", timeout_seconds: float = 30.0) -> None:
         if connection.provider_family != self.provider_family:
-            raise ProviderAdapterContractError(
-                "OpenAI adapter requires an OpenAI provider connection"
-            )
+            raise ProviderAdapterContractError("OpenAI adapter requires an OpenAI provider connection")
         self._connection = connection
         self._artifact_dir = Path(artifact_dir)
         self._timeout_seconds = float(timeout_seconds)
@@ -175,36 +136,22 @@ class OpenAIResponsesAdapter:
         if request.provider_family != self.provider_family:
             raise ProviderAdapterContractError("OpenAI adapter received a non-OpenAI request")
         if request.risk_level not in CANARY_RISK_LEVELS:
-            raise ProviderAdapterContractError(
-                "OpenAI guarded execution is restricted to low and medium risk"
-            )
+            raise ProviderAdapterContractError("OpenAI guarded execution is restricted to low and medium risk")
         if request.model not in IMPLEMENTED_MODELS:
-            raise ProviderAdapterContractError(
-                "OpenAI guarded adapter does not implement the requested model"
-            )
+            raise ProviderAdapterContractError("OpenAI guarded adapter does not implement the requested model")
         if request.reasoning_effort is not None and request.reasoning_effort not in OPENAI_REASONING_EFFORTS:
-            raise ProviderAdapterContractError(
-                f"OpenAI does not support TEO reasoning effort {request.reasoning_effort}"
-            )
+            raise ProviderAdapterContractError(f"OpenAI does not support TEO reasoning effort {request.reasoning_effort}")
 
         task = request.input_payload.get("task")
         if not isinstance(task, str) or not task.strip():
             raise ProviderAdapterContractError("OpenAI canary input_payload.task must be non-empty text")
-
         raw_max_tokens = request.input_payload.get("max_output_tokens", 512)
         if not isinstance(raw_max_tokens, int) or isinstance(raw_max_tokens, bool):
             raise ProviderAdapterContractError("max_output_tokens must be an integer")
         if raw_max_tokens < 1 or raw_max_tokens > MAX_CANARY_OUTPUT_TOKENS:
-            raise ProviderAdapterContractError(
-                f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for guarded execution"
-            )
+            raise ProviderAdapterContractError(f"max_output_tokens must be between 1 and {MAX_CANARY_OUTPUT_TOKENS} for guarded execution")
 
-        payload: dict[str, Any] = {
-            "model": request.model,
-            "input": task,
-            "max_output_tokens": raw_max_tokens,
-            "store": False,
-        }
+        payload: dict[str, Any] = {"model": request.model, "input": task, "max_output_tokens": raw_max_tokens, "store": False}
         if request.reasoning_effort is not None:
             payload["reasoning"] = {"effort": request.reasoning_effort}
 
@@ -225,19 +172,13 @@ class OpenAIResponsesAdapter:
                 status="failed",
                 provider_family=request.provider_family,
                 model=request.model,
-                failure=ProviderFailure(
-                    scope="transient",
-                    code="connection_error",
-                    message=str(exc),
-                ),
+                model_observed=False,
+                failure=ProviderFailure(scope="transient", code="connection_error", message=str(exc)),
             )
 
         status_code = connection_response.status_code
         response_payload = _decode_json(connection_response.body)
-        request_id = (
-            connection_response.headers.get("x-request-id")
-            or connection_response.headers.get("request-id")
-        )
+        request_id = connection_response.headers.get("x-request-id") or connection_response.headers.get("request-id")
         usage = _extract_usage(response_payload) if response_payload else None
 
         if 200 <= status_code < 300:
@@ -247,29 +188,21 @@ class OpenAIResponsesAdapter:
                     status="failed",
                     provider_family=request.provider_family,
                     model=request.model,
-                    failure=ProviderFailure(
-                        scope="provider",
-                        code="invalid_provider_response",
-                        message="OpenAI returned a non-JSON success response",
-                    ),
+                    model_observed=False,
+                    failure=ProviderFailure(scope="provider", code="invalid_provider_response", message="OpenAI returned a non-JSON success response"),
                 )
-            provider_model = response_payload.get("model") if isinstance(response_payload.get("model"), str) else None
-            if provider_model and provider_model != request.model:
-                raise ProviderAdapterContractError(
-                    "OpenAI response reported a model different from the dispatch-authorized model"
-                )
+            provider_model = response_payload.get("model")
+            observed_model = provider_model.strip() if isinstance(provider_model, str) and provider_model.strip() else request.model
+            model_observed = isinstance(provider_model, str) and bool(provider_model.strip())
             response_status = response_payload.get("status")
             if response_status in {"failed", "cancelled"}:
                 return ProviderExecutionResponse(
                     dispatch_id=request.dispatch_id,
                     status="failed",
                     provider_family=request.provider_family,
-                    model=request.model,
-                    failure=ProviderFailure(
-                        scope="provider",
-                        code=f"response_{response_status}",
-                        message=f"OpenAI response ended with status {response_status}",
-                    ),
+                    model=observed_model,
+                    model_observed=model_observed,
+                    failure=ProviderFailure(scope="provider", code=f"response_{response_status}", message=f"OpenAI response ended with status {response_status}"),
                     usage=usage,
                 )
             if response_status == "incomplete":
@@ -277,12 +210,9 @@ class OpenAIResponsesAdapter:
                     dispatch_id=request.dispatch_id,
                     status="failed",
                     provider_family=request.provider_family,
-                    model=request.model,
-                    failure=ProviderFailure(
-                        scope="capability",
-                        code="incomplete_response",
-                        message="OpenAI response was incomplete within the authorized guarded limits",
-                    ),
+                    model=observed_model,
+                    model_observed=model_observed,
+                    failure=ProviderFailure(scope="capability", code="incomplete_response", message="OpenAI response was incomplete within the authorized guarded limits"),
                     usage=usage,
                 )
             text = _extract_text(response_payload)
@@ -291,12 +221,9 @@ class OpenAIResponsesAdapter:
                     dispatch_id=request.dispatch_id,
                     status="failed",
                     provider_family=request.provider_family,
-                    model=request.model,
-                    failure=ProviderFailure(
-                        scope="capability",
-                        code="no_text_output",
-                        message="OpenAI returned no text content for the guarded task",
-                    ),
+                    model=observed_model,
+                    model_observed=model_observed,
+                    failure=ProviderFailure(scope="capability", code="no_text_output", message="OpenAI returned no text content for the guarded task"),
                     usage=usage,
                 )
             self._artifact_dir.mkdir(parents=True, exist_ok=True)
@@ -308,15 +235,16 @@ class OpenAIResponsesAdapter:
                 evidence.append(f"openai_response_id:{response_id}")
             if request_id:
                 evidence.append(f"openai_request_id:{request_id}")
-            if provider_model:
-                evidence.append(f"openai_response_model:{provider_model}")
+            if model_observed:
+                evidence.append(f"openai_response_model:{observed_model}")
             if request.reasoning_effort:
                 evidence.append(f"teo_reasoning_effort:{request.reasoning_effort}")
             return ProviderExecutionResponse(
                 dispatch_id=request.dispatch_id,
                 status="succeeded",
                 provider_family=request.provider_family,
-                model=request.model,
+                model=observed_model,
+                model_observed=model_observed,
                 output_ref=artifact_path.resolve().as_uri(),
                 evidence=tuple(evidence),
                 usage=usage,
@@ -328,12 +256,9 @@ class OpenAIResponsesAdapter:
             status="failed",
             provider_family=request.provider_family,
             model=request.model,
+            model_observed=False,
             evidence=(f"openai_request_id:{request_id}",) if request_id else (),
-            failure=ProviderFailure(
-                scope=_failure_scope(status_code, code),  # type: ignore[arg-type]
-                code=code,
-                message=message,
-            ),
+            failure=ProviderFailure(scope=_failure_scope(status_code, code), code=code, message=message),  # type: ignore[arg-type]
             retry_after_seconds=retry_after_seconds_from_headers(connection_response.headers),
             usage=usage,
         )
@@ -346,31 +271,29 @@ def execute_openai_canary_once(
     *,
     artifact_dir: str | Path = ".teo/runtime/artifacts/openai",
     timeout_seconds: float = 30.0,
+    enforce_identity: bool = True,
 ) -> ProviderExecutionResponse:
     """Execute one live OpenAI canary attempt while preserving TEO routing authority."""
     if dispatch.task_type not in CANARY_TASK_TYPES:
-        raise ProviderAdapterContractError(
-            "Live OpenAI canary is authorized only for high_volume_simple dispatches"
-        )
+        raise ProviderAdapterContractError("Live OpenAI canary is authorized only for high_volume_simple dispatches")
     if dispatch.risk_level not in CANARY_RISK_LEVELS:
-        raise ProviderAdapterContractError(
-            "Live OpenAI canary refuses high and critical risk dispatches"
-        )
+        raise ProviderAdapterContractError("Live OpenAI canary refuses high and critical risk dispatches")
     if dispatch.selected_implementation.provider_family != "openai":
-        raise ProviderAdapterContractError(
-            "Live OpenAI canary requires an OpenAI-selected dispatch"
-        )
+        raise ProviderAdapterContractError("Live OpenAI canary requires an OpenAI-selected dispatch")
     if dispatch.selected_implementation.model not in CANARY_MODELS:
-        raise ProviderAdapterContractError(
-            "Live OpenAI canary requires a GPT-5.6 Luna selected implementation"
-        )
+        raise ProviderAdapterContractError("Live OpenAI canary requires a GPT-5.6 Luna selected implementation")
 
-    adapter = OpenAIResponsesAdapter(
-        connection,
-        artifact_dir=artifact_dir,
-        timeout_seconds=timeout_seconds,
-    )
+    adapter = OpenAIResponsesAdapter(connection, artifact_dir=artifact_dir, timeout_seconds=timeout_seconds)
     request = ProviderExecutionRequest.from_dispatch(dispatch, input_payload)
-    response = adapter.execute(request)
-    validate_provider_response(dispatch, request, response)
+    raw_response = adapter.execute(request)
+    response = replace(
+        raw_response,
+        model=request.model,
+        observed_model=raw_response.model if raw_response.model_observed else None,
+    )
+    identity_status = validate_provider_response(dispatch, request, response, enforce_identity=False)
+    if enforce_identity and identity_status == "mismatch":
+        raise ProviderAdapterContractError(
+            "OpenAI response reported a model different from the dispatch-authorized model"
+        )
     return response
