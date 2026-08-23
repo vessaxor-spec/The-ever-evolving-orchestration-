@@ -1,13 +1,7 @@
 version: 1.1
 status: active
-reviewed_at: 2026-08-11
-policy: >-
-  Runtime-specific task routes must not mutate the shared documentation worker's
-  implementation ordering. high_volume_simple already declares its primary,
-  fallback, alternatives, and verifier topology in routing policy, while the
-  canonical documentation worker retains its own general-purpose model set.
-  Future runtime-specific worker changes must be task-scoped rather than applied
-  through an unconditional worker override.
-
+reviewed_at: '2026-08-23'
+policy: Runtime-specific implementation defaults belong to the dedicated runtime compatibility/defaults layer, not worker
+  responsibility definitions. Worker overrides may change responsibility metadata only.
 workers: {}
 worker_overrides: {}

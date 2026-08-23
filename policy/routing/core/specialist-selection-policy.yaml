@@ -1,0 +1,191 @@
+version: 2.0
+status: active
+reviewed_at: '2026-08-23'
+policy: Specialists remain model- and provider-independent responsibility definitions. This policy assigns only provider-neutral
+  runtime selection profiles; concrete implementation defaults live exclusively in policy/routing/core/runtime-compatibility-defaults.yaml.
+rules:
+- team_and_worker_route_resolves_before_specialist_selection_profile
+- selection_profile_cannot_change_team_worker_specialist_or_authority
+- selection_profile_cannot_widen_risk_or_live_scope
+- concrete_implementation_selection_remains_runtime_bound
+- connection_method_does_not_affect_runtime_fitness
+profiles:
+  critical_reasoning:
+    purpose: high-consequence reasoning with provider-diverse fallback and verification
+  deep_engineering:
+    purpose: deep technical reasoning and implementation-aware verification
+  engineering_execution:
+    purpose: implementation, debugging, and executable verification
+  research_synthesis:
+    purpose: current evidence synthesis with independent technical challenge
+  semantic_synthesis:
+    purpose: requirements, strategy, writing, and semantic review
+  multimodal_analysis:
+    purpose: visual and cross-modal interpretation with technical follow-up
+  throughput:
+    purpose: bounded economical throughput with sampled or targeted verification
+specialists:
+  architect:
+    selection_profile: critical_reasoning
+  civil-engineer:
+    selection_profile: critical_reasoning
+  compliance-auditor:
+    selection_profile: critical_reasoning
+  finance-analyst:
+    selection_profile: critical_reasoning
+  incident-commander:
+    selection_profile: critical_reasoning
+  legal-operations:
+    selection_profile: critical_reasoning
+  loan-officer-assistant:
+    selection_profile: critical_reasoning
+  red-team-advisor:
+    selection_profile: critical_reasoning
+  security-engineer:
+    selection_profile: critical_reasoning
+  tax-strategist:
+    selection_profile: critical_reasoning
+  cloud-architect:
+    selection_profile: critical_reasoning
+  database-reliability-engineer:
+    selection_profile: critical_reasoning
+  systems-requirements-engineer:
+    selection_profile: critical_reasoning
+  hardware-engineer:
+    selection_profile: critical_reasoning
+  robotics-autonomous-systems-engineer:
+    selection_profile: critical_reasoning
+  silicon-asic-engineer:
+    selection_profile: critical_reasoning
+  aerospace-satellite-engineer:
+    selection_profile: critical_reasoning
+  privacy-engineer:
+    selection_profile: critical_reasoning
+  functional-safety-engineer:
+    selection_profile: critical_reasoning
+  formal-methods-engineer:
+    selection_profile: critical_reasoning
+  fraud-forensic-investigation-specialist:
+    selection_profile: critical_reasoning
+  talent-acquisition-specialist:
+    selection_profile: critical_reasoning
+  insurance-claims-specialist:
+    selection_profile: critical_reasoning
+  agents-orchestrator:
+    selection_profile: deep_engineering
+  ai-engineer:
+    selection_profile: deep_engineering
+  blockchain-engineer:
+    selection_profile: deep_engineering
+  code-reviewer:
+    selection_profile: deep_engineering
+  data-analyst:
+    selection_profile: deep_engineering
+  orchestration-evaluation-analyst:
+    selection_profile: deep_engineering
+  data-engineer:
+    selection_profile: deep_engineering
+  devops-engineer:
+    selection_profile: deep_engineering
+  devsecops-engineer:
+    selection_profile: deep_engineering
+  embedded-engineer:
+    selection_profile: deep_engineering
+  malware-analyst:
+    selection_profile: deep_engineering
+  revenue-analyst:
+    selection_profile: deep_engineering
+  rust-engineer:
+    selection_profile: deep_engineering
+  compiler-toolchain-engineer:
+    selection_profile: deep_engineering
+  distributed-systems-engineer:
+    selection_profile: deep_engineering
+  network-engineer:
+    selection_profile: deep_engineering
+  platform-engineer:
+    selection_profile: deep_engineering
+  performance-engineer:
+    selection_profile: deep_engineering
+  finops-engineer:
+    selection_profile: deep_engineering
+  site-reliability-engineer:
+    selection_profile: deep_engineering
+  mlops-engineer:
+    selection_profile: deep_engineering
+  application-security-engineer:
+    selection_profile: deep_engineering
+  backend-engineer:
+    selection_profile: engineering_execution
+  frontend-engineer:
+    selection_profile: engineering_execution
+  game-engineer:
+    selection_profile: engineering_execution
+  qa-engineer:
+    selection_profile: engineering_execution
+  spatial-terminal:
+    selection_profile: engineering_execution
+  workflow-optimizer:
+    selection_profile: engineering_execution
+  xr-developer:
+    selection_profile: engineering_execution
+  mobile-engineer:
+    selection_profile: engineering_execution
+  manufacturing-engineer:
+    selection_profile: engineering_execution
+  china-marketing-specialist:
+    selection_profile: research_synthesis
+  cross-border-ecommerce:
+    selection_profile: research_synthesis
+  market-analyst:
+    selection_profile: research_synthesis
+  osint-specialist:
+    selection_profile: research_synthesis
+  paid-search-strategist:
+    selection_profile: research_synthesis
+  paid-social-strategist:
+    selection_profile: research_synthesis
+  programmatic-buyer:
+    selection_profile: research_synthesis
+  real-estate-agent:
+    selection_profile: research_synthesis
+  researcher:
+    selection_profile: research_synthesis
+  seo-specialist:
+    selection_profile: research_synthesis
+  social-media-strategist:
+    selection_profile: research_synthesis
+  supply-chain-strategist:
+    selection_profile: research_synthesis
+  applied-scientist:
+    selection_profile: research_synthesis
+  brand-designer:
+    selection_profile: semantic_synthesis
+  content-creator:
+    selection_profile: semantic_synthesis
+  corporate-trainer:
+    selection_profile: semantic_synthesis
+  customer-success:
+    selection_profile: semantic_synthesis
+  feedback-synthesizer:
+    selection_profile: semantic_synthesis
+  operations-manager:
+    selection_profile: semantic_synthesis
+  product-manager:
+    selection_profile: semantic_synthesis
+  project-manager:
+    selection_profile: semantic_synthesis
+  sales-coach:
+    selection_profile: semantic_synthesis
+  sales-engineer:
+    selection_profile: semantic_synthesis
+  sales-strategist:
+    selection_profile: semantic_synthesis
+  technical-writer:
+    selection_profile: semantic_synthesis
+  ux-designer:
+    selection_profile: semantic_synthesis
+  image-prompt-engineer:
+    selection_profile: multimodal_analysis
+  zk-steward:
+    selection_profile: throughput

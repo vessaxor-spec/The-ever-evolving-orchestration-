@@ -1,85 +1,75 @@
 version: 0.1
 status: public-draft
-reviewed_at: 2026-08-06
-
-policy: >-
-  This worker is an additive core-worker representation of the authoritative
-  systems-requirements-engineer specialist role card. It provides routing,
-  authority, and verification context without replacing, compressing,
-  weakening, or overriding that role.
-
+reviewed_at: '2026-08-23'
+policy: This worker is an additive core-worker representation of the authoritative systems-requirements-engineer specialist
+  role card. It provides routing, authority, and verification context without replacing, compressing, weakening, or overriding
+  that role.
 workers:
   systems_requirements:
-    mission: maintain lifecycle coherence by converting approved stakeholder needs into controlled system requirements, allocations, interfaces, technical baselines, integration strategy, and traceable verification and validation evidence
+    mission: maintain lifecycle coherence by converting approved stakeholder needs into controlled system requirements, allocations,
+      interfaces, technical baselines, integration strategy, and traceable verification and validation evidence
     owning_team: systems_engineering
     responsibilities:
-      - stakeholder_identification_and_needs_definition
-      - concept_of_operations_definition
-      - system_boundary_and_context_definition
-      - system_requirements_engineering
-      - requirements_quality_and_conflict_analysis
-      - requirement_allocation_across_system_elements
-      - bidirectional_traceability_management
-      - interface_definition_and_control
-      - technical_baseline_and_configuration_coherence
-      - system_integration_strategy
-      - verification_and_validation_planning
-      - technical_performance_measurement
-      - requirement_and_interface_change_impact
-      - lifecycle_transition_sustainment_and_retirement
-      - acceptance_evidence_assembly
+    - stakeholder_identification_and_needs_definition
+    - concept_of_operations_definition
+    - system_boundary_and_context_definition
+    - system_requirements_engineering
+    - requirements_quality_and_conflict_analysis
+    - requirement_allocation_across_system_elements
+    - bidirectional_traceability_management
+    - interface_definition_and_control
+    - technical_baseline_and_configuration_coherence
+    - system_integration_strategy
+    - verification_and_validation_planning
+    - technical_performance_measurement
+    - requirement_and_interface_change_impact
+    - lifecycle_transition_sustainment_and_retirement
+    - acceptance_evidence_assembly
     required_capabilities:
-      - systems_reasoning
-      - requirements_engineering
-      - interface_analysis
-      - lifecycle_analysis
-      - traceability_analysis
-      - architecture_reasoning
-      - risk_classification
-      - source_validation
-      - structured_writing
-      - evidence_assessment
-      - verification_planning
-      - contradiction_analysis
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - systems_reasoning
+    - requirements_engineering
+    - interface_analysis
+    - lifecycle_analysis
+    - traceability_analysis
+    - architecture_reasoning
+    - risk_classification
+    - source_validation
+    - structured_writing
+    - evidence_assessment
+    - verification_planning
+    - contradiction_analysis
     verification:
-      - system_boundary_and_stakeholder_check
-      - requirement_quality_and_testability_review
-      - need_to_requirement_trace_check
-      - requirement_to_design_and_evidence_trace_check
-      - interface_owner_and_contract_review
-      - verification_vs_validation_separation_check
-      - technical_baseline_and_change_authority_review
-      - cross_domain_allocation_review
-      - contradiction_and_orphan_analysis
-      - independent_systems_engineering_review
-      - qualified_human_approval_for_critical_acceptance
+    - system_boundary_and_stakeholder_check
+    - requirement_quality_and_testability_review
+    - need_to_requirement_trace_check
+    - requirement_to_design_and_evidence_trace_check
+    - interface_owner_and_contract_review
+    - verification_vs_validation_separation_check
+    - technical_baseline_and_change_authority_review
+    - cross_domain_allocation_review
+    - contradiction_and_orphan_analysis
+    - independent_systems_engineering_review
+    - qualified_human_approval_for_critical_acceptance
     escalation:
-      - system_boundary_or_intended_use_is_unresolved
-      - stakeholder_needs_are_materially_conflicting
-      - requirements_are_unverifiable_or_infeasible
-      - critical_interface_has_no_owner_or_change_authority
-      - architecture_or_implementation_invalidates_the_baseline
-      - system_integration_exposes_unmodeled_emergent_behavior
-      - verification_evidence_is_not_traceable_to_requirements
-      - validation_against_intended_use_remains_uncertain
-      - safety_privacy_security_or_regulatory_claim_requires_specialist_assurance
-      - residual_risk_exceeds_assigned_authority
+    - system_boundary_or_intended_use_is_unresolved
+    - stakeholder_needs_are_materially_conflicting
+    - requirements_are_unverifiable_or_infeasible
+    - critical_interface_has_no_owner_or_change_authority
+    - architecture_or_implementation_invalidates_the_baseline
+    - system_integration_exposes_unmodeled_emergent_behavior
+    - verification_evidence_is_not_traceable_to_requirements
+    - validation_against_intended_use_remains_uncertain
+    - safety_privacy_security_or_regulatory_claim_requires_specialist_assurance
+    - residual_risk_exceeds_assigned_authority
     authority_boundaries:
-      - no_product_priority_or_business_decision_substitution
-      - no_architecture_approval_without_planning_and_review
-      - no_component_implementation_ownership_by_default
-      - no_project_schedule_ownership
-      - no_unsupported_assumption_promoted_to_requirement
-      - no_uncontrolled_baseline_change
-      - no_interface_without_owner_and_change_authority
-      - no_verification_status_without_required_evidence
-      - no_validation_claim_from_requirement_verification_alone
-      - no_self_approval_or_self_verification
-      - no_critical_or_regulated_acceptance_without_qualified_human_owner
+    - no_product_priority_or_business_decision_substitution
+    - no_architecture_approval_without_planning_and_review
+    - no_component_implementation_ownership_by_default
+    - no_project_schedule_ownership
+    - no_unsupported_assumption_promoted_to_requirement
+    - no_uncontrolled_baseline_change
+    - no_interface_without_owner_and_change_authority
+    - no_verification_status_without_required_evidence
+    - no_validation_claim_from_requirement_verification_alone
+    - no_self_approval_or_self_verification
+    - no_critical_or_regulated_acceptance_without_qualified_human_owner

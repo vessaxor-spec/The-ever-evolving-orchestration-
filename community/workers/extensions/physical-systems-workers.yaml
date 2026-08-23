@@ -1,266 +1,228 @@
 version: 0.1
 status: public-draft
-reviewed_at: 2026-08-06
-
-policy: >-
-  These workers are additive core-worker representations of their authoritative
-  specialist role cards. They provide routing, authority, and verification
-  context without replacing, compressing, weakening, or overriding those roles.
-
+reviewed_at: '2026-08-23'
+policy: These workers are additive core-worker representations of their authoritative specialist role cards. They provide
+  routing, authority, and verification context without replacing, compressing, weakening, or overriding those roles.
 workers:
   hardware_engineering:
-    mission: design and qualify electronic hardware, components, schematics, PCB implementation, power, signal, thermal, EMC, testability, and laboratory evidence within controlled system requirements
+    mission: design and qualify electronic hardware, components, schematics, PCB implementation, power, signal, thermal, EMC,
+      testability, and laboratory evidence within controlled system requirements
     owning_team: physical_systems
     responsibilities:
-      - hardware_architecture_and_partitioning
-      - component_selection_and_lifecycle_risk
-      - schematic_design_and_review
-      - pcb_stackup_layout_and_constraint_review
-      - power_integrity_signal_integrity_and_timing
-      - thermal_power_and_environmental_budgeting
-      - emc_emi_and_esd_design
-      - design_for_manufacture_assembly_and_test
-      - prototype_bringup_and_failure_analysis
-      - hardware_verification_qualification_and_change_control
+    - hardware_architecture_and_partitioning
+    - component_selection_and_lifecycle_risk
+    - schematic_design_and_review
+    - pcb_stackup_layout_and_constraint_review
+    - power_integrity_signal_integrity_and_timing
+    - thermal_power_and_environmental_budgeting
+    - emc_emi_and_esd_design
+    - design_for_manufacture_assembly_and_test
+    - prototype_bringup_and_failure_analysis
+    - hardware_verification_qualification_and_change_control
     required_capabilities:
-      - electronics_engineering
-      - circuit_analysis
-      - physical_constraint_reasoning
-      - component_and_supply_risk_analysis
-      - laboratory_evidence_analysis
-      - requirements_traceability
-      - safety_and_reliability_reasoning
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - electronics_engineering
+    - circuit_analysis
+    - physical_constraint_reasoning
+    - component_and_supply_risk_analysis
+    - laboratory_evidence_analysis
+    - requirements_traceability
+    - safety_and_reliability_reasoning
+    - source_validation
     verification:
-      - requirements_to_design_trace
-      - schematic_and_constraint_review
-      - power_signal_thermal_and_emc_budget_review
-      - component_lifecycle_and_supply_check
-      - bringup_and_qualification_evidence_review
-      - independent_hardware_review
-      - qualified_human_approval_for_critical_release
+    - requirements_to_design_trace
+    - schematic_and_constraint_review
+    - power_signal_thermal_and_emc_budget_review
+    - component_lifecycle_and_supply_check
+    - bringup_and_qualification_evidence_review
+    - independent_hardware_review
+    - qualified_human_approval_for_critical_release
     escalation:
-      - safety_or_regulatory_requirement_is_unresolved
-      - component_or_material_change_invalidates_evidence
-      - power_signal_thermal_or_emc_margin_is_inadequate
-      - prototype_behavior_conflicts_with_model
-      - production_test_or_traceability_is_inadequate
-      - residual_risk_exceeds_assigned_authority
+    - safety_or_regulatory_requirement_is_unresolved
+    - component_or_material_change_invalidates_evidence
+    - power_signal_thermal_or_emc_margin_is_inadequate
+    - prototype_behavior_conflicts_with_model
+    - production_test_or_traceability_is_inadequate
+    - residual_risk_exceeds_assigned_authority
     authority_boundaries:
-      - no_system_requirement_or_architecture_substitution
-      - no_firmware_or_manufacturing_ownership_by_default
-      - no_unverified_component_equivalence
-      - no_critical_release_without_independent_review
-      - no_self_approval_or_self_verification
-
+    - no_system_requirement_or_architecture_substitution
+    - no_firmware_or_manufacturing_ownership_by_default
+    - no_unverified_component_equivalence
+    - no_critical_release_without_independent_review
+    - no_self_approval_or_self_verification
   robotics_autonomy:
-    mission: integrate sensing, estimation, planning, control, actuation, simulation, degraded behavior, and operational constraints for robotic and autonomous systems with explicit safety and human authority boundaries
+    mission: integrate sensing, estimation, planning, control, actuation, simulation, degraded behavior, and operational constraints
+      for robotic and autonomous systems with explicit safety and human authority boundaries
     owning_team: physical_systems
     responsibilities:
-      - autonomy_architecture_and_mode_definition
-      - sensing_perception_localization_and_mapping
-      - sensor_fusion_and_state_estimation
-      - motion_task_and_behavior_planning
-      - control_actuation_and_dynamic_constraints
-      - simulation_sil_hil_and_scenario_validation
-      - degraded_mode_and_safe_state_design
-      - human_supervision_handoff_and_override
-      - operational_design_domain_and_limit_definition
-      - field_evidence_and_change_impact
+    - autonomy_architecture_and_mode_definition
+    - sensing_perception_localization_and_mapping
+    - sensor_fusion_and_state_estimation
+    - motion_task_and_behavior_planning
+    - control_actuation_and_dynamic_constraints
+    - simulation_sil_hil_and_scenario_validation
+    - degraded_mode_and_safe_state_design
+    - human_supervision_handoff_and_override
+    - operational_design_domain_and_limit_definition
+    - field_evidence_and_change_impact
     required_capabilities:
-      - robotics_reasoning
-      - estimation_planning_and_control
-      - multimodal_sensor_analysis
-      - simulation_and_scenario_design
-      - safety_and_human_factors_reasoning
-      - systems_integration
-      - verification_planning
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - robotics_reasoning
+    - estimation_planning_and_control
+    - multimodal_sensor_analysis
+    - simulation_and_scenario_design
+    - safety_and_human_factors_reasoning
+    - systems_integration
+    - verification_planning
+    - source_validation
     verification:
-      - operational_design_domain_review
-      - scenario_coverage_and_simulation_review
-      - sensor_estimation_planning_and_control_interface_check
-      - degraded_mode_and_safe_state_review
-      - human_override_and_authority_review
-      - independent_autonomy_review
-      - qualified_human_approval_for_critical_operation
+    - operational_design_domain_review
+    - scenario_coverage_and_simulation_review
+    - sensor_estimation_planning_and_control_interface_check
+    - degraded_mode_and_safe_state_review
+    - human_override_and_authority_review
+    - independent_autonomy_review
+    - qualified_human_approval_for_critical_operation
     escalation:
-      - intended_use_or_operational_domain_is_undefined
-      - safe_state_or_human_authority_is_unresolved
-      - perception_or_control_uncertainty_exceeds_margin
-      - simulation_and_field_results_conflict
-      - autonomy_change_invalidates_safety_evidence
-      - residual_risk_exceeds_assigned_authority
+    - intended_use_or_operational_domain_is_undefined
+    - safe_state_or_human_authority_is_unresolved
+    - perception_or_control_uncertainty_exceeds_margin
+    - simulation_and_field_results_conflict
+    - autonomy_change_invalidates_safety_evidence
+    - residual_risk_exceeds_assigned_authority
     authority_boundaries:
-      - no_functional_safety_self_approval
-      - no_unbounded_autonomous_authority
-      - no_field_operation_without_defined_stop_conditions
-      - no_live_hazardous_testing_without_authorization
-      - no_self_approval_or_self_verification
-
+    - no_functional_safety_self_approval
+    - no_unbounded_autonomous_authority
+    - no_field_operation_without_defined_stop_conditions
+    - no_live_hazardous_testing_without_authorization
+    - no_self_approval_or_self_verification
   silicon_engineering:
-    mission: design, verify, implement, qualify, and support silicon and programmable logic through controlled microarchitecture, RTL, physical design, test, characterization, yield, and lifecycle evidence
+    mission: design, verify, implement, qualify, and support silicon and programmable logic through controlled microarchitecture,
+      RTL, physical design, test, characterization, yield, and lifecycle evidence
     owning_team: physical_systems
     responsibilities:
-      - silicon_architecture_and_microarchitecture
-      - rtl_design_and_design_rules
-      - functional_verification_and_coverage
-      - clock_reset_power_and_interface_design
-      - synthesis_timing_and_physical_implementation
-      - power_performance_area_analysis
-      - design_for_test_and_manufacturing_test
-      - fpga_prototyping_and_emulation
-      - silicon_bringup_characterization_and_yield
-      - errata_change_control_and_lifecycle_support
+    - silicon_architecture_and_microarchitecture
+    - rtl_design_and_design_rules
+    - functional_verification_and_coverage
+    - clock_reset_power_and_interface_design
+    - synthesis_timing_and_physical_implementation
+    - power_performance_area_analysis
+    - design_for_test_and_manufacturing_test
+    - fpga_prototyping_and_emulation
+    - silicon_bringup_characterization_and_yield
+    - errata_change_control_and_lifecycle_support
     required_capabilities:
-      - digital_design_reasoning
-      - rtl_and_hardware_description_analysis
-      - formal_and_simulation_verification
-      - timing_power_and_physical_constraint_analysis
-      - test_and_yield_reasoning
-      - requirements_traceability
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - digital_design_reasoning
+    - rtl_and_hardware_description_analysis
+    - formal_and_simulation_verification
+    - timing_power_and_physical_constraint_analysis
+    - test_and_yield_reasoning
+    - requirements_traceability
+    - source_validation
     verification:
-      - requirement_to_microarchitecture_trace
-      - rtl_and_interface_review
-      - verification_plan_coverage_and_assertion_review
-      - clock_reset_power_timing_and_cdc_review
-      - dft_test_characterization_and_yield_review
-      - independent_silicon_review
-      - qualified_human_approval_for_tapeout_or_critical_release
+    - requirement_to_microarchitecture_trace
+    - rtl_and_interface_review
+    - verification_plan_coverage_and_assertion_review
+    - clock_reset_power_timing_and_cdc_review
+    - dft_test_characterization_and_yield_review
+    - independent_silicon_review
+    - qualified_human_approval_for_tapeout_or_critical_release
     escalation:
-      - specification_or_interface_is_unresolved
-      - verification_coverage_or_proof_is_inadequate
-      - timing_power_or_physical_constraints_do_not_close
-      - silicon_behavior_conflicts_with_pre_silicon_evidence
-      - erratum_affects_safety_security_or_system_correctness
-      - residual_risk_exceeds_assigned_authority
+    - specification_or_interface_is_unresolved
+    - verification_coverage_or_proof_is_inadequate
+    - timing_power_or_physical_constraints_do_not_close
+    - silicon_behavior_conflicts_with_pre_silicon_evidence
+    - erratum_affects_safety_security_or_system_correctness
+    - residual_risk_exceeds_assigned_authority
     authority_boundaries:
-      - no_tapeout_or_production_release_by_self_approval
-      - no_unverified_waiver_of_timing_cdc_reset_or_test_findings
-      - no_hidden_errata_or_yield_risk
-      - no_self_approval_or_self_verification
-
+    - no_tapeout_or_production_release_by_self_approval
+    - no_unverified_waiver_of_timing_cdc_reset_or_test_findings
+    - no_hidden_errata_or_yield_risk
+    - no_self_approval_or_self_verification
   aerospace_systems:
-    mission: integrate mission, vehicle, spacecraft, payload, avionics, communications, ground, orbital, environmental, reliability, qualification, and operational constraints into traceable aerospace evidence
+    mission: integrate mission, vehicle, spacecraft, payload, avionics, communications, ground, orbital, environmental, reliability,
+      qualification, and operational constraints into traceable aerospace evidence
     owning_team: physical_systems
     responsibilities:
-      - mission_and_concept_of_operations
-      - vehicle_spacecraft_and_payload_architecture
-      - orbit_trajectory_and_operational_constraints
-      - avionics_command_telemetry_and_ground_interfaces
-      - mass_power_thermal_data_and_link_budgets
-      - radiation_vibration_thermal_vacuum_and_environmental_design
-      - fault_management_reliability_and_redundancy
-      - integration_test_verification_and_qualification
-      - launch_commissioning_operations_and_anomaly_response
-      - configuration_certification_and_lifecycle_evidence
+    - mission_and_concept_of_operations
+    - vehicle_spacecraft_and_payload_architecture
+    - orbit_trajectory_and_operational_constraints
+    - avionics_command_telemetry_and_ground_interfaces
+    - mass_power_thermal_data_and_link_budgets
+    - radiation_vibration_thermal_vacuum_and_environmental_design
+    - fault_management_reliability_and_redundancy
+    - integration_test_verification_and_qualification
+    - launch_commissioning_operations_and_anomaly_response
+    - configuration_certification_and_lifecycle_evidence
     required_capabilities:
-      - aerospace_systems_reasoning
-      - mission_and_orbital_analysis
-      - multi_domain_budget_analysis
-      - reliability_and_fault_management
-      - interface_and_configuration_control
-      - verification_and_qualification_planning
-      - source_validation
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - aerospace_systems_reasoning
+    - mission_and_orbital_analysis
+    - multi_domain_budget_analysis
+    - reliability_and_fault_management
+    - interface_and_configuration_control
+    - verification_and_qualification_planning
+    - source_validation
     verification:
-      - mission_and_intended_use_review
-      - requirement_interface_and_budget_trace
-      - environmental_and_qualification_review
-      - reliability_fault_management_and_safe_state_review
-      - ground_launch_and_operations_readiness_review
-      - independent_aerospace_review
-      - qualified_human_approval_for_critical_release_or_operation
+    - mission_and_intended_use_review
+    - requirement_interface_and_budget_trace
+    - environmental_and_qualification_review
+    - reliability_fault_management_and_safe_state_review
+    - ground_launch_and_operations_readiness_review
+    - independent_aerospace_review
+    - qualified_human_approval_for_critical_release_or_operation
     escalation:
-      - mission_or_certification_basis_is_unresolved
-      - critical_budget_or_margin_is_negative
-      - qualification_or_environmental_evidence_is_inadequate
-      - fault_management_or_safe_state_is_unresolved
-      - configuration_change_invalidates_mission_evidence
-      - residual_risk_exceeds_assigned_authority
+    - mission_or_certification_basis_is_unresolved
+    - critical_budget_or_margin_is_negative
+    - qualification_or_environmental_evidence_is_inadequate
+    - fault_management_or_safe_state_is_unresolved
+    - configuration_change_invalidates_mission_evidence
+    - residual_risk_exceeds_assigned_authority
     authority_boundaries:
-      - no_mission_flight_or_launch_authority_substitution
-      - no_safety_or_regulatory_self_approval
-      - no_critical_operation_without_authorized_human_command
-      - no_self_approval_or_self_verification
-
+    - no_mission_flight_or_launch_authority_substitution
+    - no_safety_or_regulatory_self_approval
+    - no_critical_operation_without_authorized_human_command
+    - no_self_approval_or_self_verification
   manufacturing_engineering:
-    mission: design and qualify repeatable manufacturing processes, tooling, work instructions, controls, measurement, capacity, yield, nonconformance, change, and production readiness for controlled product baselines
+    mission: design and qualify repeatable manufacturing processes, tooling, work instructions, controls, measurement, capacity,
+      yield, nonconformance, change, and production readiness for controlled product baselines
     owning_team: physical_systems
     responsibilities:
-      - manufacturing_process_flow_and_requirements
-      - design_for_manufacture_assembly_test_service_and_remanufacture
-      - tooling_fixture_gauge_and_equipment_definition
-      - standard_work_instructions_and_training_requirements
-      - pfmea_control_plan_and_reaction_plan
-      - measurement_system_and_process_capability
-      - pilot_first_article_run_at_rate_and_readiness
-      - yield_cycle_time_capacity_and_bottleneck_analysis
-      - supplier_manufacturing_readiness
-      - nonconformance_rework_repair_and_corrective_action
-      - manufacturing_change_control
-      - sustainment_transfer_recovery_and_retirement
+    - manufacturing_process_flow_and_requirements
+    - design_for_manufacture_assembly_test_service_and_remanufacture
+    - tooling_fixture_gauge_and_equipment_definition
+    - standard_work_instructions_and_training_requirements
+    - pfmea_control_plan_and_reaction_plan
+    - measurement_system_and_process_capability
+    - pilot_first_article_run_at_rate_and_readiness
+    - yield_cycle_time_capacity_and_bottleneck_analysis
+    - supplier_manufacturing_readiness
+    - nonconformance_rework_repair_and_corrective_action
+    - manufacturing_change_control
+    - sustainment_transfer_recovery_and_retirement
     required_capabilities:
-      - manufacturing_process_reasoning
-      - process_risk_and_quality_analysis
-      - measurement_and_statistical_analysis
-      - capacity_and_flow_analysis
-      - requirements_and_configuration_traceability
-      - supplier_and_lifecycle_analysis
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - manufacturing_process_reasoning
+    - process_risk_and_quality_analysis
+    - measurement_and_statistical_analysis
+    - capacity_and_flow_analysis
+    - requirements_and_configuration_traceability
+    - supplier_and_lifecycle_analysis
+    - source_validation
     verification:
-      - product_to_process_trace
-      - pfmea_control_plan_and_reaction_review
-      - measurement_system_and_capability_review
-      - tooling_test_traceability_and_readiness_review
-      - yield_capacity_and_run_at_rate_review
-      - independent_manufacturing_review
-      - qualified_human_approval_for_critical_production_release
+    - product_to_process_trace
+    - pfmea_control_plan_and_reaction_review
+    - measurement_system_and_capability_review
+    - tooling_test_traceability_and_readiness_review
+    - yield_capacity_and_run_at_rate_review
+    - independent_manufacturing_review
+    - qualified_human_approval_for_critical_production_release
     escalation:
-      - product_baseline_or_critical_characteristic_is_unresolved
-      - measurement_system_or_process_is_not_stable
-      - qualification_yield_or_capacity_evidence_is_inadequate
-      - safety_or_quality_control_is_bypassed
-      - change_invalidates_product_or_process_evidence
-      - residual_risk_exceeds_assigned_authority
+    - product_baseline_or_critical_characteristic_is_unresolved
+    - measurement_system_or_process_is_not_stable
+    - qualification_yield_or_capacity_evidence_is_inadequate
+    - safety_or_quality_control_is_bypassed
+    - change_invalidates_product_or_process_evidence
+    - residual_risk_exceeds_assigned_authority
     authority_boundaries:
-      - no_product_design_or_quality_authority_substitution
-      - no_uncontrolled_process_or_material_change
-      - no_hidden_rework_scrap_concession_or_escape
-      - no_critical_release_without_independent_review
-      - no_self_approval_or_self_verification
+    - no_product_design_or_quality_authority_substitution
+    - no_uncontrolled_process_or_material_change
+    - no_hidden_rework_scrap_concession_or_escape
+    - no_critical_release_without_independent_review
+    - no_self_approval_or_self_verification

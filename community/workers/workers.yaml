@@ -1,533 +1,388 @@
 version: 0.4
 status: active
-
 worker_template:
   required_fields:
-    - mission
-    - owning_team
-    - responsibilities
-    - required_capabilities
-    - preferred_implementations
-    - fallbacks
-    - verification
-    - escalation
-
+  - mission
+  - owning_team
+  - responsibilities
+  - required_capabilities
+  - verification
+  - escalation
 workers:
   orchestration:
     mission: design, activate, coordinate, observe, and recover governed multi-agent workflows
     owning_team: mission_control
     responsibilities:
-      - pipeline_architecture
-      - agent_activation_protocols
-      - typed_handoff_contracts
-      - capability_registry_management
-      - pipeline_state_and_checkpointing
-      - loop_and_stall_detection
-      - token_budget_management
-      - operator_gate_placement
+    - pipeline_architecture
+    - agent_activation_protocols
+    - typed_handoff_contracts
+    - capability_registry_management
+    - pipeline_state_and_checkpointing
+    - loop_and_stall_detection
+    - token_budget_management
+    - operator_gate_placement
     required_capabilities:
-      - orchestration_reasoning
-      - distributed_systems_reasoning
-      - schema_design
-      - tool_integration
-      - risk_analysis
-      - observability
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - orchestration_reasoning
+    - distributed_systems_reasoning
+    - schema_design
+    - tool_integration
+    - risk_analysis
+    - observability
     verification:
-      - handoff_contract_validation
-      - independent_pipeline_review
-      - failure_and_recovery_simulation
-      - authority_boundary_check
+    - handoff_contract_validation
+    - independent_pipeline_review
+    - failure_and_recovery_simulation
+    - authority_boundary_check
     escalation:
-      - production_side_effect
-      - irreversible_action
-      - security_sensitive_operation
-      - authority_violation
-      - unresolved_pipeline_loop
+    - production_side_effect
+    - irreversible_action
+    - security_sensitive_operation
+    - authority_violation
+    - unresolved_pipeline_loop
     authority_boundaries:
-      - no_undeclared_agent_authority
-      - no_production_side_effect_without_operator_approval
-      - no_self_modifying_instructions_or_authority
-      - no_bypass_of_required_human_gate
-
+    - no_undeclared_agent_authority
+    - no_production_side_effect_without_operator_approval
+    - no_self_modifying_instructions_or_authority
+    - no_bypass_of_required_human_gate
   operations:
-    mission: coordinate people, vendors, financial operations, infrastructure maintenance, and process improvement under controlled approvals
+    mission: coordinate people, vendors, financial operations, infrastructure maintenance, and process improvement under controlled
+      approvals
     owning_team: mission_control
     responsibilities:
-      - onboarding_and_hr_operations
-      - recruitment_operations
-      - accounts_payable_workflows
-      - vendor_performance_management
-      - infrastructure_health_coordination
-      - sop_and_process_optimization
-      - operational_kpi_management
-      - change_management
+    - onboarding_and_hr_operations
+    - recruitment_operations
+    - accounts_payable_workflows
+    - vendor_performance_management
+    - infrastructure_health_coordination
+    - sop_and_process_optimization
+    - operational_kpi_management
+    - change_management
     required_capabilities:
-      - operational_planning
-      - process_design
-      - coordination
-      - quantitative_reasoning
-      - compliance_awareness
-      - risk_analysis
-      - documentation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
+    - operational_planning
+    - process_design
+    - coordination
+    - quantitative_reasoning
+    - compliance_awareness
+    - risk_analysis
+    - documentation
     verification:
-      - approval_threshold_check
-      - pii_and_access_review
-      - payment_control_review
-      - infrastructure_change_plan_review
-      - jurisdiction_or_policy_validation
+    - approval_threshold_check
+    - pii_and_access_review
+    - payment_control_review
+    - infrastructure_change_plan_review
+    - jurisdiction_or_policy_validation
     escalation:
-      - headcount_or_compensation_change
-      - payment_above_approval_threshold
-      - production_infrastructure_change
-      - legal_or_labor_conflict
-      - regulatory_deadline_at_risk
-      - worker_classification_risk
+    - headcount_or_compensation_change
+    - payment_above_approval_threshold
+    - production_infrastructure_change
+    - legal_or_labor_conflict
+    - regulatory_deadline_at_risk
+    - worker_classification_risk
     authority_boundaries:
-      - no_unapproved_headcount_or_compensation_change
-      - no_payment_above_threshold_without_dual_approval
-      - no_unreviewed_production_infrastructure_change
-      - no_tax_or_legal_strategy_substitution
-
+    - no_unapproved_headcount_or_compensation_change
+    - no_payment_above_threshold_without_dual_approval
+    - no_unreviewed_production_infrastructure_change
+    - no_tax_or_legal_strategy_substitution
   project_delivery:
     mission: govern cross-functional delivery through realistic scope, capacity, dependency, risk, and change controls
     owning_team: mission_control
     responsibilities:
-      - project_intake
-      - definition_of_done
-      - scope_and_capacity_negotiation
-      - dependency_and_critical_path_management
-      - risk_register_management
-      - stakeholder_status_and_escalation
-      - change_control
-      - delivery_metrics_and_retrospectives
+    - project_intake
+    - definition_of_done
+    - scope_and_capacity_negotiation
+    - dependency_and_critical_path_management
+    - risk_register_management
+    - stakeholder_status_and_escalation
+    - change_control
+    - delivery_metrics_and_retrospectives
     required_capabilities:
-      - planning
-      - coordination
-      - requirements_analysis
-      - risk_analysis
-      - dependency_mapping
-      - quantitative_reasoning
-      - clear_writing
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
+    - planning
+    - coordination
+    - requirements_analysis
+    - risk_analysis
+    - dependency_mapping
+    - quantitative_reasoning
+    - clear_writing
     verification:
-      - capacity_and_timeline_validation
-      - definition_of_done_trace
-      - critical_path_review
-      - raci_accountability_check
-      - change_log_review
+    - capacity_and_timeline_validation
+    - definition_of_done_trace
+    - critical_path_review
+    - raci_accountability_check
+    - change_log_review
     escalation:
-      - unachievable_scope_or_timeline
-      - critical_path_at_risk
-      - missing_accountable_owner
-      - scope_change_without_tradeoff
-      - delivery_index_below_threshold
+    - unachievable_scope_or_timeline
+    - critical_path_at_risk
+    - missing_accountable_owner
+    - scope_change_without_tradeoff
+    - delivery_index_below_threshold
     authority_boundaries:
-      - no_product_decision_substitution
-      - no_code_implementation
-      - no_budget_ownership_substitution
-      - no_commitment_without_capacity_validation
-
+    - no_product_decision_substitution
+    - no_code_implementation
+    - no_budget_ownership_substitution
+    - no_commitment_without_capacity_validation
   architecture:
     mission: design coherent systems and resolve structural tradeoffs
     owning_team: planning
     responsibilities:
-      - system_design
-      - interface_boundaries
-      - dependency_strategy
-      - tradeoff_analysis
+    - system_design
+    - interface_boundaries
+    - dependency_strategy
+    - tradeoff_analysis
     required_capabilities:
-      - high_reasoning
-      - planning
-      - technical_context
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
+    - high_reasoning
+    - planning
+    - technical_context
     verification:
-      - engineering_feasibility_review
-      - risk_review
+    - engineering_feasibility_review
+    - risk_review
     escalation:
-      - irreversible_platform_choice
-      - security_critical
-
+    - irreversible_platform_choice
+    - security_critical
   backend:
     mission: implement and maintain server-side systems and APIs
     owning_team: engineering
     responsibilities:
-      - api_implementation
-      - business_logic
-      - service_integration
-      - tests
+    - api_implementation
+    - business_logic
+    - service_integration
+    - tests
     required_capabilities:
-      - coding
-      - debugging
-      - tool_execution
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - debugging
+    - tool_execution
     verification:
-      - targeted_tests
-      - integration_tests
-
+    - targeted_tests
+    - integration_tests
   frontend:
     mission: implement usable and maintainable web interfaces
     owning_team: engineering
     responsibilities:
-      - component_implementation
-      - state_management
-      - responsive_behavior
-      - frontend_tests
+    - component_implementation
+    - state_management
+    - responsive_behavior
+    - frontend_tests
     required_capabilities:
-      - coding
-      - visual_reasoning
-      - accessibility_awareness
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - visual_reasoning
+    - accessibility_awareness
     verification:
-      - build_validation
-      - interaction_tests
-      - accessibility_review
-
+    - build_validation
+    - interaction_tests
+    - accessibility_review
   mobile:
     mission: implement mobile applications and platform integrations
     owning_team: engineering
     responsibilities:
-      - mobile_architecture
-      - native_integration
-      - cross_platform_implementation
-      - device_testing
+    - mobile_architecture
+    - native_integration
+    - cross_platform_implementation
+    - device_testing
     required_capabilities:
-      - coding
-      - platform_reasoning
-      - debugging
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - platform_reasoning
+    - debugging
     verification:
-      - platform_builds
-      - device_or_emulator_tests
-
+    - platform_builds
+    - device_or_emulator_tests
   devops:
     mission: automate delivery, deployment, and operational workflows
     owning_team: engineering
     responsibilities:
-      - ci_cd
-      - containers
-      - deployment_automation
-      - observability
+    - ci_cd
+    - containers
+    - deployment_automation
+    - observability
     required_capabilities:
-      - coding
-      - infrastructure_reasoning
-      - tool_execution
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - infrastructure_reasoning
+    - tool_execution
     verification:
-      - configuration_validation
-      - pipeline_tests
-      - rollback_plan
-
+    - configuration_validation
+    - pipeline_tests
+    - rollback_plan
   infrastructure:
     mission: design and maintain reliable infrastructure foundations
     owning_team: planning
     responsibilities:
-      - cloud_architecture
-      - networking
-      - capacity_planning
-      - resilience
+    - cloud_architecture
+    - networking
+    - capacity_planning
+    - resilience
     required_capabilities:
-      - architecture
-      - high_reasoning
-      - risk_analysis
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - architecture
+    - high_reasoning
+    - risk_analysis
     verification:
-      - failure_mode_review
-      - cost_review
-      - recovery_plan
-
+    - failure_mode_review
+    - cost_review
+    - recovery_plan
   performance:
     mission: identify and remove measurable system bottlenecks
     owning_team: engineering
     responsibilities:
-      - profiling
-      - query_optimization
-      - runtime_analysis
-      - benchmark_design
+    - profiling
+    - query_optimization
+    - runtime_analysis
+    - benchmark_design
     required_capabilities:
-      - debugging
-      - quantitative_reasoning
-      - tool_execution
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - debugging
+    - quantitative_reasoning
+    - tool_execution
     verification:
-      - before_after_measurement
-      - regression_tests
-
+    - before_after_measurement
+    - regression_tests
   code_review:
     mission: review code for correctness, risk, scope discipline, and contract integrity
     owning_team: review
     responsibilities:
-      - inspect_diff
-      - correctness_review
-      - regression_risk_review
-      - minimal_change_discipline
-      - test_coverage_review
-      - api_contract_review
+    - inspect_diff
+    - correctness_review
+    - regression_risk_review
+    - minimal_change_discipline
+    - test_coverage_review
+    - api_contract_review
     required_capabilities:
-      - high_reasoning
-      - adversarial_review
-      - executable_verification
-      - requirements_analysis
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - high_reasoning
+    - adversarial_review
+    - executable_verification
+    - requirements_analysis
     verification:
-      - targeted_tests
-      - changed_contract_review
-      - unresolved_assumption_log
+    - targeted_tests
+    - changed_contract_review
+    - unresolved_assumption_log
     escalation:
-      - security_sensitive
-      - financial_logic
-      - permissions_or_identity
-      - cryptography
-      - destructive_data_operations
-      - production_infrastructure
-
+    - security_sensitive
+    - financial_logic
+    - permissions_or_identity
+    - cryptography
+    - destructive_data_operations
+    - production_infrastructure
   security:
     mission: identify, reduce, and verify security risk
     owning_team: review
     responsibilities:
-      - threat_modeling
-      - authentication_review
-      - authorization_review
-      - dependency_risk
-      - security_testing
+    - threat_modeling
+    - authentication_review
+    - authorization_review
+    - dependency_risk
+    - security_testing
     required_capabilities:
-      - high_reasoning
-      - adversarial_review
-      - executable_verification
-    preferred_implementations:
-      - claude-opus-5
-      - gpt-5.6-sol
-      - gpt-5.6-terra
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - high_reasoning
+    - adversarial_review
+    - executable_verification
     verification:
-      - independent_review
-      - targeted_security_tests
-      - audit_trace
+    - independent_review
+    - targeted_security_tests
+    - audit_trace
     escalation:
-      - critical_vulnerability
-      - identity_or_permissions_change
-
+    - critical_vulnerability
+    - identity_or_permissions_change
   database:
     mission: design and maintain reliable data storage and access patterns
     owning_team: engineering
     responsibilities:
-      - schema_design
-      - migrations
-      - query_review
-      - data_integrity
+    - schema_design
+    - migrations
+    - query_review
+    - data_integrity
     required_capabilities:
-      - coding
-      - data_modeling
-      - risk_analysis
-    preferred_implementations:
-      - gpt-5.6-sol
-      - gpt-5.6-terra
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - data_modeling
+    - risk_analysis
     verification:
-      - migration_tests
-      - rollback_plan
-      - integrity_checks
-
+    - migration_tests
+    - rollback_plan
+    - integrity_checks
   data_engineering:
     mission: build reliable data movement and transformation systems
     owning_team: engineering
     responsibilities:
-      - pipelines
-      - transformations
-      - data_quality
-      - orchestration
+    - pipelines
+    - transformations
+    - data_quality
+    - orchestration
     required_capabilities:
-      - coding
-      - systems_reasoning
-      - data_validation
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - systems_reasoning
+    - data_validation
     verification:
-      - data_quality_tests
-      - pipeline_replay
-
+    - data_quality_tests
+    - pipeline_replay
   ai_engineering:
     mission: implement AI-enabled systems with controlled model and tool behavior
     owning_team: engineering
     responsibilities:
-      - model_integration
-      - agent_workflows
-      - tool_use
-      - evaluation
+    - model_integration
+    - agent_workflows
+    - tool_use
+    - evaluation
     required_capabilities:
-      - coding
-      - orchestration_reasoning
-      - evaluation_design
-    preferred_implementations:
-      - gpt-5.6-sol
-      - gpt-5.6-terra
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - orchestration_reasoning
+    - evaluation_design
     verification:
-      - evaluation_suite
-      - failure_case_review
-      - cost_and_latency_check
-
+    - evaluation_suite
+    - failure_case_review
+    - cost_and_latency_check
   documentation:
     mission: create accurate, usable, and maintainable technical documentation
     owning_team: research
     responsibilities:
-      - technical_writing
-      - examples
-      - reference_updates
-      - consistency_review
+    - technical_writing
+    - examples
+    - reference_updates
+    - consistency_review
     required_capabilities:
-      - synthesis
-      - technical_accuracy
-      - clear_writing
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.7-flash
-      - claude-haiku-4-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
+    - synthesis
+    - technical_accuracy
+    - clear_writing
     verification:
-      - technical_review
-      - link_and_example_check
-
+    - technical_review
+    - link_and_example_check
   qa:
     mission: convert requirements and risks into repeatable quality checks
     owning_team: verification
     responsibilities:
-      - test_planning
-      - regression_coverage
-      - failure_reproduction
-      - acceptance_testing
+    - test_planning
+    - regression_coverage
+    - failure_reproduction
+    - acceptance_testing
     required_capabilities:
-      - test_design
-      - executable_verification
-      - requirements_analysis
-    preferred_implementations:
-      - gpt-5.6-terra
-      - claude-sonnet-5
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - test_design
+    - executable_verification
+    - requirements_analysis
     verification:
-      - independent_test_run
-      - acceptance_criteria_trace
-
+    - independent_test_run
+    - acceptance_criteria_trace
   accessibility:
     mission: ensure interfaces and content remain usable across access needs
     owning_team: review
     responsibilities:
-      - accessibility_review
-      - semantic_structure
-      - keyboard_behavior
-      - assistive_technology_considerations
+    - accessibility_review
+    - semantic_structure
+    - keyboard_behavior
+    - assistive_technology_considerations
     required_capabilities:
-      - standards_reasoning
-      - interface_review
-      - visual_analysis
-    preferred_implementations:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
-    fallbacks:
-      - gemini-3.7-flash
-      - gpt-5.6-sol
+    - standards_reasoning
+    - interface_review
+    - visual_analysis
     verification:
-      - automated_checks
-      - manual_review
-
+    - automated_checks
+    - manual_review
   release:
     mission: prepare controlled and traceable releases
     owning_team: verification
     responsibilities:
-      - release_readiness
-      - change_summary
-      - versioning
-      - rollback_readiness
+    - release_readiness
+    - change_summary
+    - versioning
+    - rollback_readiness
     required_capabilities:
-      - coordination
-      - verification
-      - documentation
-    preferred_implementations:
-      - gpt-5.6-terra
-      - claude-sonnet-5
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - coordination
+    - verification
+    - documentation
     verification:
-      - release_checklist
-      - artifact_validation
-      - rollback_confirmation
+    - release_checklist
+    - artifact_validation
+    - rollback_confirmation
+reviewed_at: '2026-08-23'

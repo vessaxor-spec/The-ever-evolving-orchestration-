@@ -1,248 +1,217 @@
 version: 0.1
 status: public-draft
-reviewed_at: 2026-08-06
-
-policy: >-
-  These workers are additive core-worker representations of their authoritative
-  specialist role cards. They provide routing, authority, and verification
-  context without replacing, compressing, weakening, or overriding those roles.
-
+reviewed_at: '2026-08-23'
+policy: These workers are additive core-worker representations of their authoritative specialist role cards. They provide
+  routing, authority, and verification context without replacing, compressing, weakening, or overriding those roles.
 workers:
   performance_engineering:
-    mission: define representative workloads, performance budgets, benchmark validity, profiling evidence, capacity, saturation, regression controls, and cross-stack optimization without sacrificing correctness or reliability
+    mission: define representative workloads, performance budgets, benchmark validity, profiling evidence, capacity, saturation,
+      regression controls, and cross-stack optimization without sacrificing correctness or reliability
     owning_team: platform_reliability
     responsibilities:
-      - workload_and_traffic_modeling
-      - end_to_end_performance_budgets
-      - benchmark_load_stress_spike_soak_and_endurance_design
-      - latency_throughput_queue_and_saturation_analysis
-      - cpu_memory_io_storage_network_and_runtime_profiling
-      - distributed_trace_and_dependency_analysis
-      - capacity_and_failover_headroom_modeling
-      - performance_regression_baselines_and_gates
-      - bottleneck_contention_retry_and_cascading_slowdown_analysis
-      - cost_per_useful_work_analysis
-      - optimization_tradeoff_and_result_verification
+    - workload_and_traffic_modeling
+    - end_to_end_performance_budgets
+    - benchmark_load_stress_spike_soak_and_endurance_design
+    - latency_throughput_queue_and_saturation_analysis
+    - cpu_memory_io_storage_network_and_runtime_profiling
+    - distributed_trace_and_dependency_analysis
+    - capacity_and_failover_headroom_modeling
+    - performance_regression_baselines_and_gates
+    - bottleneck_contention_retry_and_cascading_slowdown_analysis
+    - cost_per_useful_work_analysis
+    - optimization_tradeoff_and_result_verification
     required_capabilities:
-      - performance_reasoning
-      - workload_modeling
-      - statistical_analysis
-      - profiling_analysis
-      - queuing_and_capacity_reasoning
-      - distributed_trace_analysis
-      - benchmark_design
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - performance_reasoning
+    - workload_modeling
+    - statistical_analysis
+    - profiling_analysis
+    - queuing_and_capacity_reasoning
+    - distributed_trace_analysis
+    - benchmark_design
+    - evidence_assessment
+    - source_validation
     verification:
-      - workload_representativeness_review
-      - benchmark_environment_and_variance_check
-      - latency_distribution_and_tail_review
-      - profiling_and_root_bottleneck_check
-      - capacity_and_failure_headroom_review
-      - before_after_result_validation
-      - correctness_and_reliability_tradeoff_review
-      - independent_performance_review
-      - qualified_human_approval_for_critical_capacity_decisions
+    - workload_representativeness_review
+    - benchmark_environment_and_variance_check
+    - latency_distribution_and_tail_review
+    - profiling_and_root_bottleneck_check
+    - capacity_and_failure_headroom_review
+    - before_after_result_validation
+    - correctness_and_reliability_tradeoff_review
+    - independent_performance_review
+    - qualified_human_approval_for_critical_capacity_decisions
     escalation:
-      - workload_or_acceptance_metric_is_undefined
-      - benchmark_environments_are_not_comparable
-      - optimization_reduces_correctness_durability_or_security
-      - production_stress_test_lacks_authorization
-      - saturation_or_failover_headroom_is_insufficient
-      - critical_capacity_or_deadline_risk_is_unresolved
-      - result_cannot_be_reproduced
+    - workload_or_acceptance_metric_is_undefined
+    - benchmark_environments_are_not_comparable
+    - optimization_reduces_correctness_durability_or_security
+    - production_stress_test_lacks_authorization
+    - saturation_or_failover_headroom_is_insufficient
+    - critical_capacity_or_deadline_risk_is_unresolved
+    - result_cannot_be_reproduced
     authority_boundaries:
-      - no_qa_sre_database_network_or_application_ownership_substitution
-      - no_average_only_user_latency_claim
-      - no_uncontrolled_production_stress
-      - no_scalability_claim_beyond_evidence_without_uncertainty
-      - no_hidden_correctness_or_reliability_tradeoff
-      - no_self_approval_or_self_verification
-
+    - no_qa_sre_database_network_or_application_ownership_substitution
+    - no_average_only_user_latency_claim
+    - no_uncontrolled_production_stress
+    - no_scalability_claim_beyond_evidence_without_uncertainty
+    - no_hidden_correctness_or_reliability_tradeoff
+    - no_self_approval_or_self_verification
   finops_engineering:
-    mission: make technology cost attributable, reconciled, forecastable, and actionable through unit economics, anomaly response, optimization evidence, commitment analysis, workload placement, and verified realized savings
+    mission: make technology cost attributable, reconciled, forecastable, and actionable through unit economics, anomaly response,
+      optimization evidence, commitment analysis, workload placement, and verified realized savings
     owning_team: platform_reliability
     responsibilities:
-      - cost_and_usage_data_reconciliation
-      - ownership_tagging_and_allocation_models
-      - showback_and_chargeback_design
-      - technology_unit_economics
-      - driver_based_forecasting_and_scenarios
-      - cost_anomaly_detection_classification_and_response
-      - rightsizing_scheduling_storage_transfer_and_placement_analysis
-      - commitment_reservation_license_and_contract_analysis
-      - cost_performance_reliability_tradeoffs
-      - budgets_guardrails_and_approval_thresholds
-      - build_buy_managed_service_and_exit_economics
-      - realized_savings_verification
+    - cost_and_usage_data_reconciliation
+    - ownership_tagging_and_allocation_models
+    - showback_and_chargeback_design
+    - technology_unit_economics
+    - driver_based_forecasting_and_scenarios
+    - cost_anomaly_detection_classification_and_response
+    - rightsizing_scheduling_storage_transfer_and_placement_analysis
+    - commitment_reservation_license_and_contract_analysis
+    - cost_performance_reliability_tradeoffs
+    - budgets_guardrails_and_approval_thresholds
+    - build_buy_managed_service_and_exit_economics
+    - realized_savings_verification
     required_capabilities:
-      - finops_reasoning
-      - cost_and_usage_analysis
-      - allocation_and_unit_economic_modeling
-      - forecasting_and_scenario_analysis
-      - contract_and_commitment_analysis
-      - architecture_and_workload_reasoning
-      - risk_classification
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - finops_reasoning
+    - cost_and_usage_analysis
+    - allocation_and_unit_economic_modeling
+    - forecasting_and_scenario_analysis
+    - contract_and_commitment_analysis
+    - architecture_and_workload_reasoning
+    - risk_classification
+    - evidence_assessment
+    - source_validation
     verification:
-      - invoice_usage_and_currency_reconciliation
-      - allocation_rule_review
-      - unit_economic_definition_check
-      - forecast_driver_and_uncertainty_review
-      - commitment_downside_and_lock_in_analysis
-      - service_risk_tradeoff_review
-      - realized_savings_validation
-      - independent_finops_review
-      - qualified_human_approval_for_material_commitments
+    - invoice_usage_and_currency_reconciliation
+    - allocation_rule_review
+    - unit_economic_definition_check
+    - forecast_driver_and_uncertainty_review
+    - commitment_downside_and_lock_in_analysis
+    - service_risk_tradeoff_review
+    - realized_savings_validation
+    - independent_finops_review
+    - qualified_human_approval_for_material_commitments
     escalation:
-      - cost_cannot_be_attributed_or_reconciled
-      - proposed_savings_remove_required_reliability_or_security
-      - contract_or_commitment_terms_are_unverified
-      - shared_cost_allocation_is_arbitrary_or_disputed
-      - material_provider_lock_in_or_exit_risk
-      - accounting_tax_legal_or_procurement_judgment_is_required
-      - commercially_sensitive_data_handling_is_unclear
+    - cost_cannot_be_attributed_or_reconciled
+    - proposed_savings_remove_required_reliability_or_security
+    - contract_or_commitment_terms_are_unverified
+    - shared_cost_allocation_is_arbitrary_or_disputed
+    - material_provider_lock_in_or_exit_risk
+    - accounting_tax_legal_or_procurement_judgment_is_required
+    - commercially_sensitive_data_handling_is_unclear
     authority_boundaries:
-      - no_finance_accounting_tax_legal_or_procurement_substitution
-      - no_theoretical_savings_counted_as_realized
-      - no_reliability_security_backup_or_logging_removal_from_cost_only
-      - no_arbitrary_shared_cost_allocation
-      - no_list_price_treated_as_effective_cost_without_evidence
-      - no_self_approval_or_self_verification
-
+    - no_finance_accounting_tax_legal_or_procurement_substitution
+    - no_theoretical_savings_counted_as_realized
+    - no_reliability_security_backup_or_logging_removal_from_cost_only
+    - no_arbitrary_shared_cost_allocation
+    - no_list_price_treated_as_effective_cost_without_evidence
+    - no_self_approval_or_self_verification
   site_reliability:
-    mission: define and govern production reliability through user-centered SLOs, error budgets, readiness, capacity, dependency resilience, toil reduction, safe operations, drills, and systemic learning
+    mission: define and govern production reliability through user-centered SLOs, error budgets, readiness, capacity, dependency
+      resilience, toil reduction, safe operations, drills, and systemic learning
     owning_team: platform_reliability
     responsibilities:
-      - service_level_indicator_and_objective_definition
-      - error_budget_policy
-      - production_readiness_and_operational_risk_review
-      - service_ownership_on_call_and_support_boundaries
-      - symptom_burn_rate_and_actionable_alert_design
-      - capacity_saturation_and_failure_headroom
-      - graceful_degradation_dependency_isolation_and_retry_budgets
-      - safe_change_rollback_and_freeze_requirements
-      - toil_measurement_and_bounded_automation
-      - runbooks_recovery_drills_and_operational_testing
-      - incident_prevention_postmortem_learning_and_action_tracking
-      - reliability_launch_migration_and_deprecation_gates
+    - service_level_indicator_and_objective_definition
+    - error_budget_policy
+    - production_readiness_and_operational_risk_review
+    - service_ownership_on_call_and_support_boundaries
+    - symptom_burn_rate_and_actionable_alert_design
+    - capacity_saturation_and_failure_headroom
+    - graceful_degradation_dependency_isolation_and_retry_budgets
+    - safe_change_rollback_and_freeze_requirements
+    - toil_measurement_and_bounded_automation
+    - runbooks_recovery_drills_and_operational_testing
+    - incident_prevention_postmortem_learning_and_action_tracking
+    - reliability_launch_migration_and_deprecation_gates
     required_capabilities:
-      - reliability_reasoning
-      - slo_and_error_budget_analysis
-      - observability_analysis
-      - capacity_and_dependency_reasoning
-      - incident_and_recovery_analysis
-      - operational_automation_review
-      - risk_classification
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - reliability_reasoning
+    - slo_and_error_budget_analysis
+    - observability_analysis
+    - capacity_and_dependency_reasoning
+    - incident_and_recovery_analysis
+    - operational_automation_review
+    - risk_classification
+    - evidence_assessment
+    - source_validation
     verification:
-      - user_centered_sli_and_slo_review
-      - error_budget_policy_check
-      - production_readiness_evidence_review
-      - alert_actionability_and_burn_rate_review
-      - capacity_and_failover_headroom_test
-      - dependency_degraded_mode_and_retry_test
-      - runbook_and_recovery_drill
-      - toil_automation_safety_review
-      - independent_reliability_review
-      - qualified_human_approval_for_critical_launch_and_risk_acceptance
+    - user_centered_sli_and_slo_review
+    - error_budget_policy_check
+    - production_readiness_evidence_review
+    - alert_actionability_and_burn_rate_review
+    - capacity_and_failover_headroom_test
+    - dependency_degraded_mode_and_retry_test
+    - runbook_and_recovery_drill
+    - toil_automation_safety_review
+    - independent_reliability_review
+    - qualified_human_approval_for_critical_launch_and_risk_acceptance
     escalation:
-      - service_owner_or_user_outcome_is_undefined
-      - service_promise_cannot_be_measured
-      - production_launch_lacks_recovery_or_on_call
-      - error_budget_is_exhausted_without_approved_action
-      - shared_dependency_or_capacity_risk_is_unbounded
-      - automation_lacks_scope_stop_conditions_or_rollback
-      - critical_drill_restore_or_recovery_evidence_is_missing
-      - reliability_tradeoff_affects_safety_security_privacy_or_compliance
+    - service_owner_or_user_outcome_is_undefined
+    - service_promise_cannot_be_measured
+    - production_launch_lacks_recovery_or_on_call
+    - error_budget_is_exhausted_without_approved_action
+    - shared_dependency_or_capacity_risk_is_unbounded
+    - automation_lacks_scope_stop_conditions_or_rollback
+    - critical_drill_restore_or_recovery_evidence_is_missing
+    - reliability_tradeoff_affects_safety_security_privacy_or_compliance
     authority_boundaries:
-      - no_devops_incident_command_performance_or_product_substitution
-      - no_unmeasurable_slo
-      - no_unbounded_retry_or_automation
-      - no_production_readiness_without_ownership_and_recovery
-      - no_error_budget_used_to_bypass_mandatory_obligations
-      - no_self_approval_or_self_verification
-
+    - no_devops_incident_command_performance_or_product_substitution
+    - no_unmeasurable_slo
+    - no_unbounded_retry_or_automation
+    - no_production_readiness_without_ownership_and_recovery
+    - no_error_budget_used_to_bypass_mandatory_obligations
+    - no_self_approval_or_self_verification
   mlops:
-    mission: operate a reproducible, traceable, observable, reversible ML lifecycle across data, features, code, prompts, models, evaluation, approval, deployment, monitoring, retraining, rollback, and retirement
+    mission: operate a reproducible, traceable, observable, reversible ML lifecycle across data, features, code, prompts,
+      models, evaluation, approval, deployment, monitoring, retraining, rollback, and retirement
     owning_team: platform_reliability
     responsibilities:
-      - reproducible_training_evaluation_packaging_and_deployment
-      - dataset_feature_label_prompt_code_model_and_environment_lineage
-      - experiment_tracking_and_model_registry
-      - model_stages_promotion_gates_approvals_and_audit
-      - batch_online_streaming_edge_shadow_and_canary_deployment
-      - model_serving_reliability_capacity_latency_and_cost
-      - data_feature_concept_quality_fairness_and_behavior_drift_monitoring
-      - retraining_trigger_validation_promotion_and_rollback
-      - training_serving_consistency_and_feature_governance
-      - model_supply_chain_privacy_security_and_provenance
-      - incident_disablement_recovery_deprecation_and_retirement
+    - reproducible_training_evaluation_packaging_and_deployment
+    - dataset_feature_label_prompt_code_model_and_environment_lineage
+    - experiment_tracking_and_model_registry
+    - model_stages_promotion_gates_approvals_and_audit
+    - batch_online_streaming_edge_shadow_and_canary_deployment
+    - model_serving_reliability_capacity_latency_and_cost
+    - data_feature_concept_quality_fairness_and_behavior_drift_monitoring
+    - retraining_trigger_validation_promotion_and_rollback
+    - training_serving_consistency_and_feature_governance
+    - model_supply_chain_privacy_security_and_provenance
+    - incident_disablement_recovery_deprecation_and_retirement
     required_capabilities:
-      - ml_lifecycle_reasoning
-      - reproducibility_and_lineage_analysis
-      - model_evaluation_analysis
-      - data_and_feature_contract_reasoning
-      - deployment_and_rollback_planning
-      - drift_and_monitoring_analysis
-      - platform_and_supply_chain_reasoning
-      - privacy_security_and_fairness_awareness
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - ml_lifecycle_reasoning
+    - reproducibility_and_lineage_analysis
+    - model_evaluation_analysis
+    - data_and_feature_contract_reasoning
+    - deployment_and_rollback_planning
+    - drift_and_monitoring_analysis
+    - platform_and_supply_chain_reasoning
+    - privacy_security_and_fairness_awareness
+    - evidence_assessment
+    - source_validation
     verification:
-      - lineage_and_reproducibility_review
-      - train_validation_test_and_leakage_check
-      - evaluation_and_promotion_gate_review
-      - training_serving_consistency_test
-      - canary_rollback_and_disablement_test
-      - monitoring_drift_and_label_maturity_review
-      - retraining_feedback_loop_and_human_approval_review
-      - model_supply_chain_and_artifact_identity_check
-      - independent_mlops_review
-      - qualified_human_approval_for_critical_or_regulated_model_promotion
+    - lineage_and_reproducibility_review
+    - train_validation_test_and_leakage_check
+    - evaluation_and_promotion_gate_review
+    - training_serving_consistency_test
+    - canary_rollback_and_disablement_test
+    - monitoring_drift_and_label_maturity_review
+    - retraining_feedback_loop_and_human_approval_review
+    - model_supply_chain_and_artifact_identity_check
+    - independent_mlops_review
+    - qualified_human_approval_for_critical_or_regulated_model_promotion
     escalation:
-      - deployed_artifact_lacks_lineage
-      - evaluation_or_approval_evidence_is_missing
-      - training_serving_skew_or_data_leakage_is_suspected
-      - critical_drift_safety_fairness_or_policy_stop_condition_is_met
-      - retraining_can_create_uncontrolled_feedback_loop
-      - rollback_or_disablement_is_unproven
-      - production_data_use_lacks_privacy_or_purpose_authority
-      - critical_or_regulated_model_promotion_requires_human_owner
+    - deployed_artifact_lacks_lineage
+    - evaluation_or_approval_evidence_is_missing
+    - training_serving_skew_or_data_leakage_is_suspected
+    - critical_drift_safety_fairness_or_policy_stop_condition_is_met
+    - retraining_can_create_uncontrolled_feedback_loop
+    - rollback_or_disablement_is_unproven
+    - production_data_use_lacks_privacy_or_purpose_authority
+    - critical_or_regulated_model_promotion_requires_human_owner
     authority_boundaries:
-      - no_product_applied_science_ai_engineering_or_data_engineering_substitution
-      - no_model_promotion_without_traceable_evaluation_and_approval
-      - no_automatic_retraining_and_promotion_without_bounded_controls
-      - no_hidden_drift_lineage_or_subgroup_regression
-      - no_critical_model_active_after_defined_stop_condition
-      - no_self_approval_or_self_verification
+    - no_product_applied_science_ai_engineering_or_data_engineering_substitution
+    - no_model_promotion_without_traceable_evaluation_and_approval
+    - no_automatic_retraining_and_promotion_without_bounded_controls
+    - no_hidden_drift_lineage_or_subgroup_regression
+    - no_critical_model_active_after_defined_stop_condition
+    - no_self_approval_or_self_verification
