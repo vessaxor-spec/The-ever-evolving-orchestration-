@@ -1,0 +1,46 @@
+name: RMI-7 configuration migration
+
+on:
+  push:
+    branches:
+      - feature/runtime-model-neutral-responsibility
+
+permissions:
+  contents: write
+
+jobs:
+  migrate:
+    if: ${{ !contains(github.event.head_commit.message, 'rmi7: migrate responsibility config to model-neutral surfaces') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          ref: feature/runtime-model-neutral-responsibility
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: "3.11.15"
+          cache: pip
+          cache-dependency-path: ci/requirements-ci.lock
+      - name: Install pinned migration dependency
+        run: |
+          python -m pip install --disable-pip-version-check --upgrade "pip==26.1.2"
+          python -m pip install --disable-pip-version-check --require-hashes --no-deps -r ci/requirements-ci.lock
+      - name: Migrate responsibility configuration
+        run: python ci/rmi7_migrate_model_neutrality.py
+      - name: Verify migration changed only tracked configuration surfaces
+        run: |
+          git diff --check
+          git status --short
+          test -f policy/routing/core/runtime-compatibility-defaults.yaml
+          test -f policy/routing/core/specialist-selection-policy.yaml
+          test ! -e policy/routing/core/specialist-model-routing.yaml
+      - name: Commit mechanical migration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add community/workers policy/routing ci/rmi7_migrate_model_neutrality.py .github/workflows/rmi7-configuration-migration.yml
+          git commit -m "rmi7: migrate responsibility config to model-neutral surfaces"
+          git push origin HEAD:feature/runtime-model-neutral-responsibility
