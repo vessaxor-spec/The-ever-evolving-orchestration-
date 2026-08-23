@@ -138,6 +138,10 @@ class RuntimeTelemetryEvent:
     telemetry_version: Literal["1"] = "1"
 
     def __post_init__(self) -> None:
+        if self.intended_provider_family is None:
+            object.__setattr__(self, "intended_provider_family", self.provider_family)
+        if self.intended_model is None:
+            object.__setattr__(self, "intended_model", self.model)
         if self.telemetry_version != TELEMETRY_VERSION:
             raise ProviderAdapterContractError("Unsupported runtime telemetry version")
         if self.event_type != "provider_attempt":
