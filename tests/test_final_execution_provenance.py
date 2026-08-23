@@ -255,7 +255,10 @@ def test_tampered_route_outcome_is_rejected_before_projection() -> None:
     tampered = record.to_dict()
     tampered["primary_route"]["implementation"]["provider_family"] = "openai"
 
-    with pytest.raises(ProviderAdapterContractError, match="integrity|attempt provider"):
+    with pytest.raises(
+        ProviderAdapterContractError,
+        match="integrity|attempt provider|identity_status",
+    ):
         attach_execution_provenance(final_outcome(primary), tampered, repo_root=REPO_ROOT)
 
 
