@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from dataclasses import replace
 from math import isfinite
 from pathlib import Path
 from typing import Any
@@ -298,6 +299,7 @@ def execute_gemini_canary_once(
     *,
     artifact_dir: str | Path = ".teo/runtime/artifacts/google",
     timeout_seconds: float = 30.0,
+    enforce_identity: bool = True,
 ) -> ProviderExecutionResponse:
     """Execute one live Gemini canary attempt while preserving TEO routing authority."""
     if dispatch.task_type not in CANARY_TASK_TYPES:
@@ -311,6 +313,15 @@ def execute_gemini_canary_once(
 
     adapter = GeminiInteractionsAdapter(connection, artifact_dir=artifact_dir, timeout_seconds=timeout_seconds)
     request = ProviderExecutionRequest.from_dispatch(dispatch, input_payload)
-    response = adapter.execute(request)
-    validate_provider_response(dispatch, request, response, enforce_identity=False)
+    raw_response = adapter.execute(request)
+    response = replace(
+        raw_response,
+        model=request.model,
+        observed_model=raw_response.model if raw_response.model_observed else None,
+    )
+    identity_status = validate_provider_response(dispatch, request, response, enforce_identity=False)
+    if enforce_identity and identity_status == "mismatch":
+        raise ProviderAdapterContractError(
+            "Gemini response reported a model different from the dispatch-authorized model"
+        )
     return response
