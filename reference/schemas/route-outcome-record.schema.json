@@ -49,6 +49,8 @@
         "verification_failed",
         "awaiting_human",
         "verification_missing",
+        "identity_mismatch",
+        "identity_unconfirmed",
         "execution_failed",
         "abandoned"
       ]
@@ -109,13 +111,52 @@
           "items": {"type": "string", "minLength": 1}
         },
         "verification_dispatch_id": {"type": ["string", "null"], "minLength": 1},
-        "telemetry_event_count": {"type": "integer", "minimum": 0}
+        "telemetry_event_count": {"type": "integer", "minimum": 0},
+        "executor_identity_status": {
+          "type": ["string", "null"],
+          "enum": ["match", "mismatch", "unconfirmed", null]
+        },
+        "verifier_identity_status": {
+          "type": ["string", "null"],
+          "enum": ["match", "mismatch", "unconfirmed", null]
+        },
+        "configuration_identity_observed": {"type": "boolean"}
       }
     },
     "abandonment_reason": {"type": ["string", "null"], "minLength": 1},
     "integrity_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
   },
   "$defs": {
+    "identity_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider_family",
+        "model",
+        "source",
+        "model_observed",
+        "configuration_fingerprint",
+        "configuration_observed"
+      ],
+      "properties": {
+        "provider_family": {"type": "string", "minLength": 1},
+        "model": {"type": "string", "minLength": 1},
+        "source": {
+          "enum": [
+            "provider_response",
+            "provider_adapter",
+            "verifier_response",
+            "verifier_adapter"
+          ]
+        },
+        "model_observed": {"type": "boolean"},
+        "configuration_fingerprint": {
+          "type": ["string", "null"],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "configuration_observed": {"type": "boolean"}
+      }
+    },
     "route": {
       "type": "object",
       "additionalProperties": false,
@@ -158,7 +199,14 @@
                 {"type": "null"},
                 {"enum": ["none", "minimal", "low", "medium", "high", "xhigh", "max"]}
               ]
-            }
+            },
+            "observed_identity": {
+              "oneOf": [
+                {"type": "null"},
+                {"$ref": "#/$defs/identity_observation"}
+              ]
+            },
+            "identity_status": {"enum": ["match", "mismatch", "unconfirmed"]}
           }
         },
         "verifier": {
@@ -167,7 +215,14 @@
           "required": ["provider_family", "model"],
           "properties": {
             "provider_family": {"type": ["string", "null"], "minLength": 1},
-            "model": {"type": "string", "minLength": 1}
+            "model": {"type": "string", "minLength": 1},
+            "observed_identity": {
+              "oneOf": [
+                {"type": "null"},
+                {"$ref": "#/$defs/identity_observation"}
+              ]
+            },
+            "identity_status": {"enum": ["match", "mismatch", "unconfirmed"]}
           }
         },
         "attempts": {
@@ -245,7 +300,12 @@
               }
             }
           ]
-        }
+        },
+        "intended_provider_family": {"type": ["string", "null"], "minLength": 1},
+        "intended_model": {"type": ["string", "null"], "minLength": 1},
+        "identity_status": {"enum": ["match", "mismatch", "unconfirmed"]},
+        "model_observed": {"type": "boolean"},
+        "configuration_identity_observed": {"type": "boolean"}
       },
       "allOf": [
         {
@@ -280,9 +340,7 @@
         }
       },
       "else": {
-        "properties": {
-          "abandonment_reason": {"type": "null"}
-        }
+        "properties": {"abandonment_reason": {"type": "null"}}
       }
     },
     {
