@@ -59,7 +59,20 @@
             "verification_dispatch_id": {"type": "string", "minLength": 1},
             "final_disposition": {"enum": ["completed", "verification_failed", "awaiting_human"]},
             "fallback_assisted": {"type": "boolean"},
-            "retry_assisted": {"type": "boolean"}
+            "retry_assisted": {"type": "boolean"},
+            "intended_provider_family": {"type": ["string", "null"], "minLength": 1},
+            "intended_model": {"type": ["string", "null"], "minLength": 1},
+            "executor_identity_status": {
+              "type": ["string", "null"],
+              "enum": ["match", "mismatch", "unconfirmed", null]
+            },
+            "observed_verifier_provider_family": {"type": ["string", "null"], "minLength": 1},
+            "observed_verifier_model": {"type": ["string", "null"], "minLength": 1},
+            "verifier_identity_status": {
+              "type": ["string", "null"],
+              "enum": ["match", "mismatch", "unconfirmed", null]
+            },
+            "configuration_identity_observed": {"type": "boolean"}
           }
         }
       ]
