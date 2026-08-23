@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - feature/runtime-model-neutral-responsibility
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
 
 jobs:
   migrate:
-    if: ${{ !contains(github.event.head_commit.message, 'rmi7: migrate responsibility config to model-neutral surfaces') }}
+    if: ${{ !contains(github.event.head_commit.message || github.event.pull_request.head.sha, 'rmi7: migrate responsibility config to model-neutral surfaces') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
