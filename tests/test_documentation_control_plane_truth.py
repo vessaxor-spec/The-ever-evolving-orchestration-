@@ -240,7 +240,7 @@ def test_current_docs_do_not_turn_compatibility_or_access_into_authority() -> No
         "compatibility/default evidence",
         "does not create authority",
         "connection",
-        "does not widen live authority",
+        "do not widen live authority",
     ):
         assert phrase in combined
 
