@@ -29,7 +29,7 @@ specialists:
 
 worker_contract:
   path: community/workers/assurance-workers.yaml
-  canonical_blob_sha: 036f957c1866decf99a793b8b9b7765fe4b60ed9
+  canonical_blob_sha: fe716bd9299b97a52cc12542fe17b072a2ab2184
   expected_workers:
     - privacy_engineering
     - functional_safety
