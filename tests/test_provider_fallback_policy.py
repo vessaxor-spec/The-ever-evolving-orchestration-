@@ -53,18 +53,18 @@ def test_active_routes_have_cross_provider_non_local_fallbacks() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
 
     for route_name, primary_key in PRIMARY_KEYS.items():
-        route = bundle.implementation_routes[route_name]
+        route = bundle.runtime_task_routes[route_name]
         primary = route[primary_key]
         fallback = route.get("fallback")
 
         assert isinstance(fallback, dict) and fallback.get("model"), (
-            f"{route_name} must declare an explicit routine fallback"
+            f"{route_name} must declare an explicit routine compatibility fallback"
         )
         primary_provider = provider(bundle, str(primary["model"]))
         fallback_provider = provider(bundle, str(fallback["model"]))
 
         assert fallback_provider != primary_provider, (
-            f"{route_name} repeats provider {primary_provider} across primary and fallback"
+            f"{route_name} repeats provider {primary_provider} across compatibility primary and fallback"
         )
         assert not fallback_provider.startswith("local"), (
             f"{route_name} uses a local automatic fallback"
@@ -74,29 +74,29 @@ def test_active_routes_have_cross_provider_non_local_fallbacks() -> None:
 def test_worker_and_family_fallbacks_are_canonical_non_local_and_exclude_opus() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
 
-    for worker_name, worker in bundle.worker_registry.items():
+    for worker_name, defaults in bundle.worker_runtime_defaults.items():
         for field in ("preferred_implementations", "fallbacks"):
-            for model in worker.get(field, []):
+            for model in defaults.get(field, []):
                 provider(bundle, str(model))
-        for model in worker.get("fallbacks", []):
-            assert model != "claude-opus-5", f"{worker_name} uses Opus as a routine fallback"
+        for model in defaults.get("fallbacks", []):
+            assert model != "claude-opus-5", f"{worker_name} uses Opus as a routine compatibility fallback"
             assert not provider(bundle, str(model)).startswith("local"), (
                 f"{worker_name} uses a local automatic fallback"
             )
 
-    for family, candidates in bundle.routing.get("fallback_order", {}).items():
+    for family, candidates in bundle.runtime_fallback_order.items():
         seen: set[str] = set()
         for candidate in candidates:
             candidate_provider = provider(bundle, str(candidate["model"]))
             assert not candidate_provider.startswith("local"), (
-                f"fallback_order.{family} contains a local model"
+                f"runtime_compatibility.fallback_order.{family} contains a local model"
             )
             assert candidate_provider not in seen, (
-                f"fallback_order.{family} repeats provider {candidate_provider}"
+                f"runtime_compatibility.fallback_order.{family} repeats provider {candidate_provider}"
             )
             seen.add(candidate_provider)
             assert candidate["model"] != "claude-opus-5", (
-                f"fallback_order.{family} uses Opus as routine fallback"
+                f"runtime_compatibility.fallback_order.{family} uses Opus as routine fallback"
             )
 
 
@@ -104,7 +104,7 @@ def test_escalation_is_not_loaded_as_automatic_fallback() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     opus_locations: list[str] = []
 
-    for route_name, route in bundle.implementation_routes.items():
+    for route_name, route in bundle.runtime_task_routes.items():
         assert "escalation" not in route, f"{route_name} exposes escalation to automatic fallback"
         primary_key = PRIMARY_KEYS.get(route_name)
         if primary_key and route[primary_key].get("model") == "claude-opus-5":
@@ -115,7 +115,7 @@ def test_escalation_is_not_loaded_as_automatic_fallback() -> None:
         fallback = route.get("fallback")
         if fallback:
             assert fallback.get("model") != "claude-opus-5", (
-                f"{route_name} uses Opus as a routine fallback"
+                f"{route_name} uses Opus as a routine compatibility fallback"
             )
 
     assert "security_review.primary" in opus_locations
