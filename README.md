@@ -167,7 +167,7 @@ Runtime model binding and clean-architecture refactoring do not widen live autho
 
 The current `high_volume_simple` low or medium risk canary remains the only accepted guarded live execution scope. `documentation` is the first staged candidate; its staged replay harness and operator path are validated, but provider-backed replay evidence is still pending and it has no live-execution authority.
 
-**The next product evidence gate is provider-backed controlled documentation replay evidence.**
+**The next gate is provider-backed controlled documentation replay evidence.**
 
 CI conformance with deterministic fake provider transports does not count as empirical provider-backed evidence. High and critical live execution remains outside the current guarded runtime.
 
