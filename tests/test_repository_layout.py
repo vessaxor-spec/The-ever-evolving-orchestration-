@@ -195,7 +195,8 @@ R4_OLD_PATHS = {
 R4_CANONICAL_PATHS = {
     "policy/routing/core/routing.yaml",
     "policy/routing/core/team-routing.yaml",
-    "policy/routing/core/specialist-model-routing.yaml",
+    "policy/routing/core/runtime-compatibility-defaults.yaml",
+    "policy/routing/core/specialist-selection-policy.yaml",
     "policy/routing/extensions/mission-control-routing.yaml",
     "policy/routing/extensions/research-routing.yaml",
     "policy/routing/extensions/review-routing.yaml",
@@ -279,6 +280,8 @@ def test_r5_closes_layout_exceptions_and_completes_migration() -> None:
     assert workers["temporary_direct_extensions"] == []
     assert set(workers["canonical_extensions"]) == R5_WORKER_FILES
     assert "implementation-defaults.yaml" in routing["canonical_subdirectories"]["core"]
+    assert "runtime-compatibility-defaults.yaml" in routing["canonical_subdirectories"]["core"]
+    assert "specialist-selection-policy.yaml" in routing["canonical_subdirectories"]["core"]
     assert "R5_worker_and_implementation_topology" in policy["migration"]["completed_phases"]
     assert policy["migration"]["current_phase"] == "complete"
 

@@ -1,9 +1,8 @@
 version: 0.6
 status: active
-reviewed_at: 2026-08-19
+reviewed_at: '2026-08-23'
 model_registry: policy/routing/core/implementation-defaults.yaml
 provider_evidence: registry/models/models.yaml
-
 principles:
   capability_first: true
   provider_neutral: true
@@ -15,7 +14,6 @@ principles:
   provider_scoped_failures_exclude_provider_family: true
   reserve_opus_for_evidence_based_escalation: true
   automatic_local_fallbacks: false
-
 defaults:
   max_failed_attempts_before_escalation: 2
   automatic_local_models_allowed: false
@@ -23,618 +21,308 @@ defaults:
   prefer_cross_provider_verifiers: true
   fallback_reselection_requires_new_verifier: true
   same_provider_fallback_allowed_when:
-    - model_specific_failure
-    - no_capable_cross_provider_candidate
+  - model_specific_failure
+  - no_capable_cross_provider_candidate
   provider_scoped_failure_signals:
-    - provider_rate_limit
-    - provider_quota_exhausted
-    - provider_authentication_failure
-    - provider_billing_failure
-    - provider_regional_outage
-    - provider_service_outage
+  - provider_rate_limit
+  - provider_quota_exhausted
+  - provider_authentication_failure
+  - provider_billing_failure
+  - provider_regional_outage
+  - provider_service_outage
   require_independent_verifier_for:
-    - security_sensitive
-    - financial_logic
-    - permissions_or_identity
-    - destructive_migration
-    - production_infrastructure
-    - irreversible_platform_choice
+  - security_sensitive
+  - financial_logic
+  - permissions_or_identity
+  - destructive_migration
+  - production_infrastructure
+  - irreversible_platform_choice
   fallback_on:
-    - model_unavailable
-    - usage_limit_reached
-    - tool_access_missing
-    - context_limit_reached
-    - repeated_execution_failure
+  - model_unavailable
+  - usage_limit_reached
+  - tool_access_missing
+  - context_limit_reached
+  - repeated_execution_failure
   stop_conditions:
-    - requirements_unresolved
-    - required_evidence_unavailable
-    - verification_failed
-    - scope_expanded_beyond_authorized_task
-
+  - requirements_unresolved
+  - required_evidence_unavailable
+  - verification_failed
+  - scope_expanded_beyond_authorized_task
 profiles:
   terra:
     purpose: engineering execution
     responsibilities:
-      - inspect
-      - implement
-      - edit
-      - test
-      - debug
-      - verify
-
+    - inspect
+    - implement
+    - edit
+    - test
+    - debug
+    - verify
   sol:
     purpose: difficult reasoning and synthesis
     responsibilities:
-      - architect
-      - plan
-      - analyze_tradeoffs
-      - challenge_assumptions
-      - resolve_ambiguity
-      - reason_across_systems
-
+    - architect
+    - plan
+    - analyze_tradeoffs
+    - challenge_assumptions
+    - resolve_ambiguity
+    - reason_across_systems
   luna:
     purpose: economical throughput
     responsibilities:
-      - classify
-      - extract
-      - transform
-      - summarize
-      - map
-      - route
-
+    - classify
+    - extract
+    - transform
+    - summarize
+    - map
+    - route
 task_routing:
-  classifier:
-    agent: claude
-    model: claude-haiku-4-5
-    profile: luna
-    reasoning: low
-  fallback_classifier:
-    agent: agy
-    model: gemini-3.7-flash
-    profile: luna
-    reasoning: low
-  ambiguous_task_interpreter:
-    agent: claude
-    model: claude-sonnet-5
-    profile: sol
-    reasoning: high
-  engineering_task_interpreter:
-    agent: codex
-    model: gpt-5.6-sol
-    profile: sol
-    reasoning: high
+  classifier: {}
+  fallback_classifier: {}
+  ambiguous_task_interpreter: {}
+  engineering_task_interpreter: {}
   required_output:
-    - detected_task_type
-    - required_capabilities
-    - risk_level
-    - selected_route
-    - fallback_route
-    - verification_route
-    - routing_explanation
-
+  - detected_task_type
+  - required_capabilities
+  - risk_level
+  - selected_route
+  - fallback_route
+  - verification_route
+  - routing_explanation
 routing:
   architecture_design:
-    primary:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
+    primary: {}
     fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       purpose: preserve architectural synthesis when the Anthropic route is unavailable
     engineering_reasoner:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       purpose: validate architecture against repository and implementation constraints
     context_provider:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       purpose: external research, documentation review, and large-context synthesis
     escalate_when:
-      - security_critical
-      - irreversible_platform_choice
-      - conflicting_constraints
-      - unresolved_cross_system_tradeoffs
-      - architecture_requires_executable_repository_analysis
-    escalation:
-      agent: claude
-      model: claude-opus-5
-      profile: sol
-      reasoning: high
+    - security_critical
+    - irreversible_platform_choice
+    - conflicting_constraints
+    - unresolved_cross_system_tradeoffs
+    - architecture_requires_executable_repository_analysis
+    escalation: {}
     verifier:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       purpose: test architectural assumptions against implementation reality
-
   deep_research:
-    primary:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
+    primary: {}
     fallback:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
       purpose: continue evidence synthesis when the Google route is unavailable
     fast_collection:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: luna
-      reasoning: medium
       purpose: source discovery, extraction, and document mapping
     verifier:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
       purpose: synthesis, source challenge, and contradiction analysis
     technical_verifier:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       use_when:
-        - research_concerns_software_behavior
-        - implementation_claims_require_validation
-        - repository_or_api_constraints_matter
+      - research_concerns_software_behavior
+      - implementation_claims_require_validation
+      - repository_or_api_constraints_matter
     escalation:
-      agent: claude
-      model: claude-opus-5
-      profile: sol
-      reasoning: high
       use_when:
-        - sources_materially_disagree
-        - decision_is_high_consequence
-        - uncertainty_remains_after_verification
-
+      - sources_materially_disagree
+      - decision_is_high_consequence
+      - uncertainty_remains_after_verification
   daily_coding:
-    primary:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: medium
+    primary: {}
     planning_support:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: medium
       use_when:
-        - implementation_spans_multiple_components
-        - requirements_are_ambiguous
-        - architectural_constraints_are_present
+      - implementation_spans_multiple_components
+      - requirements_are_ambiguous
+      - architectural_constraints_are_present
     fallback:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: terra
-      reasoning: medium
       purpose: current cross-provider coding fallback without preview acceptance
-
     review_when:
-      - public_api_changed
-      - database_schema_changed
-      - authentication_changed
-      - authorization_changed
-      - dependency_graph_changed
-      - more_than_8_files_changed
-      - production_configuration_changed
-      - test_coverage_reduced
-    semantic_reviewer:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
-    executable_verifier:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: medium
-
+    - public_api_changed
+    - database_schema_changed
+    - authentication_changed
+    - authorization_changed
+    - dependency_graph_changed
+    - more_than_8_files_changed
+    - production_configuration_changed
+    - test_coverage_reduced
+    semantic_reviewer: {}
+    executable_verifier: {}
   deep_debugging:
-    primary:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: high
+    primary: {}
     fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       purpose: continue debugging when the OpenAI execution route is unavailable
     engineering_reasoner:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       purpose: form hypotheses across code, runtime, architecture, and dependencies
     hypothesis_reviewer:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
       purpose: challenge assumptions and generate competing explanations
     research_fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       use_when:
-        - external_documentation_required
-        - dependency_behavior_is_unclear
-        - issue_may_be_version_specific
+      - external_documentation_required
+      - dependency_behavior_is_unclear
+      - issue_may_be_version_specific
     escalate_after:
       failed_attempts: 2
       repeated_same_root_cause: true
       nondeterministic_failure_persists: true
-    escalation:
-      agent: claude
-      model: claude-opus-5
-      profile: sol
-      reasoning: high
+    escalation: {}
     verifier:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: high
       requirements:
-        - reproduce_original_failure
-        - demonstrate_fix
-        - run_targeted_tests
-        - run_regression_tests
-        - document_root_cause
-
+      - reproduce_original_failure
+      - demonstrate_fix
+      - run_targeted_tests
+      - run_regression_tests
+      - document_root_cause
   repo_wide_refactor:
     mapper:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: luna
-      reasoning: medium
       purpose: map repository structure, dependencies, and affected components
-    architecture_planner:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
+    architecture_planner: {}
     engineering_planner:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       purpose: translate architecture into an executable refactor sequence
-    executor:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: high
+    executor: {}
     fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       purpose: preserve refactor continuity when the OpenAI execution route is unavailable
-    verifier:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: high
-    semantic_reviewer:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
+    verifier: {}
+    semantic_reviewer: {}
     escalation:
-      agent: claude
-      model: claude-opus-5
-      profile: sol
-      reasoning: high
       use_when:
-        - refactor_changes_public_contracts
-        - migration_is_irreversible
-        - architectural_boundaries_are_disputed
-        - security_model_changes
+      - refactor_changes_public_contracts
+      - migration_is_irreversible
+      - architectural_boundaries_are_disputed
+      - security_model_changes
     required_controls:
-      - dependency_map
-      - phased_execution
-      - rollback_plan
-      - full_test_suite
-      - public_interface_comparison
-      - scope_change_detection
-
+    - dependency_map
+    - phased_execution
+    - rollback_plan
+    - full_test_suite
+    - public_interface_comparison
+    - scope_change_detection
   code_review:
     executable_review:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: medium
       responsibilities:
-        - inspect_diff
-        - execute_tests
-        - detect_runtime_errors
-        - check_repository_consistency
+      - inspect_diff
+      - execute_tests
+      - detect_runtime_errors
+      - check_repository_consistency
     fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       purpose: preserve review continuity when the OpenAI review route is unavailable
     engineering_reasoning_review:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       responsibilities:
-        - inspect_design_correctness
-        - identify_hidden_implementation_risks
-        - evaluate_cross_component_effects
+      - inspect_design_correctness
+      - identify_hidden_implementation_risks
+      - evaluate_cross_component_effects
     semantic_review:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
       responsibilities:
-        - challenge_assumptions
-        - assess_maintainability
-        - inspect_requirements_alignment
-        - identify_logic_gaps
+      - challenge_assumptions
+      - assess_maintainability
+      - inspect_requirements_alignment
+      - identify_logic_gaps
     escalation:
       conditions:
-        - security_sensitive
-        - financial_logic
-        - permissions_or_identity
-        - cryptography
-        - destructive_data_operations
-        - production_infrastructure
-      agent: claude
-      model: claude-opus-5
-      profile: sol
-      reasoning: high
+      - security_sensitive
+      - financial_logic
+      - permissions_or_identity
+      - cryptography
+      - destructive_data_operations
+      - production_infrastructure
     required_verification:
-      - targeted_tests
-      - regression_risk_review
-      - changed_contract_review
-      - unresolved_assumption_log
-
+    - targeted_tests
+    - regression_risk_review
+    - changed_contract_review
+    - unresolved_assumption_log
   security_review:
-    primary:
-      agent: claude
-      model: claude-opus-5
-      profile: sol
-      reasoning: high
+    primary: {}
     fallback:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       purpose: preserve high-reasoning security analysis when the Anthropic route is unavailable
     engineering_reasoner:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       purpose: connect threat analysis to repository and runtime behavior
-    executable_verifier:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: high
+    executable_verifier: {}
     research_support:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
       purpose: retrieve primary security documentation and current advisories
     mandatory_controls:
-      - threat_model
-      - least_privilege_review
-      - secret_exposure_check
-      - authentication_review
-      - authorization_review
-      - dependency_risk_review
-      - targeted_security_tests
-      - audit_trace
-      - independent_verification
-
+    - threat_model
+    - least_privilege_review
+    - secret_exposure_check
+    - authentication_review
+    - authorization_review
+    - dependency_risk_review
+    - targeted_security_tests
+    - audit_trace
+    - independent_verification
   multimodal_analysis:
-    primary:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: luna
-      reasoning: medium
+    primary: {}
     fallback:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
       purpose: continue multimodal interpretation when the Google route is unavailable
-    escalation:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: high
-    synthesis:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: high
+    escalation: {}
+    synthesis: {}
     technical_followup:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       use_when:
-        - visual_input_contains_code
-        - architecture_diagram_requires_implementation_analysis
-        - technical_claims_require_repository_validation
+      - visual_input_contains_code
+      - architecture_diagram_requires_implementation_analysis
+      - technical_claims_require_repository_validation
     verifier:
       method: source_grounding_and_cross_check
-
   high_volume_simple:
     primary:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: luna
-      reasoning: low
       purpose: current Flash high-throughput execution
     fallback:
-      agent: claude
-      model: claude-haiku-4-5
-      profile: luna
-      reasoning: low
       purpose: cross-provider bounded language throughput when Google is unavailable
-    alternatives:
-      - agent: codex
-        model: gpt-5.6-luna
-        profile: luna
     verifier:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: medium
       purpose: provider-diverse semantic verification of the primary Gemini 3.7 Flash route
     semantic_reviewer:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: luna
-      reasoning: medium
       purpose: fresh Google verification when Haiku becomes fallback executor and Google remains eligible
     technical_verifier:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: medium
       purpose: fresh provider-diverse verification when Google is unavailable or stronger review is required
     escalation:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: medium
       use_when:
-        - confidence_below_threshold
-        - task_contains_material_ambiguity
-        - sampled_outputs_fail_validation
+      - confidence_below_threshold
+      - task_contains_material_ambiguity
+      - sampled_outputs_fail_validation
     verification:
       method: sampled_review
       sample_rate: adaptive
-
   documentation:
-    primary:
-      agent: claude
-      model: claude-sonnet-5
-      profile: sol
-      reasoning: medium
+    primary: {}
     fallback:
-      agent: agy
-      model: gemini-3.1-pro-preview
-      profile: sol
-      reasoning: medium
       purpose: continue documentation synthesis when the Anthropic route is unavailable
-    technical_verifier:
-      agent: codex
-      model: gpt-5.6-terra
-      profile: terra
-      reasoning: medium
-    bulk_transformation:
-      agent: agy
-      model: gemini-3.7-flash
-      profile: luna
-      reasoning: low
+    technical_verifier: {}
+    bulk_transformation: {}
     architecture_documentation:
-      agent: codex
-      model: gpt-5.6-sol
-      profile: sol
-      reasoning: high
       use_when:
-        - documentation_describes_repository_architecture
-        - documentation_contains_executable_workflows
-        - technical_tradeoffs_require_validation
-
-fallback_order:
-  coding:
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: claude
-      model: claude-sonnet-5
-    - agent: codex
-      model: gpt-5.6-terra
-  engineering_reasoning:
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: claude
-      model: claude-sonnet-5
-    - agent: codex
-      model: gpt-5.6-sol
-  general_reasoning:
-    - agent: agy
-      model: gemini-3.1-pro-preview
-    - agent: codex
-      model: gpt-5.6-sol
-    - agent: claude
-      model: claude-sonnet-5
-  research:
-    - agent: claude
-      model: claude-sonnet-5
-    - agent: codex
-      model: gpt-5.6-sol
-    - agent: agy
-      model: gemini-3.1-pro-preview
-  multimodal:
-    - agent: claude
-      model: claude-sonnet-5
-    - agent: agy
-      model: gemini-3.7-flash
-  throughput:
-    - agent: agy
-      model: gemini-3.7-flash
-    - agent: claude
-      model: claude-haiku-4-5
-    - agent: codex
-      model: gpt-5.6-luna
-
+      - documentation_describes_repository_architecture
+      - documentation_contains_executable_workflows
+      - technical_tradeoffs_require_validation
 verification_policy:
   low_risk:
     minimum:
-      - output_validation
+    - output_validation
   medium_risk:
     minimum:
-      - output_validation
-      - targeted_review
+    - output_validation
+    - targeted_review
   high_risk:
     minimum:
-      - independent_verifier
-      - explicit_reasoning_summary
-      - evidence_or_test_results
-      - rollback_or_recovery_plan
+    - independent_verifier
+    - explicit_reasoning_summary
+    - evidence_or_test_results
+    - rollback_or_recovery_plan
   critical:
     minimum:
-      - independent_multi_agent_review
-      - executable_verification
-      - human_approval
-      - audit_trace
-      - rollback_plan
-
+    - independent_multi_agent_review
+    - executable_verification
+    - human_approval
+    - audit_trace
+    - rollback_plan
 decision_logging:
   required_fields:
-    - task_type
-    - selected_route
-    - selected_model
-    - selected_provider_family
-    - fallback_model
-    - fallback_provider_family
-    - verification_method
-    - risk_level
-    - selection_reason
-    - failure_scope
-    - outcome
-    - failed_attempts
-    - escalation_used
+  - task_type
+  - selected_route
+  - selected_model
+  - selected_provider_family
+  - fallback_model
+  - fallback_provider_family
+  - verification_method
+  - risk_level
+  - selection_reason
+  - failure_scope
+  - outcome
+  - failed_attempts
+  - escalation_used
+runtime_compatibility_defaults: policy/routing/core/runtime-compatibility-defaults.yaml

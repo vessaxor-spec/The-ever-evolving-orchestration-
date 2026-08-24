@@ -34,7 +34,7 @@ specialists:
 
 worker_contract:
   path: community/workers/physical-systems-workers.yaml
-  canonical_blob_sha: cbbfeeb425d17ab722a5933b2149940f0ee3df66
+  canonical_blob_sha: 34a15e5f7678d3eb7c4f77c81dbe7a2424318acf
   expected_workers:
     - hardware_engineering
     - robotics_autonomy

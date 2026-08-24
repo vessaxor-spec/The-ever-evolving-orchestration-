@@ -1,0 +1,2123 @@
+version: 1.0
+status: active
+reviewed_at: '2026-08-23'
+model_registry: policy/routing/core/implementation-defaults.yaml
+purpose: Reference-router compatibility and known-good defaults only. These named implementations seed RuntimeSelectionPort
+  when an installation-specific selector is not injected. They are not worker, team, specialist, task-route, capability, risk,
+  or authority identity and cannot widen lifecycle eligibility.
+worker_defaults:
+  orchestration:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  operations:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+  project_delivery:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+  architecture:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+  backend:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  frontend:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  mobile:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  devops:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  infrastructure:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  performance:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  code_review:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  security:
+    preferred_implementations:
+    - claude-opus-5
+    - gpt-5.6-sol
+    - gpt-5.6-terra
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  database:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - gpt-5.6-terra
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  data_engineering:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  ai_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - gpt-5.6-terra
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  documentation:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    - claude-haiku-4-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+  qa:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - claude-sonnet-5
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  accessibility:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  release:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - claude-sonnet-5
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  incident_response:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+  research:
+    preferred_implementations:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    fallbacks:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+  market_research:
+    preferred_implementations:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    fallbacks:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+  analytics:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  user_research:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+  compliance:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    - gpt-5.6-sol
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  systems_requirements:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  distributed_systems:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  database_reliability:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  network_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  platform_engineering:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  performance_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  finops_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  site_reliability:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  mlops:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  hardware_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  robotics_autonomy:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  silicon_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  aerospace_systems:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  manufacturing_engineering:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  privacy_engineering:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  functional_safety:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  formal_methods:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  application_security:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  cloud_architecture:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  compiler_toolchain:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - gpt-5.6-terra
+    - claude-sonnet-5
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.1-pro-preview
+  applied_science:
+    preferred_implementations:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    fallbacks:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+  devsecops:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  embedded:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  civil_engineering:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.1-pro-preview
+  rust_systems_programming:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.1-pro-preview
+    - claude-sonnet-5
+  automation:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.7-flash
+    - claude-sonnet-5
+  blockchain:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.7-flash
+    - claude-sonnet-5
+  game_engineering:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.7-flash
+    - claude-sonnet-5
+  terminal_ui:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.7-flash
+    - claude-sonnet-5
+  xr_engineering:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    fallbacks:
+    - gemini-3.7-flash
+    - claude-sonnet-5
+  brand_design:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  ecommerce_strategy:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  customer_success:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  learning_design:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  paid_search:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  paid_social:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  product_strategy:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  programmatic_media:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  regional_marketing:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  sales_enablement:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  sales_strategy:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  social_strategy:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  solution_engineering:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  supply_chain:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  generative_media:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+    fallbacks:
+    - gpt-5.6-sol
+    - gemini-3.7-flash
+  content:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  financial_analysis:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  knowledge_management:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  osint:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  real_estate:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  revenue_analytics:
+    preferred_implementations:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+    fallbacks:
+    - gemini-3.7-flash
+    - gpt-5.6-sol
+  legal:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  lending_compliance:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  malware_analysis:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  security_advisory:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  seo_review:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  tax_review:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  ux_review:
+    preferred_implementations:
+    - gpt-5.6-sol
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+  documentation_verification:
+    preferred_implementations:
+    - gpt-5.6-terra
+    - claude-sonnet-5
+    - gemini-3.7-flash
+    fallbacks:
+    - claude-sonnet-5
+    - gemini-3.7-flash
+task_routing_defaults:
+  classifier:
+    agent: claude
+    model: claude-haiku-4-5
+    profile: luna
+    reasoning: low
+  fallback_classifier:
+    agent: agy
+    model: gemini-3.7-flash
+    profile: luna
+    reasoning: low
+  ambiguous_task_interpreter:
+    agent: claude
+    model: claude-sonnet-5
+    profile: sol
+    reasoning: high
+  engineering_task_interpreter:
+    agent: codex
+    model: gpt-5.6-sol
+    profile: sol
+    reasoning: high
+task_routes:
+  architecture_design:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    engineering_reasoner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  deep_research:
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fast_collection:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  daily_coding:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: medium
+    planning_support:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: medium
+    fallback:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: terra
+      reasoning: medium
+    semantic_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    executable_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: medium
+  deep_debugging:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    engineering_reasoner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    hypothesis_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    research_fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  repo_wide_refactor:
+    mapper:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    architecture_planner:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    engineering_planner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    executor:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    semantic_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  code_review:
+    executable_review:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: medium
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    engineering_reasoning_review:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    semantic_review:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  security_review:
+    primary:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    engineering_reasoner:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    executable_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    research_support:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  multimodal_analysis:
+    primary:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    synthesis:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    technical_followup:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  high_volume_simple:
+    primary:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: low
+    fallback:
+      agent: claude
+      model: claude-haiku-4-5
+      profile: luna
+      reasoning: low
+    alternatives:
+    - agent: codex
+      model: gpt-5.6-luna
+      profile: luna
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: medium
+    semantic_reviewer:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: medium
+    conditional_escalation:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: medium
+  documentation:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: medium
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: medium
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: medium
+    bulk_transformation:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: low
+    architecture_documentation:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+  orchestration:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    semantic_reviewer:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    frontier_escalation:
+      agent: claude
+      model: claude-fable-5
+      profile: sol
+      reasoning: max
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  operations:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  project_delivery:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    planning_support:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  incident_response:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    context_provider:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  user_research:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fast_collection:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    quantitative_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  analytics:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    data_execution:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    benchmark_research:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    reproducibility_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  market_research:
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fast_collection:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  compliance_review:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    authority_research:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    technical_verifier:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      profile: sol
+      reasoning: high
+  cloud_architecture:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  mobile_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  compiler_toolchain:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  applied_science:
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+  systems_requirements:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  distributed_systems:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  database_reliability:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  network_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  platform_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  performance_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  finops_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  site_reliability:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  mlops:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  devops_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  devsecops_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  hardware_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  robotics_autonomy:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  silicon_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  aerospace_systems:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  manufacturing_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  embedded_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  civil_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  privacy_engineering:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  functional_safety:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  formal_methods:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  application_security:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+  rust_systems_programming:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  specialist_mission_control:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_planning:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+  specialist_platform_reliability:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_systems_engineering:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_physical_systems:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_research:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_assurance:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_review:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      profile: sol
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+  specialist_verification:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      profile: terra
+      reasoning: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      profile: sol
+      reasoning: high
+    verifier:
+      agent: agy
+      model: gemini-3.7-flash
+      profile: luna
+      reasoning: medium
+fallback_order:
+  coding:
+  - agent: agy
+    model: gemini-3.1-pro-preview
+  - agent: claude
+    model: claude-sonnet-5
+  - agent: codex
+    model: gpt-5.6-terra
+  engineering_reasoning:
+  - agent: agy
+    model: gemini-3.1-pro-preview
+  - agent: claude
+    model: claude-sonnet-5
+  - agent: codex
+    model: gpt-5.6-sol
+  general_reasoning:
+  - agent: agy
+    model: gemini-3.1-pro-preview
+  - agent: codex
+    model: gpt-5.6-sol
+  - agent: claude
+    model: claude-sonnet-5
+  research:
+  - agent: claude
+    model: claude-sonnet-5
+  - agent: codex
+    model: gpt-5.6-sol
+  - agent: agy
+    model: gemini-3.1-pro-preview
+  multimodal:
+  - agent: claude
+    model: claude-sonnet-5
+  - agent: agy
+    model: gemini-3.7-flash
+  throughput:
+  - agent: agy
+    model: gemini-3.7-flash
+  - agent: claude
+    model: claude-haiku-4-5
+  - agent: codex
+    model: gpt-5.6-luna
+specialist_profiles:
+  critical_reasoning:
+    primary:
+      agent: claude
+      model: claude-opus-5
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: xhigh
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: xhigh
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: high
+    conditional_effort_escalation:
+      model: claude-fable-5
+      reasoning: max
+      use_when:
+      - unresolved_material_disagreement_after_opus_review
+      - critical_cross_system_ambiguity_after_standard_escalation
+      - long_horizon_agentic_reasoning_where_quality_gain_is_decision_relevant
+  deep_engineering:
+    primary:
+      agent: codex
+      model: gpt-5.6-sol
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: xhigh
+        critical: xhigh
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: xhigh
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: high
+    conditional_effort_escalation:
+      model: gpt-5.6-sol
+      reasoning: max
+      mode: pro
+      use_when:
+      - repeated_execution_or_reasoning_failure
+      - high_value_code_or_review_with_clear_evals
+      - unresolved_cross_repository_invariant
+  engineering_execution:
+    primary:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: xhigh
+    fallback:
+      agent: agy
+      model: gemini-3.7-flash
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: high
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: high
+    conditional_escalation:
+      agent: codex
+      model: gpt-5.6-sol
+      reasoning: high
+      use_when:
+      - task_expands_across_components
+      - architecture_or_migration_constraints_dominate
+      - repeated_implementation_failure
+  research_synthesis:
+    primary:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: high
+    fallback:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: xhigh
+    verifier:
+      agent: codex
+      model: gpt-5.6-sol
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: xhigh
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      reasoning: high
+      use_when:
+      - sources_materially_disagree
+      - decision_is_high_consequence
+      - evidence_synthesis_remains_ambiguous
+  semantic_synthesis:
+    primary:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: xhigh
+    fallback:
+      agent: codex
+      model: gpt-5.6-sol
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: xhigh
+    verifier:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      reasoning_by_risk:
+        low: medium
+        medium: high
+        high: high
+        critical: high
+    conditional_escalation:
+      agent: claude
+      model: claude-opus-5
+      reasoning: high
+      use_when:
+      - high_consequence_strategy
+      - material_ambiguity_or_disagreement
+      - long_horizon_agentic_planning
+  multimodal_analysis:
+    primary:
+      agent: agy
+      model: gemini-3.7-flash
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: high
+    fallback:
+      agent: codex
+      model: gpt-5.6-terra
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: xhigh
+    verifier:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning_by_risk:
+        low: medium
+        medium: medium
+        high: high
+        critical: high
+    conditional_escalation:
+      agent: agy
+      model: gemini-3.1-pro-preview
+      reasoning: high
+      use_when:
+      - multimodal_interpretation_is_ambiguous
+      - long_context_cross_modal_synthesis_required
+  throughput:
+    primary:
+      agent: agy
+      model: gemini-3.7-flash
+      reasoning_by_risk:
+        low: low
+        medium: medium
+        high: high
+        critical: high
+    fallback:
+      agent: claude
+      model: claude-haiku-4-5
+      reasoning: default
+    verifier:
+      agent: codex
+      model: gpt-5.6-luna
+      reasoning_by_risk:
+        low: low
+        medium: medium
+        high: high
+        critical: high
+    conditional_escalation:
+      agent: claude
+      model: claude-sonnet-5
+      reasoning: medium
+      use_when:
+      - task_contains_material_ambiguity
+      - sampled_outputs_fail_validation
+      - synthesis_exceeds_throughput_scope
+migration_source:
+  workers:
+  - community/workers/workers.yaml
+  - community/workers/extensions/incident-response-worker.yaml
+  - community/workers/extensions/research-worker.yaml
+  - community/workers/extensions/market-research-worker.yaml
+  - community/workers/extensions/analytics-worker.yaml
+  - community/workers/extensions/user-research-worker.yaml
+  - community/workers/extensions/compliance-worker.yaml
+  - community/workers/extensions/systems-engineering-worker.yaml
+  - community/workers/extensions/platform-reliability-core-workers.yaml
+  - community/workers/extensions/platform-reliability-operations-workers.yaml
+  - community/workers/extensions/physical-systems-workers.yaml
+  - community/workers/extensions/assurance-workers.yaml
+  - community/workers/extensions/principal-engineering-active-workers.yaml
+  - community/workers/extensions/specialist-completion-workers.yaml
+  - community/workers/extensions/runtime-worker-overrides.yaml
+  routing:
+  - policy/routing/core/routing.yaml
+  - policy/routing/extensions/mission-control-routing.yaml
+  - policy/routing/extensions/research-routing.yaml
+  - policy/routing/extensions/review-routing.yaml
+  - policy/routing/extensions/principal-engineering-routing.yaml
+  - policy/routing/extensions/specialist-spawn-routing.yaml
+  specialist_policy: policy/routing/core/specialist-model-routing.yaml
+  specialist_policy_version: 1.1

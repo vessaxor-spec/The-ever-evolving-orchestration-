@@ -3,6 +3,8 @@ from pathlib import Path
 
 import yaml
 
+from teo_reference.config import ConfigBundle
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 STAGING_PATH = REPO_ROOT / "docs" / "history" / "activation" / "assurance-staging.yaml"
@@ -97,16 +99,17 @@ def test_assurance_workers_enforce_independence_and_human_authority() -> None:
     staging = load_yaml(STAGING_PATH)
     worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "assurance-workers.yaml"
     workers = load_yaml(worker_path)["workers"]
+    runtime_defaults = ConfigBundle.load(REPO_ROOT).worker_runtime_defaults
 
     assert git_blob_sha(worker_path) == staging["worker_contract"]["canonical_blob_sha"]
     assert set(workers) == EXPECTED_WORKERS
 
-    for worker in workers.values():
+    for worker_name, worker in workers.items():
         assert worker["owning_team"] == "assurance"
         assert worker["responsibilities"]
         assert worker["required_capabilities"]
-        assert len(worker["preferred_implementations"]) >= 2
-        assert worker["fallbacks"]
+        assert len(runtime_defaults[worker_name]["preferred_implementations"]) >= 2
+        assert runtime_defaults[worker_name]["fallbacks"]
         assert worker["verification"]
         assert worker["escalation"]
         assert worker["authority_boundaries"]

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from copy import deepcopy
 from pathlib import Path
 
 from teo_reference.config import ConfigBundle
@@ -17,7 +16,7 @@ def issues_after(mutator) -> list[str]:
 
 def test_route_model_reference_must_exist_in_canonical_registry() -> None:
     issues = issues_after(
-        lambda bundle: bundle.routing["routing"]["daily_coding"]["primary"].update(
+        lambda bundle: bundle.runtime_compatibility["task_routes"]["daily_coding"]["primary"].update(
             {"model": "model-that-does-not-exist"}
         )
     )
@@ -44,7 +43,7 @@ def test_models_yaml_provider_must_match_canonical_model_evidence() -> None:
 
 def test_declared_reasoning_effort_must_be_supported_when_registry_lists_levels() -> None:
     issues = issues_after(
-        lambda bundle: bundle.routing["routing"]["multimodal_analysis"]["primary"].update(
+        lambda bundle: bundle.runtime_compatibility["task_routes"]["multimodal_analysis"]["primary"].update(
             {"reasoning": "xhigh"}
         )
     )
@@ -58,7 +57,7 @@ def test_declared_reasoning_effort_must_be_supported_when_registry_lists_levels(
 
 def test_route_must_retain_an_explicit_provider_diverse_verifier_candidate() -> None:
     def mutate(bundle: ConfigBundle) -> None:
-        route = bundle.routing["routing"]["daily_coding"]
+        route = bundle.runtime_compatibility["task_routes"]["daily_coding"]
         route["semantic_reviewer"] = {
             "agent": "codex",
             "model": "gpt-5.6-sol",
@@ -74,7 +73,21 @@ def test_route_must_retain_an_explicit_provider_diverse_verifier_candidate() -> 
 
     issues = issues_after(mutate)
     assert any(
-        issue == "ERROR: route daily_coding has no explicit model- and provider-diverse verifier candidate"
+        issue == "ERROR: runtime compatibility route daily_coding has no explicit model- and provider-diverse verifier candidate"
+        for issue in issues
+    )
+
+
+def test_responsibility_route_rejects_concrete_model_identity() -> None:
+    issues = issues_after(
+        lambda bundle: bundle.routing["routing"]["daily_coding"]["primary"].update(
+            {"model": "gpt-5.6-terra"}
+        )
+    )
+    assert any(
+        issue.startswith("ERROR:")
+        and "model/provider implementation identity is not allowed in responsibility configuration" in issue
+        and "routing.routing.daily_coding.primary.model" in issue
         for issue in issues
     )
 

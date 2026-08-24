@@ -369,9 +369,9 @@ class OrchestrationEngine:
         )
 
     def _worker_allows_model(self, worker: str, choice: ImplementationChoice) -> bool:
-        worker_entry = self.config.worker_registry[worker]
-        allowed = set(str(item) for item in worker_entry.get("preferred_implementations", []))
-        allowed.update(str(item) for item in worker_entry.get("fallbacks", []))
+        worker_defaults = self.config.worker_runtime_defaults[worker]
+        allowed = set(str(item) for item in worker_defaults.get("preferred_implementations", []))
+        allowed.update(str(item) for item in worker_defaults.get("fallbacks", []))
         return choice.model in allowed
 
     def _primary_policy_warning(
@@ -381,12 +381,12 @@ class OrchestrationEngine:
         task: TaskRequest,
         selected: ImplementationChoice,
     ) -> str | None:
-        route = self.config.implementation_routes.get(task_type, {})
+        route = self.config.runtime_task_routes.get(task_type, {})
         for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
             candidate = route.get(key)
             if not isinstance(candidate, dict) or not candidate.get("model"):
                 continue
-            choice = self._choice(candidate, f"routing.{task_type}.{key}")
+            choice = self._choice(candidate, f"runtime_compatibility.task_routes.{task_type}.{key}")
             if choice.model == selected.model:
                 return None
             preview_was_only_policy_block = (
@@ -425,7 +425,7 @@ class OrchestrationEngine:
         role: str,
         capabilities: list[str],
     ) -> list[dict[str, Any]]:
-        route = self.config.implementation_routes.get(task_type, {})
+        route = self.config.runtime_task_routes.get(task_type, {})
         preferences: list[dict[str, Any]] = []
         deferred: list[dict[str, Any]] = []
 
@@ -442,30 +442,30 @@ class OrchestrationEngine:
 
         if role == "primary":
             for key in ROUTE_IMPLEMENTATION_KEYS.get(task_type, ("primary",)):
-                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
+                add(route.get(key), f"runtime_compatibility.task_routes.{task_type}.{key}", defer_if_worker_disallowed=True)
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
-            worker_entry = self.config.worker_registry[worker]
+                add(route.get(key), f"runtime_compatibility.task_routes.{task_type}.{key}", defer_if_worker_disallowed=True)
+            worker_defaults = self.config.worker_runtime_defaults[worker]
             for source_key in ("preferred_implementations", "fallbacks"):
-                for model in worker_entry.get(source_key, []):
-                    add({"agent": "registry", "model": model}, f"workers.{worker}.{source_key}")
+                for model in worker_defaults.get(source_key, []):
+                    add({"agent": "registry", "model": model}, f"runtime_compatibility.worker_defaults.{worker}.{source_key}")
         elif role == "fallback":
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
-            for model in self.config.worker_registry[worker].get("fallbacks", []):
-                add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
+                add(route.get(key), f"runtime_compatibility.task_routes.{task_type}.{key}", defer_if_worker_disallowed=True)
+            for model in self.config.worker_runtime_defaults[worker].get("fallbacks", []):
+                add({"agent": "registry", "model": model}, f"runtime_compatibility.worker_defaults.{worker}.fallbacks")
             family = self._fallback_family(capabilities)
-            for candidate in self.config.routing.get("fallback_order", {}).get(family, []):
-                add(candidate, f"fallback_order.{family}", defer_if_worker_disallowed=True)
+            for candidate in self.config.runtime_fallback_order.get(family, []):
+                add(candidate, f"runtime_compatibility.fallback_order.{family}", defer_if_worker_disallowed=True)
         elif role == "verifier":
             for key in VERIFIER_KEYS:
-                add(route.get(key), f"routing.{task_type}.{key}")
+                add(route.get(key), f"runtime_compatibility.task_routes.{task_type}.{key}")
             for key in ("fallback", "local_fallback", "conditional_escalation"):
-                add(route.get(key), f"routing.{task_type}.{key}", defer_if_worker_disallowed=True)
-            for model in self.config.worker_registry[worker].get("fallbacks", []):
-                add({"agent": "registry", "model": model}, f"workers.{worker}.fallbacks")
-            for candidate in self.config.routing.get("fallback_order", {}).get("general_reasoning", []):
-                add(candidate, "fallback_order.general_reasoning", defer_if_worker_disallowed=True)
+                add(route.get(key), f"runtime_compatibility.task_routes.{task_type}.{key}", defer_if_worker_disallowed=True)
+            for model in self.config.worker_runtime_defaults[worker].get("fallbacks", []):
+                add({"agent": "registry", "model": model}, f"runtime_compatibility.worker_defaults.{worker}.fallbacks")
+            for candidate in self.config.runtime_fallback_order.get("general_reasoning", []):
+                add(candidate, "runtime_compatibility.fallback_order.general_reasoning", defer_if_worker_disallowed=True)
         else:
             raise RoutingError(f"Unsupported runtime selection role: {role}")
 
@@ -539,7 +539,7 @@ class OrchestrationEngine:
         )
         if not preferences:
             raise RoutingError(
-                f"No transitional runtime authority/preferences are defined for {task_type}/{worker}/{role}"
+                f"No runtime compatibility preferences are defined for {task_type}/{worker}/{role}"
             )
 
         authorized_models = frozenset(str(item["model"]) for item in preferences)

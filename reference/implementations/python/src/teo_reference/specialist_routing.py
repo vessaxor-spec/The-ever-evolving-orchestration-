@@ -8,7 +8,7 @@ import yaml
 from .engine import OrchestrationEngine as BaseOrchestrationEngine, RoutingError
 from .schemas import RISK_ORDER, TaskRequest
 
-SPECIALIST_MODEL_POLICY = "policy/routing/core/specialist-model-routing.yaml"
+SPECIALIST_SELECTION_POLICY = "policy/routing/core/specialist-selection-policy.yaml"
 
 
 class SpecialistRoutingError(RoutingError):
@@ -18,28 +18,28 @@ class SpecialistRoutingError(RoutingError):
 class SpecialistRoutingEngine(BaseOrchestrationEngine):
     """TEO router with specialist policy expressed as pre-selection constraints.
 
-    Specialist policy may elevate effective risk and supply ordered implementation/
-    reasoning preferences. Actual primary, fallback, and verifier choices remain owned
-    by the runtime selection lifecycle; this layer no longer overwrites a completed
-    DispatchRecord with static model choices.
+    Specialist responsibility remains model- and provider-neutral. The specialist policy
+    may elevate effective risk and assign a provider-neutral selection profile. Concrete
+    compatibility defaults for that profile are resolved separately and still pass through
+    the runtime selection lifecycle.
     """
 
     def __init__(self, config, **kwargs):
         super().__init__(config, **kwargs)
-        self._specialist_model_policy = self._load_specialist_model_policy()
-        self._validate_specialist_model_policy()
+        self._specialist_selection_policy = self._load_specialist_selection_policy()
+        self._validate_specialist_selection_policy()
 
-    def _load_specialist_model_policy(self) -> dict[str, Any]:
-        path = Path(self.config.root) / SPECIALIST_MODEL_POLICY
+    def _load_specialist_selection_policy(self) -> dict[str, Any]:
+        path = Path(self.config.root) / SPECIALIST_SELECTION_POLICY
         if not path.is_file():
-            raise SpecialistRoutingError(f"Specialist model-routing policy not found: {path}")
+            raise SpecialistRoutingError(f"Specialist selection policy not found: {path}")
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         if not isinstance(data, dict):
-            raise SpecialistRoutingError("Specialist model-routing policy root must be a mapping")
+            raise SpecialistRoutingError("Specialist selection policy root must be a mapping")
         if data.get("status") != "active":
-            raise SpecialistRoutingError("Specialist model-routing policy must be active")
-        if not isinstance(data.get("templates"), dict) or not isinstance(data.get("specialists"), dict):
-            raise SpecialistRoutingError("Specialist model-routing policy requires templates and specialists")
+            raise SpecialistRoutingError("Specialist selection policy must be active")
+        if not isinstance(data.get("profiles"), dict) or not isinstance(data.get("specialists"), dict):
+            raise SpecialistRoutingError("Specialist selection policy requires profiles and specialists")
         return data
 
     def _provider_for_model(self, model: str) -> str | None:
@@ -47,9 +47,10 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
         provider = entry.get("provider_family")
         return str(provider) if provider else None
 
-    def _validate_specialist_model_policy(self) -> None:
-        templates = self._specialist_model_policy["templates"]
-        assignments = self._specialist_model_policy["specialists"]
+    def _validate_specialist_selection_policy(self) -> None:
+        profiles = self._specialist_selection_policy["profiles"]
+        assignments = self._specialist_selection_policy["specialists"]
+        compatibility_profiles = self.config.runtime_specialist_profiles
         registered = set(self.config.specialist_registry)
         assigned = set(assignments)
         if registered != assigned:
@@ -61,46 +62,57 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
             if extra:
                 details.append("extra=" + ",".join(extra))
             raise SpecialistRoutingError(
-                "Specialist model-routing coverage must exactly match the active registry: "
+                "Specialist selection-profile coverage must exactly match the active registry: "
                 + "; ".join(details)
             )
 
+        if set(profiles) != set(compatibility_profiles):
+            raise SpecialistRoutingError(
+                "Model-neutral specialist profiles and runtime compatibility profiles must match exactly"
+            )
+
         for specialist, assignment in assignments.items():
-            if not isinstance(assignment, dict) or not assignment.get("template"):
-                raise SpecialistRoutingError(f"Specialist {specialist} has no model-routing template")
-            template_name = str(assignment["template"])
-            template = templates.get(template_name)
-            if not isinstance(template, dict):
+            if not isinstance(assignment, dict) or not assignment.get("selection_profile"):
+                raise SpecialistRoutingError(f"Specialist {specialist} has no selection profile")
+            profile_name = str(assignment["selection_profile"])
+            if profile_name not in profiles:
                 raise SpecialistRoutingError(
-                    f"Specialist {specialist} references unknown model-routing template {template_name}"
+                    f"Specialist {specialist} references unknown selection profile {profile_name}"
+                )
+            compatibility = compatibility_profiles.get(profile_name)
+            if not isinstance(compatibility, dict):
+                raise SpecialistRoutingError(
+                    f"Selection profile {profile_name} has no runtime compatibility defaults"
                 )
             providers: list[str] = []
             models: list[str] = []
             for key in ("primary", "fallback", "verifier"):
-                candidate = template.get(key)
+                candidate = compatibility.get(key)
                 if not isinstance(candidate, dict) or not candidate.get("model"):
-                    raise SpecialistRoutingError(f"Template {template_name} is missing {key}")
+                    raise SpecialistRoutingError(
+                        f"Runtime compatibility profile {profile_name} is missing {key}"
+                    )
                 model = str(candidate["model"])
                 provider = self._provider_for_model(model)
                 if not provider:
                     raise SpecialistRoutingError(
-                        f"Template {template_name} references model without provider metadata: {model}"
+                        f"Runtime compatibility profile {profile_name} references model without provider metadata: {model}"
                     )
                 models.append(model)
                 providers.append(provider)
             if len(set(models)) != 3:
                 raise SpecialistRoutingError(
-                    f"Template {template_name} must use distinct primary, fallback and verifier models"
+                    f"Runtime compatibility profile {profile_name} must use distinct primary, fallback and verifier models"
                 )
             if len(set(providers)) != 3:
                 raise SpecialistRoutingError(
-                    f"Template {template_name} must preserve three-provider primary/fallback/verifier diversity"
+                    f"Runtime compatibility profile {profile_name} must preserve three-provider primary/fallback/verifier diversity"
                 )
 
-    def _template_for(self, specialist: str) -> tuple[str, dict[str, Any]]:
-        assignment = self._specialist_model_policy["specialists"][specialist]
-        template_name = str(assignment["template"])
-        return template_name, self._specialist_model_policy["templates"][template_name]
+    def _selection_profile_for(self, specialist: str) -> tuple[str, dict[str, Any]]:
+        assignment = self._specialist_selection_policy["specialists"][specialist]
+        profile_name = str(assignment["selection_profile"])
+        return profile_name, self.config.runtime_specialist_profiles[profile_name]
 
     @staticmethod
     def _specialist_preference(
@@ -165,16 +177,16 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
         lifecycle. Explicit route verifiers remain preferred; these candidates matter
         only when exclusions or task constraints make those choices ineligible.
         """
-        worker_entry = self.config.worker_registry[worker]
+        worker_defaults = self.config.worker_runtime_defaults[worker]
         return [
             {
                 "agent": "registry",
                 "model": model,
                 "profile": None,
                 "reasoning": "medium",
-                "source": f"workers.{worker}.preferred_implementations.documentation_recovery",
+                "source": f"runtime_compatibility.worker_defaults.{worker}.preferred_implementations.documentation_recovery",
             }
-            for model in worker_entry.get("preferred_implementations", [])
+            for model in worker_defaults.get("preferred_implementations", [])
         ]
 
     def _selection_preferences(
@@ -206,8 +218,8 @@ class SpecialistRoutingEngine(BaseOrchestrationEngine):
         if not specialist:
             return base
 
-        template_name, template = self._template_for(specialist)
-        source = f"{SPECIALIST_MODEL_POLICY}.templates.{template_name}"
+        profile_name, template = self._selection_profile_for(specialist)
+        source = f"policy/routing/core/runtime-compatibility-defaults.yaml.specialist_profiles.{profile_name}"
         preferences: list[dict[str, Any]] = []
 
         if role == "primary":

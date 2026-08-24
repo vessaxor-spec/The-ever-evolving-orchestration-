@@ -32,7 +32,7 @@ specialists:
 
 worker_definition:
   path: community/workers/platform-reliability-operations-workers.yaml
-  canonical_git_blob_sha: 367a0519f28a80d01c475f9b0d0e09dd90a47e47
+  canonical_git_blob_sha: 3ff78a334702da0e3280ca6ee7214bde03b6b948
   workers:
     - performance_engineering
     - finops_engineering

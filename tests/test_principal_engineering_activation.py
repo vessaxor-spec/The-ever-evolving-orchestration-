@@ -166,6 +166,7 @@ def test_every_principal_route_has_registered_team_worker_and_implementation() -
         assert worker_name in bundle.worker_registry
         assert bundle.worker_registry[worker_name]["owning_team"] == team_name
         assert task_type in bundle.implementation_routes
+        assert task_type in bundle.runtime_task_routes
 
 
 def test_conformance_dispatches_risk_provider_and_verification() -> None:
@@ -214,7 +215,7 @@ def test_principal_routes_use_cross_provider_routine_fallbacks() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
 
     for case in conformance_cases():
-        route = bundle.implementation_routes[str(case["task_type"])]
+        route = bundle.runtime_task_routes[str(case["task_type"])]
         primary_model = str(route["primary"]["model"])
         fallback_model = str(route["fallback"]["model"])
         verifier_model = str(route["verifier"]["model"])

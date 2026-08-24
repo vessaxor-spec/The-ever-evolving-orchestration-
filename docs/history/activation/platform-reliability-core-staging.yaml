@@ -32,7 +32,7 @@ specialists:
 
 worker_definition:
   path: community/workers/platform-reliability-core-workers.yaml
-  canonical_git_blob_sha: 845432fba9e4c5140e19707a6dc814322b1e4e54
+  canonical_git_blob_sha: 42afebb1a929df61032132d15a4e33c73b50143a
   workers:
     - distributed_systems
     - database_reliability

@@ -1,255 +1,224 @@
 version: 0.1
 status: public-draft
-reviewed_at: 2026-08-06
-
-policy: >-
-  These workers are additive core-worker representations of their authoritative
-  specialist role cards. They provide routing, authority, and verification
-  context without replacing, compressing, weakening, or overriding those roles.
-
+reviewed_at: '2026-08-23'
+policy: These workers are additive core-worker representations of their authoritative specialist role cards. They provide
+  routing, authority, and verification context without replacing, compressing, weakening, or overriding those roles.
 workers:
   distributed_systems:
-    mission: design and preserve distributed invariants, consistency, coordination, replication, state ownership, failure recovery, overload behavior, and reconciliation across independently failing components
+    mission: design and preserve distributed invariants, consistency, coordination, replication, state ownership, failure
+      recovery, overload behavior, and reconciliation across independently failing components
     owning_team: platform_reliability
     responsibilities:
-      - invariant_and_failure_model_definition
-      - consistency_and_visibility_contracts
-      - consensus_coordination_and_membership
-      - replication_failover_and_repair
-      - messaging_ordering_idempotency_and_replay
-      - distributed_transaction_and_compensation_design
-      - partitioning_and_state_ownership
-      - control_plane_and_state_machine_design
-      - overload_backpressure_and_load_shedding
-      - region_provider_and_dependency_isolation
-      - recovery_rejoin_and_reconciliation
-      - fault_injection_and_consistency_validation
+    - invariant_and_failure_model_definition
+    - consistency_and_visibility_contracts
+    - consensus_coordination_and_membership
+    - replication_failover_and_repair
+    - messaging_ordering_idempotency_and_replay
+    - distributed_transaction_and_compensation_design
+    - partitioning_and_state_ownership
+    - control_plane_and_state_machine_design
+    - overload_backpressure_and_load_shedding
+    - region_provider_and_dependency_isolation
+    - recovery_rejoin_and_reconciliation
+    - fault_injection_and_consistency_validation
     required_capabilities:
-      - distributed_systems_reasoning
-      - protocol_analysis
-      - state_machine_reasoning
-      - consistency_analysis
-      - failure_mode_analysis
-      - concurrency_reasoning
-      - architecture_reasoning
-      - fault_test_design
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - distributed_systems_reasoning
+    - protocol_analysis
+    - state_machine_reasoning
+    - consistency_analysis
+    - failure_mode_analysis
+    - concurrency_reasoning
+    - architecture_reasoning
+    - fault_test_design
+    - evidence_assessment
+    - source_validation
     verification:
-      - invariant_and_failure_model_review
-      - consistency_contract_review
-      - protocol_and_state_machine_review
-      - partition_and_leader_failure_test
-      - duplicate_reorder_and_replay_test
-      - recovery_and_reconciliation_test
-      - overload_and_backpressure_test
-      - independent_distributed_systems_review
-      - qualified_human_approval_for_critical_state_guarantees
+    - invariant_and_failure_model_review
+    - consistency_contract_review
+    - protocol_and_state_machine_review
+    - partition_and_leader_failure_test
+    - duplicate_reorder_and_replay_test
+    - recovery_and_reconciliation_test
+    - overload_and_backpressure_test
+    - independent_distributed_systems_review
+    - qualified_human_approval_for_critical_state_guarantees
     escalation:
-      - invariant_is_undefined_or_conflicting
-      - failure_model_excludes_material_risk
-      - exactly_once_claim_lacks_effect_level_evidence
-      - split_brain_or_stale_leader_risk
-      - reconciliation_authority_is_undefined
-      - irreversible_state_or_partition_migration
-      - critical_financial_identity_safety_or_control_plane_state
-      - recovery_evidence_is_incomplete
+    - invariant_is_undefined_or_conflicting
+    - failure_model_excludes_material_risk
+    - exactly_once_claim_lacks_effect_level_evidence
+    - split_brain_or_stale_leader_risk
+    - reconciliation_authority_is_undefined
+    - irreversible_state_or_partition_migration
+    - critical_financial_identity_safety_or_control_plane_state
+    - recovery_evidence_is_incomplete
     authority_boundaries:
-      - no_architecture_or_product_decision_substitution
-      - no_vendor_marketing_term_treated_as_a_guarantee
-      - no_exactly_once_claim_without_complete_semantics
-      - no_hidden_safety_tradeoff_for_availability
-      - no_irreversible_state_migration_without_recovery
-      - no_self_approval_or_self_verification
-
+    - no_architecture_or_product_decision_substitution
+    - no_vendor_marketing_term_treated_as_a_guarantee
+    - no_exactly_once_claim_without_complete_semantics
+    - no_hidden_safety_tradeoff_for_availability
+    - no_irreversible_state_migration_without_recovery
+    - no_self_approval_or_self_verification
   database_reliability:
-    mission: preserve operational database durability, transactional correctness, availability, recoverability, safe change, workload isolation, capacity, and evidence-backed fleet reliability
+    mission: preserve operational database durability, transactional correctness, availability, recoverability, safe change,
+      workload isolation, capacity, and evidence-backed fleet reliability
     owning_team: platform_reliability
     responsibilities:
-      - database_topology_and_failure_domains
-      - durability_replication_and_promotion_contracts
-      - backup_restore_and_point_in_time_recovery
-      - failover_failback_and_reconciliation
-      - schema_index_partition_and_engine_migrations
-      - transaction_isolation_locking_and_deadlocks
-      - query_planner_statistics_and_regression_analysis
-      - capacity_storage_connection_and_io_management
-      - workload_tenant_and_noisy_neighbor_isolation
-      - database_observability_and_incident_response
-      - data_repair_and_recovery_evidence
-      - database_lifecycle_and_deprecation
+    - database_topology_and_failure_domains
+    - durability_replication_and_promotion_contracts
+    - backup_restore_and_point_in_time_recovery
+    - failover_failback_and_reconciliation
+    - schema_index_partition_and_engine_migrations
+    - transaction_isolation_locking_and_deadlocks
+    - query_planner_statistics_and_regression_analysis
+    - capacity_storage_connection_and_io_management
+    - workload_tenant_and_noisy_neighbor_isolation
+    - database_observability_and_incident_response
+    - data_repair_and_recovery_evidence
+    - database_lifecycle_and_deprecation
     required_capabilities:
-      - database_reliability_reasoning
-      - transactional_reasoning
-      - query_plan_analysis
-      - capacity_analysis
-      - migration_planning
-      - recovery_planning
-      - failure_mode_analysis
-      - evidence_assessment
-      - source_validation
-      - security_and_privacy_awareness
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - database_reliability_reasoning
+    - transactional_reasoning
+    - query_plan_analysis
+    - capacity_analysis
+    - migration_planning
+    - recovery_planning
+    - failure_mode_analysis
+    - evidence_assessment
+    - source_validation
+    - security_and_privacy_awareness
     verification:
-      - durability_and_replication_review
-      - representative_restore_test
-      - promotion_fencing_and_split_brain_test
-      - transaction_invariant_review
-      - schema_migration_rehearsal
-      - query_and_capacity_evidence_review
-      - data_reconciliation_check
-      - independent_database_reliability_review
-      - qualified_human_approval_for_critical_data_operations
+    - durability_and_replication_review
+    - representative_restore_test
+    - promotion_fencing_and_split_brain_test
+    - transaction_invariant_review
+    - schema_migration_rehearsal
+    - query_and_capacity_evidence_review
+    - data_reconciliation_check
+    - independent_database_reliability_review
+    - qualified_human_approval_for_critical_data_operations
     escalation:
-      - authoritative_data_or_recovery_objective_is_undefined
-      - restore_has_not_been_tested
-      - replica_promotion_can_create_split_brain
-      - migration_is_destructive_or_irreversible
-      - critical_transaction_invariant_is_unproven
-      - corruption_or_data_loss_is_suspected
-      - regulated_or_safety_critical_data_is_affected
-      - recovery_or_repair_authority_is_unclear
+    - authoritative_data_or_recovery_objective_is_undefined
+    - restore_has_not_been_tested
+    - replica_promotion_can_create_split_brain
+    - migration_is_destructive_or_irreversible
+    - critical_transaction_invariant_is_unproven
+    - corruption_or_data_loss_is_suspected
+    - regulated_or_safety_critical_data_is_affected
+    - recovery_or_repair_authority_is_unclear
     authority_boundaries:
-      - no_data_pipeline_or_business_metric_ownership
-      - no_destructive_operation_without_authorization_and_recovery
-      - no_recoverability_claim_without_restore_evidence
-      - no_silent_durability_or_consistency_reduction
-      - no_unmasked_sensitive_data_in_diagnostics
-      - no_self_approval_or_self_verification
-
+    - no_data_pipeline_or_business_metric_ownership
+    - no_destructive_operation_without_authorization_and_recovery
+    - no_recoverability_claim_without_restore_evidence
+    - no_silent_durability_or_consistency_reduction
+    - no_unmasked_sensitive_data_in_diagnostics
+    - no_self_approval_or_self_verification
   network_engineering:
-    mission: design and operate correct, observable, secure, recoverable network paths across routing, DNS, load balancing, hybrid connectivity, segmentation, service networking, and traffic engineering
+    mission: design and operate correct, observable, secure, recoverable network paths across routing, DNS, load balancing,
+      hybrid connectivity, segmentation, service networking, and traffic engineering
     owning_team: platform_reliability
     responsibilities:
-      - topology_addressing_and_failure_domain_design
-      - routing_policy_convergence_and_loop_prevention
-      - dns_authority_resolution_caching_and_recovery
-      - load_balancing_gateway_proxy_and_traffic_management
-      - cloud_data_center_branch_edge_and_hybrid_connectivity
-      - service_networking_and_discovery
-      - segmentation_and_least_connectivity
-      - packet_path_latency_loss_mtu_and_asymmetry_analysis
-      - bandwidth_connection_nat_and_state_capacity
-      - network_observability_flow_logs_and_packet_evidence
-      - network_change_blast_radius_and_rollback
-      - network_incident_and_recovery_analysis
+    - topology_addressing_and_failure_domain_design
+    - routing_policy_convergence_and_loop_prevention
+    - dns_authority_resolution_caching_and_recovery
+    - load_balancing_gateway_proxy_and_traffic_management
+    - cloud_data_center_branch_edge_and_hybrid_connectivity
+    - service_networking_and_discovery
+    - segmentation_and_least_connectivity
+    - packet_path_latency_loss_mtu_and_asymmetry_analysis
+    - bandwidth_connection_nat_and_state_capacity
+    - network_observability_flow_logs_and_packet_evidence
+    - network_change_blast_radius_and_rollback
+    - network_incident_and_recovery_analysis
     required_capabilities:
-      - network_architecture_reasoning
-      - routing_and_dns_analysis
-      - packet_and_protocol_analysis
-      - capacity_analysis
-      - failure_mode_analysis
-      - security_boundary_reasoning
-      - change_planning
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-sol
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - network_architecture_reasoning
+    - routing_and_dns_analysis
+    - packet_and_protocol_analysis
+    - capacity_analysis
+    - failure_mode_analysis
+    - security_boundary_reasoning
+    - change_planning
+    - evidence_assessment
+    - source_validation
     verification:
-      - topology_and_shared_failure_domain_review
-      - route_policy_and_convergence_check
-      - dns_authority_and_resolver_path_check
-      - packet_path_and_return_path_validation
-      - segmentation_and_prohibited_path_test
-      - load_balancer_and_failover_test
-      - capacity_and_failover_headroom_review
-      - rollback_validation
-      - independent_network_review
-      - qualified_human_approval_for_critical_production_changes
+    - topology_and_shared_failure_domain_review
+    - route_policy_and_convergence_check
+    - dns_authority_and_resolver_path_check
+    - packet_path_and_return_path_validation
+    - segmentation_and_prohibited_path_test
+    - load_balancer_and_failover_test
+    - capacity_and_failover_headroom_review
+    - rollback_validation
+    - independent_network_review
+    - qualified_human_approval_for_critical_production_changes
     escalation:
-      - source_destination_protocol_or_trust_boundary_is_unknown
-      - route_or_dns_change_has_unbounded_blast_radius
-      - packet_capture_requires_sensitive_data_access
-      - shared_failure_domain_invalidates_redundancy
-      - segmentation_or_isolation_cannot_be_verified
-      - production_traffic_change_lacks_rollback
-      - provider_or_carrier_behavior_is_unverified
-      - critical_connectivity_or_safety_path_is_affected
+    - source_destination_protocol_or_trust_boundary_is_unknown
+    - route_or_dns_change_has_unbounded_blast_radius
+    - packet_capture_requires_sensitive_data_access
+    - shared_failure_domain_invalidates_redundancy
+    - segmentation_or_isolation_cannot_be_verified
+    - production_traffic_change_lacks_rollback
+    - provider_or_carrier_behavior_is_unverified
+    - critical_connectivity_or_safety_path_is_affected
     authority_boundaries:
-      - no_unrestricted_connectivity_to_make_a_test_pass
-      - no_unauthorized_scanning_interception_or_manipulation
-      - no_route_dns_firewall_or_gateway_change_without_approval
-      - no_network_reachability_treated_as_application_authorization
-      - no_sensitive_packet_evidence_outside_approved_handling
-      - no_self_approval_or_self_verification
-
+    - no_unrestricted_connectivity_to_make_a_test_pass
+    - no_unauthorized_scanning_interception_or_manipulation
+    - no_route_dns_firewall_or_gateway_change_without_approval
+    - no_network_reachability_treated_as_application_authorization
+    - no_sensitive_packet_evidence_outside_approved_handling
+    - no_self_approval_or_self_verification
   platform_engineering:
-    mission: provide reusable self-service platform products, APIs, catalogs, golden paths, guardrails, support contracts, and lifecycle controls that reduce engineering burden without hiding risk or ownership
+    mission: provide reusable self-service platform products, APIs, catalogs, golden paths, guardrails, support contracts,
+      and lifecycle controls that reduce engineering burden without hiding risk or ownership
     owning_team: platform_reliability
     responsibilities:
-      - platform_user_and_problem_discovery
-      - platform_product_strategy_and_scope
-      - internal_developer_platform_and_control_plane_design
-      - self_service_workflow_design
-      - platform_api_contract_and_versioning
-      - service_catalog_and_ownership_model
-      - golden_paths_templates_and_reference_implementations
-      - policy_guardrails_approvals_and_exceptions
-      - tenancy_isolation_quota_and_delegation
-      - platform_slo_support_and_incident_ownership
-      - developer_experience_adoption_and_abandonment_measurement
-      - build_buy_open_source_and_exit_analysis
-      - platform_migration_deprecation_and_retirement
+    - platform_user_and_problem_discovery
+    - platform_product_strategy_and_scope
+    - internal_developer_platform_and_control_plane_design
+    - self_service_workflow_design
+    - platform_api_contract_and_versioning
+    - service_catalog_and_ownership_model
+    - golden_paths_templates_and_reference_implementations
+    - policy_guardrails_approvals_and_exceptions
+    - tenancy_isolation_quota_and_delegation
+    - platform_slo_support_and_incident_ownership
+    - developer_experience_adoption_and_abandonment_measurement
+    - build_buy_open_source_and_exit_analysis
+    - platform_migration_deprecation_and_retirement
     required_capabilities:
-      - platform_product_reasoning
-      - developer_experience_analysis
-      - control_plane_architecture
-      - api_and_contract_design
-      - workflow_and_policy_design
-      - tenancy_and_isolation_reasoning
-      - reliability_and_support_design
-      - cost_and_lifecycle_analysis
-      - evidence_assessment
-      - source_validation
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - platform_product_reasoning
+    - developer_experience_analysis
+    - control_plane_architecture
+    - api_and_contract_design
+    - workflow_and_policy_design
+    - tenancy_and_isolation_reasoning
+    - reliability_and_support_design
+    - cost_and_lifecycle_analysis
+    - evidence_assessment
+    - source_validation
     verification:
-      - platform_user_task_validation
-      - self_service_without_hidden_manual_step_check
-      - platform_api_and_compatibility_review
-      - tenancy_and_isolation_test
-      - guardrail_exception_and_audit_review
-      - platform_slo_and_support_readiness_check
-      - migration_and_deprecation_review
-      - adoption_and_abandonment_evidence_review
-      - independent_platform_review
-      - qualified_human_approval_for_critical_shared_platform_changes
+    - platform_user_task_validation
+    - self_service_without_hidden_manual_step_check
+    - platform_api_and_compatibility_review
+    - tenancy_and_isolation_test
+    - guardrail_exception_and_audit_review
+    - platform_slo_and_support_readiness_check
+    - migration_and_deprecation_review
+    - adoption_and_abandonment_evidence_review
+    - independent_platform_review
+    - qualified_human_approval_for_critical_shared_platform_changes
     escalation:
-      - no_repeated_user_problem_or_accountable_owner
-      - privileged_self_service_lacks_scoped_authority
-      - platform_dependency_creates_unbounded_shared_blast_radius
-      - tenancy_or_isolation_is_unproven
-      - platform_capability_has_no_support_or_lifecycle_owner
-      - forced_migration_lacks_escape_or_rollback
-      - developer_telemetry_lacks_privacy_controls
-      - critical_platform_change_affects_multiple_services
+    - no_repeated_user_problem_or_accountable_owner
+    - privileged_self_service_lacks_scoped_authority
+    - platform_dependency_creates_unbounded_shared_blast_radius
+    - tenancy_or_isolation_is_unproven
+    - platform_capability_has_no_support_or_lifecycle_owner
+    - forced_migration_lacks_escape_or_rollback
+    - developer_telemetry_lacks_privacy_controls
+    - critical_platform_change_affects_multiple_services
     authority_boundaries:
-      - no_external_product_priority_substitution
-      - no_hidden_manual_ticket_path_called_self_service
-      - no_forced_single_path_without_exception_model
-      - no_unowned_or_unsupported_platform_capability
-      - no_hidden_cost_lock_in_or_failure_dependency
-      - no_self_approval_or_self_verification
+    - no_external_product_priority_substitution
+    - no_hidden_manual_ticket_path_called_self_service
+    - no_forced_single_path_without_exception_model
+    - no_unowned_or_unsupported_platform_capability
+    - no_hidden_cost_lock_in_or_failure_dependency
+    - no_self_approval_or_self_verification

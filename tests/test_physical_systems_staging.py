@@ -3,6 +3,8 @@ from pathlib import Path
 
 import yaml
 
+from teo_reference.config import ConfigBundle
+
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 STAGING_PATH = REPO_ROOT / "docs" / "history" / "activation" / "physical-systems-staging.yaml"
@@ -99,16 +101,17 @@ def test_worker_contract_matches_cards_and_human_boundaries() -> None:
     staging = load_yaml(STAGING_PATH)
     worker_path = REPO_ROOT / "community" / "workers" / "extensions" / "physical-systems-workers.yaml"
     worker_registry = load_yaml(worker_path)
+    runtime_defaults = ConfigBundle.load(REPO_ROOT).worker_runtime_defaults
 
     assert git_blob_sha(worker_path) == staging["worker_contract"]["canonical_blob_sha"]
     assert set(worker_registry["workers"]) == EXPECTED_WORKERS
 
-    for worker in worker_registry["workers"].values():
+    for worker_name, worker in worker_registry["workers"].items():
         assert worker["owning_team"] == "physical_systems"
         assert worker["responsibilities"]
         assert worker["required_capabilities"]
-        assert len(worker["preferred_implementations"]) >= 2
-        assert worker["fallbacks"]
+        assert len(runtime_defaults[worker_name]["preferred_implementations"]) >= 2
+        assert runtime_defaults[worker_name]["fallbacks"]
         assert worker["verification"]
         assert worker["escalation"]
         assert worker["authority_boundaries"]

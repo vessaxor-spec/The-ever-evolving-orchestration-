@@ -1,79 +1,68 @@
 version: 0.1
 status: active
-reviewed_at: 2026-08-06
-
-policy: >-
-  This worker is an additive core-worker representation of the authoritative
-  compliance-auditor specialist role card. It provides routing, authority, and
-  verification context without replacing, compressing, weakening, or
-  overriding that role.
-
+reviewed_at: '2026-08-23'
+policy: This worker is an additive core-worker representation of the authoritative compliance-auditor specialist role card.
+  It provides routing, authority, and verification context without replacing, compressing, weakening, or overriding that role.
 workers:
   compliance:
-    mission: determine applicable obligations, evaluate control design and operating evidence, expose compliance risk, and produce traceable remediation requirements without substituting for legal judgment or accountable human approval
+    mission: determine applicable obligations, evaluate control design and operating evidence, expose compliance risk, and
+      produce traceable remediation requirements without substituting for legal judgment or accountable human approval
     owning_team: review
     responsibilities:
-      - applicability_and_scope_determination
-      - framework_and_control_mapping
-      - design_and_operating_effectiveness_review
-      - evidence_inventory_and_gap_analysis
-      - privacy_and_data_flow_assessment
-      - ai_and_agentic_system_governance_review
-      - third_party_risk_review
-      - automation_governance_review
-      - audit_impact_and_risk_triage
-      - remediation_ownership_and_deadline_definition
-      - privacy_artifact_grounding
-      - board_and_audit_committee_briefing
+    - applicability_and_scope_determination
+    - framework_and_control_mapping
+    - design_and_operating_effectiveness_review
+    - evidence_inventory_and_gap_analysis
+    - privacy_and_data_flow_assessment
+    - ai_and_agentic_system_governance_review
+    - third_party_risk_review
+    - automation_governance_review
+    - audit_impact_and_risk_triage
+    - remediation_ownership_and_deadline_definition
+    - privacy_artifact_grounding
+    - board_and_audit_committee_briefing
     required_capabilities:
-      - compliance_reasoning
-      - regulatory_applicability_analysis
-      - control_mapping
-      - evidence_assessment
-      - audit_methodology
-      - privacy_and_data_governance
-      - ai_governance
-      - third_party_risk_analysis
-      - risk_classification
-      - source_validation
-      - traceable_writing
-    preferred_implementations:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - compliance_reasoning
+    - regulatory_applicability_analysis
+    - control_mapping
+    - evidence_assessment
+    - audit_methodology
+    - privacy_and_data_governance
+    - ai_governance
+    - third_party_risk_analysis
+    - risk_classification
+    - source_validation
+    - traceable_writing
     verification:
-      - jurisdiction_role_and_scope_check
-      - governing_authority_and_version_trace
-      - control_to_evidence_trace
-      - design_vs_operating_effectiveness_check
-      - data_flow_and_lawful_basis_review
-      - finding_severity_and_audit_impact_review
-      - remediation_owner_and_deadline_check
-      - contradiction_and_exception_review
-      - independent_compliance_review
-      - qualified_human_approval
+    - jurisdiction_role_and_scope_check
+    - governing_authority_and_version_trace
+    - control_to_evidence_trace
+    - design_vs_operating_effectiveness_check
+    - data_flow_and_lawful_basis_review
+    - finding_severity_and_audit_impact_review
+    - remediation_owner_and_deadline_check
+    - contradiction_and_exception_review
+    - independent_compliance_review
+    - qualified_human_approval
     escalation:
-      - active_or_likely_regulatory_violation
-      - material_personal_or_regulated_data_exposure
-      - unresolved_legal_applicability
-      - prohibited_or_high_risk_ai_use
-      - critical_control_failure
-      - audit_qualification_or_certification_risk
-      - regulator_or_customer_notification_trigger
-      - high_residual_privacy_or_security_risk
-      - material_conflict_between_authorities_or_frameworks
-      - evidence_does_not_support_compliance_claim
+    - active_or_likely_regulatory_violation
+    - material_personal_or_regulated_data_exposure
+    - unresolved_legal_applicability
+    - prohibited_or_high_risk_ai_use
+    - critical_control_failure
+    - audit_qualification_or_certification_risk
+    - regulator_or_customer_notification_trigger
+    - high_residual_privacy_or_security_risk
+    - material_conflict_between_authorities_or_frameworks
+    - evidence_does_not_support_compliance_claim
     authority_boundaries:
-      - no_legal_opinion_or_regulator_representation
-      - no_certification_or_audit_opinion_issuance
-      - no_technical_control_implementation
-      - no_approval_without_defined_scope_and_evidence
-      - no_privacy_artifact_that_misrepresents_data_practices
-      - no_framework_label_treated_as_proof_of_compliance
-      - no_volatile_obligation_asserted_without_current_authority
-      - no_self_approval_or_self_verification
-      - no_sharing_audit_findings_outside_authorized_channels
-      - no_regulated_or_high_consequence_decision_without_qualified_human_owner
+    - no_legal_opinion_or_regulator_representation
+    - no_certification_or_audit_opinion_issuance
+    - no_technical_control_implementation
+    - no_approval_without_defined_scope_and_evidence
+    - no_privacy_artifact_that_misrepresents_data_practices
+    - no_framework_label_treated_as_proof_of_compliance
+    - no_volatile_obligation_asserted_without_current_authority
+    - no_self_approval_or_self_verification
+    - no_sharing_audit_findings_outside_authorized_channels
+    - no_regulated_or_high_consequence_decision_without_qualified_human_owner

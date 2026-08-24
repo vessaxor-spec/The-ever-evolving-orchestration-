@@ -1,6 +1,6 @@
 version: 0.5
 status: public-draft
-reviewed_at: 2026-08-07
+reviewed_at: 2026-08-24
 
 scenarios:
   - id: architecture-high-risk
@@ -216,7 +216,7 @@ scenarios:
         specialist_risk_profile: medium
         selected_implementation.model: gemini-3.1-pro-preview
         selected_implementation.provider_family: google
-        selected_implementation.source: routing.market_research.primary
+        selected_implementation.source: runtime_compatibility.task_routes.market_research.primary
         fallback_implementation.model: gpt-5.6-sol
         fallback_implementation.provider_family: openai
         verification.team: verification

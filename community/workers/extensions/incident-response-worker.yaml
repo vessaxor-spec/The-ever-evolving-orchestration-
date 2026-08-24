@@ -1,59 +1,49 @@
 version: 0.2
 status: active
-reviewed_at: 2026-08-05
-
-policy: >-
-  This additive core-worker definition resolves the incident-commander specialist
-  binding without modifying, compressing, weakening, or overriding its
-  authoritative role card. Automatic fallbacks prefer a different provider;
-  Opus remains reserved for evidence-based escalation.
-
+reviewed_at: '2026-08-23'
+policy: This additive core-worker definition resolves the incident-commander specialist binding without modifying, compressing,
+  weakening, or overriding its authoritative role card. Automatic fallbacks prefer a different provider; Opus remains reserved
+  for evidence-based escalation.
 workers:
   incident_response:
-    mission: coordinate production incident response through evidence-based severity, explicit roles, disciplined cadence, verified resolution, and blameless learning
+    mission: coordinate production incident response through evidence-based severity, explicit roles, disciplined cadence,
+      verified resolution, and blameless learning
     owning_team: mission_control
     responsibilities:
-      - severity_classification
-      - incident_role_assignment
-      - response_cadence_management
-      - live_timeline_governance
-      - stakeholder_and_customer_communications_coordination
-      - resolution_readiness_and_monitoring_confirmation
-      - blameless_postmortem_facilitation
-      - on_call_health_and_escalation_review
+    - severity_classification
+    - incident_role_assignment
+    - response_cadence_management
+    - live_timeline_governance
+    - stakeholder_and_customer_communications_coordination
+    - resolution_readiness_and_monitoring_confirmation
+    - blameless_postmortem_facilitation
+    - on_call_health_and_escalation_review
     required_capabilities:
-      - incident_command
-      - coordination
-      - risk_analysis
-      - operational_communications
-      - timeline_management
-      - reliability_reasoning
-      - evidence_evaluation
-      - clear_writing
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - gpt-5.6-sol
+    - incident_command
+    - coordination
+    - risk_analysis
+    - operational_communications
+    - timeline_management
+    - reliability_reasoning
+    - evidence_evaluation
+    - clear_writing
     verification:
-      - severity_evidence_review
-      - role_and_cadence_check
-      - resolution_checklist_validation
-      - independent_technical_signoff_confirmation
-      - postmortem_action_trace
+    - severity_evidence_review
+    - role_and_cadence_check
+    - resolution_checklist_validation
+    - independent_technical_signoff_confirmation
+    - postmortem_action_trace
     escalation:
-      - sev1_or_data_integrity_risk
-      - payment_processing_failure
-      - cascading_service_failure
-      - contractual_sla_breach_imminent
-      - unresolved_extended_incident
-      - recurrence_with_failed_prior_actions
-      - no_technical_lead_available
+    - sev1_or_data_integrity_risk
+    - payment_processing_failure
+    - cascading_service_failure
+    - contractual_sla_breach_imminent
+    - unresolved_extended_incident
+    - recurrence_with_failed_prior_actions
+    - no_technical_lead_available
     authority_boundaries:
-      - no_technical_diagnosis_or_fix_implementation
-      - no_external_communication_without_comms_confirmation
-      - no_incident_closure_without_technical_lead_signoff
-      - no_severity_escalation_without_evidence
-      - no_blame_assignment_or_human_error_root_cause
+    - no_technical_diagnosis_or_fix_implementation
+    - no_external_communication_without_comms_confirmation
+    - no_incident_closure_without_technical_lead_signoff
+    - no_severity_escalation_without_evidence
+    - no_blame_assignment_or_human_error_root_cause

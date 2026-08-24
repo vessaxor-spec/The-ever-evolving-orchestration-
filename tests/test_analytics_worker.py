@@ -26,6 +26,7 @@ def test_analytics_worker_binding_and_boundaries() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     specialist = bundle.specialist_registry[fixture["specialist"]]
     worker = bundle.worker_registry[fixture["worker"]]
+    runtime_defaults = bundle.worker_runtime_defaults[fixture["worker"]]
 
     assert specialist["worker_binding"] == fixture["worker"]
     assert specialist["primary_team"] == fixture["primary_team"]
@@ -37,13 +38,13 @@ def test_analytics_worker_binding_and_boundaries() -> None:
         "mission",
         "responsibilities",
         "required_capabilities",
-        "preferred_implementations",
-        "fallbacks",
         "verification",
         "escalation",
         "authority_boundaries",
     ):
         assert worker.get(field), f"analytics is missing required worker field {field}"
+    for field in ("preferred_implementations", "fallbacks"):
+        assert runtime_defaults.get(field), f"analytics is missing runtime compatibility field {field}"
 
     for field, expected_values in fixture["contains"].items():
         actual_values = worker[field]
@@ -76,7 +77,7 @@ def test_analytics_dispatch_is_high_risk_and_provider_diverse() -> None:
     assert dispatch.specialist_risk_profile == "high"
     assert dispatch.selected_implementation.model == "gpt-5.6-sol"
     assert dispatch.selected_implementation.provider_family == "openai"
-    assert dispatch.selected_implementation.source == "routing.analytics.primary"
+    assert dispatch.selected_implementation.source == "runtime_compatibility.task_routes.analytics.primary"
     assert dispatch.fallback_implementation is not None
     assert dispatch.fallback_implementation.model == "gemini-3.1-pro-preview"
     assert dispatch.fallback_implementation.provider_family == "google"
@@ -122,7 +123,7 @@ def test_analytics_remains_separate_from_research_and_data_engineering() -> None
 
 
 def test_analytics_route_keeps_opus_conditional() -> None:
-    route = ConfigBundle.load(REPO_ROOT).implementation_routes["analytics"]
+    route = ConfigBundle.load(REPO_ROOT).runtime_task_routes["analytics"]
 
     assert route["primary"]["model"] == "gpt-5.6-sol"
     assert route["fallback"]["model"] == "gemini-3.1-pro-preview"

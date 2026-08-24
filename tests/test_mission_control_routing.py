@@ -50,6 +50,7 @@ def test_mission_control_route(scenario: dict[str, Any]) -> None:
     actual = dispatch.to_dict()
 
     assert scenario["expect"]["equals"]["task_type"] in bundle.implementation_routes
+    assert scenario["expect"]["equals"]["task_type"] in bundle.runtime_task_routes
 
     for dotted_path, expected_value in scenario["expect"].get("equals", {}).items():
         assert value_at_path(actual, dotted_path) == expected_value, (
@@ -77,5 +78,7 @@ def test_mission_control_route_extension_is_additive() -> None:
     for route_name in ("orchestration", "operations", "project_delivery", "incident_response"):
         assert route_name in bundle.team_routes
         assert route_name in bundle.implementation_routes
+        assert route_name in bundle.runtime_task_routes
 
-    assert bundle.implementation_routes["daily_coding"]["primary"]["model"] == "gpt-5.6-terra"
+    assert bundle.runtime_task_routes["daily_coding"]["primary"]["model"] == "gpt-5.6-terra"
+    assert "model" not in bundle.implementation_routes["daily_coding"]["primary"]

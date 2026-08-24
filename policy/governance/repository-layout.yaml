@@ -77,7 +77,8 @@ contracts:
       core:
         - implementation-defaults.yaml
         - routing.yaml
-        - specialist-model-routing.yaml
+        - runtime-compatibility-defaults.yaml
+        - specialist-selection-policy.yaml
         - team-routing.yaml
       extensions:
         - mission-control-routing.yaml

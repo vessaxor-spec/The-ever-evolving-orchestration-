@@ -57,15 +57,19 @@ def test_documentation_is_staged_without_widening_active_live_scope() -> None:
 
 
 def test_runtime_override_no_longer_mutates_shared_documentation_worker() -> None:
-    worker = engine().config.worker_registry["documentation"]
+    config = engine().config
+    worker = config.worker_registry["documentation"]
+    defaults = config.worker_runtime_defaults["documentation"]
 
-    assert worker["preferred_implementations"] == [
+    assert "preferred_implementations" not in worker
+    assert "fallbacks" not in worker
+    assert defaults["preferred_implementations"] == [
         "claude-sonnet-5",
         "gpt-5.6-sol",
         "gemini-3.7-flash",
         "claude-haiku-4-5",
     ]
-    assert worker["fallbacks"] == ["gemini-3.1-pro-preview", "gpt-5.6-sol"]
+    assert defaults["fallbacks"] == ["gemini-3.1-pro-preview", "gpt-5.6-sol"]
 
 
 def test_throughput_primary_and_fresh_verifier_rotation_survive_override_removal() -> None:

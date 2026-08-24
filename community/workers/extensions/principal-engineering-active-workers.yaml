@@ -1,389 +1,324 @@
 version: 1.0
 status: active
-reviewed_at: 2026-08-06
-policy: >-
-  These workers complete active principal-engineering routing. New definitions
-  are additive. Worker overrides are restricted to controlled enrichment and
-  team correction for existing canonical workers. They must not reduce the
-  corresponding specialist role cards.
-
+reviewed_at: '2026-08-23'
+policy: These workers complete active principal-engineering routing. New definitions are additive. Worker overrides are restricted
+  to controlled enrichment and team correction for existing canonical workers. They must not reduce the corresponding specialist
+  role cards.
 workers:
   cloud_architecture:
-    mission: design provider-neutral cloud, hybrid, and multicloud architecture, migration, governance, economics, resilience, and exit strategy
+    mission: design provider-neutral cloud, hybrid, and multicloud architecture, migration, governance, economics, resilience,
+      and exit strategy
     owning_team: planning
     responsibilities:
-      - landing_zone_and_organizational_design
-      - workload_placement_and_service_selection
-      - hybrid_multicloud_and_edge_boundaries
-      - identity_network_data_and_region_architecture
-      - resilience_recovery_and_operating_model
-      - migration_cutover_rollback_and_decommissioning
-      - cost_commitment_lockin_and_exit_analysis
+    - landing_zone_and_organizational_design
+    - workload_placement_and_service_selection
+    - hybrid_multicloud_and_edge_boundaries
+    - identity_network_data_and_region_architecture
+    - resilience_recovery_and_operating_model
+    - migration_cutover_rollback_and_decommissioning
+    - cost_commitment_lockin_and_exit_analysis
     required_capabilities:
-      - cloud_architecture_reasoning
-      - systems_reasoning
-      - current_information_retrieval
-      - source_validation
-      - reliability_analysis
-      - security_privacy_and_compliance_reasoning
-      - technology_economics
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - cloud_architecture_reasoning
+    - systems_reasoning
+    - current_information_retrieval
+    - source_validation
+    - reliability_analysis
+    - security_privacy_and_compliance_reasoning
+    - technology_economics
     verification:
-      - provider_region_service_and_quota_check
-      - workload_placement_and_failure_review
-      - migration_rollback_and_exit_review
-      - independent_cloud_architecture_review
+    - provider_region_service_and_quota_check
+    - workload_placement_and_failure_review
+    - migration_rollback_and_exit_review
+    - independent_cloud_architecture_review
     escalation:
-      - irreversible_provider_commitment
-      - unresolved_residency_or_sovereignty
-      - critical_dependency_without_recovery
+    - irreversible_provider_commitment
+    - unresolved_residency_or_sovereignty
+    - critical_dependency_without_recovery
     authority_boundaries:
-      - no_general_architecture_platform_operations_or_procurement_substitution
-      - no_provider_marketing_as_independent_evidence
-      - no_self_approval_or_self_verification
-
+    - no_general_architecture_platform_operations_or_procurement_substitution
+    - no_provider_marketing_as_independent_evidence
+    - no_self_approval_or_self_verification
   compiler_toolchain:
-    mission: design and validate compilers, linkers, runtimes, build systems, cross-compilation, compatibility, reproducibility, bootstrap, provenance, and toolchain release evidence
+    mission: design and validate compilers, linkers, runtimes, build systems, cross-compilation, compatibility, reproducibility,
+      bootstrap, provenance, and toolchain release evidence
     owning_team: engineering
     responsibilities:
-      - language_frontend_semantics_and_diagnostics
-      - intermediate_representation_and_transformations
-      - target_codegen_abi_object_and_linking
-      - runtime_and_standard_library_boundaries
-      - build_graph_cache_and_hermeticity
-      - cross_compilation_sysroot_and_sdk_design
-      - compatibility_reproducibility_and_provenance
-      - optimization_correctness_and_testing
-      - bootstrap_trust_and_release_migration
+    - language_frontend_semantics_and_diagnostics
+    - intermediate_representation_and_transformations
+    - target_codegen_abi_object_and_linking
+    - runtime_and_standard_library_boundaries
+    - build_graph_cache_and_hermeticity
+    - cross_compilation_sysroot_and_sdk_design
+    - compatibility_reproducibility_and_provenance
+    - optimization_correctness_and_testing
+    - bootstrap_trust_and_release_migration
     required_capabilities:
-      - compiler_reasoning
-      - coding
-      - systems_programming
-      - formal_reasoning
-      - target_and_abi_analysis
-      - performance_analysis
-      - supply_chain_analysis
-      - tool_execution
-    preferred_implementations:
-      - gpt-5.6-sol
-      - gpt-5.6-terra
-      - claude-sonnet-5
-    fallbacks:
-      - claude-sonnet-5
-      - gemini-3.1-pro-preview
+    - compiler_reasoning
+    - coding
+    - systems_programming
+    - formal_reasoning
+    - target_and_abi_analysis
+    - performance_analysis
+    - supply_chain_analysis
+    - tool_execution
     verification:
-      - semantic_and_optimization_review
-      - differential_conformance_and_fuzz_tests
-      - target_execution_and_abi_tests
-      - reproducible_build_and_provenance_review
-      - independent_toolchain_review
+    - semantic_and_optimization_review
+    - differential_conformance_and_fuzz_tests
+    - target_execution_and_abi_tests
+    - reproducible_build_and_provenance_review
+    - independent_toolchain_review
     escalation:
-      - unresolved_language_target_or_abi_contract
-      - hidden_undefined_behavior_dependency
-      - uncontrolled_bootstrap_or_build_input
-      - critical_compatibility_break
+    - unresolved_language_target_or_abi_contract
+    - hidden_undefined_behavior_dependency
+    - uncontrolled_bootstrap_or_build_input
+    - critical_compatibility_break
     authority_boundaries:
-      - no_language_standard_architecture_target_or_application_substitution
-      - no_benchmark_as_correctness_proof
-      - no_self_approval_or_self_verification
-
+    - no_language_standard_architecture_target_or_application_substitution
+    - no_benchmark_as_correctness_proof
+    - no_self_approval_or_self_verification
   applied_science:
-    mission: design and execute decision-relevant scientific investigations, experiments, models, simulations, and prototypes with uncertainty, reproducibility, and engineering handoff
+    mission: design and execute decision-relevant scientific investigations, experiments, models, simulations, and prototypes
+      with uncertainty, reproducibility, and engineering handoff
     owning_team: research
     responsibilities:
-      - research_question_claim_and_hypothesis_definition
-      - experiment_observational_study_and_simulation_design
-      - data_sampling_measurement_and_label_design
-      - baseline_control_ablation_and_falsification
-      - statistical_machine_learning_and_causal_analysis
-      - uncertainty_robustness_and_sensitivity
-      - external_validation_and_failure_analysis
-      - reproducibility_and_independent_replication
-      - engineering_requirements_and_technology_transfer
+    - research_question_claim_and_hypothesis_definition
+    - experiment_observational_study_and_simulation_design
+    - data_sampling_measurement_and_label_design
+    - baseline_control_ablation_and_falsification
+    - statistical_machine_learning_and_causal_analysis
+    - uncertainty_robustness_and_sensitivity
+    - external_validation_and_failure_analysis
+    - reproducibility_and_independent_replication
+    - engineering_requirements_and_technology_transfer
     required_capabilities:
-      - scientific_reasoning
-      - experiment_design
-      - statistical_analysis
-      - causal_reasoning
-      - model_validation
-      - uncertainty_calibration
-      - reproducible_analysis
-      - source_validation
-    preferred_implementations:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
-      - gpt-5.6-sol
-    fallbacks:
-      - claude-sonnet-5
-      - gpt-5.6-sol
+    - scientific_reasoning
+    - experiment_design
+    - statistical_analysis
+    - causal_reasoning
+    - model_validation
+    - uncertainty_calibration
+    - reproducible_analysis
+    - source_validation
     verification:
-      - question_estimand_and_method_review
-      - data_measurement_and_leakage_review
-      - statistical_recalculation
-      - robustness_sensitivity_and_external_validity_review
-      - independent_reproduction
+    - question_estimand_and_method_review
+    - data_measurement_and_leakage_review
+    - statistical_recalculation
+    - robustness_sensitivity_and_external_validity_review
+    - independent_reproduction
     escalation:
-      - unsupported_claim_or_measurement
-      - material_leakage_or_contamination
-      - contradictory_or_nonreproducible_result
-      - unvalidated_research_to_production_assumption
+    - unsupported_claim_or_measurement
+    - material_leakage_or_contamination
+    - contradictory_or_nonreproducible_result
+    - unvalidated_research_to_production_assumption
     authority_boundaries:
-      - no_product_production_ai_mlops_analytics_or_domain_authority_substitution
-      - no_exploratory_result_as_confirmatory_or_causal
-      - no_self_approval_or_self_verification
-
+    - no_product_production_ai_mlops_analytics_or_domain_authority_substitution
+    - no_exploratory_result_as_confirmatory_or_causal
+    - no_self_approval_or_self_verification
   devsecops:
-    mission: engineer secure delivery, build, artifact, dependency, secret, provenance, deployment, and operational control paths
+    mission: engineer secure delivery, build, artifact, dependency, secret, provenance, deployment, and operational control
+      paths
     owning_team: platform_reliability
     responsibilities:
-      - secure_ci_cd_architecture
-      - secrets_and_credential_controls
-      - dependency_and_supply_chain_controls
-      - sbom_provenance_and_artifact_signing
-      - infrastructure_and_policy_as_code_security
-      - deployment_identity_and_environment_boundaries
-      - security_scanning_and_gate_design
-      - remediation_and_exception_workflows
+    - secure_ci_cd_architecture
+    - secrets_and_credential_controls
+    - dependency_and_supply_chain_controls
+    - sbom_provenance_and_artifact_signing
+    - infrastructure_and_policy_as_code_security
+    - deployment_identity_and_environment_boundaries
+    - security_scanning_and_gate_design
+    - remediation_and_exception_workflows
     required_capabilities:
-      - coding
-      - infrastructure_reasoning
-      - application_security_reasoning
-      - supply_chain_analysis
-      - tool_execution
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - infrastructure_reasoning
+    - application_security_reasoning
+    - supply_chain_analysis
+    - tool_execution
+    - source_validation
     verification:
-      - pipeline_and_policy_validation
-      - artifact_provenance_and_signature_check
-      - secret_dependency_and_permission_review
-      - independent_security_review
+    - pipeline_and_policy_validation
+    - artifact_provenance_and_signature_check
+    - secret_dependency_and_permission_review
+    - independent_security_review
     escalation:
-      - secret_or_signing_key_exposure
-      - compromised_dependency_or_build_path
-      - production_identity_or_permission_change
+    - secret_or_signing_key_exposure
+    - compromised_dependency_or_build_path
+    - production_identity_or_permission_change
     authority_boundaries:
-      - no_unauthorized_active_security_testing
-      - no_security_compliance_or_release_self_approval
-      - no_self_approval_or_self_verification
-
+    - no_unauthorized_active_security_testing
+    - no_security_compliance_or_release_self_approval
+    - no_self_approval_or_self_verification
   embedded:
-    mission: implement deterministic firmware, drivers, RTOS behavior, memory, timing, power, debugging, and production firmware evidence for constrained devices
+    mission: implement deterministic firmware, drivers, RTOS behavior, memory, timing, power, debugging, and production firmware
+      evidence for constrained devices
     owning_team: physical_systems
     responsibilities:
-      - firmware_architecture_and_boot_sequence
-      - peripheral_driver_development
-      - rtos_task_queue_and_priority_design
-      - interrupt_and_concurrency_discipline
-      - static_memory_stack_and_linker_analysis
-      - watchdog_fault_and_recovery_behavior
-      - hardware_debugging_and_bringup
-      - power_management_and_current_profiling
-      - firmware_test_release_and_traceability
+    - firmware_architecture_and_boot_sequence
+    - peripheral_driver_development
+    - rtos_task_queue_and_priority_design
+    - interrupt_and_concurrency_discipline
+    - static_memory_stack_and_linker_analysis
+    - watchdog_fault_and_recovery_behavior
+    - hardware_debugging_and_bringup
+    - power_management_and_current_profiling
+    - firmware_test_release_and_traceability
     required_capabilities:
-      - coding
-      - embedded_systems_reasoning
-      - hardware_software_integration
-      - real_time_and_concurrency_reasoning
-      - debugging
-      - tool_execution
-      - source_validation
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - embedded_systems_reasoning
+    - hardware_software_integration
+    - real_time_and_concurrency_reasoning
+    - debugging
+    - tool_execution
+    - source_validation
     verification:
-      - target_build_and_static_analysis
-      - timing_memory_and_interrupt_review
-      - hardware_in_loop_or_target_test
-      - independent_embedded_review
+    - target_build_and_static_analysis
+    - timing_memory_and_interrupt_review
+    - hardware_in_loop_or_target_test
+    - independent_embedded_review
     escalation:
-      - safety_related_firmware
-      - unresolved_timing_or_memory_margin
-      - hardware_behavior_conflicts_with_specification
+    - safety_related_firmware
+    - unresolved_timing_or_memory_margin
+    - hardware_behavior_conflicts_with_specification
     authority_boundaries:
-      - no_hardware_design_or_functional_safety_substitution
-      - no_critical_device_release_without_independent_review
-      - no_self_approval_or_self_verification
-
+    - no_hardware_design_or_functional_safety_substitution
+    - no_critical_device_release_without_independent_review
+    - no_self_approval_or_self_verification
   civil_engineering:
-    mission: design and review civil and structural work using governing jurisdiction, adopted codes, site evidence, load paths, constructability, and qualified human authority
+    mission: design and review civil and structural work using governing jurisdiction, adopted codes, site evidence, load
+      paths, constructability, and qualified human authority
     owning_team: physical_systems
     responsibilities:
-      - site_and_jurisdiction_intake
-      - code_standard_and_adopted_edition_resolution
-      - load_path_and_structural_reasoning
-      - geotechnical_drainage_transport_or_site_coordination
-      - constructability_and_sequence_review
-      - calculation_assumption_and_limit_documentation
-      - inspection_test_and_acceptance_planning
-      - change_and_field_condition_assessment
+    - site_and_jurisdiction_intake
+    - code_standard_and_adopted_edition_resolution
+    - load_path_and_structural_reasoning
+    - geotechnical_drainage_transport_or_site_coordination
+    - constructability_and_sequence_review
+    - calculation_assumption_and_limit_documentation
+    - inspection_test_and_acceptance_planning
+    - change_and_field_condition_assessment
     required_capabilities:
-      - civil_engineering_reasoning
-      - structural_and_physical_reasoning
-      - standards_and_jurisdiction_research
-      - quantitative_reasoning
-      - risk_analysis
-      - source_validation
-      - traceable_writing
-    preferred_implementations:
-      - claude-sonnet-5
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
-    fallbacks:
-      - gpt-5.6-sol
-      - gemini-3.1-pro-preview
+    - civil_engineering_reasoning
+    - structural_and_physical_reasoning
+    - standards_and_jurisdiction_research
+    - quantitative_reasoning
+    - risk_analysis
+    - source_validation
+    - traceable_writing
     verification:
-      - governing_code_and_edition_check
-      - calculation_and_load_path_review
-      - site_assumption_and_constructability_review
-      - qualified_human_engineer_approval
+    - governing_code_and_edition_check
+    - calculation_and_load_path_review
+    - site_assumption_and_constructability_review
+    - qualified_human_engineer_approval
     escalation:
-      - life_safety_or_public_infrastructure
-      - unresolved_site_or_geotechnical_condition
-      - conflicting_code_contract_or_authority
+    - life_safety_or_public_infrastructure
+    - unresolved_site_or_geotechnical_condition
+    - conflicting_code_contract_or_authority
     authority_boundaries:
-      - no_sealed_design_or_engineer_of_record_substitution
-      - no_latest_code_as_automatic_governing_code
-      - no_self_approval_or_self_verification
-
+    - no_sealed_design_or_engineer_of_record_substitution
+    - no_latest_code_as_automatic_governing_code
+    - no_self_approval_or_self_verification
   rust_systems_programming:
-    mission: implement and review production Rust across ownership, unsafe code, FFI, async runtimes, cross-compilation, embedded targets, build systems, and performance
+    mission: implement and review production Rust across ownership, unsafe code, FFI, async runtimes, cross-compilation, embedded
+      targets, build systems, and performance
     owning_team: engineering
     responsibilities:
-      - ownership_borrowing_and_lifetime_design
-      - safe_abstractions_and_unsafe_code_audit
-      - ffi_and_cross_language_boundaries
-      - async_runtime_and_cancellation_safety
-      - cross_compilation_and_target_support
-      - embedded_and_no_std_rust
-      - performance_profiling_and_optimization
-      - cargo_workspace_dependency_and_build_design
+    - ownership_borrowing_and_lifetime_design
+    - safe_abstractions_and_unsafe_code_audit
+    - ffi_and_cross_language_boundaries
+    - async_runtime_and_cancellation_safety
+    - cross_compilation_and_target_support
+    - embedded_and_no_std_rust
+    - performance_profiling_and_optimization
+    - cargo_workspace_dependency_and_build_design
     required_capabilities:
-      - coding
-      - systems_programming
-      - memory_safety_reasoning
-      - concurrency_reasoning
-      - cross_compilation
-      - debugging
-      - tool_execution
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - systems_programming
+    - memory_safety_reasoning
+    - concurrency_reasoning
+    - cross_compilation
+    - debugging
+    - tool_execution
     verification:
-      - compiler_clippy_and_test_validation
-      - unsafe_invariant_and_miri_review
-      - target_build_and_runtime_test
-      - independent_rust_review
+    - compiler_clippy_and_test_validation
+    - unsafe_invariant_and_miri_review
+    - target_build_and_runtime_test
+    - independent_rust_review
     escalation:
-      - unsound_unsafe_abstraction
-      - security_sensitive_ffi_or_concurrency
-      - unsupported_target_or_toolchain
+    - unsound_unsafe_abstraction
+    - security_sensitive_ffi_or_concurrency
+    - unsupported_target_or_toolchain
     authority_boundaries:
-      - no_lifecycle_systems_engineering_or_architecture_substitution
-      - no_unsafe_code_without_documented_invariants
-      - no_self_approval_or_self_verification
-
+    - no_lifecycle_systems_engineering_or_architecture_substitution
+    - no_unsafe_code_without_documented_invariants
+    - no_self_approval_or_self_verification
 worker_overrides:
   mobile:
-    mission: implement and sustain production mobile applications across lifecycle, state, offline behavior, platform capabilities, accessibility, security, performance, testing, signing, distribution, and release
+    mission: implement and sustain production mobile applications across lifecycle, state, offline behavior, platform capabilities,
+      accessibility, security, performance, testing, signing, distribution, and release
     owning_team: engineering
     responsibilities:
-      - mobile_architecture_and_module_boundaries
-      - native_or_cross_platform_selection
-      - lifecycle_state_navigation_and_restoration
-      - persistence_offline_sync_conflict_and_reconciliation
-      - api_identity_notification_deeplink_and_platform_integration
-      - permission_device_capability_and_background_work
-      - mobile_security_privacy_and_sensitive_data_controls
-      - adaptive_accessible_and_multiformfactor_interfaces
-      - performance_energy_crash_and_operational_telemetry
-      - testing_signing_distribution_rollout_and_rollback
+    - mobile_architecture_and_module_boundaries
+    - native_or_cross_platform_selection
+    - lifecycle_state_navigation_and_restoration
+    - persistence_offline_sync_conflict_and_reconciliation
+    - api_identity_notification_deeplink_and_platform_integration
+    - permission_device_capability_and_background_work
+    - mobile_security_privacy_and_sensitive_data_controls
+    - adaptive_accessible_and_multiformfactor_interfaces
+    - performance_energy_crash_and_operational_telemetry
+    - testing_signing_distribution_rollout_and_rollback
     required_capabilities:
-      - coding
-      - mobile_platform_reasoning
-      - lifecycle_and_state_reasoning
-      - offline_and_distributed_data_reasoning
-      - accessibility_engineering
-      - application_security_reasoning
-      - debugging
-      - tool_execution
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - mobile_platform_reasoning
+    - lifecycle_and_state_reasoning
+    - offline_and_distributed_data_reasoning
+    - accessibility_engineering
+    - application_security_reasoning
+    - debugging
+    - tool_execution
     verification:
-      - platform_builds
-      - lifecycle_offline_and_migration_tests
-      - device_network_and_background_tests
-      - accessibility_security_and_privacy_review
-      - independent_mobile_release_review
+    - platform_builds
+    - lifecycle_offline_and_migration_tests
+    - device_network_and_background_tests
+    - accessibility_security_and_privacy_review
+    - independent_mobile_release_review
     escalation:
-      - data_loss_or_sync_corruption
-      - sensitive_permission_identity_or_storage_failure
-      - destructive_migration_without_recovery
+    - data_loss_or_sync_corruption
+    - sensitive_permission_identity_or_storage_failure
+    - destructive_migration_without_recovery
     authority_boundaries:
-      - no_product_ux_backend_platform_store_legal_or_compliance_substitution
-      - no_simulator_only_release_claim
-      - no_self_approval_or_self_verification
-
+    - no_product_ux_backend_platform_store_legal_or_compliance_substitution
+    - no_simulator_only_release_claim
+    - no_self_approval_or_self_verification
   devops:
-    mission: implement delivery, deployment, infrastructure automation, observability, recovery, and controlled operational change for shared platforms
+    mission: implement delivery, deployment, infrastructure automation, observability, recovery, and controlled operational
+      change for shared platforms
     owning_team: platform_reliability
     responsibilities:
-      - ci_cd_and_gitops
-      - infrastructure_as_code
-      - container_and_runtime_delivery
-      - deployment_strategy_and_rollback
-      - configuration_and_secret_integration
-      - observability_and_operational_automation
-      - environment_and_release_coordination
-      - disaster_recovery_implementation
+    - ci_cd_and_gitops
+    - infrastructure_as_code
+    - container_and_runtime_delivery
+    - deployment_strategy_and_rollback
+    - configuration_and_secret_integration
+    - observability_and_operational_automation
+    - environment_and_release_coordination
+    - disaster_recovery_implementation
     required_capabilities:
-      - coding
-      - infrastructure_reasoning
-      - platform_reasoning
-      - tool_execution
-      - observability
-      - risk_analysis
-    preferred_implementations:
-      - gpt-5.6-terra
-      - gpt-5.6-sol
-      - claude-sonnet-5
-    fallbacks:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
+    - coding
+    - infrastructure_reasoning
+    - platform_reasoning
+    - tool_execution
+    - observability
+    - risk_analysis
     verification:
-      - configuration_and_pipeline_validation
-      - deployment_and_rollback_test
-      - observability_and_recovery_review
-      - independent_platform_review
+    - configuration_and_pipeline_validation
+    - deployment_and_rollback_test
+    - observability_and_recovery_review
+    - independent_platform_review
     escalation:
-      - production_side_effect
-      - destructive_infrastructure_change
-      - unavailable_rollback_or_recovery
+    - production_side_effect
+    - destructive_infrastructure_change
+    - unavailable_rollback_or_recovery
     authority_boundaries:
-      - no_platform_architecture_sre_security_or_release_self_approval
-      - no_unreviewed_production_change
-      - no_self_approval_or_self_verification
+    - no_platform_architecture_sre_security_or_release_self_approval
+    - no_unreviewed_production_change
+    - no_self_approval_or_self_verification

@@ -23,6 +23,7 @@ def test_research_worker_binding_and_boundaries() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     specialist = bundle.specialist_registry[fixture["specialist"]]
     worker = bundle.worker_registry[fixture["worker"]]
+    runtime_defaults = bundle.worker_runtime_defaults[fixture["worker"]]
 
     assert specialist["worker_binding"] == fixture["worker"]
     assert specialist["primary_team"] == fixture["primary_team"]
@@ -34,13 +35,13 @@ def test_research_worker_binding_and_boundaries() -> None:
         "mission",
         "responsibilities",
         "required_capabilities",
-        "preferred_implementations",
-        "fallbacks",
         "verification",
         "escalation",
         "authority_boundaries",
     ):
         assert worker.get(field), f"research is missing required worker field {field}"
+    for field in ("preferred_implementations", "fallbacks"):
+        assert runtime_defaults.get(field), f"research is missing runtime compatibility field {field}"
 
     for field, expected_values in fixture["contains"].items():
         actual_values = worker[field]

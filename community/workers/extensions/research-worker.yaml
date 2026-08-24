@@ -1,57 +1,47 @@
 version: 0.2
 status: active
-reviewed_at: 2026-08-05
-
-policy: >-
-  This worker is derived from the authoritative researcher specialist role card.
-  It adds core routing and verification context without replacing, compressing,
-  weakening, or overriding that specialist specification. Automatic fallbacks
-  prefer a different provider family from the selected implementation. Opus is
-  reserved for evidence-based escalation rather than routine availability failover.
-
+reviewed_at: '2026-08-23'
+policy: This worker is derived from the authoritative researcher specialist role card. It adds core routing and verification
+  context without replacing, compressing, weakening, or overriding that specialist specification. Automatic fallbacks prefer
+  a different provider family from the selected implementation. Opus is reserved for evidence-based escalation rather than
+  routine availability failover.
 workers:
   research:
-    mission: gather, validate, triangulate, challenge, and synthesize evidence with explicit source quality, confidence, and uncertainty
+    mission: gather, validate, triangulate, challenge, and synthesize evidence with explicit source quality, confidence, and
+      uncertainty
     owning_team: research
     responsibilities:
-      - research_question_scoping
-      - primary_source_discovery
-      - source_quality_assessment
-      - claim_triangulation
-      - domain_framework_application
-      - adversarial_hypothesis_testing
-      - uncertainty_quantification
-      - structured_research_briefing
+    - research_question_scoping
+    - primary_source_discovery
+    - source_quality_assessment
+    - claim_triangulation
+    - domain_framework_application
+    - adversarial_hypothesis_testing
+    - uncertainty_quantification
+    - structured_research_briefing
     required_capabilities:
-      - source_grounding
-      - research_reasoning
-      - synthesis
-      - evidence_validation
-      - contradiction_analysis
-      - uncertainty_calibration
-      - domain_adaptation
-    preferred_implementations:
-      - gemini-3.1-pro-preview
-      - claude-sonnet-5
-      - gpt-5.6-sol
-    fallbacks:
-      - claude-sonnet-5
-      - gpt-5.6-sol
+    - source_grounding
+    - research_reasoning
+    - synthesis
+    - evidence_validation
+    - contradiction_analysis
+    - uncertainty_calibration
+    - domain_adaptation
     verification:
-      - source_independence_check
-      - claim_evidence_trace
-      - counterargument_review
-      - recency_and_staleness_check
-      - confidence_calibration
+    - source_independence_check
+    - claim_evidence_trace
+    - counterargument_review
+    - recency_and_staleness_check
+    - confidence_calibration
     escalation:
-      - insufficient_source_triangulation
-      - material_source_conflict
-      - high_consequence_domain
-      - current_evidence_unavailable
-      - legal_medical_financial_advice_boundary
+    - insufficient_source_triangulation
+    - material_source_conflict
+    - high_consequence_domain
+    - current_evidence_unavailable
+    - legal_medical_financial_advice_boundary
     authority_boundaries:
-      - no_business_decision_substitution
-      - no_final_deliverable_ownership
-      - no_code_or_automation_execution
-      - no_inference_presented_as_fact
-      - no_unqualified_legal_medical_financial_advice
+    - no_business_decision_substitution
+    - no_final_deliverable_ownership
+    - no_code_or_automation_execution
+    - no_inference_presented_as_fact
+    - no_unqualified_legal_medical_financial_advice
