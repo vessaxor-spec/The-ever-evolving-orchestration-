@@ -1,6 +1,6 @@
 version: 0.2
 status: public-draft
-reviewed_at: 2026-08-05
+reviewed_at: 2026-08-24
 
 scenarios:
   - id: orchestration-route
@@ -19,7 +19,7 @@ scenarios:
         selected_specialist: agents-orchestrator
         specialist_risk_profile: high
         selected_implementation.model: gpt-5.6-sol
-        selected_implementation.source: routing.orchestration.primary
+        selected_implementation.source: runtime_compatibility.task_routes.orchestration.primary
         fallback_implementation.model: gemini-3.1-pro-preview
         verification.team: verification
         verification.implementation.model: claude-sonnet-5
@@ -58,7 +58,7 @@ scenarios:
         selected_specialist: operations-manager
         specialist_risk_profile: high
         selected_implementation.model: claude-sonnet-5
-        selected_implementation.source: routing.operations.primary
+        selected_implementation.source: runtime_compatibility.task_routes.operations.primary
         fallback_implementation.model: gemini-3.1-pro-preview
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
@@ -98,7 +98,7 @@ scenarios:
         selected_specialist: project-manager
         specialist_risk_profile: medium
         selected_implementation.model: claude-sonnet-5
-        selected_implementation.source: routing.project_delivery.primary
+        selected_implementation.source: runtime_compatibility.task_routes.project_delivery.primary
         fallback_implementation.model: gemini-3.1-pro-preview
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
@@ -136,7 +136,7 @@ scenarios:
         selected_specialist: incident-commander
         specialist_risk_profile: critical
         selected_implementation.model: claude-sonnet-5
-        selected_implementation.source: routing.incident_response.primary
+        selected_implementation.source: runtime_compatibility.task_routes.incident_response.primary
         fallback_implementation.model: gemini-3.1-pro-preview
         verification.team: verification
         verification.implementation.model: gpt-5.6-sol
