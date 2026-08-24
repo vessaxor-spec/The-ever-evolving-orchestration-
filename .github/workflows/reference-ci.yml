@@ -13,51 +13,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: reference-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  rmi7_apply_rewire:
-    name: Apply RMI-7 runtime rewiring
-    if: ${{ github.event_name == 'pull_request' && github.head_ref == 'feature/runtime-model-neutral-responsibility' }}
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - name: Check out feature branch
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
-        with:
-          ref: feature/runtime-model-neutral-responsibility
-      - name: Detect whether runtime rewiring is already applied
-        id: detect
-        run: |
-          if grep -q 'runtime_compatibility: dict' reference/implementations/python/src/teo_reference/config.py; then
-            echo 'needed=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'needed=true' >> "$GITHUB_OUTPUT"
-          fi
-      - name: Set up Python
-        if: ${{ steps.detect.outputs.needed == 'true' }}
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
-        with:
-          python-version: "3.11.15"
-      - name: Apply exact-source runtime rewiring
-        if: ${{ steps.detect.outputs.needed == 'true' }}
-        run: |
-          python ci/rmi7_rewire_runtime_v2.py
-          git diff --check
-          python -m compileall -q reference/implementations/python/src
-      - name: Commit runtime rewiring
-        if: ${{ steps.detect.outputs.needed == 'true' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reference/implementations/python/src/teo_reference/config.py reference/implementations/python/src/teo_reference/engine.py reference/implementations/python/src/teo_reference/specialist_routing.py
-          git commit -m "rmi7: bind runtime defaults outside responsibility routes"
-          git push origin HEAD:feature/runtime-model-neutral-responsibility
-
   validate:
     name: Validate reference router
     runs-on: ubuntu-24.04
