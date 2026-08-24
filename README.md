@@ -10,16 +10,15 @@
 
 ### Models evolve. Responsibilities endure.
 
-A vendor-neutral orchestration specification and runnable reference control plane for deciding **which intelligence should do the work, under what authority, with which fallback, and with what verification**.
+A vendor-neutral orchestration specification and runnable reference control plane for deciding **who should own the work, what capabilities are required, which currently eligible implementation should execute, how fallback should behave, and what evidence is required before completion**.
 
 [![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)
 [![Release](https://img.shields.io/github/v/release/vessaxor-spec/The-ever-evolving-orchestration-?label=release)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0)
 
-[**Public overview**](https://vessaxor-spec.github.io/teo/) ·
-[**Explore the specification**](docs/specification/lexicon.md) ·
-[**Run the reference router**](reference/implementations/python/README.md) ·
-[**See current progress**](docs/stewardship/progress-tracker.md) ·
-[**View the roadmap**](docs/stewardship/roadmap.md)
+[**Specification**](docs/specification/lexicon.md) ·
+[**Reference router**](reference/implementations/python/README.md) ·
+[**Current progress**](docs/stewardship/progress-tracker.md) ·
+[**Roadmap**](docs/stewardship/roadmap.md)
 
 **Stable:** `v1.0.0` · **State:** `reference_operational` · **Development:** `teo-reference-router==1.0.1.dev0`
 
@@ -27,49 +26,23 @@ A vendor-neutral orchestration specification and runnable reference control plan
 
 ---
 
-<details>
-<summary><strong>Table of contents</strong></summary>
-
-- [About TEO](#about-teo)
-- [How TEO works](#how-teo-works)
-- [What TEO owns](#what-teo-owns)
-- [Current state](#current-state)
-- [Quick start](#quick-start)
-- [Repository map](#repository-map)
-- [Governance and evidence](#governance-and-evidence)
-- [Roadmap](#roadmap)
-- [Community stewardship](#community-stewardship)
-- [License](#license)
-
-</details>
-
 ## About TEO
 
-AI models change quickly. Responsibility, authority, risk boundaries, and the need for accountable verification change much more slowly.
+TEO is an orchestration control plane. It separates durable responsibility, risk, authority, capability, fallback, and verification semantics from temporary model/provider implementations.
 
-TEO is built around one enduring premise:
+Its governing premise is:
 
 > **The model is not the architecture.**
 
-TEO separates **what a task requires** from **which model happens to implement it today**. It resolves responsibility, effective risk, required capability, implementation eligibility, fallback, and independent verification before a result can become an evidence-bearing outcome.
+Its runtime-binding invariant is:
 
-That makes the system resilient to provider changes, model releases, new access mechanisms, and future implementations without repeatedly redesigning how work is understood and governed.
+> **TEO routes capabilities and responsibility, not model brands.**
 
-### Why this exists
-
-TEO is designed to prevent several common orchestration failures:
-
-- choosing a model before resolving responsibility and capability;
-- treating model competence as execution authority;
-- allowing fallback to silently weaken risk or verification requirements;
-- coupling routing to API keys, subscriptions, OAuth state, or billing;
-- letting one provider plan, execute, review, and verify consequential work without independence;
-- presenting simulated, staged, or research evidence as live operational proof;
-- embedding temporary provider assumptions into permanent architecture.
+TEO is designed to remain useful as models, providers, local runtimes, connection methods, versions, and deployment environments change.
 
 ## How TEO works
 
-TEO resolves the control path in this order:
+The current executable control path is:
 
 ```text
 Task
@@ -79,106 +52,177 @@ Task
   -> Worker
   -> Optional Specialist
   -> Required capabilities
-  -> Eligible implementation
-  -> Provider-aware recovery route
-  -> Independent verifier
+  -> Runtime inventory
+  -> Eligibility
+  -> Calibration
+  -> Best-fit selection / scoped pin
+  -> Execution
+  -> Observed runtime identity
+  -> Independent verification
   -> Evidence-bearing outcome
 ```
 
-The active control plane is **team-first, capability-first, evidence-first, and failure-aware**.
+Candidate implementations move through a strict lifecycle:
 
-### Core routing principles
+**Discovered -> Eligible -> Calibrated -> Selected**
 
-1. **Responsibility before implementation.** Resolve the accountable Team and Worker before selecting a model.
-2. **Capability before provider.** Determine what the task requires before considering an implementation.
-3. **Risk is a floor.** Convenience, fallback, or caller preference cannot lower effective risk.
-4. **Connection is not fitness.** Authentication and subscription state do not become model-selection signals.
-5. **Fallback preserves authority.** Recovery must remain capability-valid and cannot widen permissions or weaken verification.
-6. **Verification is independent.** Consequential work must have route-appropriate independent verification and fail closed when none remains eligible.
+Discovery, availability, calibration evidence, fitness scores, compatibility defaults, and pins do not create authority. Selection occurs only inside the already-authorized set.
 
-The canonical routing source is [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml). Model-sensitive changes are governed by [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml). README prose summarizes those controls and does not outrank them.
+### Responsibility is model-neutral
+
+Teams, Workers, Specialists, task routes, risk, and authority do not own concrete model/provider identity.
+
+Current responsibility and runtime-binding surfaces are separated deliberately:
+
+- `community/workers/workers.yaml` — Worker responsibility and capability structure;
+- `policy/routing/core/routing.yaml` — model-neutral task/responsibility routing;
+- `policy/routing/core/specialist-selection-policy.yaml` — model-neutral specialist selection policy;
+- `policy/routing/core/runtime-compatibility-defaults.yaml` — explicit named implementation compatibility/default evidence;
+- runtime inventory / eligibility / calibration / selection ports — actual runtime binding.
+
+The retired `specialist-model-routing.yaml` is not a current authority surface.
+
+Named implementations may still appear where names are materially required: compatibility/default evidence, provider/model registries, experiments, explicit scoped pins, reproduction, incident mitigation, examples, fixtures, provider adapters, or evidence records. Those names do not become responsibility identity.
+
+### Runtime inventory does not equal runtime truth
+
+The default configured compatibility bridge represents configured implementations as `user_declared` compatibility inputs. It does **not** claim those implementations are currently running, reachable, healthy, available to a particular account, or empirically calibrated.
+
+Installations may inject a provider-independent runtime inventory, eligibility evidence source, calibration history, and fitness evidence through the runtime-binding ports. Local and remote implementations are peers unless explicit policy says otherwise.
+
+### Observed identity matters
+
+TEO records intended execution identity separately from independently observed executor/checker identity. A selected model name is not enough to prove what actually ran.
+
+Observed identity may be `match`, `mismatch`, or `unconfirmed`. Mismatch or unconfirmed identity cannot be silently promoted to a verified completed outcome. Exact execution-configuration identity is not fabricated when the provider attests only model/provider identity.
 
 ## What TEO owns
 
 | TEO owns | TEO deliberately does not own |
 |---|---|
-| responsibility resolution | the user's provider account |
-| effective-risk interpretation | API keys, OAuth sessions, subscriptions, or billing |
-| Team, Worker, and optional Specialist assignment | host identity or host-native permissions |
-| required capabilities | an arbitrary sandbox, container, or deployment runtime |
-| eligible implementation and reasoning route | permission to widen execution scope |
-| provider-aware fallback and escalation | a permanent universal model ranking |
-| independent verifier assignment | provider credentials or credential brokering |
+| responsibility resolution | provider accounts, subscriptions, or billing |
+| effective-risk interpretation | API keys, OAuth sessions, service-account lifecycle, or credential brokering |
+| Team / Worker / optional Specialist assignment | host identity or host-native permissions |
+| required capabilities | generic sandbox/container/deployment infrastructure |
+| runtime eligibility/calibration/selection policy | permission to widen task or live-execution authority |
+| bounded fallback/escalation | a universal permanent model ranking |
+| independent verification | provider credential provisioning |
 | evidence-aware finalization | production distributed scheduling by implication |
 
-Provider access is intentionally separated from routing. An integrating runtime may use any legitimate provider-supported access mechanism without changing TEO's responsibility, capability, risk, fallback, or verifier decisions. See [`docs/specification/provider-access-boundary.md`](docs/specification/provider-access-boundary.md) and [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
+## Connection neutrality
+
+Provider access is intentionally separate from routing semantics.
+
+API keys, OAuth or subscription-backed sessions, delegated identity, service accounts, connector sessions, SDK-managed identity, credential brokers, local runtimes, and future provider-supported access methods must not change the selected Team, Worker, Specialist, model role, fallback, verifier, or reasoning effort merely because the access mechanism differs.
+
+A missing credential or entitlement is an access-boundary condition, not proof that a different model was intrinsically the correct route.
+
+See [`docs/specification/provider-access-boundary.md`](docs/specification/provider-access-boundary.md) and [`policy/governance/provider-access-separation.yaml`](policy/governance/provider-access-separation.yaml).
 
 ## Current state
 
-TEO has crossed the functional-v1 boundary and is now in post-v1 stewardship and controlled evolution.
+TEO has crossed the functional-v1 boundary and is in post-v1 stewardship and controlled evolution.
 
 | Surface | Current state |
 |---|---|
 | Stable release | [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0), `reference_operational` |
 | Development line | `teo-reference-router==1.0.1.dev0` |
-| Repository architecture | R1 through R5 complete and CI-governed |
+| Current executable main | `3d121fde56f840bbfaa6bcb240c262f045525786` after RMI-7 / PR #208 |
+| Runtime model binding | RMI-1 through RMI-7 merged; RMI-8 documentation reconciliation is the remaining runtime-binding gate |
+| Current qualification | Reference Implementation CI #951: **1,113 tests**, **602 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
+| Organizational topology | ten active organizational teams, 84 workers, 82 preserved specialist role cards, dedicated Mission Control workers for orchestration, operations, project delivery, and incident response |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
-| Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
-| Regulated specialist evidence | six-card pilot stability-qualified; seven-day authority monitoring remains active; expansion requires explicit next risk-tier batch approval |
+| Staged live candidate | `documentation`, evaluation only, no live-execution authority |
 | High and critical live execution | not authorized |
+| Regulated specialist evidence | stability-qualified six-card pilot; seven-day source-resolution cadence remains active; expansion requires explicit next risk-tier batch approval |
 | Current operational priority | evidence-governed live execution expansion |
-| Canonical current status | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
 
-The current reference system includes deterministic routing, risk controls, specialist bindings, capability checks, provider-diverse recovery, fresh-verifier rotation, guarded provider execution, content-free runtime telemetry, evidence-aware finalization, and qualified-human authority where policy requires it.
+The active specialist topology includes [`community/specialists/workforce-expansion-active.yaml`](community/specialists/workforce-expansion-active.yaml). Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, Shadow Route Evaluation, and the Qualified-human approval lifecycle have completed their current declared milestones.
 
-The bounded regulated-specialist evidence pilot has completed **2 of 2 formal refresh cycles** and the executable **stability qualification**. The qualification performed **five complete clean authority-resolution replays**, **three independent repeatability runs**, **15 of 15 governed fail-closed mutations**, a controlled authority-move path, and an external-network observation that resolved all seven declared authorities. The seven-day source-resolution cadence remains continuous drift monitoring, not an elapsed-time waiting gate. Qualification does not auto-authorize expansion; an explicit next risk-tier batch approval and separate reviewed change are still required.
+## Runtime model binding history
 
-### Host Integration research
+The runtime-model-binding program is tracked in Issue #200.
 
-The **Host Integration Contract** remains non-normative research. Empirical Fresh-AI trial 001 supports fresh-session, no-reminder **routing continuity**, but it did **not** establish full selected-executor/verifier end-to-end assimilation. TEO preserves that negative result rather than promoting it into a stronger claim.
+- RMI-1: provider-independent runtime-binding contracts and inventory.
+- RMI-2: multi-source runtime inventory composition.
+- RMI-3: provider-independent eligibility evidence.
+- RMI-4: exact execution-configuration calibration history and freshness.
+- RMI-5: best-fit runtime selection, scoped pins, and production dispatch cutover.
+- RMI-6: observed executor/checker runtime identity through telemetry, Route-Outcome, finalization, and provenance.
+- RMI-7: model-neutral responsibility routes and explicit runtime compatibility/default surfaces.
+- RMI-8: canonical documentation/progress reconciliation.
 
-See:
+RMI-7 merged via PR #208 as `3d121fde56f840bbfaa6bcb240c262f045525786`. Exact-head CI #951 qualified the change with 1,113 tests, 602 tracked files, 42 schemas, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end routing.
 
-- [`research/roadmaps/host-integration-contract.md`](research/roadmaps/host-integration-contract.md)
-- [`research/roadmaps/host-integration-assimilation-protocol.md`](research/roadmaps/host-integration-assimilation-protocol.md)
-- [`research/roadmaps/host-integration-fresh-session-trial.md`](research/roadmaps/host-integration-fresh-session-trial.md)
-- [`research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md)
+## Live execution boundary
 
-The repository's current validation counts, evidence milestones, and exact research boundaries belong in the canonical progress tracker and research records. The compact snapshot below is retained because TEO CI explicitly protects these README truth claims.
+Runtime model binding does not widen live authority.
 
-<details>
-<summary><strong>Current evidence snapshot (CI-protected)</strong></summary>
+The current `high_volume_simple` low or medium risk canary remains the only accepted guarded live execution scope. `documentation` is the first staged candidate; its staged replay harness and operator path are validated, but provider-backed replay evidence is still pending and it has no live-execution authority.
 
-TEO currently has **ten active organizational teams**, **84 workers**, **82 preserved specialist role cards**, and dedicated Mission Control workers for orchestration, operations, project delivery, and incident response. The Mission Control worker identities are `orchestration`, `operations`, `project_delivery`, and `incident_response`. The active specialist topology includes [`community/specialists/workforce-expansion-active.yaml`](community/specialists/workforce-expansion-active.yaml). Route-Outcome Evidence, the Benchmark and Outcome Lab, Source-backed Cost Attribution, **Shadow Route Evaluation**, and the **Qualified-human approval lifecycle** have completed their current declared milestones.
+**The next gate is provider-backed controlled documentation replay evidence.**
 
-The accepted substantive runtime-control baseline remains **Reference Implementation CI #514** with **657 automated tests**, **477 tracked-file layout checks**, regulated specialist evidence validation, **40 JSON Schema** parses, valid linked configuration, and the provider-diverse end-to-end reference lifecycle. The documentation reconciliation baseline is **CI #602** with **802 automated tests** and **515 tracked-file layout checks**. The latest Host Integration research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks**. The regulated-evidence stability qualification was accepted with **967 automated tests**, **551 tracked-file layout checks**, **41 JSON Schemas**, valid linked configuration, regulated-specialist evidence validation, and the provider-diverse artifact-bound reference lifecycle. These baselines prove their declared checks, not broader provider-backed production claims.
+CI conformance with deterministic fake provider transports does not count as empirical provider-backed evidence. High and critical live execution remains outside the current guarded runtime.
 
-The regulated pilot itself is now **stability-qualified**. Its current evidence consists of **five complete clean authority-resolution replays**, **three independent repeatability runs**, **15 of 15 governed fail-closed mutations**, a controlled authority move, and a GitHub-hosted external-network observation that resolved **7 of 7 declared authorities**. Continuous resolution remains on a **seven-day source-resolution cadence**, and any expansion still requires **explicit next risk-tier batch approval**.
+## Evidence and verification
 
-Host Integration has accumulated **eleven provider-independent adversarial slices** plus integrated Fresh-AI assimilation/conformance. Those slices include **verifier-context independence**, **exact artifact/change-set stale-PASS resistance**, **brokered conformant process-lifetime cross-process authority/replay**, **static runtime-wired authority-surface reconciliation**, **process-lifetime recursion resistance**, **exact local freshness binding**, and **portfolio/task-admission separation**. The assimilation work operationalizes the rule **Assimilation is not installation** and requires **two distinct post-assimilation task IDs** rather than treating one successful demo as durable continuity.
+A successful provider call is not a completed TEO outcome. Completion may require route-outcome evidence, artifact integrity, observed runtime identity, provider-diverse verification, and separately required qualified-human authority.
+
+Key controls include:
+
+- non-lowerable effective risk;
+- provider/model deny-wins constraints;
+- preview-model explicit acceptance;
+- bounded retries and canonical redispatch for fallback;
+- provider-family circuit state separated from tenant entitlement/access state;
+- content-free runtime telemetry by default;
+- exact artifact-bound finalization;
+- provider-diverse independent verification;
+- observed executor/checker identity integrity;
+- qualified-human approval where policy independently requires it.
+
+## Model freshness
+
+Pretrained, cached, remembered, or previously documented model information is not authoritative for current model state.
+
+Before recommending or changing a model-bearing compatibility/evidence/default surface, verify current authoritative provider documentation under [`policy/governance/model-freshness.yaml`](policy/governance/model-freshness.yaml).
+
+A newer model does not automatically replace an existing route or compatibility default. Fresh releases trigger review, not automatic authority changes.
+
+## Host Integration research
+
+The Host Integration Contract remains non-normative research and does not widen current live scope.
+
+The current research record contains **eleven provider-independent adversarial slices** plus integrated Fresh-AI assimilation/conformance. The latest consolidated historical research baseline remains **Reference Implementation CI #739** with **964 automated tests** and **543 tracked-file layout checks** for that research milestone; this is historical Host Integration evidence, not the current whole-repository validation baseline.
+
+Satisfied research slices include **brokered conformant process-lifetime cross-process authority/replay**, **static runtime-wired authority-surface reconciliation**, **verifier-context independence**, **exact artifact/change-set stale-PASS resistance**, **process-lifetime recursion resistance**, **exact local freshness binding**, and **portfolio/task-admission separation**.
+
+The governing integration principle is **Assimilation is not installation**. Process-local assimilation evidence requires continued use on **two distinct post-assimilation task IDs** rather than treating one successful demo as durable continuity.
+
+Empirical Fresh-AI trial 001 supports fresh-session/no-reminder **routing continuity**, but not full end-to-end selected-executor/verifier assimilation. Research simulation may support `routing_continuity_only`; authenticated selected-versus-observed executor/verifier identity plus artifact/digest binding remains required for a stronger claim. The earlier **red-canary CI #676** is preserved as research evidence rather than hidden.
 
 Key research records include:
 
-- [`host-integration-verifier-artifact-binding-2026-08-12.md`](research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md)
-- [`host-integration-cross-process-authority-2026-08-13.md`](research/runtime/host-integration-cross-process-authority-2026-08-13.md)
-- [`host-integration-authority-surface-reconciliation-2026-08-14.md`](research/runtime/host-integration-authority-surface-reconciliation-2026-08-14.md)
-- [`host-integration-recursion-resistance-2026-08-14.md`](research/runtime/host-integration-recursion-resistance-2026-08-14.md)
-- [`host-integration-freshness-binding-2026-08-14.md`](research/runtime/host-integration-freshness-binding-2026-08-14.md)
-- [`host-integration-portfolio-authority-separation-2026-08-15.md`](research/runtime/host-integration-portfolio-authority-separation-2026-08-15.md)
-- [`host-integration-assimilation-protocol.md`](research/roadmaps/host-integration-assimilation-protocol.md)
-- [`host-integration-fresh-session-trial.md`](research/roadmaps/host-integration-fresh-session-trial.md)
-- [`host-integration-integrated-conformance-assimilation-2026-08-15.md`](research/runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md)
-- [`2026-08-15-local-fresh-ai-cross-session-trial-001.md`](research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md)
+- [`research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md`](research/runtime/host-integration-verifier-artifact-binding-2026-08-12.md)
+- [`research/runtime/host-integration-cross-process-authority-2026-08-13.md`](research/runtime/host-integration-cross-process-authority-2026-08-13.md)
+- [`research/runtime/host-integration-authority-surface-reconciliation-2026-08-14.md`](research/runtime/host-integration-authority-surface-reconciliation-2026-08-14.md)
+- [`research/runtime/host-integration-recursion-resistance-2026-08-14.md`](research/runtime/host-integration-recursion-resistance-2026-08-14.md)
+- [`research/runtime/host-integration-freshness-binding-2026-08-14.md`](research/runtime/host-integration-freshness-binding-2026-08-14.md)
+- [`research/runtime/host-integration-portfolio-authority-separation-2026-08-15.md`](research/runtime/host-integration-portfolio-authority-separation-2026-08-15.md)
+- [`research/roadmaps/host-integration-assimilation-protocol.md`](research/roadmaps/host-integration-assimilation-protocol.md)
+- [`research/roadmaps/host-integration-fresh-session-trial.md`](research/roadmaps/host-integration-fresh-session-trial.md)
+- [`research/runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md`](research/runtime/host-integration-integrated-conformance-assimilation-2026-08-15.md)
+- [`research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md`](research/runtime/2026-08-15-local-fresh-ai-cross-session-trial-001.md)
 
-Empirical trial 001 supports fresh-session, no-reminder **routing continuity** but not full end-to-end assimilation. The hardened validator therefore limits research simulation to `routing_continuity_only` unless authenticated selected-versus-observed executor and verifier identity plus digest binding are proven. The earlier **red-canary CI #676** is preserved as evidence from the exact local freshness binding slice rather than hidden as a clean-history rewrite.
+## Accepted future research
 
-The current canonical workstream is **evidence-governed live execution expansion**, **now at 65%**. **`documentation` is the first staged candidate**; its provider-diverse topology and **staged replay harness are validated**, but **provider-backed replay evidence is still pending** and it has **no live-execution authority**. **The next gate is provider-backed controlled documentation replay evidence**. The low or medium risk `high_volume_simple` canary remains the only accepted live execution scope.
+Current non-normative accepted research directions include:
 
-The targeted **control-integrity audit** closed a qualified-human **temporal-causality** gap and added recovery-authority regression coverage. **Control Integrity remains intentionally scored at 90%** because mutation depth remains an ongoing discipline. **Issue #100** repository branch-retention cleanup **is complete** and is not a runtime or routing blocker.
+- Host Integration Contract;
+- Execution Environment & Recovery;
+- Task Intent & Action Authority.
 
-Current compatible extensions include **final execution provenance**. Accepted non-normative future research includes **Task Intent & Action Authority** and **Execution Environment & Recovery**. None of these research directions silently widen current live authority.
-
-</details>
+These research tracks do not silently alter Task Request authority, provider routing, specialist responsibility, qualified-human approval, live scope, or the stable v1 contract.
 
 ## Quick start
 
@@ -187,7 +231,7 @@ Current compatible extensions include **final execution provenance**. Accepted n
 - Python **3.11+**
 - Git
 
-### Install the reference implementation
+### Install
 
 ```bash
 git clone https://github.com/vessaxor-spec/The-ever-evolving-orchestration-.git
@@ -195,15 +239,13 @@ cd The-ever-evolving-orchestration-
 python -m pip install -e '.[test]'
 ```
 
-The package is defined at the repository root and exposes the `teo` CLI.
-
 ### Validate linked configuration
 
 ```bash
 teo --repo-root . validate
 ```
 
-### Create a dispatch
+### Plan a dispatch
 
 ```bash
 teo --repo-root . plan \
@@ -212,136 +254,21 @@ teo --repo-root . plan \
   --audit-log /tmp/teo-audit.jsonl
 ```
 
-### Finalize an executed and independently verified result
-
-```bash
-teo --repo-root . finalize \
-  /tmp/teo-dispatch.json \
-  execution-result.json \
-  verification-result.json \
-  --audit-log /tmp/teo-audit.jsonl
-```
-
-### Run the demonstration and tests
-
-```bash
-python reference/examples/run_example.py
-pytest
-```
-
-For provider adapters, retry/fallback behavior, guarded live execution, telemetry, live verification, and Route-Outcome Evidence integration, see the [`Python reference router guide`](reference/implementations/python/README.md).
-
 ## Repository map
 
-```text
-.
-├── README.md                     # public entry point
-├── CONSTITUTION.md               # enduring governance principles
-├── AI_INSTRUCTIONS.md            # machine-facing repository operating rules
-├── CHANGELOG.md                  # accepted change history
-├── policy/                       # normative governance, routing, and runtime policy
-├── registry/                     # teams, workers, specialists, models, and capabilities
-├── community/                    # human-readable teams, specialists, capsules, stewardship
-├── reference/                    # runnable reference implementation and examples
-├── research/                     # non-normative experiments, evidence, and future directions
-├── docs/                         # specification, architecture, methodology, releases, history
-├── tests/                        # executable conformance and regression evidence
-├── ci/                           # repository validation support
-└── assets/                       # public visual assets
-```
+- [`CONSTITUTION.md`](CONSTITUTION.md) — enduring project principles.
+- [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) — repository operating instructions for AI agents.
+- [`docs/specification/`](docs/specification/) — canonical concepts and contracts.
+- [`policy/`](policy/) — machine-readable routing, runtime, governance, and authority policy.
+- [`registry/`](registry/) — capabilities, implementations, and evidence/catalog data.
+- [`community/`](community/) — Teams, Workers, and Specialist role definitions.
+- [`reference/implementations/python/`](reference/implementations/python/) — runnable reference implementation.
+- [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) — canonical current progress.
+- [`docs/stewardship/roadmap.md`](docs/stewardship/roadmap.md) — strategic direction.
+- [`research/`](research/) — non-normative research and future-roadmap evidence.
 
-Repository placement is governed by [`policy/governance/repository-layout.yaml`](policy/governance/repository-layout.yaml) and explained in [`docs/stewardship/repository-layout.md`](docs/stewardship/repository-layout.md).
+## Governance
 
-### Documentation map
+Repository truth outranks remembered state. Material architectural or behavioral claims should be evidence-backed, current where freshness matters, independently checked where consequence warrants it, and reconciled into canonical documentation only after executable truth exists.
 
-| If you want to understand... | Start here |
-|---|---|
-| enduring principles | [`CONSTITUTION.md`](CONSTITUTION.md) |
-| project philosophy | [`docs/philosophy/manifesto.md`](docs/philosophy/manifesto.md) |
-| terminology | [`docs/specification/lexicon.md`](docs/specification/lexicon.md) |
-| functional-v1 boundary | [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md) and [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) |
-| current operational state | [`docs/stewardship/progress-tracker.md`](docs/stewardship/progress-tracker.md) |
-| strategic direction | [`docs/stewardship/roadmap.md`](docs/stewardship/roadmap.md) |
-| canonical routing | [`policy/routing/core/routing.yaml`](policy/routing/core/routing.yaml) |
-| regulated specialist evidence | [`policy/specialists/evidence-pilot.yaml`](policy/specialists/evidence-pilot.yaml), [`policy/specialists/evidence-stability-qualification.yaml`](policy/specialists/evidence-stability-qualification.yaml), and [`docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md`](docs/history/validation/regulated-specialist-evidence-stability-qualification-2026-08-16.md) |
-| provider-access separation | [`docs/specification/provider-access-boundary.md`](docs/specification/provider-access-boundary.md) |
-| runnable implementation | [`reference/implementations/python/README.md`](reference/implementations/python/README.md) |
-| historical audits | [`docs/history/audits/`](docs/history/audits/) |
-| non-normative research | [`research/`](research/) |
-
-## Governance and evidence
-
-TEO distinguishes **Directive -> Interpretation -> Diagnosis -> Evidence -> Decision -> Approval -> Execution -> Verification -> Documentation -> Learning**.
-
-Implementation is not completion. Consequential claims require evidence appropriate to the claim, and staged or simulated success is not represented as live operational proof.
-
-### Authority hierarchy
-
-When sources disagree, use the more authoritative and current source:
-
-1. applicable machine-readable policy, registry, schema, and activation state;
-2. immutable release contracts for the release being discussed;
-3. canonical stewardship records for current progress;
-4. research and evidence records for bounded claims;
-5. README summaries and explanatory prose.
-
-The README is deliberately an entry point, not a parallel source of truth.
-
-### Evidence discipline
-
-TEO's CI validates repository layout, Python sources, automated tests, regulated-specialist evidence, JSON schemas, linked configuration, and the provider-diverse reference lifecycle. A green CI run proves the checks it actually executed. It does not convert staged, simulated, or unexecuted provider evidence into a stronger empirical claim.
-
-The stable release contract is [`docs/releases/v1.0.0.md`](docs/releases/v1.0.0.md). Current development state is tracked separately so post-v1 work cannot silently rewrite the historical release boundary.
-
-## Roadmap
-
-The original foundation milestones are complete:
-
-- repository credibility and governance;
-- organizational Team and Worker architecture;
-- deterministic routing validation;
-- registry and evidence structure;
-- runnable reference control plane;
-- functional `v1.0.0` release.
-
-Post-v1 work is focused on **control integrity, evidence quality, governed live-scope expansion, calibration, regulated evidence freshness, and future distributed-runtime hardening**.
-
-The current `NOW / NEXT / LATER` sequencing and completion estimates are maintained in the [`Progress Tracker`](docs/stewardship/progress-tracker.md). Strategic direction is maintained in the [`Roadmap`](docs/stewardship/roadmap.md).
-
-Newer models trigger evaluation, not automatic promotion. New architecture directions enter through evidence and review, not README claims.
-
-## Community stewardship
-
-TEO is intended for public technical review and long-term stewardship.
-
-Useful review includes:
-
-- routing and capability gaps;
-- stale provider/model evidence;
-- verification-independence weaknesses;
-- authority or recovery bypasses;
-- specialist evidence freshness;
-- reproducibility and CI weaknesses;
-- documentation drift between policy, runtime, and prose.
-
-Use [GitHub Discussions](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/discussions) for questions, early proposals, research, and technical exploration. Use [GitHub Issues](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/issues) for reproducible defects and accepted, scoped work. Participation is governed by [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
-
-Accepted historical states are preserved as immutable **Capsules** rather than rewritten after the fact. See [`community/capsules/README.md`](community/capsules/README.md).
-
-Because no permanent reuse license or contribution terms have been selected yet, external code contributions should wait until that boundary is resolved. Public review and evidence-backed discussion are still welcome.
-
-## License
-
-**No open-source license has been selected yet.**
-
-The repository is publicly viewable, but no permission is currently granted to copy, modify, distribute, sublicense, or use its contents except where applicable law permits. See [`LICENSE`](LICENSE) for the current legal boundary.
-
----
-
-<div align="center">
-
-**Models evolve. Responsibilities endure.**
-
-[Back to top](#readme-top)
-
-</div>
+The stable release remains `v1.0.0`; post-v1 development does not retroactively change the released artifact.
