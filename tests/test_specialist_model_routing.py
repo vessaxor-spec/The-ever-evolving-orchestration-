@@ -10,7 +10,7 @@ from teo_reference.specialist_routing import SpecialistRoutingEngine
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-POLICY_PATH = REPO_ROOT / "policy/routing/core/specialist-model-routing.yaml"
+POLICY_PATH = REPO_ROOT / "policy/routing/core/specialist-selection-policy.yaml"
 PREVIEW_ACCEPTANCE = {"accepted_preview_models": ["gemini-3.1-pro-preview"]}
 
 
@@ -18,18 +18,19 @@ def engine() -> SpecialistRoutingEngine:
     return SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
 
 
-def test_specialist_model_policy_covers_all_82_active_specialists_exactly_once() -> None:
+def test_specialist_selection_policy_covers_all_82_active_specialists_exactly_once() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     policy = yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8"))
     assert len(bundle.specialist_registry) == 82
     assert len(policy["specialists"]) == 82
     assert set(policy["specialists"]) == set(bundle.specialist_registry)
+    for specialist, assignment in policy["specialists"].items():
+        assert assignment["selection_profile"] in policy["profiles"], specialist
 
 
-def test_every_template_has_cross_provider_fallback_and_third_provider_verifier() -> None:
+def test_every_specialist_compatibility_profile_has_cross_provider_fallback_and_third_provider_verifier() -> None:
     router = engine()
-    policy = yaml.safe_load(POLICY_PATH.read_text(encoding="utf-8"))
-    for name, template in policy["templates"].items():
+    for name, template in router.config.runtime_specialist_profiles.items():
         models = [template[key]["model"] for key in ("primary", "fallback", "verifier")]
         providers = [router._provider_for_model(model) for model in models]
         assert len(set(models)) == 3, name
