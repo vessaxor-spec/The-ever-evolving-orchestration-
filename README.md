@@ -15,7 +15,9 @@ A vendor-neutral orchestration specification and runnable reference control plan
 [![Reference Implementation CI](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml/badge.svg)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/actions/workflows/reference-ci.yml)
 [![Release](https://img.shields.io/github/v/release/vessaxor-spec/The-ever-evolving-orchestration-?label=release)](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0)
 
+[**Manifesto**](docs/philosophy/manifesto.md) ·
 [**Specification**](docs/specification/lexicon.md) ·
+[**v1 readiness**](docs/releases/v1-readiness.md) ·
 [**Reference router**](reference/implementations/python/README.md) ·
 [**Current progress**](docs/stewardship/progress-tracker.md) ·
 [**Roadmap**](docs/stewardship/roadmap.md)
@@ -66,7 +68,7 @@ Candidate implementations move through a strict lifecycle:
 
 **Discovered -> Eligible -> Calibrated -> Selected**
 
-Discovery, availability, calibration evidence, fitness scores, compatibility defaults, and pins do not create authority. Selection occurs only inside the already-authorized set.
+Discovery, availability, calibration evidence, fitness scores, compatibility defaults, and pins do not create authority. Selection occurs only inside the already-authorized set. Compatibility evidence by itself does not create authority.
 
 ### Responsibility is model-neutral
 
@@ -258,6 +260,9 @@ teo --repo-root . plan \
 
 - [`CONSTITUTION.md`](CONSTITUTION.md) — enduring project principles.
 - [`AI_INSTRUCTIONS.md`](AI_INSTRUCTIONS.md) — repository operating instructions for AI agents.
+- [`docs/philosophy/manifesto.md`](docs/philosophy/manifesto.md) — project philosophy and design north star.
+- [`docs/specification/lexicon.md`](docs/specification/lexicon.md) — canonical concepts and terminology.
+- [`docs/releases/v1-readiness.md`](docs/releases/v1-readiness.md) — functional-v1 readiness contract.
 - [`docs/specification/`](docs/specification/) — canonical concepts and contracts.
 - [`policy/`](policy/) — machine-readable routing, runtime, governance, and authority policy.
 - [`registry/`](registry/) — capabilities, implementations, and evidence/catalog data.
