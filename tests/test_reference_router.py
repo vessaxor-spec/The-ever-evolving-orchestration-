@@ -46,42 +46,21 @@ def build_repo(root: Path) -> Path:
         {
             "routing": {
                 "daily_coding": {
-                    "primary": {"agent": "codex", "model": "gpt-terra", "profile": "terra"},
-                    "planning_support": {"agent": "codex", "model": "gpt-sol", "profile": "sol"},
-                    "fallback": {"agent": "agy", "model": "gemini-pro", "profile": "sol"},
-                    "semantic_reviewer": {
-                        "agent": "claude",
-                        "model": "claude-sonnet",
-                        "profile": "sol",
-                    },
+                    "primary": {},
+                    "planning_support": {"use_when": ["complex_change"]},
+                    "fallback": {"purpose": "cross-provider fallback"},
+                    "semantic_reviewer": {"purpose": "independent semantic review"},
                 },
                 "security_review": {
-                    "primary": {"agent": "claude", "model": "claude-opus", "profile": "sol"},
-                    "executable_verifier": {
-                        "agent": "codex",
-                        "model": "gpt-terra",
-                        "profile": "terra",
-                    },
+                    "primary": {},
+                    "fallback": {"purpose": "cross-provider fallback"},
+                    "executable_verifier": {"purpose": "independent executable review"},
                 },
                 "architecture_design": {
-                    "primary": {"agent": "claude", "model": "claude-sonnet", "profile": "sol"},
-                    "verifier": {"agent": "codex", "model": "gpt-sol", "profile": "sol"},
+                    "primary": {},
+                    "fallback": {"purpose": "cross-provider fallback"},
+                    "verifier": {"purpose": "implementation feasibility review"},
                 },
-            },
-            "fallback_order": {
-                "coding": [
-                    {"agent": "codex", "model": "gpt-terra"},
-                    {"agent": "agy", "model": "gemini-pro"},
-                    {"agent": "claude", "model": "claude-sonnet"},
-                ],
-                "engineering_reasoning": [
-                    {"agent": "codex", "model": "gpt-sol"},
-                    {"agent": "claude", "model": "claude-sonnet"},
-                ],
-                "general_reasoning": [
-                    {"agent": "claude", "model": "claude-sonnet"},
-                    {"agent": "codex", "model": "gpt-sol"},
-                ],
             },
             "verification_policy": {
                 "low": {"minimum": ["output_validation"]},
@@ -100,28 +79,93 @@ def build_repo(root: Path) -> Path:
                 "backend": {
                     "owning_team": "engineering",
                     "required_capabilities": ["coding", "debugging", "tool_execution"],
-                    "preferred_implementations": ["gpt-terra", "gpt-sol"],
-                    "fallbacks": ["gemini-pro", "claude-sonnet"],
                 },
                 "frontend": {
                     "owning_team": "engineering",
                     "required_capabilities": ["coding", "visual_reasoning"],
-                    "preferred_implementations": ["gpt-terra"],
-                    "fallbacks": ["gemini-pro", "claude-sonnet"],
                 },
                 "security": {
                     "owning_team": "review",
                     "required_capabilities": ["high_reasoning", "adversarial_review"],
-                    "preferred_implementations": ["claude-opus", "gpt-sol"],
-                    "fallbacks": ["claude-sonnet", "gpt-terra"],
                 },
                 "architecture": {
                     "owning_team": "planning",
                     "required_capabilities": ["high_reasoning", "planning"],
-                    "preferred_implementations": ["claude-sonnet", "gpt-sol"],
-                    "fallbacks": ["claude-opus", "gemini-pro"],
                 },
             }
+        },
+    )
+    write_yaml(
+        root / "policy/routing/core/runtime-compatibility-defaults.yaml",
+        {
+            "worker_defaults": {
+                "backend": {
+                    "preferred_implementations": ["gpt-terra", "gpt-sol"],
+                    "fallbacks": ["gemini-pro", "claude-sonnet"],
+                },
+                "frontend": {
+                    "preferred_implementations": ["gpt-terra", "gpt-sol"],
+                    "fallbacks": ["gemini-pro", "claude-sonnet"],
+                },
+                "security": {
+                    "preferred_implementations": ["claude-opus", "gpt-sol"],
+                    "fallbacks": ["gpt-sol", "gemini-pro"],
+                },
+                "architecture": {
+                    "preferred_implementations": ["claude-sonnet", "gpt-sol"],
+                    "fallbacks": ["gemini-pro", "gpt-sol"],
+                },
+            },
+            "task_routes": {
+                "daily_coding": {
+                    "primary": {"agent": "codex", "model": "gpt-terra", "profile": "terra"},
+                    "planning_support": {"agent": "codex", "model": "gpt-sol", "profile": "sol"},
+                    "fallback": {"agent": "agy", "model": "gemini-pro", "profile": "sol"},
+                    "semantic_reviewer": {
+                        "agent": "claude",
+                        "model": "claude-sonnet",
+                        "profile": "sol",
+                    },
+                },
+                "security_review": {
+                    "primary": {"agent": "claude", "model": "claude-opus", "profile": "sol"},
+                    "fallback": {"agent": "codex", "model": "gpt-sol", "profile": "sol"},
+                    "executable_verifier": {
+                        "agent": "codex",
+                        "model": "gpt-terra",
+                        "profile": "terra",
+                    },
+                },
+                "architecture_design": {
+                    "primary": {"agent": "claude", "model": "claude-sonnet", "profile": "sol"},
+                    "fallback": {"agent": "agy", "model": "gemini-pro", "profile": "sol"},
+                    "verifier": {"agent": "codex", "model": "gpt-sol", "profile": "sol"},
+                },
+            },
+            "task_routing_defaults": {
+                "classifier": {"agent": "claude", "model": "claude-sonnet", "profile": "sol"}
+            },
+            "fallback_order": {
+                "coding": [
+                    {"agent": "agy", "model": "gemini-pro"},
+                    {"agent": "claude", "model": "claude-sonnet"},
+                    {"agent": "codex", "model": "gpt-terra"},
+                ],
+                "engineering_reasoning": [
+                    {"agent": "claude", "model": "claude-sonnet"},
+                    {"agent": "codex", "model": "gpt-sol"},
+                    {"agent": "agy", "model": "gemini-pro"},
+                ],
+                "general_reasoning": [
+                    {"agent": "claude", "model": "claude-sonnet"},
+                    {"agent": "codex", "model": "gpt-sol"},
+                    {"agent": "agy", "model": "gemini-pro"},
+                ],
+            },
+            "specialist_profiles": {
+                "backend-engineer": {"selection_profile": "backend"},
+                "security-engineer": {"selection_profile": "security"},
+            },
         },
     )
     write_yaml(
