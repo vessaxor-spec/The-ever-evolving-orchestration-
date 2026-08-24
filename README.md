@@ -129,9 +129,9 @@ TEO has crossed the functional-v1 boundary and is in post-v1 stewardship and con
 |---|---|
 | Stable release | [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0), `reference_operational` |
 | Development line | `teo-reference-router==1.0.1.dev0` |
-| Current executable main | `3d121fde56f840bbfaa6bcb240c262f045525786` after RMI-7 / PR #208 |
-| Runtime model binding | RMI-1 through RMI-7 merged; RMI-8 documentation reconciliation is the remaining runtime-binding gate |
-| Current qualification | Reference Implementation CI #951: **1,113 tests**, **602 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
+| Executable baseline | `main@3d121fde56f840bbfaa6bcb240c262f045525786` before the documentation-only RMI-8 merge |
+| Runtime model binding | RMI-1 through RMI-8 implemented and qualified; PR #209 is the documentation-only closure tranche |
+| Current qualification | RMI-8 candidate Reference Implementation CI #954 on exact head `b5918ddb9574aca9f94e7e394658b4007b57ef27`: **1,115 tests**, **602 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
 | Organizational topology | ten active organizational teams, 84 workers, 82 preserved specialist role cards, dedicated Mission Control workers for orchestration, operations, project delivery, and incident response |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live candidate | `documentation`, evaluation only, no live-execution authority |
@@ -152,9 +152,9 @@ The runtime-model-binding program is tracked in Issue #200.
 - RMI-5: best-fit runtime selection, scoped pins, and production dispatch cutover.
 - RMI-6: observed executor/checker runtime identity through telemetry, Route-Outcome, finalization, and provenance.
 - RMI-7: model-neutral responsibility routes and explicit runtime compatibility/default surfaces.
-- RMI-8: canonical documentation/progress reconciliation.
+- RMI-8: canonical README, roadmap, Progress Tracker, AI operating instructions, and documentation-truth reconciliation.
 
-RMI-7 merged via PR #208 as `3d121fde56f840bbfaa6bcb240c262f045525786`. Exact-head CI #951 qualified the change with 1,113 tests, 602 tracked files, 42 schemas, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end routing.
+RMI-7 merged via PR #208 as `3d121fde56f840bbfaa6bcb240c262f045525786`. RMI-8 candidate CI #954 qualified the documentation/truth reconciliation with 1,115 tests, 602 tracked files, 42 schemas, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end routing. A final exact-head CI remains the merge gate for PR #209.
 
 ## Live execution boundary
 
