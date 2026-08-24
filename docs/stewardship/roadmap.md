@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8.
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–3; Tranche 4 is next.
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -61,7 +61,7 @@ Task
 
 The strict lifecycle is **Discovered -> Eligible -> Calibrated -> Selected**.
 
-RMI-1 through RMI-8 are implemented and qualified:
+RMI-1 through RMI-8 are implemented, qualified, and merged:
 
 - provider-independent runtime inventory and five inventory classes;
 - deterministic multi-source inventory composition with fail-closed conflict handling;
@@ -80,11 +80,31 @@ RMI-1 through RMI-8 are implemented and qualified:
 
 Connection mechanism remains separate from runtime fitness and routing. API keys, OAuth, subscription-backed sessions, delegated identity, service accounts, connector sessions, SDK-managed identity, credential brokers, local runtimes, or future provider-supported access methods do not become intrinsic model-selection signals.
 
-RMI-8 candidate qualification on exact PR head `b5918ddb9574aca9f94e7e394658b4007b57ef27` is Reference Implementation CI #954: 1,115 tests, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence, and provider-diverse end-to-end routing. A final exact-head documentation-evidence verification is required before PR #209 merges.
+RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Final exact-head qualification on `d5ab4791e7b037bade24e2780a9aaef7df42878f` was Reference Implementation CI #958: 1,115 tests, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence, and provider-diverse end-to-end routing.
+
+## Current actionable repository work: clean-architecture migration (#197)
+
+The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–3 are merged:
+
+- Tranche 1 — deterministic classification/risk domain policy;
+- Tranche 2 — finalization use case and artifact-integrity port;
+- Tranche 3 — dispatch application service, responsibility resolvers, and application-facing implementation-selection seam.
+
+Tranche 3 merged via PR #210 as `74c128947f1d98f0e42c595bd1229561ab6dab50`. Exact-head CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780` passed 1,118 tests, 607 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing.
+
+`OrchestrationEngine.dispatch()` is now a thin application-service façade. Worker, Specialist, and capability resolution are extracted. The inheritance bridge in `SpecialistRoutingEngine` is deliberately retained so **Tranche 4 — specialist routing by composition** remains independently reviewable.
+
+Rules:
+
+- recalibrate #197 against current `main` before each tranche;
+- preserve dependency direction and existing behavior;
+- do not fold runtime-model-binding product behavior into #197;
+- do not change live authority, provider access, or model/default policy as a side effect;
+- where workstreams touch a surface, sequence changes so each remains independently understandable and reversible.
 
 ## Current operational priority: evidence-governed live execution expansion
 
-The completed runtime-binding program does not widen live authority.
+The completed runtime-binding program and clean-architecture migration do not widen live authority.
 
 The existing low or medium risk `high_volume_simple` canary remains the only accepted guarded live execution scope. `documentation` remains the first staged candidate and is evaluation only.
 
@@ -141,17 +161,6 @@ Independent human calibration under Issue #75 remains optional evidence enhancem
 The bounded six-card regulated specialist evidence pilot has completed its current executable stability milestone.
 
 Maintain the seven-day authority-resolution cadence as continuous drift detection. Do not auto-authorize a larger regulated registry. Any next risk-tier batch requires explicit approval and a separate bounded reviewed change.
-
-## Clean-architecture migration (#197)
-
-The Python clean-architecture migration remains a separate behavior-preserving workstream.
-
-Rules:
-
-- recalibrate #197 against current `main` before each tranche;
-- preserve dependency direction and existing behavior;
-- do not fold runtime-model-binding product behavior into #197;
-- where both workstreams touch a surface, sequence changes so each remains independently understandable and reversible.
 
 ## Host Integration Contract research
 
