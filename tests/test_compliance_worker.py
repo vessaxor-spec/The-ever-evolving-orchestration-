@@ -26,6 +26,7 @@ def test_compliance_worker_binding_and_boundaries() -> None:
     bundle = ConfigBundle.load(REPO_ROOT)
     specialist = bundle.specialist_registry[fixture["specialist"]]
     worker = bundle.worker_registry[fixture["worker"]]
+    runtime_defaults = bundle.worker_runtime_defaults[fixture["worker"]]
 
     assert specialist["worker_binding"] == fixture["worker"]
     assert specialist["primary_team"] == fixture["primary_team"]
@@ -37,13 +38,13 @@ def test_compliance_worker_binding_and_boundaries() -> None:
         "mission",
         "responsibilities",
         "required_capabilities",
-        "preferred_implementations",
-        "fallbacks",
         "verification",
         "escalation",
         "authority_boundaries",
     ):
         assert worker.get(field), f"compliance is missing required worker field {field}"
+    for field in ("preferred_implementations", "fallbacks"):
+        assert runtime_defaults.get(field), f"compliance is missing runtime compatibility field {field}"
 
     for field, expected_values in fixture["contains"].items():
         actual_values = worker[field]
@@ -76,7 +77,7 @@ def test_compliance_dispatch_is_critical_provider_diverse_and_human_gated() -> N
     assert dispatch.specialist_risk_profile == "critical"
     assert dispatch.selected_implementation.model == "claude-sonnet-5"
     assert dispatch.selected_implementation.provider_family == "anthropic"
-    assert dispatch.selected_implementation.source == "routing.compliance_review.primary"
+    assert dispatch.selected_implementation.source == "runtime_compatibility.task_routes.compliance_review.primary"
     assert dispatch.fallback_implementation is not None
     assert dispatch.fallback_implementation.model == "gpt-5.6-sol"
     assert dispatch.fallback_implementation.provider_family == "openai"
@@ -172,7 +173,7 @@ def test_compliance_remains_separate_from_legal_security_and_implementation() ->
 
 
 def test_compliance_route_keeps_opus_conditional() -> None:
-    route = ConfigBundle.load(REPO_ROOT).implementation_routes["compliance_review"]
+    route = ConfigBundle.load(REPO_ROOT).runtime_task_routes["compliance_review"]
 
     assert route["primary"]["model"] == "claude-sonnet-5"
     assert route["fallback"]["model"] == "gpt-5.6-sol"
