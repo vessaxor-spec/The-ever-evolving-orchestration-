@@ -15,13 +15,13 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current executable main | `3d121fde56f840bbfaa6bcb240c262f045525786` after RMI-7 / PR #208 |
+| Current executable main | `3d121fde56f840bbfaa6bcb240c262f045525786` before the RMI-8 documentation-only merge |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | 1,113 tests passed, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #951 |
-| Runtime model binding | RMI-1 through RMI-7 executable and merged; RMI-8 documentation/progress reconciliation in progress |
+| Current validated scale | 1,115 tests passed, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by RMI-8 candidate Reference Implementation CI #954 on exact PR head `b5918ddb9574aca9f94e7e394658b4007b57ef27` |
+| Runtime model binding | RMI-1 through RMI-8 implemented and qualified; merge of the documentation-only RMI-8 tranche is the remaining closure action |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
 | Specialist selection policy | model-neutral `policy/routing/core/specialist-selection-policy.yaml` |
@@ -56,7 +56,7 @@ The strict candidate lifecycle is:
 
 **Discovered -> Eligible -> Calibrated -> Selected**
 
-Key invariants now executable on `main`:
+Key invariants now executable:
 
 - discovery, availability, eligibility, calibration, fitness, and pins never widen authority;
 - responsibility configuration is model/provider neutral;
@@ -82,16 +82,16 @@ The default configured compatibility bridge represents configured implementation
 - [x] RMI-5 — policy-constrained runtime best-fit selection and dispatch cutover; PRs #205 and #206.
 - [x] RMI-6 — observed executor/checker identity through execution, telemetry, Route-Outcome, finalization, and provenance; PR #207.
 - [x] RMI-7 — remove model identity from workers/responsibility routes and isolate named implementations to explicit compatibility/default surfaces; PR #208, merged as `3d121fde56f840bbfaa6bcb240c262f045525786`.
-- [ ] RMI-8 — reconcile canonical documentation, policy descriptions, and the Progress Tracker against completed executable truth; current workstream.
+- [x] RMI-8 — reconcile canonical documentation, AI operating instructions, roadmap, Progress Tracker, and documentation-truth tests against completed executable truth; PR #209 candidate qualified by CI #954 and pending final exact-head closure verification/merge.
 
-RMI-7 qualification on exact PR head `2b3b5273c1b606ad8a862897a976ccd15a8aa247` was Reference Implementation CI #951 / run `32775297777`: **1,113 tests passed**, **602 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing.
+RMI-8 candidate qualification on exact PR head `b5918ddb9574aca9f94e7e394658b4007b57ef27` was Reference Implementation CI #954 / run `32779702503`: **1,115 tests passed**, **602 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing.
 
 ## Portfolio view
 
 | Workstream | Status | Progress | Current milestone | Next gate |
 |---|---|---:|---|---|
 | Core architecture and governance | Complete | 100% | Functional v1 reference contract | Maintain protected invariants through compatible evolution |
-| Runtime model binding | In progress | 95% | RMI-1 through RMI-7 executable and qualified | Complete RMI-8 canonical documentation/progress reconciliation |
+| Runtime model binding | Complete | 100% | RMI-1 through RMI-8 implemented and qualified | Preserve runtime-binding invariants through future compatible evolution |
 | Repository information architecture | Complete | 100% | R1 through R5 | Preserve governed placement and lifecycle boundaries |
 | Team, worker, and specialist architecture | Operational | 100% | 10 teams, 84 workers, 82 active specialists | Add roles only after proven responsibility-gap and authority review |
 | Control integrity | Operational | 90% | Post-v1 conformance, mutation resistance, artifact-bound finalization, observed-identity integrity | Continue closing newly discovered finalization, authority, and recovery mutation gaps |
@@ -109,27 +109,13 @@ RMI-7 qualification on exact PR head `2b3b5273c1b606ad8a862897a976ccd15a8aa247` 
 
 ## NOW
 
-### 1. RMI-8 — canonical truth reconciliation
+### Evidence-governed live execution expansion
 
-Reconcile the current authority-facing documentation against the executable runtime-model-binding architecture. This is documentation and governance truth alignment only. It must not widen live scope, change provider access, refresh model versions, alter product verification policy, or absorb the behavior-preserving #197 workstream.
-
-Completion gate:
-
-- Progress Tracker, roadmap, README, AI instructions, and documentation-truth tests agree with executable `main`;
-- retired `specialist-model-routing.yaml` is not described as current authority;
-- workers and responsibility routes are not described as owning concrete models;
-- runtime compatibility/default surfaces are described as compatibility/evidence rather than discovery or fitness authority;
-- current CI evidence is exact and dated;
-- canonical CI passes on the exact RMI-8 head;
-- independent scope audit confirms documentation/truth-test scope only.
-
-### 2. Evidence-governed live execution expansion
-
-The operational product milestone remains unchanged by RMI-8.
+RMI-8 documentation reconciliation is qualified and awaiting only final exact-head closure verification/merge. It does not change the operational product milestone.
 
 `documentation` is the first bounded staged candidate. It remains **staged only** and has **no live-execution authority**. The active guarded runtime remains limited to `high_volume_simple` at low or medium effective risk.
 
-The staged documentation replay harness and operator path are validated. CI uses deterministic fake provider transports and therefore does not constitute empirical provider-backed replay evidence. The next material gate is a real provider-backed controlled `documentation` replay using the existing operator path, followed by the applicable shadow, recovery, and independent-review evidence before any active-scope mutation.
+The staged documentation replay harness and operator path are validated. CI uses deterministic fake provider transports and therefore does not constitute empirical provider-backed replay evidence. The next material product gate is a real provider-backed controlled `documentation` replay using the existing operator path, followed by the applicable shadow, recovery, and independent-review evidence before any active-scope mutation.
 
 Provider-backed `documentation` replay is intentionally deferred as an open action item until provider access is supplied for the bounded evidence run. No access mechanism is itself routing authority.
 
@@ -137,7 +123,7 @@ Do not authorize high or critical live execution from the runtime-model-binding 
 
 ## NEXT
 
-After RMI-8 closes, no additional workstream is automatically promoted by documentation completion. The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
+No additional workstream is automatically promoted by RMI-8 documentation completion. The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
 
 The #197 clean-architecture migration remains separately sequenced and behavior-preserving.
 
