@@ -217,7 +217,7 @@ def _provider_for_model(models: dict[str, Any], model: str) -> str | None:
     return str(provider) if provider else None
 
 
-def _iter_model_candidates(value: Any, path: str = "routing"):
+def _iter_model_candidates(value: Any, path: str = "runtime_compatibility"):
     if isinstance(value, dict):
         if value.get("model"):
             yield path, value
@@ -228,6 +228,29 @@ def _iter_model_candidates(value: Any, path: str = "routing"):
     elif isinstance(value, list):
         for index, nested in enumerate(value):
             yield from _iter_model_candidates(nested, f"{path}[{index}]")
+
+
+_MODEL_IDENTITY_KEYS = {
+    "agent",
+    "model",
+    "profile",
+    "reasoning",
+    "reasoning_by_risk",
+    "preferred_implementations",
+    "fallbacks",
+}
+
+
+def _iter_responsibility_model_identity(value: Any, path: str):
+    if isinstance(value, dict):
+        for key, nested in value.items():
+            current = f"{path}.{key}"
+            if key in _MODEL_IDENTITY_KEYS:
+                yield current
+            yield from _iter_responsibility_model_identity(nested, current)
+    elif isinstance(value, list):
+        for index, nested in enumerate(value):
+            yield from _iter_responsibility_model_identity(nested, f"{path}[{index}]")
 
 
 _EXECUTION_KEYS = ("primary", "executor", "executable_review")
@@ -248,6 +271,7 @@ class ConfigBundle:
     root: Path
     team_routing: dict[str, Any]
     routing: dict[str, Any]
+    runtime_compatibility: dict[str, Any]
     workers: dict[str, Any]
     specialists: dict[str, Any]
     models: dict[str, Any]
@@ -275,6 +299,9 @@ class ConfigBundle:
                     root_path / "policy/routing/extensions/principal-engineering-routing.yaml",
                     root_path / "policy/routing/extensions/specialist-spawn-routing.yaml",
                 ),
+            ),
+            runtime_compatibility=_load_yaml(
+                root_path / "policy/routing/core/runtime-compatibility-defaults.yaml"
             ),
             workers=_load_workers(
                 root_path / "community/workers/workers.yaml",
@@ -316,6 +343,11 @@ class ConfigBundle:
         routes = self.team_routing.get("team_routes")
         routing = self.routing.get("routing")
         workers = self.workers.get("workers")
+        runtime_worker_defaults = self.runtime_compatibility.get("worker_defaults")
+        runtime_task_routes = self.runtime_compatibility.get("task_routes")
+        runtime_task_routing_defaults = self.runtime_compatibility.get("task_routing_defaults")
+        runtime_fallback_order = self.runtime_compatibility.get("fallback_order")
+        runtime_specialist_profiles = self.runtime_compatibility.get("specialist_profiles")
         specialists = self.specialists.get("specialists")
         models = self.models.get("models")
         capabilities = self.capabilities.get("capabilities")
@@ -325,6 +357,11 @@ class ConfigBundle:
             "team_routes": routes,
             "routing": routing,
             "workers": workers,
+            "runtime_worker_defaults": runtime_worker_defaults,
+            "runtime_task_routes": runtime_task_routes,
+            "runtime_task_routing_defaults": runtime_task_routing_defaults,
+            "runtime_fallback_order": runtime_fallback_order,
+            "runtime_specialist_profiles": runtime_specialist_profiles,
             "specialists": specialists,
             "models": models,
             "capabilities": capabilities,
@@ -339,11 +376,38 @@ class ConfigBundle:
         assert isinstance(routes, dict)
         assert isinstance(routing, dict)
         assert isinstance(workers, dict)
+        assert isinstance(runtime_worker_defaults, dict)
+        assert isinstance(runtime_task_routes, dict)
+        assert isinstance(runtime_task_routing_defaults, dict)
+        assert isinstance(runtime_fallback_order, dict)
+        assert isinstance(runtime_specialist_profiles, dict)
         assert isinstance(specialists, dict)
         assert isinstance(models, dict)
         assert isinstance(model_evidence, dict)
 
         known_models = _known_models(self.models)
+
+        for surface_name, surface in (("workers", self.workers), ("routing", self.routing)):
+            for identity_path in _iter_responsibility_model_identity(surface, surface_name):
+                issues.append(
+                    f"ERROR: model/provider implementation identity is not allowed in responsibility configuration: {identity_path}"
+                )
+
+        worker_names = set(workers)
+        compatibility_worker_names = set(runtime_worker_defaults)
+        if worker_names != compatibility_worker_names:
+            missing = sorted(worker_names - compatibility_worker_names)
+            extra = sorted(compatibility_worker_names - worker_names)
+            details: list[str] = []
+            if missing:
+                details.append("missing=" + ",".join(missing))
+            if extra:
+                details.append("extra=" + ",".join(extra))
+            issues.append(
+                "ERROR: runtime compatibility worker-default coverage must exactly match active workers: "
+                + "; ".join(details)
+            )
+
         reachable_pairs: set[tuple[str, str]] = set()
         for route_name, route in routes.items():
             if route_name not in routing and route_name != "release":
@@ -413,17 +477,23 @@ class ConfigBundle:
             required_capabilities = worker.get("required_capabilities", [])
             if not isinstance(required_capabilities, list) or not required_capabilities:
                 issues.append(f"ERROR: worker {worker_name} requires a non-empty required_capabilities list")
-            for source_key in ("preferred_implementations", "fallbacks"):
-                values = worker.get(source_key, [])
-                if not isinstance(values, list) or not values:
-                    issues.append(f"ERROR: worker {worker_name} requires a non-empty {source_key} list")
-                    continue
-                unknown_models = sorted(str(model) for model in values if str(model) not in known_models)
-                if unknown_models:
-                    issues.append(
-                        f"ERROR: worker {worker_name} references unregistered models in {source_key}: "
-                        + ", ".join(unknown_models)
-                    )
+            compatibility_defaults = runtime_worker_defaults.get(worker_name, {})
+            if not isinstance(compatibility_defaults, dict):
+                issues.append(f"ERROR: runtime compatibility defaults for worker {worker_name} must be a mapping")
+            else:
+                for source_key in ("preferred_implementations", "fallbacks"):
+                    values = compatibility_defaults.get(source_key, [])
+                    if not isinstance(values, list) or not values:
+                        issues.append(
+                            f"ERROR: runtime compatibility worker {worker_name} requires a non-empty {source_key} list"
+                        )
+                        continue
+                    unknown_models = sorted(str(model) for model in values if str(model) not in known_models)
+                    if unknown_models:
+                        issues.append(
+                            f"ERROR: runtime compatibility worker {worker_name} references unregistered models in {source_key}: "
+                            + ", ".join(unknown_models)
+                        )
             if not team:
                 issues.append(f"ERROR: worker {worker_name} requires owning_team")
 
@@ -447,7 +517,7 @@ class ConfigBundle:
                     f"ERROR: model {concrete} provider mismatch: policy/routing/core/implementation-defaults.yaml={configured_provider}, registry={evidence_provider}"
                 )
 
-        for path, candidate in _iter_model_candidates(self.routing):
+        for path, candidate in _iter_model_candidates(self.runtime_compatibility):
             model = str(candidate.get("model") or "")
             if model not in known_models:
                 issues.append(f"ERROR: {path} references unregistered model {model}")
@@ -462,9 +532,9 @@ class ConfigBundle:
                     f"ERROR: {path} requests unsupported reasoning effort {reasoning} for {model}"
                 )
 
-        for route_name, route in routing.items():
+        for route_name, route in runtime_task_routes.items():
             if not isinstance(route, dict):
-                issues.append(f"ERROR: implementation route {route_name} must be a mapping")
+                issues.append(f"ERROR: runtime compatibility task route {route_name} must be a mapping")
                 continue
             execution: dict[str, Any] | None = None
             for key in _EXECUTION_KEYS:
@@ -492,7 +562,7 @@ class ConfigBundle:
                     break
             if not provider_diverse:
                 issues.append(
-                    f"ERROR: route {route_name} has no explicit model- and provider-diverse verifier candidate"
+                    f"ERROR: runtime compatibility route {route_name} has no explicit model- and provider-diverse verifier candidate"
                 )
 
         return issues
@@ -508,6 +578,30 @@ class ConfigBundle:
     @property
     def worker_registry(self) -> dict[str, Any]:
         return self.workers["workers"]
+
+    @property
+    def runtime_compatibility_defaults(self) -> dict[str, Any]:
+        return self.runtime_compatibility
+
+    @property
+    def worker_runtime_defaults(self) -> dict[str, Any]:
+        return self.runtime_compatibility["worker_defaults"]
+
+    @property
+    def runtime_task_routes(self) -> dict[str, Any]:
+        return self.runtime_compatibility["task_routes"]
+
+    @property
+    def runtime_task_routing_defaults(self) -> dict[str, Any]:
+        return self.runtime_compatibility["task_routing_defaults"]
+
+    @property
+    def runtime_fallback_order(self) -> dict[str, Any]:
+        return self.runtime_compatibility["fallback_order"]
+
+    @property
+    def runtime_specialist_profiles(self) -> dict[str, Any]:
+        return self.runtime_compatibility["specialist_profiles"]
 
     @property
     def specialist_registry(self) -> dict[str, Any]:
