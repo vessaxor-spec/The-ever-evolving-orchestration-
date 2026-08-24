@@ -13,11 +13,12 @@ EXPECTED_MISSION_CONTROL_WORKERS = {
     "project_delivery",
     "incident_response",
 }
-CURRENT_PRE_RMI8_MAIN = "3d121fde56f840bbfaa6bcb240c262f045525786"
-RMI7_QUALIFIED_TESTS = 1113
-RMI7_QUALIFIED_TRACKED_FILES = 602
-RMI7_QUALIFIED_SCHEMAS = 42
-RMI7_QUALIFIED_CI = 951
+PRE_RMI8_MAIN = "3d121fde56f840bbfaa6bcb240c262f045525786"
+RMI8_CANDIDATE_HEAD = "b5918ddb9574aca9f94e7e394658b4007b57ef27"
+RMI8_QUALIFIED_TESTS = 1115
+RMI8_QUALIFIED_TRACKED_FILES = 602
+RMI8_QUALIFIED_SCHEMAS = 42
+RMI8_QUALIFIED_CI = 954
 
 
 def _text(path: str) -> str:
@@ -65,23 +66,25 @@ def test_runtime_binding_current_authority_surfaces_exist() -> None:
     ).exists()
 
 
-def test_progress_tracker_matches_post_rmi7_executable_truth() -> None:
+def test_progress_tracker_matches_qualified_rmi8_truth() -> None:
     text = _text("docs/stewardship/progress-tracker.md")
 
     for phrase in (
         "**Last reconciled:** 2026-08-24",
-        f"`{CURRENT_PRE_RMI8_MAIN}` after RMI-7 / PR #208",
-        f"{RMI7_QUALIFIED_TESTS:,} tests passed",
-        f"{RMI7_QUALIFIED_TRACKED_FILES} tracked-file layout checks",
-        f"{RMI7_QUALIFIED_SCHEMAS} schemas",
-        f"Reference Implementation CI #{RMI7_QUALIFIED_CI}",
-        "RMI-1 through RMI-7 executable and merged",
+        f"`{PRE_RMI8_MAIN}` before the RMI-8 documentation-only merge",
+        f"{RMI8_QUALIFIED_TESTS:,} tests passed",
+        f"{RMI8_QUALIFIED_TRACKED_FILES} tracked-file layout checks",
+        f"{RMI8_QUALIFIED_SCHEMAS} schemas",
+        f"Reference Implementation CI #{RMI8_QUALIFIED_CI}",
+        RMI8_CANDIDATE_HEAD,
+        "RMI-1 through RMI-8 implemented and qualified",
         "model/provider neutral",
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "Discovered -> Eligible -> Calibrated -> Selected",
         "compatibility inputs. It does not claim that those implementations are currently running",
-        "RMI-8 — reconcile canonical documentation",
+        "[x] RMI-8",
+        "| Runtime model binding | Complete | 100% |",
         "| Live execution expansion | In progress | 65% |",
         "`documentation`, evaluation only, not authorized for live execution",
         "provider-backed controlled documentation replay evidence",
@@ -96,22 +99,27 @@ def test_progress_tracker_matches_post_rmi7_executable_truth() -> None:
     for stale in (
         "993 tests passed, 558 tracked-file layout checks",
         "established by CI #806",
+        "RMI-1 through RMI-7 executable and merged; RMI-8 documentation/progress reconciliation in progress",
+        "| Runtime model binding | In progress | 95% |",
         "specialist-model-routing.yaml` is the current",
     ):
         assert stale not in text
 
 
-def test_roadmap_describes_capability_first_runtime_binding() -> None:
+def test_roadmap_describes_completed_capability_first_runtime_binding() -> None:
     text = _text("docs/stewardship/roadmap.md")
 
     for phrase in (
+        "runtime-model-binding program through RMI-8",
         "TEO routes capabilities and responsibility, not model brands",
         "Discovered -> Eligible -> Calibrated -> Selected",
+        "RMI-1 through RMI-8 are implemented and qualified",
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
         "Connection mechanism remains separate from runtime fitness and routing",
-        "Current: RMI-8 truth reconciliation",
+        "RMI-8 candidate qualification",
+        "Reference Implementation CI #954",
         "High and critical live execution remains outside the current guarded runtime",
         "Clean-architecture migration (#197)",
         "Assimilation is not installation",
@@ -120,6 +128,7 @@ def test_roadmap_describes_capability_first_runtime_binding() -> None:
         assert phrase in text
 
     assert "The repaired staged route is:" not in text
+    assert "Current: RMI-8 truth reconciliation" not in text
 
 
 def test_root_readme_exposes_current_runtime_binding_truth() -> None:
@@ -134,11 +143,13 @@ def test_root_readme_exposes_current_runtime_binding_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`{CURRENT_PRE_RMI8_MAIN}` after RMI-7 / PR #208",
-        f"Reference Implementation CI #{RMI7_QUALIFIED_CI}",
-        "1,113 tests",
+        f"`main@{PRE_RMI8_MAIN}` before the documentation-only RMI-8 merge",
+        f"Reference Implementation CI #{RMI8_QUALIFIED_CI}",
+        RMI8_CANDIDATE_HEAD,
+        "1,115 tests",
         "602 tracked-file layout checks",
         "42 schemas",
+        "RMI-1 through RMI-8 implemented and qualified",
         "The next gate is provider-backed controlled documentation replay evidence",
         "eleven provider-independent adversarial slices",
         "Reference Implementation CI #739",
