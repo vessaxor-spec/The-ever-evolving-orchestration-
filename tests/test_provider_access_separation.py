@@ -103,7 +103,8 @@ def test_ai_instructions_preserve_connection_neutrality() -> None:
 def test_routing_and_model_registry_do_not_encode_authentication_mechanics() -> None:
     paths = [
         REPO_ROOT / "policy/routing/core/routing.yaml",
-        REPO_ROOT / "policy/routing/core/specialist-model-routing.yaml",
+        REPO_ROOT / "policy/routing/core/specialist-selection-policy.yaml",
+        REPO_ROOT / "policy/routing/core/runtime-compatibility-defaults.yaml",
         REPO_ROOT / "policy/routing/core/team-routing.yaml",
         REPO_ROOT / "policy/routing/core/implementation-defaults.yaml",
     ]
