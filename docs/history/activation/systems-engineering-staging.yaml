@@ -15,7 +15,7 @@ specialist:
 worker:
   id: systems_requirements
   definition: community/workers/systems-engineering-worker.yaml
-  canonical_git_blob_sha: e1f7e18dc835b6d54cebb4e7a6967cd81fec9993
+  canonical_git_blob_sha: 256927dc1e2013b10814a8cf4382f5cf7e2937db
 
 standards_posture:
   verified_at: 2026-08-06
