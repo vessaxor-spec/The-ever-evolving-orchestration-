@@ -46,7 +46,7 @@ jobs:
       - name: Apply exact-source runtime rewiring
         if: ${{ steps.detect.outputs.needed == 'true' }}
         run: |
-          python ci/rmi7_rewire_runtime.py
+          python ci/rmi7_rewire_runtime_v2.py
           git diff --check
           python -m compileall -q reference/implementations/python/src
       - name: Commit runtime rewiring
