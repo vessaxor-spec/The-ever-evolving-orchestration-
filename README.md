@@ -129,9 +129,9 @@ TEO has crossed the functional-v1 boundary and is in post-v1 stewardship and con
 |---|---|
 | Stable release | [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0), `reference_operational` |
 | Development line | `teo-reference-router==1.0.1.dev0` |
-| Executable baseline | `main@74c128947f1d98f0e42c595bd1229561ab6dab50` after clean-architecture Tranche 3 / PR #210 |
+| Executable code baseline | `main@74c128947f1d98f0e42c595bd1229561ab6dab50` after clean-architecture Tranche 3 / PR #210; stewardship-only reconciliation does not change executable behavior |
 | Runtime model binding | RMI-1 through RMI-8 complete; RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` |
-| Current qualification | Reference Implementation CI #960 on exact Tranche 3 head `504c05f67ee6d89e0144e6d16c11c3a19509e780`: **1,118 tests**, **607 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
+| Current validated scale | stewardship Reference Implementation CI #963 on PR #211 established **1,119 tests**, **607 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
 | Clean architecture | Tranches 1–3 merged under Issue #197; Tranche 4 specialist-routing composition is next |
 | Organizational topology | ten active organizational teams, 84 workers, 82 preserved specialist role cards, dedicated Mission Control workers for orchestration, operations, project delivery, and incident response |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
@@ -159,7 +159,7 @@ RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Its fina
 
 ## Clean-architecture migration
 
-Issue #197 is a separate behavior-preserving migration. Tranches 1–3 are merged. Tranche 3 / PR #210 introduced the dispatch application service, Worker/Specialist/capability resolvers, and an application-facing implementation-selection seam while keeping `OrchestrationEngine.dispatch()` as a thin compatibility façade. The `SpecialistRoutingEngine` inheritance bridge is intentionally retained until Tranche 4 replaces that coupling by composition.
+Issue #197 is a separate behavior-preserving migration. Tranches 1–3 are merged. Tranche 3 / PR #210 introduced the dispatch application service, Worker/Specialist/capability resolvers, and an application-facing implementation-selection seam while keeping `OrchestrationEngine.dispatch()` as a thin compatibility façade. Tranche 3 exact-head CI #960 passed 1,118 tests, 607 tracked files, 42 schemas, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. The `SpecialistRoutingEngine` inheritance bridge is intentionally retained until Tranche 4 replaces that coupling by composition.
 
 ## Live execution boundary
 
