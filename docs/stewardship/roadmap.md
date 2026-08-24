@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the executable runtime-model-binding migration through RMI-7.
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8.
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -61,7 +61,7 @@ Task
 
 The strict lifecycle is **Discovered -> Eligible -> Calibrated -> Selected**.
 
-RMI-1 through RMI-7 are merged:
+RMI-1 through RMI-8 are implemented and qualified:
 
 - provider-independent runtime inventory and five inventory classes;
 - deterministic multi-source inventory composition with fail-closed conflict handling;
@@ -73,30 +73,18 @@ RMI-1 through RMI-7 are merged:
 - reasoning controls bound before calibration/selection;
 - observed executor/checker identity and intended-versus-observed mismatch handling;
 - model/provider-neutral worker, specialist-responsibility, and task-route configuration;
-- named implementations isolated to explicit compatibility/default/evidence, experiment, pin, reproduction, or incident-mitigation surfaces.
+- named implementations isolated to explicit compatibility/default/evidence, experiment, pin, reproduction, or incident-mitigation surfaces;
+- canonical documentation, AI instructions, roadmap, Progress Tracker, and truth tests reconciled to the executable architecture.
 
-`policy/routing/core/runtime-compatibility-defaults.yaml` is therefore a compatibility/default evidence surface, not responsibility authority and not proof that a candidate is live, healthy, reachable, or empirically calibrated. `policy/routing/core/specialist-selection-policy.yaml` is the current model-neutral specialist selection policy. The retired `specialist-model-routing.yaml` is not a current authority surface.
+`policy/routing/core/runtime-compatibility-defaults.yaml` is a compatibility/default evidence surface, not responsibility authority and not proof that a candidate is live, healthy, reachable, or empirically calibrated. `policy/routing/core/specialist-selection-policy.yaml` is the current model-neutral specialist selection policy. The retired `specialist-model-routing.yaml` is not a current authority surface.
 
 Connection mechanism remains separate from runtime fitness and routing. API keys, OAuth, subscription-backed sessions, delegated identity, service accounts, connector sessions, SDK-managed identity, credential brokers, local runtimes, or future provider-supported access methods do not become intrinsic model-selection signals.
 
-## Current: RMI-8 truth reconciliation
-
-RMI-8 reconciles canonical policy descriptions, README guidance, AI operating instructions, the Progress Tracker, roadmap, and documentation-truth tests against the completed executable runtime-binding architecture.
-
-RMI-8 must remain documentation/governance truth work only. It must not:
-
-- widen live execution;
-- refresh concrete model versions merely because documentation is changing;
-- change provider authentication or access semantics;
-- alter product verification or qualified-human authority policy;
-- create runtime discovery claims unsupported by the reference implementation;
-- fold behavior-changing runtime work into the separate clean-architecture migration in #197.
-
-The accepted current executable baseline before RMI-8 documentation changes is `main@3d121fde56f840bbfaa6bcb240c262f045525786`, qualified by RMI-7 Reference Implementation CI #951 with 1,113 tests, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence, and provider-diverse end-to-end routing.
+RMI-8 candidate qualification on exact PR head `b5918ddb9574aca9f94e7e394658b4007b57ef27` is Reference Implementation CI #954: 1,115 tests, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence, and provider-diverse end-to-end routing. A final exact-head documentation-evidence verification is required before PR #209 merges.
 
 ## Current operational priority: evidence-governed live execution expansion
 
-The runtime-binding migration does not widen live authority.
+The completed runtime-binding program does not widen live authority.
 
 The existing low or medium risk `high_volume_simple` canary remains the only accepted guarded live execution scope. `documentation` remains the first staged candidate and is evaluation only.
 
