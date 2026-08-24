@@ -1,13 +1,20 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 from typing import Any, Iterable, Sequence
-from uuid import uuid4
 
 from .adapters.configured_runtime_selection import ConfiguredRuntimeSelectionAdapter
 from .adapters.filesystem import FilesystemArtifactIntegrityAdapter
+from .application.dispatch import (
+    CapabilityResolver,
+    DispatchResolutionError,
+    DispatchService,
+    DispatchServiceError,
+    ImplementationSelector,
+    SpecialistResolver,
+    WorkerResolver,
+)
 from .application.finalization import FinalizationError, FinalizationService
 from .config import ConfigBundle
 from .domain.routing import RISK_PATTERNS as RISK_PATTERNS
@@ -137,6 +144,25 @@ class OrchestrationEngine:
         self._runtime_calibration_requirements = (
             runtime_calibration_requirements or CalibrationRequirements(required=False)
         )
+        self._worker_resolver = WorkerResolver(config)
+        self._specialist_resolver = SpecialistResolver(config)
+        self._capability_resolver = CapabilityResolver(config)
+        self._implementation_selector = ImplementationSelector(
+            select_runtime=self._select_runtime_choice,
+            select_fallback=self._select_fallback_runtime,
+            plan_verification=self._verification_plan,
+            primary_policy_warning=self._primary_policy_warning,
+        )
+        self._dispatch_service = DispatchService(
+            config,
+            classify_task=self._classify_task,
+            assess_risk=self._assess_risk,
+            refine_risk=self._refine_effective_risk,
+            worker_resolver=self._worker_resolver,
+            specialist_resolver=self._specialist_resolver,
+            capability_resolver=self._capability_resolver,
+            implementation_selector=self._implementation_selector,
+        )
 
     @classmethod
     def from_repo(
@@ -164,110 +190,10 @@ class OrchestrationEngine:
         return self._runtime_selector
 
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
-        task_type, classification_reason = self._classify_task(task)
-        risk, risk_reason = self._assess_risk(task)
-        route = self.config.team_routes.get(task_type)
-        if not route:
-            raise RoutingError(f"No team route for task type: {task_type}")
-
-        team = str(route["primary_team"])
-        worker = self._resolve_worker(route, task)
-        specialist, specialist_warning = self._resolve_specialist(task, team, worker)
-        if specialist:
-            specialist_risk = str(specialist[1].get("risk_profile", risk))
-            if specialist_risk in RISK_ORDER and RISK_ORDER[specialist_risk] > RISK_ORDER[risk]:
-                risk = specialist_risk
-                risk_reason += (
-                    f" Specialist {specialist[0]} elevated the effective risk to {specialist_risk}."
-                )
-        specialist_name = specialist[0] if specialist else None
-        risk, refinement_reason = self._refine_effective_risk(task, specialist_name, risk)
-        if refinement_reason:
-            risk_reason += " " + refinement_reason
-
-        capabilities = self._resolve_capabilities(task, worker)
-        evaluated_at = utc_now()
-        primary = self._select_runtime_choice(
-            task=task,
-            task_type=task_type,
-            worker=worker,
-            role="primary",
-            risk=risk,
-            capabilities=capabilities,
-            specialist=specialist_name,
-            evaluated_at=evaluated_at,
-        )
-        primary_policy_warning = self._primary_policy_warning(task_type, worker, task, primary)
-        fallback = self._select_fallback_runtime(
-            task=task,
-            task_type=task_type,
-            worker=worker,
-            risk=risk,
-            capabilities=capabilities,
-            specialist=specialist_name,
-            primary=primary,
-            evaluated_at=evaluated_at,
-        )
-        verification = self._verification_plan(
-            task_type,
-            risk,
-            task,
-            primary,
-            worker,
-            specialist[1] if specialist else None,
-            specialist_name=specialist_name,
-            evaluated_at=evaluated_at,
-        )
-
-        warnings = [primary_policy_warning] if primary_policy_warning else []
-        if specialist_warning:
-            warnings.append(specialist_warning)
-        worker_entry = self.config.worker_registry.get(worker)
-        if worker_entry and worker_entry.get("owning_team") != team:
-            warnings.append(
-                f"Selected worker {worker} is registered to {worker_entry.get('owning_team')}, not {team}; "
-                "the canonical route was preserved and the mismatch was exposed."
-            )
-
-        explanation = [classification_reason, risk_reason]
-        explanation.append(f"Team route {task_type} selected {team}/{worker}.")
-        if specialist:
-            explanation.append(
-                f"Specialist {specialist[0]} matched team {team} and worker binding {worker}."
-            )
-        explanation.append(
-            f"Runtime binding selected {primary.model} for execution after authority, "
-            "eligibility, calibration, and fitness evaluation."
-        )
-        if fallback:
-            explanation.append(
-                f"Runtime binding selected {fallback.model} as the constrained fallback."
-            )
-        explanation.append(
-            f"Independent verification assigned to {verification.implementation.model} with "
-            f"{', '.join(verification.method)}."
-        )
-
-        specialist_entry = specialist[1] if specialist else None
-        return DispatchRecord(
-            task_id=task.task_id,
-            dispatch_id=f"dispatch-{uuid4().hex[:12]}",
-            created_at=evaluated_at,
-            task=task.task,
-            task_type=task_type,
-            risk_level=risk,
-            selected_team=team,
-            selected_worker=worker,
-            selected_specialist=specialist_name,
-            specialist_source=str(specialist_entry.get("role_card")) if specialist_entry else None,
-            specialist_risk_profile=str(specialist_entry.get("risk_profile")) if specialist_entry else None,
-            required_capabilities=capabilities,
-            selected_implementation=primary,
-            fallback_implementation=fallback,
-            verification=verification,
-            routing_explanation=explanation,
-            warnings=warnings,
-        )
+        try:
+            return self._dispatch_service.dispatch(task)
+        except DispatchServiceError as exc:
+            raise RoutingError(str(exc)) from exc
 
     def finalize(
         self,
@@ -305,68 +231,24 @@ class OrchestrationEngine:
         return risk, None
 
     def _resolve_worker(self, route: dict[str, Any], task: TaskRequest) -> str:
-        worker = str(route["primary_worker"])
-        overrides = route.get("worker_override_by_context", {})
-        contexts = _unique([task.domain or "", *task.constraints.contexts])
-        for context in contexts:
-            if context in overrides:
-                worker = str(overrides[context])
-                break
-        if worker not in self.config.worker_registry:
-            raise RoutingError(f"Selected worker is not defined in the core registry: {worker}")
-        return worker
+        try:
+            return self._worker_resolver.resolve(route, task)
+        except DispatchResolutionError as exc:
+            raise RoutingError(str(exc)) from exc
 
     def _resolve_specialist(
         self, task: TaskRequest, team: str, worker: str
     ) -> tuple[tuple[str, dict[str, Any]] | None, str | None]:
-        registry = self.config.specialist_registry
-        if task.specialist:
-            entry = registry.get(task.specialist)
-            if not entry:
-                raise RoutingError(f"Requested specialist is not registered: {task.specialist}")
-            if entry.get("primary_team") != team or entry.get("worker_binding") != worker:
-                raise RoutingError(
-                    f"Requested specialist {task.specialist} does not match selected route {team}/{worker}"
-                )
-            return (task.specialist, entry), None
-
-        normalized = re.sub(r"[^a-z0-9]+", "-", task.task.lower()).strip("-")
-        candidates: list[tuple[str, dict[str, Any]]] = []
-        for name, entry in registry.items():
-            if entry.get("primary_team") != team or entry.get("worker_binding") != worker:
-                continue
-            tokens = [
-                token
-                for token in name.split("-")
-                if token not in {"engineer", "specialist", "analyst"}
-            ]
-            if name in normalized or (tokens and all(token in normalized for token in tokens)):
-                candidates.append((name, entry))
-        if len(candidates) == 1:
-            return candidates[0], None
-        if len(candidates) > 1:
-            return None, "Multiple specialists matched; no specialist was selected without an explicit hint."
-        return None, None
+        try:
+            return self._specialist_resolver.resolve(task, team, worker)
+        except DispatchResolutionError as exc:
+            raise RoutingError(str(exc)) from exc
 
     def _resolve_capabilities(self, task: TaskRequest, worker: str) -> list[str]:
-        worker_entry = self.config.worker_registry[worker]
-        worker_team = str(worker_entry.get("owning_team") or "")
-        registry = self.config.capability_registry
-        for capability in task.constraints.required_capabilities:
-            entry = registry.get(capability)
-            if not entry:
-                raise RoutingError(f"Required capability is not registered: {capability}")
-            typical_teams = set(str(item) for item in entry.get("typical_teams", []))
-            if typical_teams and "all" not in typical_teams and worker_team not in typical_teams:
-                raise RoutingError(
-                    f"Selected worker {worker} cannot satisfy required capability {capability} for team {worker_team}"
-                )
-        return _unique(
-            [
-                *worker_entry.get("required_capabilities", []),
-                *task.constraints.required_capabilities,
-            ]
-        )
+        try:
+            return self._capability_resolver.resolve(task, worker)
+        except DispatchResolutionError as exc:
+            raise RoutingError(str(exc)) from exc
 
     def _worker_allows_model(self, worker: str, choice: ImplementationChoice) -> bool:
         worker_defaults = self.config.worker_runtime_defaults[worker]
