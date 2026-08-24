@@ -15,12 +15,12 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current executable main | `74c128947f1d98f0e42c595bd1229561ab6dab50` after clean-architecture Tranche 3 / PR #210 |
+| Current executable code baseline | `74c128947f1d98f0e42c595bd1229561ab6dab50` after clean-architecture Tranche 3 / PR #210; subsequent stewardship-only reconciliation does not change executable behavior |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | **1,118 tests passed**, **607 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #960 on exact PR #210 head `504c05f67ee6d89e0144e6d16c11c3a19509e780` |
+| Current validated scale | **1,119 tests passed**, **607 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by stewardship Reference Implementation CI #963 on PR #211 |
 | Runtime model binding | Complete through RMI-8; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` and Issue #200 is closed completed |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
