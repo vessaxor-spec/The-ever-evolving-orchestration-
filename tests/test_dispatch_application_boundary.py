@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
+from teo_reference.application.dispatch.specialist_policy import SpecialistRoutingPolicy
 from teo_reference.config import ConfigBundle
 from teo_reference.engine import OrchestrationEngine
 from teo_reference.specialist_routing import SpecialistRoutingEngine
@@ -18,6 +19,25 @@ DISPATCH_PACKAGE = (
     / "teo_reference"
     / "application"
     / "dispatch"
+)
+SPECIALIST_ROUTING_MODULE = (
+    REPO_ROOT
+    / "reference"
+    / "implementations"
+    / "python"
+    / "src"
+    / "teo_reference"
+    / "specialist_routing.py"
+)
+SPECIALIST_POLICY_ADAPTER = (
+    REPO_ROOT
+    / "reference"
+    / "implementations"
+    / "python"
+    / "src"
+    / "teo_reference"
+    / "adapters"
+    / "specialist_selection_policy.py"
 )
 
 
@@ -35,6 +55,7 @@ def test_dispatch_application_boundary_does_not_import_outer_engine_or_adapters(
         "from ...adapters",
         "from ...provider_",
         "from ...cli",
+        "import yaml",
     )
     for path in DISPATCH_PACKAGE.glob("*.py"):
         text = path.read_text(encoding="utf-8")
@@ -42,16 +63,35 @@ def test_dispatch_application_boundary_does_not_import_outer_engine_or_adapters(
             assert marker not in text, f"{path.name} depends on outer boundary {marker}"
 
 
-def test_specialist_routing_hooks_remain_bound_through_tranche_3_bridge() -> None:
+def test_specialist_routing_uses_composition_instead_of_engine_inheritance() -> None:
     router = SpecialistRoutingEngine(ConfigBundle.load(REPO_ROOT))
 
-    assert router._dispatch_service._refine_risk.__self__ is router
+    assert not issubclass(SpecialistRoutingEngine, OrchestrationEngine)
+    assert isinstance(router._engine, OrchestrationEngine)
+    assert router._dispatch_service is router._engine._dispatch_service
+    assert router._engine._risk_refiner.__self__ is router._specialist_policy
     assert (
-        router._dispatch_service._refine_risk.__func__
-        is SpecialistRoutingEngine._refine_effective_risk
+        router._engine._risk_refiner.__func__
+        is SpecialistRoutingPolicy.refine_effective_risk
     )
-    assert router._implementation_selector._select_runtime.__self__ is router
+    assert (
+        router._engine._selection_preference_refiner.__self__
+        is router._specialist_policy
+    )
+    assert (
+        router._engine._selection_preference_refiner.__func__
+        is SpecialistRoutingPolicy.refine_selection_preferences
+    )
 
-    # Tranche 3 intentionally preserves the inheritance bridge. Tranche 4 owns
-    # removal of this coupling after the application boundary is qualified.
-    assert issubclass(SpecialistRoutingEngine, OrchestrationEngine)
+
+def test_specialist_policy_loading_is_outside_application_boundary() -> None:
+    application_policy = (
+        DISPATCH_PACKAGE / "specialist_policy.py"
+    ).read_text(encoding="utf-8")
+    adapter = SPECIALIST_POLICY_ADAPTER.read_text(encoding="utf-8")
+    facade = SPECIALIST_ROUTING_MODULE.read_text(encoding="utf-8")
+
+    assert "import yaml" not in application_policy
+    assert "Path(" not in application_policy
+    assert "import yaml" in adapter
+    assert "YamlSpecialistSelectionPolicyAdapter" in facade
