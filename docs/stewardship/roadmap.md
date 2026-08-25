@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–3; Tranche 4 is next.
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4; Tranche 5 configuration-boundary separation is next.
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -84,15 +84,20 @@ RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Final ex
 
 ## Current actionable repository work: clean-architecture migration (#197)
 
-The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–3 are merged:
+The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 are merged:
 
 - Tranche 1 — deterministic classification/risk domain policy;
 - Tranche 2 — finalization use case and artifact-integrity port;
-- Tranche 3 — dispatch application service, responsibility resolvers, and application-facing implementation-selection seam.
+- Tranche 3 — dispatch application service, responsibility resolvers, and application-facing implementation-selection seam;
+- Tranche 4 — specialist routing by composition with specialist-selection configuration I/O behind a narrow port/adapter.
 
 Tranche 3 merged via PR #210 as `74c128947f1d98f0e42c595bd1229561ab6dab50`. Exact-head CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780` passed 1,118 tests, 607 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing.
 
-`OrchestrationEngine.dispatch()` is now a thin application-service façade. Worker, Specialist, and capability resolution are extracted. The inheritance bridge in `SpecialistRoutingEngine` is deliberately retained so **Tranche 4 — specialist routing by composition** remains independently reviewable.
+Tranche 4 merged via PR #212 as `2f4df9d1124be91473e346ddb926f5d93c93de3e`. Exact-head CI #968 on `176217f9803c2ec274d2b225c52cf1f4d5c0f27f` passed 1,120 tests, 610 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing.
+
+`OrchestrationEngine.dispatch()` remains a thin application-service façade. Worker, Specialist, and capability resolution are extracted. `SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`; specialist risk/preference refinement is composed through a pure application policy.
+
+**Tranche 5 — configuration boundary separation** is the next clean-architecture gate. It must separate filesystem/YAML loading, explicit composition, invariant validation, and immutable runtime configuration views while preserving the explicit extension manifest, fail-closed validation, and `ConfigBundle` compatibility.
 
 Rules:
 
@@ -100,6 +105,7 @@ Rules:
 - preserve dependency direction and existing behavior;
 - do not fold runtime-model-binding product behavior into #197;
 - do not change live authority, provider access, or model/default policy as a side effect;
+- do not turn configuration discovery or loading into routing authority;
 - where workstreams touch a surface, sequence changes so each remains independently understandable and reversible.
 
 ## Current operational priority: evidence-governed live execution expansion

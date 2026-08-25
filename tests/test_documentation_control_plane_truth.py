@@ -13,19 +13,25 @@ EXPECTED_MISSION_CONTROL_WORKERS = {
     "project_delivery",
     "incident_response",
 }
-CURRENT_MAIN = "74c128947f1d98f0e42c595bd1229561ab6dab50"
+CURRENT_MAIN = "2f4df9d1124be91473e346ddb926f5d93c93de3e"
 RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
 RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
 RMI8_FINAL_CI = 958
+TRANCHE3_MERGE = "74c128947f1d98f0e42c595bd1229561ab6dab50"
 TRANCHE3_HEAD = "504c05f67ee6d89e0144e6d16c11c3a19509e780"
 TRANCHE3_QUALIFIED_TESTS = 1118
 TRANCHE3_QUALIFIED_TRACKED_FILES = 607
 TRANCHE3_QUALIFIED_SCHEMAS = 42
 TRANCHE3_QUALIFIED_CI = 960
-CURRENT_VALIDATED_TESTS = 1119
-CURRENT_VALIDATED_TRACKED_FILES = 607
-CURRENT_VALIDATED_SCHEMAS = 42
-CURRENT_VALIDATED_CI = 963
+TRANCHE4_HEAD = "176217f9803c2ec274d2b225c52cf1f4d5c0f27f"
+TRANCHE4_QUALIFIED_TESTS = 1120
+TRANCHE4_QUALIFIED_TRACKED_FILES = 610
+TRANCHE4_QUALIFIED_SCHEMAS = 42
+TRANCHE4_QUALIFIED_CI = 968
+CURRENT_VALIDATED_TESTS = TRANCHE4_QUALIFIED_TESTS
+CURRENT_VALIDATED_TRACKED_FILES = TRANCHE4_QUALIFIED_TRACKED_FILES
+CURRENT_VALIDATED_SCHEMAS = TRANCHE4_QUALIFIED_SCHEMAS
+CURRENT_VALIDATED_CI = TRANCHE4_QUALIFIED_CI
 
 
 def _text(path: str) -> str:
@@ -78,13 +84,15 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
 
     for phrase in (
         "**Last reconciled:** 2026-08-25",
-        f"`{CURRENT_MAIN}` after clean-architecture Tranche 3 / PR #210",
+        f"`{CURRENT_MAIN}` after clean-architecture Tranche 4 / PR #212",
         f"{CURRENT_VALIDATED_TESTS:,} tests passed",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
         f"{CURRENT_VALIDATED_SCHEMAS} schemas",
         f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
         f"Reference Implementation CI #{TRANCHE3_QUALIFIED_CI}",
         TRANCHE3_HEAD,
+        f"Reference Implementation CI #{TRANCHE4_QUALIFIED_CI}",
+        TRANCHE4_HEAD,
         f"PR #209 merged as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
         RMI8_FINAL_HEAD,
@@ -94,8 +102,8 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         "specialist-selection-policy.yaml",
         "Discovered -> Eligible -> Calibrated -> Selected",
         "compatibility inputs. It does not claim that those implementations are currently running",
-        "Tranches 1–3 merged and qualified",
-        "Tranche 4: specialist routing by composition",
+        "Tranches 1–4 merged and qualified",
+        "Tranche 5: configuration boundary separation",
         "`documentation`, evaluation only, not authorized for live execution",
         "provider-backed controlled `documentation` replay evidence",
         "High and critical live execution remains unauthorized",
@@ -106,6 +114,9 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         assert phrase in text
 
     for stale in (
+        "Tranches 1–3 merged and qualified",
+        "Tranche 4: specialist routing by composition",
+        "specialist inheritance bridge remains intentionally present for Tranche 4",
         "before the RMI-8 documentation-only merge",
         "merge of the documentation-only RMI-8 tranche is the remaining closure action",
         "PR #209 candidate qualified",
@@ -132,17 +143,25 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         f"PR #209 as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
         "Current actionable repository work: clean-architecture migration (#197)",
-        f"PR #210 as `{CURRENT_MAIN}`",
+        f"PR #210 as `{TRANCHE3_MERGE}`",
         f"CI #{TRANCHE3_QUALIFIED_CI}",
+        f"PR #212 as `{CURRENT_MAIN}`",
+        f"CI #{TRANCHE4_QUALIFIED_CI}",
         "Tranche 4 — specialist routing by composition",
+        "Tranche 5 — configuration boundary separation",
         "High and critical live execution remains outside the current guarded runtime",
         "Assimilation is not installation",
         "routing_continuity_only",
     ):
         assert phrase in text
 
-    assert "RMI-8 candidate qualification" not in text
-    assert "required before PR #209 merges" not in text
+    for stale in (
+        "The behavior-preserving Python clean-architecture migration has completed Tranches 1–3; Tranche 4 is next.",
+        "inheritance bridge in `SpecialistRoutingEngine` is deliberately retained",
+        "RMI-8 candidate qualification",
+        "required before PR #209 merges",
+    ):
+        assert stale not in text
 
 
 def test_root_readme_exposes_current_repository_truth() -> None:
@@ -157,17 +176,20 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`main@{CURRENT_MAIN}` after clean-architecture Tranche 3 / PR #210",
+        f"`main@{CURRENT_MAIN}` after clean-architecture Tranche 4 / PR #212",
         f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
         f"{CURRENT_VALIDATED_TESTS:,} tests",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
         f"{CURRENT_VALIDATED_SCHEMAS} schemas",
         f"PR #209 as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
-        "Tranches 1–3 are merged",
+        "Tranches 1–4 are merged",
         f"Tranche 3 exact-head CI #{TRANCHE3_QUALIFIED_CI}",
         f"{TRANCHE3_QUALIFIED_TESTS:,} tests",
-        "Tranche 4 replaces that coupling by composition",
+        f"Tranche 4 exact-head CI #{TRANCHE4_QUALIFIED_CI}",
+        f"{TRANCHE4_QUALIFIED_TESTS:,} tests",
+        "`SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`",
+        "Tranche 5 configuration-boundary separation is the next clean-architecture gate",
         "The next gate is provider-backed controlled documentation replay evidence",
         "eleven provider-independent adversarial slices",
         "Reference Implementation CI #739",
@@ -177,6 +199,8 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         assert phrase in text
 
     for stale in (
+        "Tranches 1–3 are merged",
+        "inheritance bridge is intentionally retained until Tranche 4",
         "before the documentation-only RMI-8 merge",
         "PR #209 is the documentation-only closure tranche",
         "RMI-8 candidate Reference Implementation CI #954",
@@ -185,22 +209,35 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         assert stale not in text
 
 
-def test_clean_architecture_plan_records_tranche3_and_next_gate() -> None:
+def test_clean_architecture_plan_records_tranche4_and_next_gate() -> None:
     text = _text("docs/architecture/python-clean-architecture-migration.md")
 
     for phrase in (
-        "Tranches 1–3 merged",
+        "Tranches 1–4 merged",
         "Tranche 3 — dispatch application service — COMPLETE",
-        f"PR #210 as `{CURRENT_MAIN}`",
+        f"PR #210 as `{TRANCHE3_MERGE}`",
         TRANCHE3_HEAD,
         f"Reference Implementation CI #{TRANCHE3_QUALIFIED_CI}",
         f"{TRANCHE3_QUALIFIED_TESTS:,} tests passed",
         f"{TRANCHE3_QUALIFIED_TRACKED_FILES} tracked files",
-        "Tranche 4 — specialist routing by composition — NEXT",
+        "Tranche 4 — specialist routing by composition — COMPLETE",
+        f"PR #212 as `{CURRENT_MAIN}`",
+        TRANCHE4_HEAD,
+        f"Reference Implementation CI #{TRANCHE4_QUALIFIED_CI}",
+        f"{TRANCHE4_QUALIFIED_TESTS:,} tests passed",
+        f"{TRANCHE4_QUALIFIED_TRACKED_FILES} tracked files",
         "SpecialistRoutingEngine",
-        "inheritance/refinement/preference bridge for Tranche 4",
+        "no longer subclasses",
+        "Tranche 5 — configuration boundary — NEXT",
     ):
         assert phrase in text
+
+    for stale in (
+        "Tranche 4 — specialist routing by composition — NEXT",
+        "specialist_routing.py` remains the next coupling target",
+        "inheritance/refinement/preference bridge for Tranche 4",
+    ):
+        assert stale not in text
 
 
 def test_ai_instructions_use_runtime_binding_not_static_model_authority() -> None:

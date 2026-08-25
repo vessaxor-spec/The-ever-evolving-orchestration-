@@ -15,17 +15,17 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current executable code baseline | `74c128947f1d98f0e42c595bd1229561ab6dab50` after clean-architecture Tranche 3 / PR #210; subsequent stewardship-only reconciliation does not change executable behavior |
+| Current executable code baseline | `2f4df9d1124be91473e346ddb926f5d93c93de3e` after clean-architecture Tranche 4 / PR #212; stewardship-only reconciliation does not change executable behavior |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | **1,119 tests passed**, **607 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by stewardship Reference Implementation CI #963 on PR #211 |
+| Current validated scale | **1,120 tests passed**, **610 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #968 on PR #212 |
 | Runtime model binding | Complete through RMI-8; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` and Issue #200 is closed completed |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
 | Specialist selection policy | model-neutral `policy/routing/core/specialist-selection-policy.yaml` |
-| Clean architecture | Tranches 1–3 merged; Tranche 4 specialist-routing composition is the next actionable repository gate |
+| Clean architecture | Tranches 1–4 merged and qualified; Tranche 5 configuration-boundary separation is the next actionable repository gate |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
@@ -94,12 +94,14 @@ Issue #197 remains behavior-preserving and separate from Runtime Model Binding.
 - [x] Tranche 1 — deterministic classification/risk domain policy; PR #196, `a63887179a1ff3adfa7d7119a7db1a5f598a0f86`.
 - [x] Tranche 2 — finalization use case and artifact-integrity port; PR #198, `467c706d6f1077371928e3fcbe3f32f5ec51fb19`.
 - [x] Tranche 3 — dispatch application service and responsibility resolvers/selectors; PR #210, `74c128947f1d98f0e42c595bd1229561ab6dab50`.
-- [ ] Tranche 4 — replace specialist-routing inheritance coupling with composition.
+- [x] Tranche 4 — replace specialist-routing inheritance coupling with composition; PR #212, `2f4df9d1124be91473e346ddb926f5d93c93de3e`.
 - [ ] Tranche 5 — separate configuration loading/composition/validation/runtime view.
 - [ ] Tranche 6 — move provider/verifier/runtime/evaluation implementations behind explicit outer namespaces with compatibility shims.
 - [ ] Tranche 7 — reduce compatibility surface only through explicit API evidence/versioning.
 
-Tranche 3 exact-head qualification was Reference Implementation CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780`: **1,118 tests**, **607 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing. `OrchestrationEngine.dispatch()` is now a thin application-service façade; Worker, Specialist, and capability resolution are extracted. The specialist inheritance bridge remains intentionally present for Tranche 4.
+Tranche 3 exact-head qualification was Reference Implementation CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780`: **1,118 tests**, **607 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing. `OrchestrationEngine.dispatch()` became a thin application-service façade with Worker, Specialist, and capability resolution extracted.
+
+Tranche 4 exact-head qualification was Reference Implementation CI #968 on `176217f9803c2ec274d2b225c52cf1f4d5c0f27f`: **1,120 tests**, **610 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing. `SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`; specialist risk/preference refinement is composed through a pure application policy, and specialist-selection YAML/filesystem loading is behind a narrow port/adapter.
 
 ## Portfolio view
 
@@ -118,17 +120,17 @@ Tranche 3 exact-head qualification was Reference Implementation CI #960 on `504c
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve anti-Goodhart and no-policy-write boundaries |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, temporal causality, and finalization boundaries |
 | Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
-| Clean-architecture migration (#197) | In progress | — | Tranches 1–3 merged and qualified | Tranche 4: specialist routing by composition |
+| Clean-architecture migration (#197) | In progress | — | Tranches 1–4 merged and qualified | Tranche 5: configuration boundary separation |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
 ## NOW
 
-### 1. Clean-architecture Tranche 4 — specialist routing by composition
+### 1. Clean-architecture Tranche 5 — configuration boundary separation
 
-This is the next fully actionable repository gate. Replace the inheritance-heavy `SpecialistRoutingEngine` coupling with composable policy refinement while preserving accepted public compatibility and every routing/risk/authority/runtime-selection behavior. The public `SpecialistRoutingEngine` remains available until compatibility evidence supports any later simplification.
+This is the next fully actionable repository gate after Tranche 4. Separate configuration filesystem/YAML loading, explicit composition, invariant validation, and immutable runtime views while preserving `ConfigBundle` compatibility, the explicit extension manifest, fail-closed validation, routing/runtime semantics, and repository-governance boundaries.
 
-Do not fold provider/model changes, live-scope changes, or Runtime Model Binding behavior into Tranche 4.
+Tranche 5 must not turn configuration discovery into authority, introduce implicit policy discovery, change provider/model defaults, widen live scope, or alter Runtime Model Binding behavior.
 
 ### 2. Evidence-governed live execution expansion
 
@@ -140,7 +142,7 @@ No access mechanism is itself routing authority. Do not authorize high or critic
 
 ## NEXT
 
-After Tranche 4, continue #197 only after exact repository recalibration. Tranche 5 is the planned configuration-boundary split, but it is not automatically authorized by this tracker if Tranche 4 evidence reveals a different required sequence.
+After Tranche 5, continue #197 only after exact repository recalibration. Tranche 6 is the planned provider/verifier/runtime/evaluation namespace migration, but it is not automatically authorized if Tranche 5 evidence reveals a different required sequence.
 
 The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
 
