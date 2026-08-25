@@ -158,8 +158,9 @@ def test_finalize_accepts_matching_executor_observed_identity(tmp_path: Path, ca
     assert json.loads(capsys.readouterr().out)["dispatch_id"] == dispatch["dispatch_id"]
 
 
-def test_finalize_rejects_executor_observed_identity_mismatch(tmp_path: Path) -> None:
+def test_finalize_rejects_executor_observed_identity_mismatch(tmp_path: Path, capsys) -> None:
     dispatch_path, dispatch = plan_dispatch(tmp_path)
+    capsys.readouterr()
     execution, verification = write_finalize_inputs(
         tmp_path,
         dispatch,
@@ -178,10 +179,15 @@ def test_finalize_rejects_executor_observed_identity_mismatch(tmp_path: Path) ->
             ]
         )
     assert exc.value.code == 2
+    assert "executor runtime identity is mismatch" in capsys.readouterr().err
 
 
-def test_finalize_execution_schema_remains_strict_for_unknown_fields(tmp_path: Path) -> None:
+def test_finalize_execution_schema_remains_strict_for_unknown_fields(
+    tmp_path: Path,
+    capsys,
+) -> None:
     dispatch_path, dispatch = plan_dispatch(tmp_path)
+    capsys.readouterr()
     execution, verification = write_finalize_inputs(
         tmp_path,
         dispatch,
@@ -200,12 +206,15 @@ def test_finalize_execution_schema_remains_strict_for_unknown_fields(tmp_path: P
             ]
         )
     assert exc.value.code == 2
+    assert "execution input failed schema validation" in capsys.readouterr().err
 
 
 def test_finalize_preserves_legacy_execution_without_observed_identity(
     tmp_path: Path,
+    capsys,
 ) -> None:
     dispatch_path, dispatch = plan_dispatch(tmp_path)
+    capsys.readouterr()
     execution, verification = write_finalize_inputs(
         tmp_path,
         dispatch,
@@ -222,3 +231,4 @@ def test_finalize_preserves_legacy_execution_without_observed_identity(
             str(verification),
         ]
     ) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "completed"
