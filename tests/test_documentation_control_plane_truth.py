@@ -13,12 +13,19 @@ EXPECTED_MISSION_CONTROL_WORKERS = {
     "project_delivery",
     "incident_response",
 }
-PRE_RMI8_MAIN = "3d121fde56f840bbfaa6bcb240c262f045525786"
-RMI8_CANDIDATE_HEAD = "b5918ddb9574aca9f94e7e394658b4007b57ef27"
-RMI8_QUALIFIED_TESTS = 1115
-RMI8_QUALIFIED_TRACKED_FILES = 602
-RMI8_QUALIFIED_SCHEMAS = 42
-RMI8_QUALIFIED_CI = 954
+CURRENT_MAIN = "74c128947f1d98f0e42c595bd1229561ab6dab50"
+RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
+RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
+RMI8_FINAL_CI = 958
+TRANCHE3_HEAD = "504c05f67ee6d89e0144e6d16c11c3a19509e780"
+TRANCHE3_QUALIFIED_TESTS = 1118
+TRANCHE3_QUALIFIED_TRACKED_FILES = 607
+TRANCHE3_QUALIFIED_SCHEMAS = 42
+TRANCHE3_QUALIFIED_CI = 960
+CURRENT_VALIDATED_TESTS = 1119
+CURRENT_VALIDATED_TRACKED_FILES = 607
+CURRENT_VALIDATED_SCHEMAS = 42
+CURRENT_VALIDATED_CI = 963
 
 
 def _text(path: str) -> str:
@@ -66,30 +73,32 @@ def test_runtime_binding_current_authority_surfaces_exist() -> None:
     ).exists()
 
 
-def test_progress_tracker_matches_qualified_rmi8_truth() -> None:
+def test_progress_tracker_matches_current_merged_truth() -> None:
     text = _text("docs/stewardship/progress-tracker.md")
 
     for phrase in (
-        "**Last reconciled:** 2026-08-24",
-        f"`{PRE_RMI8_MAIN}` before the RMI-8 documentation-only merge",
-        f"{RMI8_QUALIFIED_TESTS:,} tests passed",
-        f"{RMI8_QUALIFIED_TRACKED_FILES} tracked-file layout checks",
-        f"{RMI8_QUALIFIED_SCHEMAS} schemas",
-        f"Reference Implementation CI #{RMI8_QUALIFIED_CI}",
-        RMI8_CANDIDATE_HEAD,
-        "RMI-1 through RMI-8 implemented and qualified",
+        "**Last reconciled:** 2026-08-25",
+        f"`{CURRENT_MAIN}` after clean-architecture Tranche 3 / PR #210",
+        f"{CURRENT_VALIDATED_TESTS:,} tests passed",
+        f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
+        f"{CURRENT_VALIDATED_SCHEMAS} schemas",
+        f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
+        f"Reference Implementation CI #{TRANCHE3_QUALIFIED_CI}",
+        TRANCHE3_HEAD,
+        f"PR #209 merged as `{RMI8_MERGE}`",
+        f"Reference Implementation CI #{RMI8_FINAL_CI}",
+        RMI8_FINAL_HEAD,
+        "RMI-1 through RMI-8 merged and reconciled",
         "model/provider neutral",
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "Discovered -> Eligible -> Calibrated -> Selected",
         "compatibility inputs. It does not claim that those implementations are currently running",
-        "[x] RMI-8",
-        "| Runtime model binding | Complete | 100% |",
-        "| Live execution expansion | In progress | 65% |",
+        "Tranches 1–3 merged and qualified",
+        "Tranche 4: specialist routing by composition",
         "`documentation`, evaluation only, not authorized for live execution",
-        "provider-backed controlled documentation replay evidence",
+        "provider-backed controlled `documentation` replay evidence",
         "High and critical live execution remains unauthorized",
-        "Clean-architecture migration (#197)",
         "Host Integration Contract research",
         "Execution Environment & Recovery Contract",
         "Task Intent & Action Authority Contract",
@@ -97,41 +106,46 @@ def test_progress_tracker_matches_qualified_rmi8_truth() -> None:
         assert phrase in text
 
     for stale in (
+        "before the RMI-8 documentation-only merge",
+        "merge of the documentation-only RMI-8 tranche is the remaining closure action",
+        "PR #209 candidate qualified",
+        "awaiting only final exact-head closure verification/merge",
         "993 tests passed, 558 tracked-file layout checks",
         "established by CI #806",
-        "RMI-1 through RMI-7 executable and merged; RMI-8 documentation/progress reconciliation in progress",
         "| Runtime model binding | In progress | 95% |",
-        "specialist-model-routing.yaml` is the current",
     ):
         assert stale not in text
 
 
-def test_roadmap_describes_completed_capability_first_runtime_binding() -> None:
+def test_roadmap_describes_completed_runtime_binding_and_current_clean_architecture() -> None:
     text = _text("docs/stewardship/roadmap.md")
 
     for phrase in (
         "runtime-model-binding program through RMI-8",
         "TEO routes capabilities and responsibility, not model brands",
         "Discovered -> Eligible -> Calibrated -> Selected",
-        "RMI-1 through RMI-8 are implemented and qualified",
+        "RMI-1 through RMI-8 are implemented, qualified, and merged",
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
         "Connection mechanism remains separate from runtime fitness and routing",
-        "RMI-8 candidate qualification",
-        "Reference Implementation CI #954",
+        f"PR #209 as `{RMI8_MERGE}`",
+        f"Reference Implementation CI #{RMI8_FINAL_CI}",
+        "Current actionable repository work: clean-architecture migration (#197)",
+        f"PR #210 as `{CURRENT_MAIN}`",
+        f"CI #{TRANCHE3_QUALIFIED_CI}",
+        "Tranche 4 — specialist routing by composition",
         "High and critical live execution remains outside the current guarded runtime",
-        "Clean-architecture migration (#197)",
         "Assimilation is not installation",
         "routing_continuity_only",
     ):
         assert phrase in text
 
-    assert "The repaired staged route is:" not in text
-    assert "Current: RMI-8 truth reconciliation" not in text
+    assert "RMI-8 candidate qualification" not in text
+    assert "required before PR #209 merges" not in text
 
 
-def test_root_readme_exposes_current_runtime_binding_truth() -> None:
+def test_root_readme_exposes_current_repository_truth() -> None:
     text = _text("README.md")
 
     for phrase in (
@@ -143,13 +157,17 @@ def test_root_readme_exposes_current_runtime_binding_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`main@{PRE_RMI8_MAIN}` before the documentation-only RMI-8 merge",
-        f"Reference Implementation CI #{RMI8_QUALIFIED_CI}",
-        RMI8_CANDIDATE_HEAD,
-        "1,115 tests",
-        "602 tracked-file layout checks",
-        "42 schemas",
-        "RMI-1 through RMI-8 implemented and qualified",
+        f"`main@{CURRENT_MAIN}` after clean-architecture Tranche 3 / PR #210",
+        f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
+        f"{CURRENT_VALIDATED_TESTS:,} tests",
+        f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
+        f"{CURRENT_VALIDATED_SCHEMAS} schemas",
+        f"PR #209 as `{RMI8_MERGE}`",
+        f"Reference Implementation CI #{RMI8_FINAL_CI}",
+        "Tranches 1–3 are merged",
+        f"Tranche 3 exact-head CI #{TRANCHE3_QUALIFIED_CI}",
+        f"{TRANCHE3_QUALIFIED_TESTS:,} tests",
+        "Tranche 4 replaces that coupling by composition",
         "The next gate is provider-backed controlled documentation replay evidence",
         "eleven provider-independent adversarial slices",
         "Reference Implementation CI #739",
@@ -158,7 +176,31 @@ def test_root_readme_exposes_current_runtime_binding_truth() -> None:
     ):
         assert phrase in text
 
-    assert "accepted substantive runtime-control baseline remains **Reference Implementation CI #514**" not in text
+    for stale in (
+        "before the documentation-only RMI-8 merge",
+        "PR #209 is the documentation-only closure tranche",
+        "RMI-8 candidate Reference Implementation CI #954",
+        "A final exact-head CI remains the merge gate for PR #209",
+    ):
+        assert stale not in text
+
+
+def test_clean_architecture_plan_records_tranche3_and_next_gate() -> None:
+    text = _text("docs/architecture/python-clean-architecture-migration.md")
+
+    for phrase in (
+        "Tranches 1–3 merged",
+        "Tranche 3 — dispatch application service — COMPLETE",
+        f"PR #210 as `{CURRENT_MAIN}`",
+        TRANCHE3_HEAD,
+        f"Reference Implementation CI #{TRANCHE3_QUALIFIED_CI}",
+        f"{TRANCHE3_QUALIFIED_TESTS:,} tests passed",
+        f"{TRANCHE3_QUALIFIED_TRACKED_FILES} tracked files",
+        "Tranche 4 — specialist routing by composition — NEXT",
+        "SpecialistRoutingEngine",
+        "inheritance/refinement/preference bridge for Tranche 4",
+    ):
+        assert phrase in text
 
 
 def test_ai_instructions_use_runtime_binding_not_static_model_authority() -> None:
@@ -204,7 +246,7 @@ def test_current_docs_do_not_turn_compatibility_or_access_into_authority() -> No
         "compatibility/default evidence",
         "does not create authority",
         "connection",
-        "does not widen live authority",
+        "do not widen live authority",
     ):
         assert phrase in combined
 

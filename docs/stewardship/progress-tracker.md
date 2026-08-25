@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record  
-**Last reconciled:** 2026-08-24  
+**Last reconciled:** 2026-08-25  
 **Stable release:** `v1.0.0`  
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -15,23 +15,24 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current executable main | `3d121fde56f840bbfaa6bcb240c262f045525786` before the RMI-8 documentation-only merge |
+| Current executable code baseline | `74c128947f1d98f0e42c595bd1229561ab6dab50` after clean-architecture Tranche 3 / PR #210; subsequent stewardship-only reconciliation does not change executable behavior |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | 1,115 tests passed, 602 tracked-file layout checks, 42 schemas, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by RMI-8 candidate Reference Implementation CI #954 on exact PR head `b5918ddb9574aca9f94e7e394658b4007b57ef27` |
-| Runtime model binding | RMI-1 through RMI-8 implemented and qualified; merge of the documentation-only RMI-8 tranche is the remaining closure action |
+| Current validated scale | **1,119 tests passed**, **607 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by stewardship Reference Implementation CI #963 on PR #211 |
+| Runtime model binding | Complete through RMI-8; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` and Issue #200 is closed completed |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
 | Specialist selection policy | model-neutral `policy/routing/core/specialist-selection-policy.yaml` |
+| Clean architecture | Tranches 1–3 merged; Tranche 4 specialist-routing composition is the next actionable repository gate |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
 | Regulated evidence pilot | 6 specialists, stability-qualified and intentionally bounded |
 | Repository information architecture | R1 through R5 complete |
 
-## Runtime model binding — current executable truth
+## Runtime model binding — completed executable truth
 
 TEO routes capabilities and responsibility, not model brands.
 
@@ -82,16 +83,30 @@ The default configured compatibility bridge represents configured implementation
 - [x] RMI-5 — policy-constrained runtime best-fit selection and dispatch cutover; PRs #205 and #206.
 - [x] RMI-6 — observed executor/checker identity through execution, telemetry, Route-Outcome, finalization, and provenance; PR #207.
 - [x] RMI-7 — remove model identity from workers/responsibility routes and isolate named implementations to explicit compatibility/default surfaces; PR #208, merged as `3d121fde56f840bbfaa6bcb240c262f045525786`.
-- [x] RMI-8 — reconcile canonical documentation, AI operating instructions, roadmap, Progress Tracker, and documentation-truth tests against completed executable truth; PR #209 candidate qualified by CI #954 and pending final exact-head closure verification/merge.
+- [x] RMI-8 — reconcile canonical documentation, AI operating instructions, roadmap, Progress Tracker, and documentation-truth tests; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`.
 
-RMI-8 candidate qualification on exact PR head `b5918ddb9574aca9f94e7e394658b4007b57ef27` was Reference Implementation CI #954 / run `32779702503`: **1,115 tests passed**, **602 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing.
+RMI-8 final qualification on exact PR head `d5ab4791e7b037bade24e2780a9aaef7df42878f` was Reference Implementation CI #958: **1,115 tests passed**, **602 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing.
+
+## Clean-architecture migration — current executable truth
+
+Issue #197 remains behavior-preserving and separate from Runtime Model Binding.
+
+- [x] Tranche 1 — deterministic classification/risk domain policy; PR #196, `a63887179a1ff3adfa7d7119a7db1a5f598a0f86`.
+- [x] Tranche 2 — finalization use case and artifact-integrity port; PR #198, `467c706d6f1077371928e3fcbe3f32f5ec51fb19`.
+- [x] Tranche 3 — dispatch application service and responsibility resolvers/selectors; PR #210, `74c128947f1d98f0e42c595bd1229561ab6dab50`.
+- [ ] Tranche 4 — replace specialist-routing inheritance coupling with composition.
+- [ ] Tranche 5 — separate configuration loading/composition/validation/runtime view.
+- [ ] Tranche 6 — move provider/verifier/runtime/evaluation implementations behind explicit outer namespaces with compatibility shims.
+- [ ] Tranche 7 — reduce compatibility surface only through explicit API evidence/versioning.
+
+Tranche 3 exact-head qualification was Reference Implementation CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780`: **1,118 tests**, **607 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing. `OrchestrationEngine.dispatch()` is now a thin application-service façade; Worker, Specialist, and capability resolution are extracted. The specialist inheritance bridge remains intentionally present for Tranche 4.
 
 ## Portfolio view
 
 | Workstream | Status | Progress | Current milestone | Next gate |
 |---|---|---:|---|---|
 | Core architecture and governance | Complete | 100% | Functional v1 reference contract | Maintain protected invariants through compatible evolution |
-| Runtime model binding | Complete | 100% | RMI-1 through RMI-8 implemented and qualified | Preserve runtime-binding invariants through future compatible evolution |
+| Runtime model binding | Complete | 100% | RMI-1 through RMI-8 merged and reconciled | Preserve runtime-binding invariants through future compatible evolution |
 | Repository information architecture | Complete | 100% | R1 through R5 | Preserve governed placement and lifecycle boundaries |
 | Team, worker, and specialist architecture | Operational | 100% | 10 teams, 84 workers, 82 active specialists | Add roles only after proven responsibility-gap and authority review |
 | Control integrity | Operational | 90% | Post-v1 conformance, mutation resistance, artifact-bound finalization, observed-identity integrity | Continue closing newly discovered finalization, authority, and recovery mutation gaps |
@@ -103,29 +118,31 @@ RMI-8 candidate qualification on exact PR head `b5918ddb9574aca9f94e7e394658b400
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve anti-Goodhart and no-policy-write boundaries |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, temporal causality, and finalization boundaries |
 | Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
-| Clean-architecture migration (#197) | In progress | — | behavior-preserving migration remains separate from runtime-model binding | Continue only from current #197 repository truth; do not fold RMI behavior changes into it |
+| Clean-architecture migration (#197) | In progress | — | Tranches 1–3 merged and qualified | Tranche 4: specialist routing by composition |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
 ## NOW
 
-### Evidence-governed live execution expansion
+### 1. Clean-architecture Tranche 4 — specialist routing by composition
 
-RMI-8 documentation reconciliation is qualified and awaiting only final exact-head closure verification/merge. It does not change the operational product milestone.
+This is the next fully actionable repository gate. Replace the inheritance-heavy `SpecialistRoutingEngine` coupling with composable policy refinement while preserving accepted public compatibility and every routing/risk/authority/runtime-selection behavior. The public `SpecialistRoutingEngine` remains available until compatibility evidence supports any later simplification.
 
-`documentation` is the first bounded staged candidate. It remains **staged only** and has **no live-execution authority**. The active guarded runtime remains limited to `high_volume_simple` at low or medium effective risk.
+Do not fold provider/model changes, live-scope changes, or Runtime Model Binding behavior into Tranche 4.
 
-The staged documentation replay harness and operator path are validated. CI uses deterministic fake provider transports and therefore does not constitute empirical provider-backed replay evidence. The next material product gate is a real provider-backed controlled `documentation` replay using the existing operator path, followed by the applicable shadow, recovery, and independent-review evidence before any active-scope mutation.
+### 2. Evidence-governed live execution expansion
 
-Provider-backed `documentation` replay is intentionally deferred as an open action item until provider access is supplied for the bounded evidence run. No access mechanism is itself routing authority.
+The product evidence gate remains provider-backed controlled `documentation` replay through the existing bounded operator path. It remains deferred until provider access is supplied for that evidence run.
 
-Do not authorize high or critical live execution from the runtime-model-binding work. **High and critical live execution remains unauthorized.**
+`documentation` is **staged only** and has **no live-execution authority**. The active guarded runtime remains limited to `high_volume_simple` at low or medium effective risk. CI uses deterministic fake provider transports and therefore does not constitute empirical provider-backed replay evidence.
+
+No access mechanism is itself routing authority. Do not authorize high or critical live execution from the architectural migration. **High and critical live execution remains unauthorized.**
 
 ## NEXT
 
-No additional workstream is automatically promoted by RMI-8 documentation completion. The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
+After Tranche 4, continue #197 only after exact repository recalibration. Tranche 5 is the planned configuration-boundary split, but it is not automatically authorized by this tracker if Tranche 4 evidence reveals a different required sequence.
 
-The #197 clean-architecture migration remains separately sequenced and behavior-preserving.
+The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
 
 ## LATER
 

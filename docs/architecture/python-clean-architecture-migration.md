@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation**  
+Status: **incremental implementation — Tranches 1–3 merged**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -12,29 +12,27 @@ TEO is already a mature control plane with strong conformance, mutation, authori
 
 ## Current-state diagnosis
 
-The repository-level information architecture is already intentional and must remain unchanged. The architectural debt is primarily inside the Python package.
+The repository-level information architecture is intentional and remains unchanged. The architectural debt is primarily inside the Python package.
 
-### 1. `engine.py` owns too many concerns
+### 1. `engine.py` remains a compatibility/composition facade
 
-`OrchestrationEngine` currently performs deterministic task classification, risk assessment, team/worker/specialist resolution, capability resolution, implementation selection, fallback selection, verifier selection, and finalization. Finalization also reaches directly into filesystem-backed artifact integrity.
+Tranches 1–3 have removed deterministic classification/risk ownership, finalization ownership, and dispatch orchestration ownership from `engine.py`. `OrchestrationEngine.dispatch()` now delegates to an application service. Runtime-selection compatibility methods remain in the facade so the specialist inheritance bridge can be removed independently in Tranche 4.
 
-This makes the engine an orchestration facade, policy engine, selector, and infrastructure client at the same time.
+### 2. `specialist_routing.py` remains the next coupling target
 
-### 2. `specialist_routing.py` is tightly coupled to engine internals
+`SpecialistRoutingEngine` still subclasses the base engine and overrides protected risk/preference behavior. Tranche 3 deliberately preserved that bridge so dispatch extraction could be qualified without combining an inheritance rewrite. Tranche 4 owns the transition to composition.
 
-`SpecialistRoutingEngine` subclasses the base engine, overrides protected behavior, consumes private helpers, loads YAML policy itself, and mutates the dispatch returned by `super().dispatch()`. The behavior is tested, but the inheritance relationship makes internal refactoring expensive.
+### 3. `config.py` still combines loading, composition, normalization, validation, and projection
 
-### 3. `config.py` combines loading, composition, normalization, validation, and projection
+`ConfigBundle` owns filesystem/YAML I/O, the extension manifest, config composition, invariant validation, and runtime registry views. That split remains Tranche 5.
 
-`ConfigBundle` owns filesystem/YAML I/O, the extension manifest, config composition, invariant validation, and runtime registry views. The result is a large boundary object whose responsibilities span infrastructure and application policy.
+### 4. Provider contracts and provider implementations still share package-level surfaces
 
-### 4. Provider contracts and provider implementations share the same package level
+Provider-neutral contracts exist, while provider implementations, retry/circuit behavior, verification, and runtime execution remain broadly distributed. Tranche 6 will move these behind explicit outer-layer namespaces with compatibility shims.
 
-Provider-neutral contracts exist, but OpenAI, Anthropic, Google, retry/circuit behavior, verification, and runtime execution all occupy one flat namespace. The code is modular by file but not yet explicit by dependency direction.
+### 5. The package root remains a broad compatibility surface
 
-### 5. The package root is a broad compatibility surface
-
-`teo_reference.__init__` re-exports a large portion of the implementation and aliases the specialist router as `OrchestrationEngine`. That surface should be preserved during migration, then simplified only through an explicit compatibility decision.
+`teo_reference.__init__` continues to preserve existing public imports. Compatibility reduction is an explicit later API decision, not an automatic effect of internal reorganization.
 
 ## Target package structure
 
@@ -43,44 +41,22 @@ The target structure is a dependency map, not permission for an immediate bulk m
 ```text
 teo_reference/
 ├── domain/
-│   ├── models.py                 # task, dispatch, verification, outcome value objects
+│   ├── models.py
 │   ├── routing/
-│   │   ├── classification.py     # deterministic task classification
-│   │   ├── risk.py               # monotonic risk policy
-│   │   ├── capability.py         # capability satisfaction rules
-│   │   └── eligibility.py        # implementation eligibility rules
-│   ├── evidence/                 # evidence/provenance invariants
-│   └── authority/                # approval/authority invariants
+│   ├── evidence/
+│   └── authority/
 ├── application/
 │   ├── dispatch/
-│   │   ├── service.py            # dispatch use case
-│   │   ├── worker_resolver.py
-│   │   ├── specialist_resolver.py
-│   │   ├── implementation_selector.py
-│   │   └── verification_planner.py
+│   │   ├── service.py
+│   │   ├── resolvers.py
+│   │   └── selectors.py
 │   ├── finalization/
-│   │   └── service.py            # final outcome use case
-│   ├── runtime/                  # guarded execution/retry/recovery use cases
-│   └── evaluation/               # benchmark/shadow/calibration use cases
+│   │   └── service.py
+│   ├── runtime/
+│   └── evaluation/
 ├── ports/
-│   ├── configuration.py          # configuration source contract
-│   ├── provider.py               # provider execution contract
-│   ├── verifier.py               # independent verification contract
-│   ├── artifact.py               # artifact identity/integrity contract
-│   ├── telemetry.py              # telemetry sink contract
-│   └── evidence_store.py         # append/read evidence contract
 ├── adapters/
-│   ├── configuration/
-│   │   └── yaml_repository.py
-│   ├── providers/
-│   │   ├── openai.py
-│   │   ├── anthropic.py
-│   │   └── google.py
-│   ├── verification/
-│   ├── filesystem/
-│   └── persistence/
 ├── interfaces/
-│   └── cli/
 └── compatibility facades
     ├── engine.py
     ├── schemas.py
@@ -101,35 +77,49 @@ interfaces/adapters -> ports/application -> domain
 
 The domain layer must not import filesystem, YAML, provider SDK, environment, network, telemetry, runtime, or repository-loading modules.
 
-Application services may depend on domain policy and abstract ports. Concrete adapters implement those ports. Compatibility facades may temporarily bridge old import paths to the new structure, but new domain code must not depend back on the facades.
+Application services may depend on domain policy and abstract ports. Concrete adapters implement those ports. Compatibility facades may temporarily bridge old import paths to the new structure, but new domain/application code must not depend back on outer facades or concrete provider adapters.
 
 ## Migration sequence
 
-### Tranche 1 — deterministic routing domain boundary
+### Tranche 1 — deterministic routing domain boundary — COMPLETE
 
-Implemented in the first migration PR:
+Merged via PR #196 as `a63887179a1ff3adfa7d7119a7db1a5f598a0f86`.
 
-- extract task-classification rules from `engine.py` into `domain/routing.py`;
-- extract monotonic risk assessment from `engine.py` into the same pure domain module;
-- preserve the existing `teo_reference.engine.RoutingError` type and keep `TASK_PATTERNS` and `RISK_PATTERNS` available from `teo_reference.engine` as compatibility exports;
-- make the engine delegate to pure policies;
-- add direct behavior tests and an architectural fitness test prohibiting outer-layer imports from the new domain module.
+- extracted task-classification rules from `engine.py` into the domain routing boundary;
+- extracted monotonic risk assessment;
+- preserved `teo_reference.engine.RoutingError`, `TASK_PATTERNS`, and `RISK_PATTERNS` compatibility;
+- added direct behavior and dependency-direction tests.
 
-This is intentionally narrow. It reduces engine responsibility without changing route selection, provider policy, risk semantics, or public entry points.
+### Tranche 2 — finalization use case + artifact-integrity port — COMPLETE
 
-### Tranche 2 — finalization use case + artifact-integrity port
+Merged via PR #198 as `467c706d6f1077371928e3fcbe3f32f5ec51fb19`.
 
-Extract final outcome construction from `engine.py`. Replace the direct dependency on filesystem artifact revalidation with an injected artifact-integrity port whose default adapter preserves current behavior. Keep `OrchestrationEngine.finalize()` as the compatibility facade.
+- extracted final outcome construction behind `FinalizationService`;
+- introduced the artifact-integrity port and filesystem default adapter;
+- kept `OrchestrationEngine.finalize()` as the compatibility facade;
+- preserved artifact-bound finalization and authority behavior.
 
-Acceptance requires all artifact-bound finalization, execution-provenance, authority, recovery, and mutation tests to remain green.
+### Tranche 3 — dispatch application service — COMPLETE
 
-### Tranche 3 — dispatch application service
+Merged via PR #210 as `74c128947f1d98f0e42c595bd1229561ab6dab50`.
 
-Move worker/specialist/capability resolution, primary/fallback selection, and verification planning behind a dispatch service. Preserve deterministic policy and all current fail-closed behavior. `engine.py` becomes a thin composition facade.
+Implemented:
 
-### Tranche 4 — specialist routing by composition
+- `application/dispatch/DispatchService` as the dispatch use-case coordinator;
+- `WorkerResolver`, `SpecialistResolver`, and `CapabilityResolver` for responsibility resolution;
+- an application-facing `ImplementationSelector` seam for primary/fallback/verifier selection;
+- `OrchestrationEngine.dispatch()` reduced to a thin service facade;
+- legacy protected resolver helpers retained as compatibility wrappers;
+- dependency-direction tests preventing the dispatch application package from importing the outer engine, adapters, provider modules, or CLI;
+- explicit preservation of the `SpecialistRoutingEngine` inheritance/refinement/preference bridge for Tranche 4.
 
-Replace inheritance-heavy specialist routing with composable policy refinement. Specialist model policy loading moves behind a configuration port. The public `SpecialistRoutingEngine` remains available until compatibility evidence supports a later simplification.
+Exact-head qualification on `504c05f67ee6d89e0144e6d16c11c3a19509e780` was Reference Implementation CI #960: **1,118 tests passed**, **607 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+### Tranche 4 — specialist routing by composition — NEXT
+
+Replace inheritance-heavy specialist routing with composable policy refinement. Specialist selection-policy loading should move behind an appropriate configuration boundary while preserving the public `SpecialistRoutingEngine` compatibility surface.
+
+Acceptance must prove that specialist risk elevation, specialist selection-profile preferences, documentation recovery verifier behavior, provider diversity, runtime lifecycle gates, and current public dispatch behavior remain unchanged. Tranche 4 must not absorb the broader ConfigBundle split reserved for Tranche 5.
 
 ### Tranche 5 — configuration boundary
 
@@ -175,7 +165,7 @@ Each tranche must be independently revertible. Do not combine behavior changes, 
 
 The migration is complete when:
 
-1. `engine.py` is a thin compatibility/composition facade rather than the owner of domain rules;
+1. `engine.py` is a thin compatibility/composition facade rather than the owner of domain/use-case rules;
 2. inner policies are pure and mechanically protected from outer dependencies;
 3. configuration and provider I/O sit behind explicit ports;
 4. specialist refinement no longer relies on fragile subclass coupling;
