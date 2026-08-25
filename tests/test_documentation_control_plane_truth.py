@@ -188,7 +188,7 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         f"{TRANCHE3_QUALIFIED_TESTS:,} tests",
         f"Tranche 4 exact-head CI #{TRANCHE4_QUALIFIED_CI}",
         f"{TRANCHE4_QUALIFIED_TESTS:,} tests",
-        "SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine",
+        "`SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`",
         "Tranche 5 configuration-boundary separation is the next clean-architecture gate",
         "The next gate is provider-backed controlled documentation replay evidence",
         "eleven provider-independent adversarial slices",
