@@ -18,10 +18,14 @@ RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
 RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
 RMI8_FINAL_CI = 958
 TRANCHE3_HEAD = "504c05f67ee6d89e0144e6d16c11c3a19509e780"
-CURRENT_QUALIFIED_TESTS = 1118
-CURRENT_QUALIFIED_TRACKED_FILES = 607
-CURRENT_QUALIFIED_SCHEMAS = 42
-CURRENT_QUALIFIED_CI = 960
+TRANCHE3_QUALIFIED_TESTS = 1118
+TRANCHE3_QUALIFIED_TRACKED_FILES = 607
+TRANCHE3_QUALIFIED_SCHEMAS = 42
+TRANCHE3_QUALIFIED_CI = 960
+CURRENT_VALIDATED_TESTS = 1119
+CURRENT_VALIDATED_TRACKED_FILES = 607
+CURRENT_VALIDATED_SCHEMAS = 42
+CURRENT_VALIDATED_CI = 963
 
 
 def _text(path: str) -> str:
@@ -75,10 +79,11 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
     for phrase in (
         "**Last reconciled:** 2026-08-25",
         f"`{CURRENT_MAIN}` after clean-architecture Tranche 3 / PR #210",
-        f"{CURRENT_QUALIFIED_TESTS:,} tests passed",
-        f"{CURRENT_QUALIFIED_TRACKED_FILES} tracked-file layout checks",
-        f"{CURRENT_QUALIFIED_SCHEMAS} schemas",
-        f"Reference Implementation CI #{CURRENT_QUALIFIED_CI}",
+        f"{CURRENT_VALIDATED_TESTS:,} tests passed",
+        f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
+        f"{CURRENT_VALIDATED_SCHEMAS} schemas",
+        f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
+        f"Reference Implementation CI #{TRANCHE3_QUALIFIED_CI}",
         TRANCHE3_HEAD,
         f"PR #209 merged as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
@@ -128,7 +133,7 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
         "Current actionable repository work: clean-architecture migration (#197)",
         f"PR #210 as `{CURRENT_MAIN}`",
-        f"CI #{CURRENT_QUALIFIED_CI}",
+        f"CI #{TRANCHE3_QUALIFIED_CI}",
         "Tranche 4 — specialist routing by composition",
         "High and critical live execution remains outside the current guarded runtime",
         "Assimilation is not installation",
@@ -153,14 +158,15 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
         f"`main@{CURRENT_MAIN}` after clean-architecture Tranche 3 / PR #210",
-        f"Reference Implementation CI #{CURRENT_QUALIFIED_CI}",
-        TRANCHE3_HEAD,
-        "1,118 tests",
-        "607 tracked-file layout checks",
-        "42 schemas",
+        f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
+        f"{CURRENT_VALIDATED_TESTS:,} tests",
+        f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
+        f"{CURRENT_VALIDATED_SCHEMAS} schemas",
         f"PR #209 as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
         "Tranches 1–3 are merged",
+        f"Tranche 3 exact-head CI #{TRANCHE3_QUALIFIED_CI}",
+        f"{TRANCHE3_QUALIFIED_TESTS:,} tests",
         "Tranche 4 replaces that coupling by composition",
         "The next gate is provider-backed controlled documentation replay evidence",
         "eleven provider-independent adversarial slices",
@@ -187,9 +193,9 @@ def test_clean_architecture_plan_records_tranche3_and_next_gate() -> None:
         "Tranche 3 — dispatch application service — COMPLETE",
         f"PR #210 as `{CURRENT_MAIN}`",
         TRANCHE3_HEAD,
-        f"Reference Implementation CI #{CURRENT_QUALIFIED_CI}",
-        "1,118 tests passed",
-        "607 tracked files",
+        f"Reference Implementation CI #{TRANCHE3_QUALIFIED_CI}",
+        f"{TRANCHE3_QUALIFIED_TESTS:,} tests passed",
+        f"{TRANCHE3_QUALIFIED_TRACKED_FILES} tracked files",
         "Tranche 4 — specialist routing by composition — NEXT",
         "SpecialistRoutingEngine",
         "inheritance/refinement/preference bridge for Tranche 4",
