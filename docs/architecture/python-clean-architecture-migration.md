@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–3 merged**  
+Status: **incremental implementation — Tranches 1–4 merged**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -16,15 +16,15 @@ The repository-level information architecture is intentional and remains unchang
 
 ### 1. `engine.py` remains a compatibility/composition facade
 
-Tranches 1–3 have removed deterministic classification/risk ownership, finalization ownership, and dispatch orchestration ownership from `engine.py`. `OrchestrationEngine.dispatch()` now delegates to an application service. Runtime-selection compatibility methods remain in the facade so the specialist inheritance bridge can be removed independently in Tranche 4.
+Tranches 1–4 have removed deterministic classification/risk ownership, finalization ownership, dispatch orchestration ownership, and specialist-routing inheritance from the base engine path. `OrchestrationEngine.dispatch()` delegates to the dispatch application service, and optional risk/preference refinement seams default to no-op behavior unless explicitly composed. Runtime-selection compatibility methods remain in the facade pending later bounded extraction.
 
-### 2. `specialist_routing.py` remains the next coupling target
+### 2. Specialist routing is now composition-based
 
-`SpecialistRoutingEngine` still subclasses the base engine and overrides protected risk/preference behavior. Tranche 3 deliberately preserved that bridge so dispatch extraction could be qualified without combining an inheritance rewrite. Tranche 4 owns the transition to composition.
+`SpecialistRoutingEngine` remains the accepted public compatibility façade but no longer subclasses `OrchestrationEngine`. Specialist risk refinement and runtime-preference refinement are composed through `application/dispatch/specialist_policy.py`, while specialist-selection YAML/filesystem loading is behind `SpecialistSelectionPolicyPort` and the YAML adapter. Existing specialist dispatch, documentation-recovery verifier behavior, runtime lifecycle gates, provider diversity, and public compatibility are preserved.
 
-### 3. `config.py` still combines loading, composition, normalization, validation, and projection
+### 3. `config.py` is now the next coupling target
 
-`ConfigBundle` owns filesystem/YAML I/O, the extension manifest, config composition, invariant validation, and runtime registry views. That split remains Tranche 5.
+`ConfigBundle` still combines filesystem/YAML I/O, the extension manifest, config composition, normalization, invariant validation, and runtime registry projections. Separating those responsibilities without weakening fail-closed repository governance is Tranche 5.
 
 ### 4. Provider contracts and provider implementations still share package-level surfaces
 
@@ -49,7 +49,8 @@ teo_reference/
 │   ├── dispatch/
 │   │   ├── service.py
 │   │   ├── resolvers.py
-│   │   └── selectors.py
+│   │   ├── selectors.py
+│   │   └── specialist_policy.py
 │   ├── finalization/
 │   │   └── service.py
 │   ├── runtime/
@@ -59,6 +60,7 @@ teo_reference/
 ├── interfaces/
 └── compatibility facades
     ├── engine.py
+    ├── specialist_routing.py
     ├── schemas.py
     ├── config.py
     ├── provider_adapter.py
@@ -111,17 +113,28 @@ Implemented:
 - `OrchestrationEngine.dispatch()` reduced to a thin service facade;
 - legacy protected resolver helpers retained as compatibility wrappers;
 - dependency-direction tests preventing the dispatch application package from importing the outer engine, adapters, provider modules, or CLI;
-- explicit preservation of the `SpecialistRoutingEngine` inheritance/refinement/preference bridge for Tranche 4.
+- explicit preservation of the `SpecialistRoutingEngine` inheritance/refinement/preference bridge for the independently reviewable Tranche 4.
 
 Exact-head qualification on `504c05f67ee6d89e0144e6d16c11c3a19509e780` was Reference Implementation CI #960: **1,118 tests passed**, **607 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
 
-### Tranche 4 — specialist routing by composition — NEXT
+### Tranche 4 — specialist routing by composition — COMPLETE
 
-Replace inheritance-heavy specialist routing with composable policy refinement. Specialist selection-policy loading should move behind an appropriate configuration boundary while preserving the public `SpecialistRoutingEngine` compatibility surface.
+Merged via PR #212 as `2f4df9d1124be91473e346ddb926f5d93c93de3e`.
 
-Acceptance must prove that specialist risk elevation, specialist selection-profile preferences, documentation recovery verifier behavior, provider diversity, runtime lifecycle gates, and current public dispatch behavior remain unchanged. Tranche 4 must not absorb the broader ConfigBundle split reserved for Tranche 5.
+Implemented:
 
-### Tranche 5 — configuration boundary
+- `SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`;
+- specialist risk and selection-preference refinement moved into the pure application-layer `SpecialistRoutingPolicy`;
+- specialist-selection YAML/filesystem loading moved behind `SpecialistSelectionPolicyPort` and `YamlSpecialistSelectionPolicyAdapter`;
+- base-engine risk/preference refinement seams are explicit, optional, and no-op when no policy is injected;
+- the façade delegates accepted compatibility helpers to the composed base engine rather than relying on protected subclass coupling;
+- temporary MRO/inheritance characterization tests were replaced by composition, dependency-direction, and responsibility-equivalence assertions.
+
+Exact-head qualification on `176217f9803c2ec274d2b225c52cf1f4d5c0f27f` was Reference Implementation CI #968: **1,120 tests passed**, **610 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+The tranche did not change Runtime Model Binding behavior, model/default policy, provider access/authentication, live scope, routing authority, risk semantics, or provider-diverse verification.
+
+### Tranche 5 — configuration boundary — NEXT
 
 Split `ConfigBundle` responsibilities into:
 
@@ -130,7 +143,7 @@ Split `ConfigBundle` responsibilities into:
 3. invariant validation;
 4. immutable runtime configuration view.
 
-The extension manifest must remain explicit and fail closed; the migration must not weaken repository governance or permit implicit policy discovery.
+The extension manifest must remain explicit and fail closed; the migration must not weaken repository governance, permit implicit policy discovery, or turn configuration discovery into routing authority. Existing `ConfigBundle` construction/import behavior remains a compatibility surface until equivalent behavior is proved.
 
 ### Tranche 6 — providers, verification, runtime, and evaluation namespaces
 
