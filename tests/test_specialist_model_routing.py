@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 
 from teo_reference.config import ConfigBundle
+from teo_reference.engine import OrchestrationEngine as BaseOrchestrationEngine
 from teo_reference.schemas import TaskRequest
 from teo_reference.specialist_routing import SpecialistRoutingEngine
 
@@ -172,7 +173,7 @@ def test_non_specialist_route_preserves_existing_model_and_exposes_existing_reas
     assert dispatch.selected_implementation.reasoning == "medium"
 
 
-def test_specialist_model_refinement_never_changes_team_worker_or_specialist_source() -> None:
+def test_specialist_refinement_never_changes_team_worker_or_specialist_source() -> None:
     router = engine()
     task = TaskRequest.from_dict(
         {
@@ -183,7 +184,7 @@ def test_specialist_model_refinement_never_changes_team_worker_or_specialist_sou
             "constraints": PREVIEW_ACCEPTANCE,
         }
     )
-    base = router.__class__.__mro__[1].dispatch(router, task)
+    base = BaseOrchestrationEngine(router.config).dispatch(task)
     refined = router.dispatch(task)
     assert refined.selected_team == base.selected_team
     assert refined.selected_worker == base.selected_worker

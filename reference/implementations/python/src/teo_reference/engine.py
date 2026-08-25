@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Callable, Iterable, Sequence
 
 from .adapters.configured_runtime_selection import ConfiguredRuntimeSelectionAdapter
 from .adapters.filesystem import FilesystemArtifactIntegrityAdapter
@@ -135,6 +135,8 @@ class OrchestrationEngine:
         artifact_integrity: ArtifactIntegrityPort | None = None,
         runtime_selector: RuntimeSelectionPort | None = None,
         runtime_calibration_requirements: CalibrationRequirements | None = None,
+        risk_refiner: Callable[[TaskRequest, str | None, str], tuple[str, str | None]] | None = None,
+        selection_preference_refiner: Callable[..., list[dict[str, Any]]] | None = None,
     ):
         self.config = config
         self._finalization = FinalizationService(
@@ -144,6 +146,8 @@ class OrchestrationEngine:
         self._runtime_calibration_requirements = (
             runtime_calibration_requirements or CalibrationRequirements(required=False)
         )
+        self._risk_refiner = risk_refiner
+        self._selection_preference_refiner = selection_preference_refiner
         self._worker_resolver = WorkerResolver(config)
         self._specialist_resolver = SpecialistResolver(config)
         self._capability_resolver = CapabilityResolver(config)
@@ -171,11 +175,15 @@ class OrchestrationEngine:
         *,
         runtime_selector: RuntimeSelectionPort | None = None,
         runtime_calibration_requirements: CalibrationRequirements | None = None,
+        risk_refiner: Callable[[TaskRequest, str | None, str], tuple[str, str | None]] | None = None,
+        selection_preference_refiner: Callable[..., list[dict[str, Any]]] | None = None,
     ) -> "OrchestrationEngine":
         return cls(
             ConfigBundle.load(repo_root),
             runtime_selector=runtime_selector,
             runtime_calibration_requirements=runtime_calibration_requirements,
+            risk_refiner=risk_refiner,
+            selection_preference_refiner=selection_preference_refiner,
         )
 
     def _runtime_selection_port(self) -> RuntimeSelectionPort:
@@ -228,7 +236,9 @@ class OrchestrationEngine:
         specialist: str | None,
         risk: str,
     ) -> tuple[str, str | None]:
-        return risk, None
+        if self._risk_refiner is None:
+            return risk, None
+        return self._risk_refiner(task, specialist, risk)
 
     def _resolve_worker(self, route: dict[str, Any], task: TaskRequest) -> str:
         try:
@@ -377,11 +387,23 @@ class OrchestrationEngine:
         capabilities: list[str],
         specialist: str | None,
     ) -> list[dict[str, Any]]:
-        return self._base_selection_preferences(
+        base = self._base_selection_preferences(
             task_type=task_type,
             worker=worker,
             role=role,
             capabilities=capabilities,
+        )
+        if self._selection_preference_refiner is None:
+            return base
+        return self._selection_preference_refiner(
+            base_preferences=base,
+            task=task,
+            task_type=task_type,
+            worker=worker,
+            role=role,
+            risk=risk,
+            capabilities=capabilities,
+            specialist=specialist,
         )
 
     @staticmethod
