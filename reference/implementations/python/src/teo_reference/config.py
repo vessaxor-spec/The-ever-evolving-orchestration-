@@ -8,6 +8,14 @@ from .adapters.repository_configuration import (
     RepositoryConfigurationSourceError,
     YamlRepositoryConfigurationAdapter,
 )
+from .application.configuration.composition import (
+    ConfigurationCompositionError,
+    compose_repository_configuration,
+    load_routing as _compose_routing,
+    load_specialists as _compose_specialists,
+    load_team_routing as _compose_team_routing,
+    load_workers as _compose_workers,
+)
 from .ports.configuration import RepositoryConfigurationSourcePort
 
 
@@ -15,59 +23,19 @@ class ConfigurationError(RuntimeError):
     pass
 
 
-def _mapping(data: dict[str, Any], key: str, path: Path) -> dict[str, Any]:
-    value = data.get(key)
-    if not isinstance(value, dict):
-        raise ConfigurationError(f"Configuration must contain a {key} mapping: {path}")
-    return value
-
-
-def _separate_conditional_escalations(routes: dict[str, Any]) -> None:
-    for route in routes.values():
-        if not isinstance(route, dict):
-            continue
-        escalation = route.pop("escalation", None)
-        if escalation is not None:
-            route["conditional_escalation"] = escalation
-
-
+# Compatibility shims for repository-internal characterization tests and callers that
+# reached into the former private composition helpers. Composition semantics now live
+# in the application boundary; these wrappers only preserve the historical public
+# ConfigurationError translation for composition failures.
 def _load_team_routing(
     source: RepositoryConfigurationSourcePort,
     path: Path,
     extension_paths: tuple[Path, ...] = (),
 ) -> dict[str, Any]:
-    data = source.load(path)
-    routes = _mapping(data, "team_routes", path)
-
-    for extension_path in extension_paths:
-        extension = source.load_optional(extension_path)
-        if extension is None:
-            continue
-        extension_routes = _mapping(extension, "team_routes", extension_path)
-        duplicates = sorted(set(routes).intersection(extension_routes))
-        if duplicates:
-            raise ConfigurationError(
-                f"Team-routing extension duplicates canonical routes in {extension_path}: "
-                + ", ".join(duplicates)
-            )
-        routes.update(extension_routes)
-
-        route_overrides = extension.get("route_overrides", {})
-        if not isinstance(route_overrides, dict):
-            raise ConfigurationError(
-                f"Team-routing extension route_overrides must be a mapping: {extension_path}"
-            )
-        for route_name, override in route_overrides.items():
-            if route_name not in routes:
-                raise ConfigurationError(
-                    f"Team-routing override references unknown route {route_name}: {extension_path}"
-                )
-            if not isinstance(override, dict):
-                raise ConfigurationError(
-                    f"Team-routing override must be a mapping for {route_name}: {extension_path}"
-                )
-            routes[route_name] = override
-    return data
+    try:
+        return _compose_team_routing(source, path, extension_paths)
+    except ConfigurationCompositionError as exc:
+        raise ConfigurationError(str(exc)) from exc
 
 
 def _load_routing(
@@ -75,31 +43,10 @@ def _load_routing(
     path: Path,
     extension_paths: tuple[Path, ...] = (),
 ) -> dict[str, Any]:
-    data = source.load(path)
-    routes = _mapping(data, "routing", path)
-
-    for extension_path in extension_paths:
-        extension = source.load_optional(extension_path)
-        if extension is None:
-            continue
-        extension_routes = _mapping(extension, "routing", extension_path)
-        duplicates = sorted(set(routes).intersection(extension_routes))
-        if duplicates:
-            raise ConfigurationError(
-                f"Routing extension duplicates canonical routes in {extension_path}: "
-                + ", ".join(duplicates)
-            )
-        routes.update(extension_routes)
-
-    _separate_conditional_escalations(routes)
-
-    policy = data.get("verification_policy")
-    if isinstance(policy, dict):
-        for risk in ("low", "medium", "high"):
-            canonical_key = f"{risk}_risk"
-            if risk not in policy and canonical_key in policy:
-                policy[risk] = policy[canonical_key]
-    return data
+    try:
+        return _compose_routing(source, path, extension_paths)
+    except ConfigurationCompositionError as exc:
+        raise ConfigurationError(str(exc)) from exc
 
 
 def _load_workers(
@@ -107,38 +54,10 @@ def _load_workers(
     path: Path,
     extension_paths: tuple[Path, ...] = (),
 ) -> dict[str, Any]:
-    data = source.load(path)
-    workers = _mapping(data, "workers", path)
-
-    for extension_path in extension_paths:
-        extension = source.load_optional(extension_path)
-        if extension is None:
-            continue
-        extension_workers = _mapping(extension, "workers", extension_path)
-        duplicates = sorted(set(workers).intersection(extension_workers))
-        if duplicates:
-            raise ConfigurationError(
-                f"Worker extension duplicates canonical workers in {extension_path}: "
-                + ", ".join(duplicates)
-            )
-        workers.update(extension_workers)
-
-        overrides = extension.get("worker_overrides", {})
-        if not isinstance(overrides, dict):
-            raise ConfigurationError(
-                f"Worker extension worker_overrides must be a mapping: {extension_path}"
-            )
-        for worker_name, override in overrides.items():
-            if worker_name not in workers:
-                raise ConfigurationError(
-                    f"Worker override references unknown worker {worker_name}: {extension_path}"
-                )
-            if not isinstance(override, dict):
-                raise ConfigurationError(
-                    f"Worker override must be a mapping for {worker_name}: {extension_path}"
-                )
-            workers[worker_name].update(override)
-    return data
+    try:
+        return _compose_workers(source, path, extension_paths)
+    except ConfigurationCompositionError as exc:
+        raise ConfigurationError(str(exc)) from exc
 
 
 def _load_specialists(
@@ -146,50 +65,10 @@ def _load_specialists(
     path: Path,
     extension_paths: tuple[Path, ...] = (),
 ) -> dict[str, Any]:
-    data = source.load(path)
-    specialists = _mapping(data, "specialists", path)
-    allowed_override_fields = {
-        "primary_team",
-        "supporting_teams",
-        "worker_binding",
-        "risk_profile",
-    }
-
-    for extension_path in extension_paths:
-        extension = source.load_optional(extension_path)
-        if extension is None:
-            continue
-        extension_specialists = _mapping(extension, "specialists", extension_path)
-        duplicates = sorted(set(specialists).intersection(extension_specialists))
-        if duplicates:
-            raise ConfigurationError(
-                f"Specialist extension duplicates canonical specialists in {extension_path}: "
-                + ", ".join(duplicates)
-            )
-        specialists.update(extension_specialists)
-
-        overrides = extension.get("allocation_overrides", {})
-        if not isinstance(overrides, dict):
-            raise ConfigurationError(
-                f"Specialist extension allocation_overrides must be a mapping: {extension_path}"
-            )
-        for specialist_name, override in overrides.items():
-            if specialist_name not in specialists:
-                raise ConfigurationError(
-                    f"Specialist override references unknown specialist {specialist_name}: {extension_path}"
-                )
-            if not isinstance(override, dict):
-                raise ConfigurationError(
-                    f"Specialist override must be a mapping for {specialist_name}: {extension_path}"
-                )
-            disallowed = sorted(set(override).difference(allowed_override_fields))
-            if disallowed:
-                raise ConfigurationError(
-                    f"Specialist override changes protected fields for {specialist_name}: "
-                    + ", ".join(disallowed)
-                )
-            specialists[specialist_name].update(override)
-    return data
+    try:
+        return _compose_specialists(source, path, extension_paths)
+    except ConfigurationCompositionError as exc:
+        raise ConfigurationError(str(exc)) from exc
 
 
 def _known_models(models: dict[str, Any]) -> set[str]:
@@ -299,69 +178,19 @@ class ConfigBundle:
         root_path = Path(root).resolve()
         configuration_source = source or YamlRepositoryConfigurationAdapter()
         try:
+            composed = compose_repository_configuration(root_path, configuration_source)
             bundle = cls(
                 root=root_path,
-                team_routing=_load_team_routing(
-                    configuration_source,
-                    root_path / "policy/routing/core/team-routing.yaml",
-                    (
-                        root_path / "policy/routing/extensions/principal-engineering-team-routing.yaml",
-                        root_path / "policy/routing/extensions/specialist-spawn-team-routing.yaml",
-                    ),
-                ),
-                routing=_load_routing(
-                    configuration_source,
-                    root_path / "policy/routing/core/routing.yaml",
-                    (
-                        root_path / "policy/routing/extensions/mission-control-routing.yaml",
-                        root_path / "policy/routing/extensions/research-routing.yaml",
-                        root_path / "policy/routing/extensions/review-routing.yaml",
-                        root_path / "policy/routing/extensions/principal-engineering-routing.yaml",
-                        root_path / "policy/routing/extensions/specialist-spawn-routing.yaml",
-                    ),
-                ),
-                runtime_compatibility=configuration_source.load(
-                    root_path / "policy/routing/core/runtime-compatibility-defaults.yaml"
-                ),
-                workers=_load_workers(
-                    configuration_source,
-                    root_path / "community/workers/workers.yaml",
-                    (
-                        root_path / "community/workers/extensions/incident-response-worker.yaml",
-                        root_path / "community/workers/extensions/research-worker.yaml",
-                        root_path / "community/workers/extensions/market-research-worker.yaml",
-                        root_path / "community/workers/extensions/analytics-worker.yaml",
-                        root_path / "community/workers/extensions/user-research-worker.yaml",
-                        root_path / "community/workers/extensions/compliance-worker.yaml",
-                        root_path / "community/workers/extensions/systems-engineering-worker.yaml",
-                        root_path / "community/workers/extensions/platform-reliability-core-workers.yaml",
-                        root_path / "community/workers/extensions/platform-reliability-operations-workers.yaml",
-                        root_path / "community/workers/extensions/physical-systems-workers.yaml",
-                        root_path / "community/workers/extensions/assurance-workers.yaml",
-                        root_path / "community/workers/extensions/principal-engineering-active-workers.yaml",
-                        root_path / "community/workers/extensions/specialist-completion-workers.yaml",
-                        root_path / "community/workers/extensions/runtime-worker-overrides.yaml",
-                    ),
-                ),
-                specialists=_load_specialists(
-                    configuration_source,
-                    root_path / "community/specialists/specialists.yaml",
-                    (
-                        root_path / "community/specialists/principal-engineering-active.yaml",
-                        root_path / "community/specialists/workforce-expansion-active.yaml",
-                    ),
-                ),
-                models=configuration_source.load(
-                    root_path / "policy/routing/core/implementation-defaults.yaml"
-                ),
-                capabilities=configuration_source.load(
-                    root_path / "registry/capabilities/capabilities.yaml"
-                ),
-                model_evidence=configuration_source.load(
-                    root_path / "registry/models/models.yaml"
-                ),
+                team_routing=composed.team_routing,
+                routing=composed.routing,
+                runtime_compatibility=composed.runtime_compatibility,
+                workers=composed.workers,
+                specialists=composed.specialists,
+                models=composed.models,
+                capabilities=composed.capabilities,
+                model_evidence=composed.model_evidence,
             )
-        except RepositoryConfigurationSourceError as exc:
+        except (RepositoryConfigurationSourceError, ConfigurationCompositionError) as exc:
             raise ConfigurationError(str(exc)) from exc
         errors = [issue for issue in bundle.validate() if issue.startswith("ERROR:")]
         if errors:
