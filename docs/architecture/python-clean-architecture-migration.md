@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 merged**  
+Status: **incremental implementation — Tranches 1–4 plus Tranche 5A merged**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -22,9 +22,11 @@ Tranches 1–4 have removed deterministic classification/risk ownership, finaliz
 
 `SpecialistRoutingEngine` remains the accepted public compatibility façade but no longer subclasses `OrchestrationEngine`. Specialist risk refinement and runtime-preference refinement are composed through `application/dispatch/specialist_policy.py`, while specialist-selection YAML/filesystem loading is behind `SpecialistSelectionPolicyPort` and the YAML adapter. Existing specialist dispatch, documentation-recovery verifier behavior, runtime lifecycle gates, provider diversity, and public compatibility are preserved.
 
-### 3. `config.py` is now the next coupling target
+### 3. Configuration source I/O is separated; composition is the next coupling target
 
-`ConfigBundle` still combines filesystem/YAML I/O, the extension manifest, config composition, normalization, invariant validation, and runtime registry projections. Separating those responsibilities without weakening fail-closed repository governance is Tranche 5.
+Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. `config.py` no longer performs direct YAML or filesystem reads, but the `ConfigBundle` compatibility façade still owns the explicit repository path manifest, extension ordering, merge/override composition, normalization, invariant validation, and runtime registry projections.
+
+Tranche 5B owns the explicit composition/manifest boundary. T5C and T5D remain separately reviewable validation and immutable-runtime-view boundaries.
 
 ### 4. Provider contracts and provider implementations still share package-level surfaces
 
@@ -46,6 +48,8 @@ teo_reference/
 │   ├── evidence/
 │   └── authority/
 ├── application/
+│   ├── configuration/
+│   │   └── composition.py
 │   ├── dispatch/
 │   │   ├── service.py
 │   │   ├── resolvers.py
@@ -134,16 +138,53 @@ Exact-head qualification on `176217f9803c2ec274d2b225c52cf1f4d5c0f27f` was Refer
 
 The tranche did not change Runtime Model Binding behavior, model/default policy, provider access/authentication, live scope, routing authority, risk semantics, or provider-diverse verification.
 
-### Tranche 5 — configuration boundary — NEXT
+### Tranche 5 — configuration boundary — IN PROGRESS
 
-Split `ConfigBundle` responsibilities into:
+Tranche 5 is split into independently reversible subtranches so loading, composition, validation, and runtime projection are not moved together.
 
-1. YAML/filesystem adapter;
-2. configuration composition;
-3. invariant validation;
-4. immutable runtime configuration view.
+#### Tranche 5A — configuration source I/O — COMPLETE
 
-The extension manifest must remain explicit and fail closed; the migration must not weaken repository governance, permit implicit policy discovery, or turn configuration discovery into routing authority. Existing `ConfigBundle` construction/import behavior remains a compatibility surface until equivalent behavior is proved.
+Merged via PR #214 as `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201`.
+
+Implemented:
+
+- `RepositoryConfigurationSourcePort` for required and explicitly named optional repository configuration mappings;
+- `YamlRepositoryConfigurationAdapter` as the concrete filesystem/PyYAML adapter;
+- `ConfigBundle.load()` source injection while preserving its accepted compatibility surface;
+- exact explicit required/optional source paths with no directory scanning or implicit discovery;
+- translation of adapter source errors back into the existing public `ConfigurationError` contract;
+- boundary tests proving `config.py` itself performs no YAML/filesystem reads.
+
+Exact PR-head qualification on `17afc5d5ff3b74897e6c2bcd534ccb6158fbc2cb` was Reference Implementation CI #977: **1,127 tests passed**, **612 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+Merged-main qualification on `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` was Reference Implementation CI #978: **1,127 tests passed**, **612 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+T5A deliberately preserved the explicit extension manifest, composition/merge/override rules, normalization, invariant validation, and mutable runtime projections for later bounded subtranches.
+
+#### Tranche 5B — configuration composition and explicit manifest — NEXT
+
+Extract from the `ConfigBundle` compatibility façade:
+
+1. the exact required and optional repository configuration path manifest;
+2. extension ordering;
+3. team-route, routing, Worker, and Specialist merge/override rules;
+4. conditional-escalation and verification-policy normalization.
+
+The application-side composition boundary may depend on `RepositoryConfigurationSourcePort` but must not import concrete adapters, YAML, the outer `config.py` façade, provider modules, runtime execution, or CLI surfaces. `ConfigBundle.load()` remains the compatibility entry point and delegates composition through the extracted boundary.
+
+Acceptance must prove exact source-path requests, ordering, duplicate rejection, approved override behavior, protected Specialist override rejection, normalization equivalence, and unchanged whole-repository behavior.
+
+The manifest must remain explicit and fail closed. T5B must not weaken repository governance, permit implicit policy discovery, turn configuration discovery into routing authority, change provider/model defaults, alter Runtime Model Binding, widen live scope, or implement Issue #215 Stage B.
+
+#### Tranche 5C — invariant validation — LATER
+
+Extract `ConfigBundle.validate()` invariant ownership behind an explicit validation boundary while preserving existing mutable compatibility behavior, error/warning semantics, and fail-closed `ConfigBundle.load()` behavior.
+
+#### Tranche 5D — immutable runtime configuration view — LATER
+
+Introduce an immutable runtime-facing configuration view behind the existing mutable `ConfigBundle` compatibility façade. Existing tests and downstream callers that intentionally mutate `ConfigBundle` for validation/conformance remain supported until compatibility evidence permits a separate API decision.
+
+Full Tranche 5 is not complete until T5A through T5D are qualified and canonical stewardship records are reconciled.
 
 ### Tranche 6 — providers, verification, runtime, and evaluation namespaces
 
