@@ -288,6 +288,9 @@ def test_configuration_warning_baseline_is_exact() -> None:
 def test_activation_loader_rejects_protected_specialist_field_override(
     tmp_path: Path,
 ) -> None:
+    from teo_reference.adapters.repository_configuration import (
+        YamlRepositoryConfigurationAdapter,
+    )
     from teo_reference.config import ConfigurationError, _load_specialists
 
     canonical = tmp_path / "canonical.yaml"
@@ -302,7 +305,11 @@ def test_activation_loader_rejects_protected_specialist_field_override(
     )
 
     with pytest.raises(ConfigurationError, match="protected fields"):
-        _load_specialists(canonical, (extension,))
+        _load_specialists(
+            YamlRepositoryConfigurationAdapter(),
+            canonical,
+            (extension,),
+        )
 
 
 def test_regulated_evidence_pilot_remains_exactly_six() -> None:

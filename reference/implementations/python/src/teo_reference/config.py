@@ -4,20 +4,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-import yaml
+from .adapters.repository_configuration import (
+    RepositoryConfigurationSourceError,
+    YamlRepositoryConfigurationAdapter,
+)
+from .ports.configuration import RepositoryConfigurationSourcePort
 
 
 class ConfigurationError(RuntimeError):
     pass
-
-
-def _load_yaml(path: Path) -> dict[str, Any]:
-    if not path.is_file():
-        raise ConfigurationError(f"Required configuration file not found: {path}")
-    data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise ConfigurationError(f"Configuration root must be a mapping: {path}")
-    return data
 
 
 def _mapping(data: dict[str, Any], key: str, path: Path) -> dict[str, Any]:
@@ -36,14 +31,18 @@ def _separate_conditional_escalations(routes: dict[str, Any]) -> None:
             route["conditional_escalation"] = escalation
 
 
-def _load_team_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
-    data = _load_yaml(path)
+def _load_team_routing(
+    source: RepositoryConfigurationSourcePort,
+    path: Path,
+    extension_paths: tuple[Path, ...] = (),
+) -> dict[str, Any]:
+    data = source.load(path)
     routes = _mapping(data, "team_routes", path)
 
     for extension_path in extension_paths:
-        if not extension_path.is_file():
+        extension = source.load_optional(extension_path)
+        if extension is None:
             continue
-        extension = _load_yaml(extension_path)
         extension_routes = _mapping(extension, "team_routes", extension_path)
         duplicates = sorted(set(routes).intersection(extension_routes))
         if duplicates:
@@ -71,14 +70,18 @@ def _load_team_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> di
     return data
 
 
-def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
-    data = _load_yaml(path)
+def _load_routing(
+    source: RepositoryConfigurationSourcePort,
+    path: Path,
+    extension_paths: tuple[Path, ...] = (),
+) -> dict[str, Any]:
+    data = source.load(path)
     routes = _mapping(data, "routing", path)
 
     for extension_path in extension_paths:
-        if not extension_path.is_file():
+        extension = source.load_optional(extension_path)
+        if extension is None:
             continue
-        extension = _load_yaml(extension_path)
         extension_routes = _mapping(extension, "routing", extension_path)
         duplicates = sorted(set(routes).intersection(extension_routes))
         if duplicates:
@@ -99,14 +102,18 @@ def _load_routing(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[st
     return data
 
 
-def _load_workers(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
-    data = _load_yaml(path)
+def _load_workers(
+    source: RepositoryConfigurationSourcePort,
+    path: Path,
+    extension_paths: tuple[Path, ...] = (),
+) -> dict[str, Any]:
+    data = source.load(path)
     workers = _mapping(data, "workers", path)
 
     for extension_path in extension_paths:
-        if not extension_path.is_file():
+        extension = source.load_optional(extension_path)
+        if extension is None:
             continue
-        extension = _load_yaml(extension_path)
         extension_workers = _mapping(extension, "workers", extension_path)
         duplicates = sorted(set(workers).intersection(extension_workers))
         if duplicates:
@@ -134,8 +141,12 @@ def _load_workers(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[st
     return data
 
 
-def _load_specialists(path: Path, extension_paths: tuple[Path, ...] = ()) -> dict[str, Any]:
-    data = _load_yaml(path)
+def _load_specialists(
+    source: RepositoryConfigurationSourcePort,
+    path: Path,
+    extension_paths: tuple[Path, ...] = (),
+) -> dict[str, Any]:
+    data = source.load(path)
     specialists = _mapping(data, "specialists", path)
     allowed_override_fields = {
         "primary_team",
@@ -145,9 +156,9 @@ def _load_specialists(path: Path, extension_paths: tuple[Path, ...] = ()) -> dic
     }
 
     for extension_path in extension_paths:
-        if not extension_path.is_file():
+        extension = source.load_optional(extension_path)
+        if extension is None:
             continue
-        extension = _load_yaml(extension_path)
         extension_specialists = _mapping(extension, "specialists", extension_path)
         duplicates = sorted(set(specialists).intersection(extension_specialists))
         if duplicates:
@@ -279,60 +290,79 @@ class ConfigBundle:
     model_evidence: dict[str, Any]
 
     @classmethod
-    def load(cls, root: str | Path) -> "ConfigBundle":
+    def load(
+        cls,
+        root: str | Path,
+        *,
+        source: RepositoryConfigurationSourcePort | None = None,
+    ) -> "ConfigBundle":
         root_path = Path(root).resolve()
-        bundle = cls(
-            root=root_path,
-            team_routing=_load_team_routing(
-                root_path / "policy/routing/core/team-routing.yaml",
-                (
-                    root_path / "policy/routing/extensions/principal-engineering-team-routing.yaml",
-                    root_path / "policy/routing/extensions/specialist-spawn-team-routing.yaml",
+        configuration_source = source or YamlRepositoryConfigurationAdapter()
+        try:
+            bundle = cls(
+                root=root_path,
+                team_routing=_load_team_routing(
+                    configuration_source,
+                    root_path / "policy/routing/core/team-routing.yaml",
+                    (
+                        root_path / "policy/routing/extensions/principal-engineering-team-routing.yaml",
+                        root_path / "policy/routing/extensions/specialist-spawn-team-routing.yaml",
+                    ),
                 ),
-            ),
-            routing=_load_routing(
-                root_path / "policy/routing/core/routing.yaml",
-                (
-                    root_path / "policy/routing/extensions/mission-control-routing.yaml",
-                    root_path / "policy/routing/extensions/research-routing.yaml",
-                    root_path / "policy/routing/extensions/review-routing.yaml",
-                    root_path / "policy/routing/extensions/principal-engineering-routing.yaml",
-                    root_path / "policy/routing/extensions/specialist-spawn-routing.yaml",
+                routing=_load_routing(
+                    configuration_source,
+                    root_path / "policy/routing/core/routing.yaml",
+                    (
+                        root_path / "policy/routing/extensions/mission-control-routing.yaml",
+                        root_path / "policy/routing/extensions/research-routing.yaml",
+                        root_path / "policy/routing/extensions/review-routing.yaml",
+                        root_path / "policy/routing/extensions/principal-engineering-routing.yaml",
+                        root_path / "policy/routing/extensions/specialist-spawn-routing.yaml",
+                    ),
                 ),
-            ),
-            runtime_compatibility=_load_yaml(
-                root_path / "policy/routing/core/runtime-compatibility-defaults.yaml"
-            ),
-            workers=_load_workers(
-                root_path / "community/workers/workers.yaml",
-                (
-                    root_path / "community/workers/extensions/incident-response-worker.yaml",
-                    root_path / "community/workers/extensions/research-worker.yaml",
-                    root_path / "community/workers/extensions/market-research-worker.yaml",
-                    root_path / "community/workers/extensions/analytics-worker.yaml",
-                    root_path / "community/workers/extensions/user-research-worker.yaml",
-                    root_path / "community/workers/extensions/compliance-worker.yaml",
-                    root_path / "community/workers/extensions/systems-engineering-worker.yaml",
-                    root_path / "community/workers/extensions/platform-reliability-core-workers.yaml",
-                    root_path / "community/workers/extensions/platform-reliability-operations-workers.yaml",
-                    root_path / "community/workers/extensions/physical-systems-workers.yaml",
-                    root_path / "community/workers/extensions/assurance-workers.yaml",
-                    root_path / "community/workers/extensions/principal-engineering-active-workers.yaml",
-                    root_path / "community/workers/extensions/specialist-completion-workers.yaml",
-                    root_path / "community/workers/extensions/runtime-worker-overrides.yaml",
+                runtime_compatibility=configuration_source.load(
+                    root_path / "policy/routing/core/runtime-compatibility-defaults.yaml"
                 ),
-            ),
-            specialists=_load_specialists(
-                root_path / "community/specialists/specialists.yaml",
-                (
-                    root_path / "community/specialists/principal-engineering-active.yaml",
-                    root_path / "community/specialists/workforce-expansion-active.yaml",
+                workers=_load_workers(
+                    configuration_source,
+                    root_path / "community/workers/workers.yaml",
+                    (
+                        root_path / "community/workers/extensions/incident-response-worker.yaml",
+                        root_path / "community/workers/extensions/research-worker.yaml",
+                        root_path / "community/workers/extensions/market-research-worker.yaml",
+                        root_path / "community/workers/extensions/analytics-worker.yaml",
+                        root_path / "community/workers/extensions/user-research-worker.yaml",
+                        root_path / "community/workers/extensions/compliance-worker.yaml",
+                        root_path / "community/workers/extensions/systems-engineering-worker.yaml",
+                        root_path / "community/workers/extensions/platform-reliability-core-workers.yaml",
+                        root_path / "community/workers/extensions/platform-reliability-operations-workers.yaml",
+                        root_path / "community/workers/extensions/physical-systems-workers.yaml",
+                        root_path / "community/workers/extensions/assurance-workers.yaml",
+                        root_path / "community/workers/extensions/principal-engineering-active-workers.yaml",
+                        root_path / "community/workers/extensions/specialist-completion-workers.yaml",
+                        root_path / "community/workers/extensions/runtime-worker-overrides.yaml",
+                    ),
                 ),
-            ),
-            models=_load_yaml(root_path / "policy/routing/core/implementation-defaults.yaml"),
-            capabilities=_load_yaml(root_path / "registry/capabilities/capabilities.yaml"),
-            model_evidence=_load_yaml(root_path / "registry/models/models.yaml"),
-        )
+                specialists=_load_specialists(
+                    configuration_source,
+                    root_path / "community/specialists/specialists.yaml",
+                    (
+                        root_path / "community/specialists/principal-engineering-active.yaml",
+                        root_path / "community/specialists/workforce-expansion-active.yaml",
+                    ),
+                ),
+                models=configuration_source.load(
+                    root_path / "policy/routing/core/implementation-defaults.yaml"
+                ),
+                capabilities=configuration_source.load(
+                    root_path / "registry/capabilities/capabilities.yaml"
+                ),
+                model_evidence=configuration_source.load(
+                    root_path / "registry/models/models.yaml"
+                ),
+            )
+        except RepositoryConfigurationSourceError as exc:
+            raise ConfigurationError(str(exc)) from exc
         errors = [issue for issue in bundle.validate() if issue.startswith("ERROR:")]
         if errors:
             raise ConfigurationError("\n".join(errors))
