@@ -159,7 +159,7 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         f"CI #{TRANCHE3_QUALIFIED_CI}",
         f"PR #212 as `{TRANCHE4_MERGE}`",
         f"CI #{TRANCHE4_QUALIFIED_CI}",
-        f"PR #214 as `{CURRENT_MAIN}`",
+        f"PR #214 merged as `{CURRENT_MAIN}`",
         f"CI #{TRANCHE5A_MAIN_CI}",
         "Tranche 5A — configuration source I/O — COMPLETE",
         "Tranche 5B — configuration composition and explicit manifest — NEXT",
