@@ -13,7 +13,7 @@ EXPECTED_MISSION_CONTROL_WORKERS = {
     "project_delivery",
     "incident_response",
 }
-CURRENT_MAIN = "1ba1a4b0a83e403b422b47f2e7b7cef733ccb201"
+CURRENT_MAIN = "6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f"
 RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
 RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
 RMI8_FINAL_CI = 958
@@ -29,16 +29,23 @@ TRANCHE4_QUALIFIED_TESTS = 1120
 TRANCHE4_QUALIFIED_TRACKED_FILES = 610
 TRANCHE4_QUALIFIED_SCHEMAS = 42
 TRANCHE4_QUALIFIED_CI = 968
+TRANCHE5A_MERGE = "1ba1a4b0a83e403b422b47f2e7b7cef733ccb201"
 TRANCHE5A_HEAD = "17afc5d5ff3b74897e6c2bcd534ccb6158fbc2cb"
 TRANCHE5A_QUALIFIED_TESTS = 1127
 TRANCHE5A_QUALIFIED_TRACKED_FILES = 612
 TRANCHE5A_QUALIFIED_SCHEMAS = 42
 TRANCHE5A_PR_CI = 977
 TRANCHE5A_MAIN_CI = 978
-CURRENT_VALIDATED_TESTS = TRANCHE5A_QUALIFIED_TESTS
-CURRENT_VALIDATED_TRACKED_FILES = TRANCHE5A_QUALIFIED_TRACKED_FILES
-CURRENT_VALIDATED_SCHEMAS = TRANCHE5A_QUALIFIED_SCHEMAS
-CURRENT_VALIDATED_CI = TRANCHE5A_MAIN_CI
+TRANCHE5B_HEAD = "d52a834509dd04f141550806871a203b0d850560"
+TRANCHE5B_QUALIFIED_TESTS = 1135
+TRANCHE5B_QUALIFIED_TRACKED_FILES = 615
+TRANCHE5B_QUALIFIED_SCHEMAS = 42
+TRANCHE5B_PR_CI = 982
+TRANCHE5B_MAIN_CI = 983
+CURRENT_VALIDATED_TESTS = TRANCHE5B_QUALIFIED_TESTS
+CURRENT_VALIDATED_TRACKED_FILES = TRANCHE5B_QUALIFIED_TRACKED_FILES
+CURRENT_VALIDATED_SCHEMAS = TRANCHE5B_QUALIFIED_SCHEMAS
+CURRENT_VALIDATED_CI = TRANCHE5B_MAIN_CI
 
 
 def _text(path: str) -> str:
@@ -91,7 +98,7 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
 
     for phrase in (
         "**Last reconciled:** 2026-08-26",
-        f"`{CURRENT_MAIN}` after clean-architecture Tranche 5A / PR #214",
+        f"`{CURRENT_MAIN}` after clean-architecture Tranche 5B / PR #219",
         f"{CURRENT_VALIDATED_TESTS:,} tests passed",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
         f"{CURRENT_VALIDATED_SCHEMAS} schemas",
@@ -103,6 +110,9 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         f"Reference Implementation CI #{TRANCHE5A_PR_CI}",
         TRANCHE5A_HEAD,
         f"Reference Implementation CI #{TRANCHE5A_MAIN_CI}",
+        f"Reference Implementation CI #{TRANCHE5B_PR_CI}",
+        TRANCHE5B_HEAD,
+        f"Reference Implementation CI #{TRANCHE5B_MAIN_CI}",
         f"PR #209 merged as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
         RMI8_FINAL_HEAD,
@@ -112,8 +122,8 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         "specialist-selection-policy.yaml",
         "Discovered -> Eligible -> Calibrated -> Selected",
         "compatibility inputs. It does not claim that those implementations are currently running",
-        "Tranches 1–4 plus Tranche 5A merged and qualified",
-        "T5B: configuration composition and explicit manifest",
+        "Tranches 1–4 plus Tranche 5A and Tranche 5B merged and qualified",
+        "T5C: invariant validation boundary",
         "`documentation`, evaluation only, not authorized for live execution",
         "provider-backed controlled `documentation` replay evidence",
         "High and critical live execution remains unauthorized",
@@ -124,6 +134,8 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         assert phrase in text
 
     for stale in (
+        "T5B configuration composition and explicit manifest is the next actionable repository gate",
+        "T5B: configuration composition and explicit manifest",
         "Tranches 1–4 merged and qualified; Tranche 5 configuration-boundary separation is the next actionable repository gate",
         "Tranche 5: configuration boundary separation",
         "Tranches 1–3 merged and qualified",
@@ -159,10 +171,13 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         f"CI #{TRANCHE3_QUALIFIED_CI}",
         f"PR #212 as `{TRANCHE4_MERGE}`",
         f"CI #{TRANCHE4_QUALIFIED_CI}",
-        f"PR #214 merged as `{CURRENT_MAIN}`",
+        f"PR #214 merged as `{TRANCHE5A_MERGE}`",
         f"CI #{TRANCHE5A_MAIN_CI}",
+        f"PR #219 merged as `{CURRENT_MAIN}`",
+        f"CI #{TRANCHE5B_MAIN_CI}",
         "Tranche 5A — configuration source I/O — COMPLETE",
-        "Tranche 5B — configuration composition and explicit manifest — NEXT",
+        "Tranche 5B — configuration composition and explicit manifest — COMPLETE",
+        "Tranche 5C — invariant validation boundary — NEXT",
         "High and critical live execution remains outside the current guarded runtime",
         "Assimilation is not installation",
         "routing_continuity_only",
@@ -170,6 +185,7 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         assert phrase in text
 
     for stale in (
+        "Tranche 5B — configuration composition and explicit manifest — NEXT",
         "The behavior-preserving Python clean-architecture migration has completed Tranches 1–4; Tranche 5 configuration-boundary separation is next.",
         "Tranche 5 — configuration boundary separation** is the next clean-architecture gate",
         "inheritance bridge in `SpecialistRoutingEngine` is deliberately retained",
@@ -191,22 +207,24 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`main@{CURRENT_MAIN}` after clean-architecture Tranche 5A / PR #214",
+        f"`main@{CURRENT_MAIN}` after clean-architecture Tranche 5B / PR #219",
         f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
         f"{CURRENT_VALIDATED_TESTS:,} tests",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
         f"{CURRENT_VALIDATED_SCHEMAS} schemas",
         f"PR #209 as `{RMI8_MERGE}`",
         f"Reference Implementation CI #{RMI8_FINAL_CI}",
-        "Tranches 1–4 plus Tranche 5A are merged",
+        "Tranches 1–4 plus Tranche 5A and Tranche 5B are merged",
         f"Tranche 3 exact-head CI #{TRANCHE3_QUALIFIED_CI}",
         f"{TRANCHE3_QUALIFIED_TESTS:,} tests",
         f"Tranche 4 exact-head CI #{TRANCHE4_QUALIFIED_CI}",
         f"{TRANCHE4_QUALIFIED_TESTS:,} tests",
         f"Tranche 5A merged-main CI #{TRANCHE5A_MAIN_CI}",
         f"{TRANCHE5A_QUALIFIED_TESTS:,} tests",
+        f"Tranche 5B merged-main CI #{TRANCHE5B_MAIN_CI}",
+        f"{TRANCHE5B_QUALIFIED_TESTS:,} tests",
         "`SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`",
-        "Tranche 5B configuration composition and explicit manifest is the next clean-architecture gate",
+        "Tranche 5C invariant validation boundary is the next clean-architecture gate",
         "The next gate is provider-backed controlled documentation replay evidence",
         "eleven provider-independent adversarial slices",
         "Reference Implementation CI #739",
@@ -216,6 +234,8 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         assert phrase in text
 
     for stale in (
+        "Tranches 1–4 plus Tranche 5A are merged",
+        "Tranche 5B configuration composition and explicit manifest is the next clean-architecture gate",
         "Tranches 1–4 are merged",
         "Tranche 5 configuration-boundary separation is the next clean-architecture gate",
         "inheritance bridge is intentionally retained until Tranche 4",
@@ -227,11 +247,11 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         assert stale not in text
 
 
-def test_clean_architecture_plan_records_tranche5a_and_next_gate() -> None:
+def test_clean_architecture_plan_records_tranche5b_and_next_gate() -> None:
     text = _text("docs/architecture/python-clean-architecture-migration.md")
 
     for phrase in (
-        "Tranches 1–4 plus Tranche 5A merged",
+        "Tranches 1–4 plus Tranche 5A and Tranche 5B merged",
         "Tranche 3 — dispatch application service — COMPLETE",
         f"PR #210 as `{TRANCHE3_MERGE}`",
         TRANCHE3_HEAD,
@@ -247,17 +267,26 @@ def test_clean_architecture_plan_records_tranche5a_and_next_gate() -> None:
         "SpecialistRoutingEngine",
         "no longer subclasses",
         "Tranche 5A — configuration source I/O — COMPLETE",
-        f"PR #214 as `{CURRENT_MAIN}`",
+        f"PR #214 as `{TRANCHE5A_MERGE}`",
         TRANCHE5A_HEAD,
         f"Reference Implementation CI #{TRANCHE5A_PR_CI}",
         f"Reference Implementation CI #{TRANCHE5A_MAIN_CI}",
         f"{TRANCHE5A_QUALIFIED_TESTS:,} tests passed",
         f"{TRANCHE5A_QUALIFIED_TRACKED_FILES} tracked files",
-        "Tranche 5B — configuration composition and explicit manifest — NEXT",
+        "Tranche 5B — configuration composition and explicit manifest — COMPLETE",
+        f"PR #219 as `{CURRENT_MAIN}`",
+        TRANCHE5B_HEAD,
+        f"Reference Implementation CI #{TRANCHE5B_PR_CI}",
+        f"Reference Implementation CI #{TRANCHE5B_MAIN_CI}",
+        f"{TRANCHE5B_QUALIFIED_TESTS:,} tests passed",
+        f"{TRANCHE5B_QUALIFIED_TRACKED_FILES} tracked files",
+        "Tranche 5C — invariant validation — NEXT",
     ):
         assert phrase in text
 
     for stale in (
+        "Tranche 5B — configuration composition and explicit manifest — NEXT",
+        "Configuration source I/O is separated; composition is the next coupling target",
         "Tranche 5 — configuration boundary — NEXT",
         "`config.py` is now the next coupling target",
         "Tranche 4 — specialist routing by composition — NEXT",
