@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 plus Tranche 5A merged**  
+Status: **incremental implementation — Tranches 1–4 plus Tranche 5A and Tranche 5B merged**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -22,11 +22,11 @@ Tranches 1–4 have removed deterministic classification/risk ownership, finaliz
 
 `SpecialistRoutingEngine` remains the accepted public compatibility façade but no longer subclasses `OrchestrationEngine`. Specialist risk refinement and runtime-preference refinement are composed through `application/dispatch/specialist_policy.py`, while specialist-selection YAML/filesystem loading is behind `SpecialistSelectionPolicyPort` and the YAML adapter. Existing specialist dispatch, documentation-recovery verifier behavior, runtime lifecycle gates, provider diversity, and public compatibility are preserved.
 
-### 3. Configuration source I/O is separated; composition is the next coupling target
+### 3. Configuration source I/O and composition are separated; invariant validation is the next coupling target
 
-Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. `config.py` no longer performs direct YAML or filesystem reads, but the `ConfigBundle` compatibility façade still owns the explicit repository path manifest, extension ordering, merge/override composition, normalization, invariant validation, and runtime registry projections.
+Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. Tranche 5B then moved the explicit repository path manifest, extension ordering, merge/override composition, and current normalization behind `application/configuration/composition.py` while `ConfigBundle.load()` remains the compatibility entry point.
 
-Tranche 5B owns the explicit composition/manifest boundary. T5C and T5D remain separately reviewable validation and immutable-runtime-view boundaries.
+`ConfigBundle.validate()` still owns the invariant-validation rules and issue construction. Tranche 5C owns that validation boundary. T5D remains the separately reviewable immutable-runtime-view boundary.
 
 ### 4. Provider contracts and provider implementations still share package-level surfaces
 
@@ -49,7 +49,8 @@ teo_reference/
 │   └── authority/
 ├── application/
 │   ├── configuration/
-│   │   └── composition.py
+│   │   ├── composition.py
+│   │   └── validation.py
 │   ├── dispatch/
 │   │   ├── service.py
 │   │   ├── resolvers.py
@@ -161,24 +162,35 @@ Merged-main qualification on `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` was Refe
 
 T5A deliberately preserved the explicit extension manifest, composition/merge/override rules, normalization, invariant validation, and mutable runtime projections for later bounded subtranches.
 
-#### Tranche 5B — configuration composition and explicit manifest — NEXT
+#### Tranche 5B — configuration composition and explicit manifest — COMPLETE
 
-Extract from the `ConfigBundle` compatibility façade:
+Merged via PR #219 as `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f`.
 
-1. the exact required and optional repository configuration path manifest;
+Implemented:
+
+1. the exact required and optional repository configuration path manifest as an immutable explicit application-owned manifest;
 2. extension ordering;
-3. team-route, routing, Worker, and Specialist merge/override rules;
-4. conditional-escalation and verification-policy normalization.
+3. Team-route, routing, Worker, and Specialist merge/override rules;
+4. conditional-escalation and verification-policy normalization;
+5. `ConfigBundle.load()` delegation through the application composition boundary;
+6. compatibility/error-translation shims for former private composition helpers;
+7. focused manifest-order, dependency-direction, duplicate/override, protected-Specialist, normalization, and equivalence regressions.
 
-The application-side composition boundary may depend on `RepositoryConfigurationSourcePort` but must not import concrete adapters, YAML, the outer `config.py` façade, provider modules, runtime execution, or CLI surfaces. `ConfigBundle.load()` remains the compatibility entry point and delegates composition through the extracted boundary.
+The application composition boundary depends on `RepositoryConfigurationSourcePort` and does not import concrete adapters, YAML, the outer `config.py` façade, provider modules, runtime execution, or CLI surfaces. The manifest remains explicit; no directory scanning or implicit policy discovery was introduced.
 
-Acceptance must prove exact source-path requests, ordering, duplicate rejection, approved override behavior, protected Specialist override rejection, normalization equivalence, and unchanged whole-repository behavior.
+Exact PR-head qualification on `d52a834509dd04f141550806871a203b0d850560` was Reference Implementation CI #982: **1,135 tests passed**, **615 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
 
-The manifest must remain explicit and fail closed. T5B must not weaken repository governance, permit implicit policy discovery, turn configuration discovery into routing authority, change provider/model defaults, alter Runtime Model Binding, widen live scope, or implement Issue #215 Stage B.
+Merged-main qualification on `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` was Reference Implementation CI #983: **1,135 tests passed**, **615 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
 
-#### Tranche 5C — invariant validation — LATER
+T5B deliberately preserved `ConfigBundle.validate()` invariant ownership and mutable runtime projections for the independently reviewable T5C/T5D boundaries.
 
-Extract `ConfigBundle.validate()` invariant ownership behind an explicit validation boundary while preserving existing mutable compatibility behavior, error/warning semantics, and fail-closed `ConfigBundle.load()` behavior.
+#### Tranche 5C — invariant validation — NEXT
+
+Extract `ConfigBundle.validate()` invariant ownership behind an explicit application validation boundary while preserving existing mutable compatibility behavior, exact error/warning semantics and ordering, and fail-closed `ConfigBundle.load()` behavior.
+
+The validation boundary must not import the outer `config.py` façade, concrete adapters, YAML/filesystem I/O, provider implementations, runtime execution, or CLI surfaces. It must consume only the configuration state required to evaluate the existing invariants and return the same issue list for equivalent inputs.
+
+Acceptance must prove clean-repository equivalence, representative mutation/error equivalence, fail-closed load behavior, dependency direction, and unchanged whole-repository behavior. T5C must not introduce new validation policy, change model/provider defaults, alter Runtime Model Binding, widen live scope, move runtime projections, or implement Issue #215 Stage B.
 
 #### Tranche 5D — immutable runtime configuration view — LATER
 
