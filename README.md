@@ -129,10 +129,10 @@ TEO has crossed the functional-v1 boundary and is in post-v1 stewardship and con
 |---|---|
 | Stable release | [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0), `reference_operational` |
 | Development line | `teo-reference-router==1.0.1.dev0` |
-| Executable code baseline | `main@2f4df9d1124be91473e346ddb926f5d93c93de3e` after clean-architecture Tranche 4 / PR #212; stewardship-only reconciliation does not change executable behavior |
+| Executable code baseline | `main@1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` after clean-architecture Tranche 5A / PR #214; stewardship-only reconciliation does not change executable behavior |
 | Runtime model binding | RMI-1 through RMI-8 complete; RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` |
-| Current validated scale | Reference Implementation CI #968 on PR #212 established **1,120 tests**, **610 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
-| Clean architecture | Tranches 1–4 merged under Issue #197; Tranche 5 configuration-boundary separation is the next clean-architecture gate |
+| Current validated scale | Reference Implementation CI #978 on merged `main@1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` established **1,127 tests**, **612 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |
+| Clean architecture | Tranches 1–4 plus Tranche 5A merged under Issue #197; Tranche 5B configuration composition and explicit manifest is the next clean-architecture gate |
 | Organizational topology | ten active organizational teams, 84 workers, 82 preserved specialist role cards, dedicated Mission Control workers for orchestration, operations, project delivery, and incident response |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live candidate | `documentation`, evaluation only, no live-execution authority |
@@ -159,9 +159,11 @@ RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Its fina
 
 ## Clean-architecture migration
 
-Issue #197 is a separate behavior-preserving migration. Tranches 1–4 are merged. Tranche 3 / PR #210 introduced the dispatch application service, Worker/Specialist/capability resolvers, and an application-facing implementation-selection seam while keeping `OrchestrationEngine.dispatch()` as a thin compatibility façade. Tranche 3 exact-head CI #960 passed 1,118 tests, 607 tracked files, 42 schemas, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E.
+Issue #197 is a separate behavior-preserving migration. Tranches 1–4 plus Tranche 5A are merged. Tranche 3 / PR #210 introduced the dispatch application service, Worker/Specialist/capability resolvers, and an application-facing implementation-selection seam while keeping `OrchestrationEngine.dispatch()` as a thin compatibility façade. Tranche 3 exact-head CI #960 passed 1,118 tests, 607 tracked files, 42 schemas, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E.
 
-Tranche 4 / PR #212 replaced specialist-routing inheritance coupling with composition. `SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`; specialist risk/preference refinement now runs through a pure application policy and specialist-selection YAML/filesystem loading is behind a narrow configuration port/adapter. Tranche 4 exact-head CI #968 passed 1,120 tests, 610 tracked files, 42 schemas, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. Tranche 5 configuration-boundary separation is the next clean-architecture gate.
+Tranche 4 / PR #212 replaced specialist-routing inheritance coupling with composition. `SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`; specialist risk/preference refinement now runs through a pure application policy and specialist-selection YAML/filesystem loading is behind a narrow configuration port/adapter. Tranche 4 exact-head CI #968 passed 1,120 tests, 610 tracked files, 42 schemas, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E.
+
+Tranche 5A / PR #214 isolated repository configuration YAML/filesystem I/O behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter` while preserving the explicit configuration manifest, composition, validation, routing, authority, Runtime Model Binding, provider/default policy, and live scope. Exact PR-head CI #977 passed 1,127 tests, 612 tracked files, 42 schemas, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. Tranche 5A merged-main CI #978 on `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` passed the same 1,127 tests, 612 tracked files, 42 schemas, configuration, evidence, and provider-diverse E2E gates. Tranche 5B configuration composition and explicit manifest is the next clean-architecture gate.
 
 ## Live execution boundary
 

@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4; Tranche 5 configuration-boundary separation is next.
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus Tranche 5A; **Tranche 5B configuration composition and explicit manifest is next.**
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -84,12 +84,13 @@ RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Final ex
 
 ## Current actionable repository work: clean-architecture migration (#197)
 
-The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 are merged:
+The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 plus Tranche 5A are merged:
 
 - Tranche 1 — deterministic classification/risk domain policy;
 - Tranche 2 — finalization use case and artifact-integrity port;
 - Tranche 3 — dispatch application service, responsibility resolvers, and application-facing implementation-selection seam;
-- Tranche 4 — specialist routing by composition with specialist-selection configuration I/O behind a narrow port/adapter.
+- Tranche 4 — specialist routing by composition with specialist-selection configuration I/O behind a narrow port/adapter;
+- Tranche 5A — repository configuration source I/O behind a narrow source port/adapter.
 
 Tranche 3 merged via PR #210 as `74c128947f1d98f0e42c595bd1229561ab6dab50`. Exact-head CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780` passed 1,118 tests, 607 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing.
 
@@ -97,7 +98,22 @@ Tranche 4 merged via PR #212 as `2f4df9d1124be91473e346ddb926f5d93c93de3e`. Exac
 
 `OrchestrationEngine.dispatch()` remains a thin application-service façade. Worker, Specialist, and capability resolution are extracted. `SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`; specialist risk/preference refinement is composed through a pure application policy.
 
-**Tranche 5 — configuration boundary separation** is the next clean-architecture gate. It must separate filesystem/YAML loading, explicit composition, invariant validation, and immutable runtime configuration views while preserving the explicit extension manifest, fail-closed validation, and `ConfigBundle` compatibility.
+### Tranche 5A — configuration source I/O — COMPLETE
+
+PR #214 merged as `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201`. It introduced `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`, moved filesystem/PyYAML reads out of `config.py`, and preserved the exact explicit required/optional path set with no implicit discovery. Exact PR-head CI #977 on `17afc5d5ff3b74897e6c2bcd534ccb6158fbc2cb` passed 1,127 tests, 612 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing. Merged-main CI #978 on `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` passed the same 1,127 tests, 612 tracked files, 42 schemas, configuration, evidence, and provider-diverse E2E gates.
+
+T5A deliberately did **not** move the explicit extension manifest, merge/override rules, normalization, invariant validation, or mutable runtime projections. Those remain independently reviewable Tranche 5 boundaries.
+
+### Tranche 5B — configuration composition and explicit manifest — NEXT
+
+Move the explicit repository configuration manifest, extension ordering, composition/merge/override behavior, and current normalization out of the `ConfigBundle` compatibility façade into an application-side configuration composition boundary. Preserve exact path ordering, duplicate detection, approved override rules, conditional-escalation normalization, verification-policy normalization, source-port injection, and current public `ConfigBundle` behavior.
+
+T5B must not introduce directory scanning or implicit policy discovery. Configuration presence and discovery are not authority. T5B must not change model/provider defaults, Runtime Model Binding, risk/routing behavior, provider access, live scope, or Issue #215 Stage B.
+
+Later Tranche 5 subtranches remain separate:
+
+- **T5C** — invariant validation boundary while preserving fail-closed validation and mutable compatibility behavior;
+- **T5D** — immutable runtime configuration view behind the mutable `ConfigBundle` compatibility façade.
 
 Rules:
 
