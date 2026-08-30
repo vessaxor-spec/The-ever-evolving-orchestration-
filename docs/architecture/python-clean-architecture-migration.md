@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 plus Tranche 5A and Tranche 5B merged**  
+Status: **incremental implementation — Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C merged**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -22,11 +22,11 @@ Tranches 1–4 have removed deterministic classification/risk ownership, finaliz
 
 `SpecialistRoutingEngine` remains the accepted public compatibility façade but no longer subclasses `OrchestrationEngine`. Specialist risk refinement and runtime-preference refinement are composed through `application/dispatch/specialist_policy.py`, while specialist-selection YAML/filesystem loading is behind `SpecialistSelectionPolicyPort` and the YAML adapter. Existing specialist dispatch, documentation-recovery verifier behavior, runtime lifecycle gates, provider diversity, and public compatibility are preserved.
 
-### 3. Configuration source I/O and composition are separated; invariant validation is the next coupling target
+### 3. Configuration source I/O, composition, and validation are separated; immutable runtime view is next
 
-Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. Tranche 5B then moved the explicit repository path manifest, extension ordering, merge/override composition, and current normalization behind `application/configuration/composition.py` while `ConfigBundle.load()` remains the compatibility entry point.
+Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. Tranche 5B moved the explicit repository path manifest, extension ordering, merge/override composition, and current normalization behind `application/configuration/composition.py`. Tranche 5C moved invariant-validation ownership and deterministic issue construction behind `application/configuration/validation.py` while `ConfigBundle.validate()` remains the compatibility façade.
 
-`ConfigBundle.validate()` still owns the invariant-validation rules and issue construction. Tranche 5C owns that validation boundary. T5D remains the separately reviewable immutable-runtime-view boundary.
+The T5C validation input is an immutable shell over the same mutable configuration mappings, so existing post-load mutation/conformance behavior remains intact. T5D is the separately reviewable immutable runtime-facing configuration-view boundary.
 
 ### 4. Provider contracts and provider implementations still share package-level surfaces
 
@@ -184,19 +184,34 @@ Merged-main qualification on `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` was Refe
 
 T5B deliberately preserved `ConfigBundle.validate()` invariant ownership and mutable runtime projections for the independently reviewable T5C/T5D boundaries.
 
-#### Tranche 5C — invariant validation — NEXT
+#### Tranche 5C — invariant validation — COMPLETE
 
-Extract `ConfigBundle.validate()` invariant ownership behind an explicit application validation boundary while preserving existing mutable compatibility behavior, exact error/warning semantics and ordering, and fail-closed `ConfigBundle.load()` behavior.
+Merged via PR #221 as `93a5bb98fcef116000af90fa417098553ef4160d`.
 
-The validation boundary must not import the outer `config.py` façade, concrete adapters, YAML/filesystem I/O, provider implementations, runtime execution, or CLI surfaces. It must consume only the configuration state required to evaluate the existing invariants and return the same issue list for equivalent inputs.
+Implemented:
 
-Acceptance must prove clean-repository equivalence, representative mutation/error equivalence, fail-closed load behavior, dependency direction, and unchanged whole-repository behavior. T5C must not introduce new validation policy, change model/provider defaults, alter Runtime Model Binding, widen live scope, move runtime projections, or implement Issue #215 Stage B.
+1. invariant-validation ownership and deterministic issue construction moved into `application/configuration/validation.py`;
+2. `RepositoryConfigurationValidationInput` provides a frozen application-facing shell over the existing mutable configuration mappings;
+3. `ConfigBundle.validate()` remains the compatibility façade and delegates to `validate_repository_configuration()`;
+4. former module-private validation helpers remain compatibility aliases rather than duplicate rule ownership;
+5. clean and representative mutated configuration equivalence regressions preserve exact issue text and ordering;
+6. post-load mutation visibility remains intact for validation/conformance callers;
+7. `ConfigBundle.load()` remains fail closed on invariant violations;
+8. dependency-direction tests prohibit outer façade, concrete adapter, YAML/filesystem, provider/runtime, and CLI dependencies in the application validator.
 
-#### Tranche 5D — immutable runtime configuration view — LATER
+Exact PR-head qualification on `e2f602175ace0b0a3466142f331154f4840842f2` was Reference Implementation CI #986: **1,141 tests passed**, **617 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+Merged-main qualification on `93a5bb98fcef116000af90fa417098553ef4160d` was Reference Implementation CI #987: **1,141 tests passed**, **617 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+T5C did not change validation policy, model/provider defaults, Runtime Model Binding, routing/risk/authority semantics, provider access, live scope, finalization, verification, or Issue #215 Stage B. Mutable runtime projections remain intentionally unchanged for T5D.
+
+#### Tranche 5D — immutable runtime configuration view — NEXT
 
 Introduce an immutable runtime-facing configuration view behind the existing mutable `ConfigBundle` compatibility façade. Existing tests and downstream callers that intentionally mutate `ConfigBundle` for validation/conformance remain supported until compatibility evidence permits a separate API decision.
 
-Full Tranche 5 is not complete until T5A through T5D are qualified and canonical stewardship records are reconciled.
+T5D must preserve the application validation and composition boundaries already established, must not make the mutable compatibility façade the runtime source of accidental mutation, and must not change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B.
+
+Full Tranche 5 is not complete until T5D is qualified and canonical stewardship records are reconciled.
 
 ### Tranche 6 — providers, verification, runtime, and evaluation namespaces
 
