@@ -156,11 +156,11 @@ class RuntimeConfigurationBinding:
         self,
         source: Any,
         *,
-        view_factory: Callable[[], RuntimeConfigurationView],
+        view_factory: Callable[[], Any] | None = None,
     ) -> None:
         self._source = source
-        self._view_factory = view_factory
-        self._active: ContextVar[RuntimeConfigurationView | None] = ContextVar(
+        self._view_factory = view_factory or (lambda: source)
+        self._active: ContextVar[Any | None] = ContextVar(
             f"teo_runtime_configuration_{id(self)}",
             default=None,
         )
@@ -171,7 +171,7 @@ class RuntimeConfigurationBinding:
         return active if active is not None else self._source
 
     @contextmanager
-    def activate(self) -> Iterator[RuntimeConfigurationView]:
+    def activate(self) -> Iterator[Any]:
         view = self._view_factory()
         token = self._active.set(view)
         try:
