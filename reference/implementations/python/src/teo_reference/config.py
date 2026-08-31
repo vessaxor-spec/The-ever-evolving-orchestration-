@@ -16,6 +16,10 @@ from .application.configuration.composition import (
     load_team_routing as _compose_team_routing,
     load_workers as _compose_workers,
 )
+from .application.configuration.runtime_view import (
+    RuntimeConfigurationView,
+    build_runtime_configuration_view,
+)
 from .application.configuration.validation import (
     RepositoryConfigurationValidationInput,
     _EXECUTION_KEYS,
@@ -137,6 +141,11 @@ class ConfigBundle:
                 model_evidence=self.model_evidence,
             )
         )
+
+    def runtime_view(self) -> RuntimeConfigurationView:
+        """Return a detached immutable snapshot for one runtime execution boundary."""
+
+        return build_runtime_configuration_view(self)
 
     @property
     def team_routes(self) -> dict[str, Any]:
