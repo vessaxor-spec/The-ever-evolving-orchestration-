@@ -6,6 +6,7 @@ from typing import Any, Callable, Iterable, Sequence
 
 from .adapters.configured_runtime_selection import ConfiguredRuntimeSelectionAdapter
 from .adapters.filesystem import FilesystemArtifactIntegrityAdapter
+from .application.configuration.runtime_view import RuntimeConfigurationBinding
 from .application.dispatch import (
     CapabilityResolver,
     DispatchResolutionError,
@@ -138,7 +139,10 @@ class OrchestrationEngine:
         risk_refiner: Callable[[TaskRequest, str | None, str], tuple[str, str | None]] | None = None,
         selection_preference_refiner: Callable[..., list[dict[str, Any]]] | None = None,
     ):
-        self.config = config
+        self._runtime_configuration = RuntimeConfigurationBinding(
+            config,
+            view_factory=config.runtime_view,
+        )
         self._finalization = FinalizationService(
             artifact_integrity or FilesystemArtifactIntegrityAdapter()
         )
@@ -148,9 +152,9 @@ class OrchestrationEngine:
         )
         self._risk_refiner = risk_refiner
         self._selection_preference_refiner = selection_preference_refiner
-        self._worker_resolver = WorkerResolver(config)
-        self._specialist_resolver = SpecialistResolver(config)
-        self._capability_resolver = CapabilityResolver(config)
+        self._worker_resolver = WorkerResolver(self._runtime_configuration)
+        self._specialist_resolver = SpecialistResolver(self._runtime_configuration)
+        self._capability_resolver = CapabilityResolver(self._runtime_configuration)
         self._implementation_selector = ImplementationSelector(
             select_runtime=self._select_runtime_choice,
             select_fallback=self._select_fallback_runtime,
@@ -158,7 +162,7 @@ class OrchestrationEngine:
             primary_policy_warning=self._primary_policy_warning,
         )
         self._dispatch_service = DispatchService(
-            config,
+            self._runtime_configuration,
             classify_task=self._classify_task,
             assess_risk=self._assess_risk,
             refine_risk=self._refine_effective_risk,
@@ -167,6 +171,12 @@ class OrchestrationEngine:
             capability_resolver=self._capability_resolver,
             implementation_selector=self._implementation_selector,
         )
+
+    @property
+    def config(self) -> Any:
+        """Expose mutable compatibility configuration outside active dispatch only."""
+
+        return self._runtime_configuration.current
 
     @classmethod
     def from_repo(
@@ -199,7 +209,8 @@ class OrchestrationEngine:
 
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
         try:
-            return self._dispatch_service.dispatch(task)
+            with self._runtime_configuration.activate():
+                return self._dispatch_service.dispatch(task)
         except DispatchServiceError as exc:
             raise RoutingError(str(exc)) from exc
 
