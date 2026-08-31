@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record  
-**Last reconciled:** 2026-08-26  
+**Last reconciled:** 2026-08-30  
 **Stable release:** `v1.0.0`  
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -15,17 +15,17 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current executable code baseline | `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` after clean-architecture Tranche 5B / PR #219; stewardship-only reconciliation does not change executable behavior |
+| Current executable code baseline | `93a5bb98fcef116000af90fa417098553ef4160d` after clean-architecture Tranche 5C / PR #221; stewardship-only reconciliation does not change executable behavior |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | **1,135 tests passed**, **615 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #983 on merged `main@6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` |
+| Current validated scale | **1,141 tests passed**, **617 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #987 on merged `main@93a5bb98fcef116000af90fa417098553ef4160d` |
 | Runtime model binding | Complete through RMI-8; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` and Issue #200 is closed completed |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
 | Specialist selection policy | model-neutral `policy/routing/core/specialist-selection-policy.yaml` |
-| Clean architecture | Tranches 1–4 plus Tranche 5A and Tranche 5B merged and qualified; T5C invariant validation boundary is the next actionable repository gate |
+| Clean architecture | Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C merged and qualified; T5D immutable runtime configuration view is the next actionable repository gate |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
@@ -98,7 +98,7 @@ Issue #197 remains behavior-preserving and separate from Runtime Model Binding.
 - [ ] Tranche 5 — separate configuration loading/composition/validation/runtime view.
   - [x] T5A — repository configuration source I/O port/adapter; PR #214, `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201`.
   - [x] T5B — configuration composition and explicit manifest; PR #219, `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f`.
-  - [ ] T5C — invariant validation boundary.
+  - [x] T5C — invariant validation boundary; PR #221, `93a5bb98fcef116000af90fa417098553ef4160d`.
   - [ ] T5D — immutable runtime configuration view behind the mutable `ConfigBundle` compatibility façade.
 - [ ] Tranche 6 — move provider/verifier/runtime/evaluation implementations behind explicit outer namespaces with compatibility shims.
 - [ ] Tranche 7 — reduce compatibility surface only through explicit API evidence/versioning.
@@ -109,9 +109,11 @@ Tranche 4 exact-head qualification was Reference Implementation CI #968 on `1762
 
 Tranche 5A isolated repository configuration YAML/filesystem I/O behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter` without changing composition, validation, routing, authority, Runtime Model Binding, provider/default policy, or live scope. PR #214 exact head `17afc5d5ff3b74897e6c2bcd534ccb6158fbc2cb` passed Reference Implementation CI #977 with **1,127 tests**, **612 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, and provider-diverse end-to-end routing. The merged executable baseline `1ba1a4b0a83e403b422b47f2e7b7cef733ccb201` then passed Reference Implementation CI #978 with the same **1,127 tests**, **612 tracked files**, **42 schemas**, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end behavior.
 
-Tranche 5B moved the explicit repository configuration manifest, extension ordering, Team-route/routing/Worker/Specialist merge and override rules, and existing routing normalization into `application/configuration/composition.py`. `ConfigBundle.load()` now delegates composition through that application boundary while retaining compatibility/error-translation shims. Validation semantics and mutable runtime projections remain unchanged for T5C/T5D. PR #219 exact head `d52a834509dd04f141550806871a203b0d850560` passed Reference Implementation CI #982 with **1,135 tests**, **615 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, and provider-diverse end-to-end routing. The merged executable baseline `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` then passed Reference Implementation CI #983 with the same **1,135 tests**, **615 tracked files**, **42 schemas**, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end behavior.
+Tranche 5B moved the explicit repository configuration manifest, extension ordering, Team-route/routing/Worker/Specialist merge and override rules, and existing routing normalization into `application/configuration/composition.py`. `ConfigBundle.load()` now delegates composition through that application boundary while retaining compatibility/error-translation shims. PR #219 exact head `d52a834509dd04f141550806871a203b0d850560` passed Reference Implementation CI #982 with **1,135 tests**, **615 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, and provider-diverse end-to-end routing. The merged executable baseline `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` then passed Reference Implementation CI #983 with the same **1,135 tests**, **615 tracked files**, **42 schemas**, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end behavior.
 
-Full Tranche 5 remains incomplete. T5C must extract invariant-validation ownership from the mutable `ConfigBundle` compatibility façade without changing validation semantics, fail-closed loading, routing, authority, Runtime Model Binding, provider/default policy, risk, or live scope. T5D immutable runtime views remain a separate later boundary.
+Tranche 5C moved invariant-validation ownership and deterministic issue construction into `application/configuration/validation.py`. `ConfigBundle.validate()` remains a thin compatibility façade, `RepositoryConfigurationValidationInput` is a frozen shell over the existing mutable mappings, and post-load mutation/conformance behavior remains observable. PR #221 exact head `e2f602175ace0b0a3466142f331154f4840842f2` passed Reference Implementation CI #986 with **1,141 tests**, **617 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, and provider-diverse end-to-end routing. The merged executable baseline `93a5bb98fcef116000af90fa417098553ef4160d` then passed Reference Implementation CI #987 with the same **1,141 tests**, **617 tracked files**, **42 schemas**, valid linked configuration, regulated-specialist evidence, and provider-diverse end-to-end behavior.
+
+Full Tranche 5 remains incomplete. T5D is the next bounded clean-architecture gate: introduce an immutable runtime-facing configuration view behind the existing mutable `ConfigBundle` compatibility façade while keeping intentional mutable validation/conformance callers compatible. T5D must not change routing, authority, Runtime Model Binding, provider/default policy, risk, live scope, finalization, verification, or Issue #215 Stage B.
 
 ## Portfolio view
 
@@ -130,17 +132,17 @@ Full Tranche 5 remains incomplete. T5C must extract invariant-validation ownersh
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve anti-Goodhart and no-policy-write boundaries |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, temporal causality, and finalization boundaries |
 | Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
-| Clean-architecture migration (#197) | In progress | — | Tranches 1–4 plus T5A and T5B merged and qualified | T5C: invariant validation boundary |
+| Clean-architecture migration (#197) | In progress | — | Tranches 1–4 plus T5A, T5B, and T5C merged and qualified | T5D: immutable runtime configuration view |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
 ## NOW
 
-### 1. Clean-architecture Tranche 5C — invariant validation boundary
+### 1. Clean-architecture Tranche 5D — immutable runtime configuration view
 
-T5A isolated repository configuration reads behind a source port/adapter, and T5B isolated the explicit manifest, ordered extension composition, merge/override rules, and normalization behind the application configuration boundary. T5C is the next fully actionable repository gate: extract invariant-validation ownership from `ConfigBundle.validate()` into an explicit application validation boundary while preserving `ConfigBundle.validate()` as the accepted compatibility façade.
+T5A isolated configuration source I/O, T5B isolated explicit composition and normalization, and T5C isolated invariant validation while preserving the mutable `ConfigBundle` compatibility façade. T5D is now the next bounded repository gate: introduce an immutable runtime-facing configuration view behind that façade so runtime consumers do not depend on accidental mutability, while preserving intentional mutable validation/conformance callers.
 
-T5C must preserve the exact existing error/warning contract and fail-closed `ConfigBundle.load()` behavior. It must not add new configuration semantics, turn validation into routing authority, change model/provider defaults, widen live scope, alter risk/routing behavior, move mutable runtime projections reserved for T5D, or reopen Runtime Model Binding. Issue #215 Stage B remains separate.
+T5D must preserve the existing source, composition, and validation boundaries and their exact semantics. It must not change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B. Compatibility reduction remains a later explicit API decision rather than an automatic side effect of immutability.
 
 ### 2. Evidence-governed live execution expansion
 
@@ -154,7 +156,7 @@ No access mechanism is itself routing authority. Do not authorize high or critic
 
 After full Tranche 5, continue #197 only after exact repository recalibration. Tranche 6 is the planned provider/verifier/runtime/evaluation namespace migration, but it is not automatically authorized if Tranche 5 evidence reveals a different required sequence.
 
-Within Tranche 5, T5D immutable runtime views follow T5C only after exact-head qualification and repository reconciliation.
+T5D must itself be implemented, exact-head qualified, merged-main qualified, and reconciled before Tranche 5 is complete.
 
 The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
 

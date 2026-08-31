@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus Tranche 5A and Tranche 5B; **Tranche 5C invariant validation boundary is next.**
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C; **Tranche 5D immutable runtime configuration view is next.**
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -84,14 +84,15 @@ RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Final ex
 
 ## Current actionable repository work: clean-architecture migration (#197)
 
-The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 plus Tranche 5A and Tranche 5B are merged:
+The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C are merged:
 
 - Tranche 1 — deterministic classification/risk domain policy;
 - Tranche 2 — finalization use case and artifact-integrity port;
 - Tranche 3 — dispatch application service, responsibility resolvers, and application-facing implementation-selection seam;
 - Tranche 4 — specialist routing by composition with specialist-selection configuration I/O behind a narrow port/adapter;
 - Tranche 5A — repository configuration source I/O behind a narrow source port/adapter;
-- Tranche 5B — explicit configuration manifest, ordered composition/merge/override behavior, and normalization behind the application configuration boundary.
+- Tranche 5B — explicit configuration manifest, ordered composition/merge/override behavior, and normalization behind the application configuration boundary;
+- Tranche 5C — invariant-validation ownership and deterministic issue construction behind the application configuration-validation boundary.
 
 Tranche 3 merged via PR #210 as `74c128947f1d98f0e42c595bd1229561ab6dab50`. Exact-head CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780` passed 1,118 tests, 607 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing.
 
@@ -111,17 +112,21 @@ PR #219 merged as `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f`. It moved the expli
 
 Exact PR-head CI #982 on `d52a834509dd04f141550806871a203b0d850560` passed 1,135 tests, 615 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing. Merged-main CI #983 on `6528be6e54b5acc8c37ef8ab1f5198ab1e61d20f` passed the same 1,135 tests, 615 tracked files, 42 schemas, configuration, evidence, and provider-diverse E2E gates.
 
-T5B deliberately did **not** change `ConfigBundle.validate()` semantics or move mutable runtime projections. Those remain the independently reviewable T5C/T5D boundaries.
+T5B deliberately did **not** change `ConfigBundle.validate()` semantics or move mutable runtime projections. Those remained the independently reviewable T5C/T5D boundaries.
 
-### Tranche 5C — invariant validation boundary — NEXT
+### Tranche 5C — invariant validation boundary — COMPLETE
 
-Extract invariant-validation ownership from `ConfigBundle.validate()` into an explicit application configuration-validation boundary. Preserve the existing mutable `ConfigBundle` compatibility façade, exact issue ordering/text, fail-closed `ConfigBundle.load()` behavior, current dependency direction, and existing configuration semantics.
+PR #221 merged as `93a5bb98fcef116000af90fa417098553ef4160d`. It moved invariant-validation ownership and deterministic issue construction into `application/configuration/validation.py`, introduced `RepositoryConfigurationValidationInput` as a frozen shell over the existing mutable mappings, and reduced `ConfigBundle.validate()` to a thin compatibility façade. Existing post-load mutation/conformance behavior and fail-closed loading remain intact.
 
-T5C must not introduce new validation policy, turn validation into routing authority, alter model/provider defaults, Runtime Model Binding, risk/routing behavior, provider access, live scope, finalization, verification, or Issue #215 Stage B. Mutable runtime configuration projections remain reserved for T5D.
+Exact PR-head CI #986 on `e2f602175ace0b0a3466142f331154f4840842f2` passed 1,141 tests, 617 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing. Merged-main CI #987 on `93a5bb98fcef116000af90fa417098553ef4160d` passed the same 1,141 tests, 617 tracked files, 42 schemas, configuration, evidence, and provider-diverse E2E gates.
 
-Later Tranche 5 subtranche remains separate:
+T5C deliberately did **not** introduce an immutable runtime projection or change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B.
 
-- **T5D** — immutable runtime configuration view behind the mutable `ConfigBundle` compatibility façade.
+### Tranche 5D — immutable runtime configuration view — NEXT
+
+Introduce an immutable runtime-facing configuration view behind the existing mutable `ConfigBundle` compatibility façade. Existing tests and downstream callers that intentionally mutate `ConfigBundle` for validation/conformance remain supported until compatibility evidence permits a separate API decision.
+
+T5D must preserve the established source, composition, and validation boundaries. It must not make configuration discovery or immutability a source of routing authority, and must not change risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B.
 
 Rules:
 
@@ -129,7 +134,7 @@ Rules:
 - preserve dependency direction and existing behavior;
 - do not fold runtime-model-binding product behavior into #197;
 - do not change live authority, provider access, or model/default policy as a side effect;
-- do not turn configuration discovery, loading, composition, or validation into routing authority;
+- do not turn configuration discovery, loading, composition, validation, or runtime projection into routing authority;
 - where workstreams touch a surface, sequence changes so each remains independently understandable and reversible.
 
 ## Current operational priority: evidence-governed live execution expansion
