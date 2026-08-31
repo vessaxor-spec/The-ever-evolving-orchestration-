@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, Callable
 
 from ...schemas import RISK_ORDER, TaskRequest
 
@@ -32,13 +32,43 @@ class SpecialistRoutingPolicy:
         self._runtime_specialist_profiles = runtime_specialist_profiles
         self._worker_runtime_defaults = worker_runtime_defaults
         self._model_registry = model_registry
+        self._runtime_config_provider: Callable[[], Any] | None = None
         self._validate()
 
+    def bind_runtime_config_provider(self, provider: Callable[[], Any]) -> None:
+        """Bind runtime reads without changing the accepted bound-method surface."""
+
+        self._runtime_config_provider = provider
+
+    def _runtime_config(self) -> Any | None:
+        return self._runtime_config_provider() if self._runtime_config_provider else None
+
+    def _active_specialist_registry(self) -> dict[str, Any]:
+        config = self._runtime_config()
+        return config.specialist_registry if config is not None else self._specialist_registry
+
+    def _active_runtime_specialist_profiles(self) -> dict[str, Any]:
+        config = self._runtime_config()
+        return (
+            config.runtime_specialist_profiles
+            if config is not None
+            else self._runtime_specialist_profiles
+        )
+
+    def _active_worker_runtime_defaults(self) -> dict[str, Any]:
+        config = self._runtime_config()
+        return config.worker_runtime_defaults if config is not None else self._worker_runtime_defaults
+
+    def _active_model_registry(self) -> dict[str, Any]:
+        config = self._runtime_config()
+        return config.model_registry if config is not None else self._model_registry
+
     def _model_entry(self, model: str) -> dict[str, Any]:
-        direct = self._model_registry.get(model)
+        registry = self._active_model_registry()
+        direct = registry.get(model)
         if isinstance(direct, dict):
             return direct
-        for entry in self._model_registry.values():
+        for entry in registry.values():
             if not isinstance(entry, dict):
                 continue
             if entry.get("concrete_model") == model or model in entry.get(
@@ -61,7 +91,9 @@ class SpecialistRoutingPolicy:
                 "Specialist selection policy requires profiles and specialists"
             )
 
-        registered = set(self._specialist_registry)
+        specialist_registry = self._active_specialist_registry()
+        runtime_specialist_profiles = self._active_runtime_specialist_profiles()
+        registered = set(specialist_registry)
         assigned = set(assignments)
         if registered != assigned:
             missing = sorted(registered - assigned)
@@ -76,7 +108,7 @@ class SpecialistRoutingPolicy:
                 + "; ".join(details)
             )
 
-        if set(profiles) != set(self._runtime_specialist_profiles):
+        if set(profiles) != set(runtime_specialist_profiles):
             raise SpecialistRoutingPolicyError(
                 "Model-neutral specialist profiles and runtime compatibility profiles must match exactly"
             )
@@ -91,7 +123,7 @@ class SpecialistRoutingPolicy:
                 raise SpecialistRoutingPolicyError(
                     f"Specialist {specialist} references unknown selection profile {profile_name}"
                 )
-            compatibility = self._runtime_specialist_profiles.get(profile_name)
+            compatibility = runtime_specialist_profiles.get(profile_name)
             if not isinstance(compatibility, dict):
                 raise SpecialistRoutingPolicyError(
                     f"Selection profile {profile_name} has no runtime compatibility defaults"
@@ -124,7 +156,7 @@ class SpecialistRoutingPolicy:
     def selection_profile_for(self, specialist: str) -> tuple[str, dict[str, Any]]:
         assignment = self._selection_policy["specialists"][specialist]
         profile_name = str(assignment["selection_profile"])
-        return profile_name, self._runtime_specialist_profiles[profile_name]
+        return profile_name, self._active_runtime_specialist_profiles()[profile_name]
 
     @staticmethod
     def _specialist_preference(
@@ -166,7 +198,7 @@ class SpecialistRoutingPolicy:
     ) -> tuple[str, str | None]:
         if not specialist:
             return risk, None
-        entry = self._specialist_registry.get(specialist, {})
+        entry = self._active_specialist_registry().get(specialist, {})
         escalation = entry.get("risk_escalation", {})
         if not isinstance(escalation, dict):
             return risk, None
@@ -196,7 +228,7 @@ class SpecialistRoutingPolicy:
         *,
         worker: str,
     ) -> list[dict[str, Any]]:
-        worker_defaults = self._worker_runtime_defaults[worker]
+        worker_defaults = self._active_worker_runtime_defaults()[worker]
         return [
             {
                 "agent": "registry",
