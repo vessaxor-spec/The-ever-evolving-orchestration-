@@ -57,8 +57,8 @@ class SpecialistRoutingEngine:
 
         self._engine = BaseOrchestrationEngine(
             config,
-            risk_refiner=self._specialist_policy.refine_effective_risk,
-            selection_preference_refiner=self._specialist_policy.refine_selection_preferences,
+            risk_refiner=self._runtime_refine_effective_risk,
+            selection_preference_refiner=self._runtime_refine_selection_preferences,
             **engine_kwargs,
         )
 
@@ -69,6 +69,29 @@ class SpecialistRoutingEngine:
         **kwargs: Any,
     ) -> "SpecialistRoutingEngine":
         return cls(ConfigBundle.load(repo_root), **kwargs)
+
+    def _runtime_policy(self) -> SpecialistRoutingPolicy:
+        runtime_config = self._engine.config
+        if runtime_config is self.config:
+            return self._specialist_policy
+        return SpecialistRoutingPolicy(
+            selection_policy=self._specialist_selection_policy,
+            specialist_registry=runtime_config.specialist_registry,
+            runtime_specialist_profiles=runtime_config.runtime_specialist_profiles,
+            worker_runtime_defaults=runtime_config.worker_runtime_defaults,
+            model_registry=runtime_config.model_registry,
+        )
+
+    def _runtime_refine_effective_risk(
+        self,
+        task: TaskRequest,
+        specialist: str | None,
+        risk: str,
+    ) -> tuple[str, str | None]:
+        return self._runtime_policy().refine_effective_risk(task, specialist, risk)
+
+    def _runtime_refine_selection_preferences(self, **kwargs: Any) -> list[dict[str, Any]]:
+        return self._runtime_policy().refine_selection_preferences(**kwargs)
 
     def dispatch(self, task: TaskRequest) -> DispatchRecord:
         try:
