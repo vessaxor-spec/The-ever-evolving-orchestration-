@@ -139,9 +139,14 @@ class OrchestrationEngine:
         risk_refiner: Callable[[TaskRequest, str | None, str], tuple[str, str | None]] | None = None,
         selection_preference_refiner: Callable[..., list[dict[str, Any]]] | None = None,
     ):
+        runtime_view_factory = getattr(config, "runtime_view", None)
         self._runtime_configuration = RuntimeConfigurationBinding(
             config,
-            view_factory=config.runtime_view,
+            view_factory=(
+                runtime_view_factory
+                if callable(runtime_view_factory)
+                else lambda: config
+            ),
         )
         self._finalization = FinalizationService(
             artifact_integrity or FilesystemArtifactIntegrityAdapter()
