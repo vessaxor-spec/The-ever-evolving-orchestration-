@@ -102,6 +102,7 @@ def test_runtime_view_boundary_has_no_outer_layer_dependencies() -> None:
             imported_modules.add(node.module)
 
     assert imported_modules <= {
+        "__future__",
         "contextlib",
         "contextvars",
         "dataclasses",
