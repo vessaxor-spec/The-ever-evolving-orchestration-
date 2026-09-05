@@ -61,6 +61,9 @@ class SpecialistRoutingEngine:
             selection_preference_refiner=self._specialist_policy.refine_selection_preferences,
             **engine_kwargs,
         )
+        self._specialist_policy.bind_runtime_config_provider(
+            lambda: self._engine.config
+        )
 
     @classmethod
     def from_repo(
