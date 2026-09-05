@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C merged**  
+Status: **incremental implementation — Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -24,9 +24,9 @@ Tranches 1–4 have removed deterministic classification/risk ownership, finaliz
 
 ### 3. Configuration source I/O, composition, and validation are separated; immutable runtime view is next
 
-Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. Tranche 5B moved the explicit repository path manifest, extension ordering, merge/override composition, and current normalization behind `application/configuration/composition.py`. Tranche 5C moved invariant-validation ownership and deterministic issue construction behind `application/configuration/validation.py` while `ConfigBundle.validate()` remains the compatibility façade.
+Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. Tranche 5B moved the explicit repository path manifest, extension ordering, merge/override composition, and current normalization behind `application/configuration/composition.py`. Tranche 5C moved invariant-validation ownership and deterministic issue construction behind `application/configuration/validation.py` while `ConfigBundle.validate()` remains the compatibility façade. Tranche 5D added a detached, deeply immutable runtime configuration view behind that mutable façade and binds one snapshot per dispatch.
 
-The T5C validation input is an immutable shell over the same mutable configuration mappings, so existing post-load mutation/conformance behavior remains intact. T5D is the separately reviewable immutable runtime-facing configuration-view boundary.
+The T5C validation input remains an immutable shell over the same mutable configuration mappings, so existing post-load mutation/conformance behavior remains intact. T5D now supplies the separately owned immutable runtime-facing configuration-view boundary: pre-dispatch compatibility mutations remain observable, while mid-dispatch mutation cannot alter the active execution snapshot.
 
 ### 4. Provider contracts and provider implementations still share package-level surfaces
 
@@ -139,7 +139,7 @@ Exact-head qualification on `176217f9803c2ec274d2b225c52cf1f4d5c0f27f` was Refer
 
 The tranche did not change Runtime Model Binding behavior, model/default policy, provider access/authentication, live scope, routing authority, risk semantics, or provider-diverse verification.
 
-### Tranche 5 — configuration boundary — IN PROGRESS
+### Tranche 5 — configuration boundary — COMPLETE
 
 Tranche 5 is split into independently reversible subtranches so loading, composition, validation, and runtime projection are not moved together.
 
@@ -205,15 +205,29 @@ Merged-main qualification on `93a5bb98fcef116000af90fa417098553ef4160d` was Refe
 
 T5C did not change validation policy, model/provider defaults, Runtime Model Binding, routing/risk/authority semantics, provider access, live scope, finalization, verification, or Issue #215 Stage B. Mutable runtime projections remain intentionally unchanged for T5D.
 
-#### Tranche 5D — immutable runtime configuration view — NEXT
+#### Tranche 5D — immutable runtime configuration view — COMPLETE
 
-Introduce an immutable runtime-facing configuration view behind the existing mutable `ConfigBundle` compatibility façade. Existing tests and downstream callers that intentionally mutate `ConfigBundle` for validation/conformance remain supported until compatibility evidence permits a separate API decision.
+Merged via PR #224 as `3607ccd793fad3913221982967636c2374c77334`.
 
-T5D must preserve the application validation and composition boundaries already established, must not make the mutable compatibility façade the runtime source of accidental mutation, and must not change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B.
+Implemented:
 
-Full Tranche 5 is not complete until T5D is qualified and canonical stewardship records are reconciled.
+1. `application/configuration/runtime_view.py` owns a detached, deeply immutable runtime configuration projection;
+2. immutable dict/list-compatible containers preserve existing concrete-container compatibility checks while rejecting mutation;
+3. `ConfigBundle.runtime_view()` is the compatibility-to-runtime projection seam and leaves `ConfigBundle` itself mutable;
+4. `RuntimeConfigurationBinding` activates one fresh snapshot per dispatch using context-local state;
+5. mutations made before dispatch remain observable, while mutations during an active dispatch cannot alter that execution's configuration snapshot;
+6. Worker, Specialist, capability, runtime-selection, fallback, verification, and specialist-refinement reads share the same active snapshot;
+7. specialist refinement preserves the established `SpecialistRoutingPolicy` bound-method callback identity while resolving active runtime configuration through a bound provider;
+8. legacy/partial engine compatibility fixtures that do not expose `runtime_view()` remain constructible;
+9. focused regressions cover deep immutability, snapshot detachment, pre-dispatch mutation visibility, mid-dispatch isolation, compatibility construction, callback identity, and dependency direction.
 
-### Tranche 6 — providers, verification, runtime, and evaluation namespaces
+Exact PR-head qualification on `c66ade0aef57b0742f11bf323eb5b251f9d14585` was Reference Implementation CI #996: **1,145 tests passed**, **619 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+Merged-main qualification on `3607ccd793fad3913221982967636c2374c77334` was Reference Implementation CI #997: **1,145 tests passed**, **619 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+T5D did not change routing policy, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification policy, Issue #215 Stage B, or compatibility-reduction policy. Full Tranche 5 is complete.
+
+### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
 
 Move concrete providers/verifiers and runtime/evaluation subsystems under explicit outer-layer namespaces. Existing top-level modules act as temporary compatibility shims. Perform moves in bounded groups, not as one mechanical relocation.
 

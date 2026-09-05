@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C; **Tranche 5D immutable runtime configuration view is next.**
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D); **Tranche 6 outer-layer namespace migration is next and remains unstarted.**
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -84,7 +84,7 @@ RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b`. Final ex
 
 ## Current actionable repository work: clean-architecture migration (#197)
 
-The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 plus Tranche 5A, Tranche 5B, and Tranche 5C are merged:
+The Python clean-architecture migration remains a separate behavior-preserving workstream. Tranches 1–4 plus full Tranche 5 (T5A–T5D) are merged and main-qualified:
 
 - Tranche 1 — deterministic classification/risk domain policy;
 - Tranche 2 — finalization use case and artifact-integrity port;
@@ -92,7 +92,8 @@ The Python clean-architecture migration remains a separate behavior-preserving w
 - Tranche 4 — specialist routing by composition with specialist-selection configuration I/O behind a narrow port/adapter;
 - Tranche 5A — repository configuration source I/O behind a narrow source port/adapter;
 - Tranche 5B — explicit configuration manifest, ordered composition/merge/override behavior, and normalization behind the application configuration boundary;
-- Tranche 5C — invariant-validation ownership and deterministic issue construction behind the application configuration-validation boundary.
+- Tranche 5C — invariant-validation ownership and deterministic issue construction behind the application configuration-validation boundary;
+- Tranche 5D — detached deeply immutable dispatch-scoped runtime configuration view behind the mutable compatibility façade.
 
 Tranche 3 merged via PR #210 as `74c128947f1d98f0e42c595bd1229561ab6dab50`. Exact-head CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780` passed 1,118 tests, 607 tracked-file layout checks, 42 schemas, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse end-to-end routing.
 
@@ -122,11 +123,23 @@ Exact PR-head CI #986 on `e2f602175ace0b0a3466142f331154f4840842f2` passed 1,141
 
 T5C deliberately did **not** introduce an immutable runtime projection or change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B.
 
-### Tranche 5D — immutable runtime configuration view — NEXT
+### Tranche 5D — immutable runtime configuration view — COMPLETE
 
-Introduce an immutable runtime-facing configuration view behind the existing mutable `ConfigBundle` compatibility façade. Existing tests and downstream callers that intentionally mutate `ConfigBundle` for validation/conformance remain supported until compatibility evidence permits a separate API decision.
+Merged via PR #224 as `3607ccd793fad3913221982967636c2374c77334`.
 
-T5D must preserve the established source, composition, and validation boundaries. It must not make configuration discovery or immutability a source of routing authority, and must not change risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification, or Issue #215 Stage B.
+Implemented a detached, deeply immutable runtime configuration view in `application/configuration/runtime_view.py` behind the mutable `ConfigBundle` compatibility façade. One fresh snapshot is activated per dispatch: intentional mutations made before dispatch remain observable, while mutations during an active dispatch cannot change that execution's configuration. Existing dict/list compatibility checks remain supported through immutable containers, legacy partial-config engine fixtures remain constructible, and specialist risk/preference refinement consumes the same active snapshot without changing the established bound-policy callback identity.
+
+Exact PR-head qualification on `c66ade0aef57b0742f11bf323eb5b251f9d14585` was Reference Implementation CI #996: **1,145 tests passed**, **619 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+Merged-main qualification on `3607ccd793fad3913221982967636c2374c77334` was Reference Implementation CI #997: **1,145 tests passed**, **619 tracked files** validated, **42 schemas** parsed, regulated-specialist evidence passed, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing passed.
+
+Full Tranche 5 is complete. T5D did not change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification policy, Issue #215 Stage B, or compatibility-reduction policy.
+
+### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
+
+Tranche 6 is the next planned behavior-preserving boundary. Move concrete provider, verifier, runtime, and evaluation implementations behind explicit outer-layer namespaces while retaining temporary compatibility shims. The work has **not started** and must begin with fresh repository/import-surface recalibration.
+
+Perform namespace moves in independently reversible groups rather than one mechanical relocation. Do not treat file movement as permission to change provider choice, routing, risk, authority, Runtime Model Binding, provider access, live scope, verification policy, finalization, Issue #215 Stage B, or accepted compatibility surfaces.
 
 Rules:
 
