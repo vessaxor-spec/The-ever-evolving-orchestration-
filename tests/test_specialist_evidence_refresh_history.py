@@ -11,7 +11,8 @@ from teo_reference.evidence_refresh import load_refresh_records, validate_refres
 ROOT = Path(__file__).resolve().parents[1]
 CYCLE_ONE_NAME = "regulated-specialist-evidence-refresh-cycle-2026-08-11.json"
 CYCLE_TWO_NAME = "regulated-specialist-evidence-refresh-cycle-2026-08-16.json"
-RECORD_NAMES = (CYCLE_ONE_NAME, CYCLE_TWO_NAME)
+CYCLE_THREE_NAME = "regulated-specialist-evidence-refresh-cycle-2026-10-02.json"
+RECORD_NAMES = (CYCLE_ONE_NAME, CYCLE_TWO_NAME, CYCLE_THREE_NAME)
 
 
 def _copy_refresh_fixture(tmp_path: Path) -> Path:
@@ -28,7 +29,7 @@ def _copy_refresh_fixture(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def _record_path(root: Path, name: str = CYCLE_TWO_NAME) -> Path:
+def _record_path(root: Path, name: str = CYCLE_THREE_NAME) -> Path:
     return root / "docs/history/validation" / name
 
 
@@ -37,9 +38,10 @@ def test_refresh_history_is_valid_and_bound_to_active_registry() -> None:
     assert errors == []
 
     records = load_refresh_records(ROOT)
-    assert len(records) == 2
+    assert len(records) == 3
     _, cycle_one = records[0]
     _, cycle_two = records[1]
+    _, cycle_three = records[2]
 
     assert cycle_one["sequence"] == 1
     assert cycle_one["status"] == "completed"
@@ -87,6 +89,26 @@ def test_refresh_history_is_valid_and_bound_to_active_registry() -> None:
     assert cycle_two["expansion_gate"]["controlled_change_handled"] is True
     assert cycle_two["expansion_gate"]["controlled_change_type"] == "authority_move"
 
+    assert cycle_three["sequence"] == 3
+    assert cycle_three["status"] == "completed"
+    assert cycle_three["performed_at"] == "2026-10-02"
+    assert cycle_three["registry_before_blob_sha"] == cycle_two["registry_after_blob_sha"]
+    assert cycle_three["maintenance_summary"] == {
+        "claims_reviewed": 7,
+        "authorities_resolved": 7,
+        "claims_reaffirmed": 7,
+        "claims_amended": 0,
+        "authorities_moved": 0,
+        "authority_conflicts": 0,
+        "specialist_cards_changed": 0,
+    }
+    assert cycle_three["expansion_gate"]["refresh_cycles_completed"] == 3
+    assert cycle_three["expansion_gate"]["refresh_cycles_required"] == 2
+    assert cycle_three["expansion_gate"]["controlled_change_handled"] is False
+    assert cycle_three["expansion_gate"]["controlled_change_type"] == "none"
+    assert cycle_three["expansion_gate"]["next_batch_approved"] is False
+    assert cycle_three["expansion_gate"]["expansion_authorized"] is False
+
 
 def test_cycle_one_covers_all_seven_claims_and_records_controlled_amendment() -> None:
     _, cycle = load_refresh_records(ROOT)[0]
@@ -105,11 +127,11 @@ def test_cycle_one_covers_all_seven_claims_and_records_controlled_amendment() ->
     assert cycle["expansion_gate"]["controlled_change_type"] == "claim_amendment"
 
 
-def test_active_registry_reflects_cycle_two_dates_authority_and_rule_37e() -> None:
+def test_active_registry_reflects_cycle_three_dates_authority_and_rule_37e() -> None:
     registry = yaml.safe_load(
         (ROOT / "policy/specialists/evidence-pilot.yaml").read_text(encoding="utf-8")
     )
-    assert registry["reviewed_at"].isoformat() == "2026-08-16"
+    assert registry["reviewed_at"].isoformat() == "2026-10-02"
 
     legal = registry["pilot_specialists"]["legal-operations"]["claims"][0]
     assert "cannot be restored or replaced through additional discovery" in legal["statement"]
@@ -120,11 +142,11 @@ def test_active_registry_reflects_cycle_two_dates_authority_and_rule_37e() -> No
 
     for specialist, entry in registry["pilot_specialists"].items():
         for claim in entry["claims"]:
-            assert claim["verified_at"].isoformat() == "2026-08-16", specialist
+            assert claim["verified_at"].isoformat() == "2026-10-02", specialist
             expected_expiry = (
-                "2026-09-15"
+                "2026-11-01"
                 if claim["volatility_class"] == "fast_moving"
-                else "2026-11-14"
+                else "2026-12-31"
             )
             assert claim["expires_at"].isoformat() == expected_expiry, claim["id"]
 
@@ -158,7 +180,7 @@ def test_missing_claim_review_is_rejected(tmp_path: Path) -> None:
     cycle["claims_reviewed"].pop()
     cycle["maintenance_summary"]["claims_reviewed"] = 6
     cycle["maintenance_summary"]["authorities_resolved"] = 6
-    cycle["maintenance_summary"]["claims_reaffirmed"] = 5
+    cycle["maintenance_summary"]["claims_reaffirmed"] = 6
     record_path.write_text(json.dumps(cycle, indent=2) + "\n", encoding="utf-8")
 
     errors = validate_refresh_history(root)
