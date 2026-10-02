@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D); **Tranche 6 outer-layer namespace migration is next and remains unstarted.**
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D). The required Tranche 6 import/public-surface reconstitution is complete; **T6A provider execution adapters is the next unstarted implementation gate.**
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -137,9 +137,16 @@ Full Tranche 5 is complete. T5D did not change routing, risk, authority, Runtime
 
 ### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
 
-Tranche 6 is the next planned behavior-preserving boundary. Move concrete provider, verifier, runtime, and evaluation implementations behind explicit outer-layer namespaces while retaining temporary compatibility shims. The work has **not started** and must begin with fresh repository/import-surface recalibration.
+The required read-only reconstitution is complete against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`, qualified by Reference Implementation CI #999 with **1,145 tests**, **619 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E. The exact-tree scan covered **218 Python files**: 83 package source files, 120 tests, and 15 CI/example/research Python files. Current `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 has since advanced only through regulated-evidence maintenance in PR #227, to **621 tracked files**, without changing import, architecture, or runtime implementation surfaces.
 
-Perform namespace moves in independently reversible groups rather than one mechanical relocation. Do not treat file movement as permission to change provider choice, routing, risk, authority, Runtime Model Binding, provider access, live scope, verification policy, finalization, Issue #215 Stage B, or accepted compatibility surfaces.
+Reconstitution confirmed that current top-level and package-root imports are accepted compatibility surfaces. It also identified four bounded implementation groups:
+
+1. **T6A — provider execution adapters namespace:** move only concrete OpenAI/Google/Anthropic execution implementations under `teo_reference.adapters.providers`, retain top-level compatibility shims, and preserve package-root exports.
+2. **T6B — live verifier adapters namespace:** move concrete provider verifier implementations behind an outer verifier namespace while preserving provider-diversity behavior.
+3. **T6C — runtime implementation namespace:** reconstitute the canary/circuit/retry/telemetry/verification cluster before movement and decide `runtime_identity` ownership independently.
+4. **T6D — evaluation namespace:** migrate benchmark/shadow/calibration/live-scope evaluation implementations only after provider/verifier namespaces stabilize.
+
+**T6A is the next implementation gate and has not started.** Perform namespace moves in independently reversible groups rather than one mechanical relocation. Do not treat file movement as permission to change provider choice, routing, risk, authority, Runtime Model Binding, provider access, live scope, verification policy, finalization, Issue #215 Stage B, model versions, or accepted compatibility surfaces.
 
 Rules:
 
@@ -206,7 +213,7 @@ Independent human calibration under Issue #75 remains optional evidence enhancem
 
 ## Regulated specialist evidence
 
-The bounded six-card regulated specialist evidence pilot has completed its current executable stability milestone.
+The bounded six-card regulated specialist evidence pilot has completed its current executable stability milestone. Refresh cycle 3 was qualified on 2026-10-02 after the fast-moving lending evidence expired; all seven consequential pilot claims were reaffirmed without claim, authority, specialist-card, or verification-ownership changes. The fast-moving lending evidence now expires 2026-11-01 and slow-moving evidence expires 2026-12-31.
 
 Maintain the seven-day authority-resolution cadence as continuous drift detection. Do not auto-authorize a larger regulated registry. Any next risk-tier batch requires explicit approval and a separate bounded reviewed change.
 
