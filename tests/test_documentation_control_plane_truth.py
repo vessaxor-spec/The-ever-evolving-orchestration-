@@ -23,7 +23,13 @@ EVIDENCE_REFRESH_HEAD = "ccd1d7bee209f1c8d5fefd046ac59f2c92172ee7"
 EVIDENCE_REFRESH_PR_CI = 1002
 EVIDENCE_REFRESH_MAIN_CI = 1003
 EVIDENCE_REFRESH_TRACKED_FILES = 621
-CURRENT_MAIN = EVIDENCE_REFRESH_MERGE
+T6A_MERGE = "e791e6b2685359e6e7ca64a5bd66d10e2efc37eb"
+T6A_HEAD = "533c9cb22f914af318b47f665620daf941cb664b"
+T6A_PR_CI = 1006
+T6A_MAIN_CI = 1007
+T6A_QUALIFIED_TESTS = 1151
+T6A_QUALIFIED_TRACKED_FILES = 626
+CURRENT_MAIN = T6A_MERGE
 RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
 RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
 RMI8_FINAL_CI = 958
@@ -66,10 +72,10 @@ TRANCHE5D_QUALIFIED_TRACKED_FILES = 619
 TRANCHE5D_QUALIFIED_SCHEMAS = 42
 TRANCHE5D_PR_CI = 996
 TRANCHE5D_MAIN_CI = 997
-CURRENT_VALIDATED_TESTS = TRANCHE5D_QUALIFIED_TESTS
-CURRENT_VALIDATED_TRACKED_FILES = EVIDENCE_REFRESH_TRACKED_FILES
+CURRENT_VALIDATED_TESTS = T6A_QUALIFIED_TESTS
+CURRENT_VALIDATED_TRACKED_FILES = T6A_QUALIFIED_TRACKED_FILES
 CURRENT_VALIDATED_SCHEMAS = TRANCHE5D_QUALIFIED_SCHEMAS
-CURRENT_VALIDATED_CI = EVIDENCE_REFRESH_MAIN_CI
+CURRENT_VALIDATED_CI = T6A_MAIN_CI
 
 
 def _text(path: str) -> str:
@@ -121,8 +127,8 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
     text = _text("docs/stewardship/progress-tracker.md")
 
     for phrase in (
-        "**Last reconciled:** 2026-10-02",
-        f"`main@{CURRENT_MAIN}` after regulated specialist evidence refresh / PR #227",
+        "**Last reconciled:** 2026-10-15",
+        f"`main@{CURRENT_MAIN}` after T6A provider execution adapters / PR #228",
         f"`{TRANCHE5D_MERGE}` from clean-architecture Tranche 5D / PR #224",
         f"{CURRENT_VALIDATED_TESTS:,} tests passed",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
@@ -164,7 +170,10 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         "Discovered -> Eligible -> Calibrated -> Selected",
         "compatibility inputs. It does not claim that those implementations are currently running",
         "Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and qualified",
-        "T6A: provider execution adapters namespace",
+        "T6B: live verifier adapters namespace",
+        T6A_HEAD,
+        f"Reference Implementation CI #{T6A_PR_CI}",
+        f"Reference Implementation CI #{T6A_MAIN_CI}",
         "Tranche 6 reconstitution is complete",
         "218 Python files",
         "83 package source files, 120 tests, and 15 CI/example/research Python files",
@@ -197,6 +206,7 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         "established by CI #806",
         "| Runtime model binding | In progress | 95% |",
         "Before implementation, reconstitute current repository truth",
+        "T6A is next only after this reconstitution stewardship reconciliation",
     ):
         assert stale not in text
 
@@ -234,7 +244,9 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         "Tranche 5C — invariant validation boundary — COMPLETE",
         "Tranche 5D — immutable runtime configuration view — COMPLETE",
         "Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT",
-        "T6A — provider execution adapters namespace",
+        "T6A — provider execution adapters namespace — COMPLETE",
+        T6A_HEAD,
+        f"CI #{T6A_MAIN_CI}",
         "218 Python files",
         "The required read-only reconstitution is complete",
         f"main@{EVIDENCE_REFRESH_MERGE}",
@@ -256,6 +268,7 @@ def test_roadmap_describes_completed_runtime_binding_and_current_clean_architect
         "RMI-8 candidate qualification",
         "required before PR #209 merges",
         "must begin with fresh repository/import-surface recalibration",
+        "T6A is the next implementation gate and has not started",
     ):
         assert stale not in text
 
@@ -272,7 +285,7 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`main@{CURRENT_MAIN}` after regulated specialist evidence refresh / PR #227",
+        f"`main@{CURRENT_MAIN}` after T6A provider execution adapters / PR #228",
         f"`{TRANCHE5D_MERGE}` from clean-architecture Tranche 5D / PR #224",
         f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
         f"{CURRENT_VALIDATED_TESTS:,} tests",
@@ -295,9 +308,9 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         f"{TRANCHE5D_QUALIFIED_TESTS:,} tests",
         TRANCHE5D_HEAD,
         "`SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`",
-        "Tranche 6 import/public-surface reconstitution is complete and T6A provider execution adapters is the next unstarted implementation gate",
+        "Tranche 6 reconstitution and T6A provider execution adapters complete and main-qualified; T6B live verifier adapters is next and unstarted",
         "218 Python files",
-        "T6A — provider execution adapters namespace — is the next implementation gate and has not started",
+        "T6A — provider execution adapters namespace — is complete and main-qualified; T6B live verifier adapters is next",
         "refresh cycle 3 qualified on 2026-10-02",
         "2026-11-01",
         "2026-12-31",
@@ -375,9 +388,11 @@ def test_clean_architecture_plan_records_tranche5d_and_next_gate() -> None:
         f"{TRANCHE5D_QUALIFIED_TESTS:,} tests passed",
         f"{TRANCHE5D_QUALIFIED_TRACKED_FILES} tracked files",
         "Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT",
-        "T6A — provider execution adapters namespace",
+        "T6A — provider execution adapters namespace — COMPLETE",
+        T6A_HEAD,
+        f"CI #{T6A_MAIN_CI}",
         "218 Python files",
-        "T6A is the next implementation gate and has not started",
+        "T6B is the next implementation gate and has not started",
         f"main@{EVIDENCE_REFRESH_MERGE}",
         f"CI #{EVIDENCE_REFRESH_MAIN_CI}",
         "advanced afterward only through regulated-evidence maintenance in PR #227",

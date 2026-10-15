@@ -1,7 +1,7 @@
 # TEO Progress Tracker
 
 **Status:** active stewardship record  
-**Last reconciled:** 2026-10-02  
+**Last reconciled:** 2026-10-15  
 **Stable release:** `v1.0.0`  
 **Current development line:** `teo-reference-router==1.0.1.dev0`
 
@@ -15,18 +15,18 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current repository baseline | `main@5445806f5cf7746d59010ae027bb1b9fc8047158` after regulated specialist evidence refresh / PR #227; Reference Implementation CI #1003 qualified this baseline |
-| Current executable code baseline | `3607ccd793fad3913221982967636c2374c77334` from clean-architecture Tranche 5D / PR #224; later changes through current `main` are stewardship/evidence-control-plane only and do not change runtime implementation |
+| Current repository baseline | `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` after T6A provider execution adapters / PR #228; Reference Implementation CI #1007 qualified this baseline |
+| Current executable code baseline | `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` from clean-architecture T6A / PR #228; prior `3607ccd793fad3913221982967636c2374c77334` from clean-architecture Tranche 5D / PR #224 remains the prior executable milestone; no routing/policy/live-scope changes |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | **1,145 tests passed**, **621 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #1003 on `main@5445806f5cf7746d59010ae027bb1b9fc8047158` |
+| Current validated scale | **1,151 tests passed**, **626 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #1007 on `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` |
 | Runtime model binding | Complete through RMI-8; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` and Issue #200 is closed completed |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
 | Specialist selection policy | model-neutral `policy/routing/core/specialist-selection-policy.yaml` |
-| Clean architecture | Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and qualified; Tranche 6 import/public-surface reconstitution is complete; T6A provider execution adapters is the next unstarted implementation gate |
+| Clean architecture | Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and qualified; Tranche 6 reconstitution and T6A provider execution adapters complete and main-qualified; T6B live verifier adapters is next and unstarted |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
@@ -103,7 +103,7 @@ Issue #197 remains behavior-preserving and separate from Runtime Model Binding.
   - [x] T5D — immutable runtime configuration view behind the mutable `ConfigBundle` compatibility façade; PR #224, `3607ccd793fad3913221982967636c2374c77334`.
 - [ ] Tranche 6 — move provider/verifier/runtime/evaluation implementations behind explicit outer namespaces with compatibility shims.
   - [x] Reconstitution — characterize current repository ownership and accepted import/public compatibility surfaces on qualified `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`; 218 Python files inspected.
-  - [ ] T6A — provider execution adapters namespace with top-level and package-root compatibility preserved.
+  - [x] T6A — provider execution adapters namespace with top-level and package-root compatibility preserved; PR #228 merged and main-qualified.
   - [ ] T6B — live verifier adapters namespace with provider-diverse verification behavior preserved.
   - [ ] T6C — operational runtime implementation namespace after fresh cluster/ownership characterization.
   - [ ] T6D — evaluation namespace in bounded groups after provider/verifier stabilization.
@@ -127,6 +127,8 @@ Tranche 6 reconstitution is complete. The read-only exact-tree diagnosis covered
 
 The repository baseline subsequently advanced only through regulated-evidence maintenance. PR #227 exact head `ccd1d7bee209f1c8d5fefd046ac59f2c92172ee7` passed Reference Implementation CI #1002 with **1,145 tests**, **621 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E; it merged as `5445806f5cf7746d59010ae027bb1b9fc8047158`, and merged-main CI #1003 passed the same gates. Refresh cycle 3 reaffirmed all seven pilot claims without claim, authority, specialist-card, routing, runtime, or verification-ownership changes; registry expansion remains unauthorized.
 
+T6A / PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` passed Reference Implementation CI #1006: **1,151 tests**, **626 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. It merged as `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb`; merged-main Reference Implementation CI #1007 passed those gates. Concrete provider execution adapters now live under `teo_reference.adapters.providers`; accepted legacy imports, verifier-facing `_extract_usage` helpers, and package-root exports remain intact. **T6B live verifier adapters is next and unstarted.**
+
 ## Portfolio view
 
 | Workstream | Status | Progress | Current milestone | Next gate |
@@ -144,17 +146,17 @@ The repository baseline subsequently advanced only through regulated-evidence ma
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve anti-Goodhart and no-policy-write boundaries |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, temporal causality, and finalization boundaries |
 | Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
-| Clean-architecture migration (#197) | In progress | — | Tranche 6 reconstitution complete; current `main` advanced afterward only through evidence maintenance | T6A: provider execution adapters namespace |
+| Clean-architecture migration (#197) | In progress | — | T6A complete and qualified on current `main`; provider implementations relocated with compatibility shims | T6B: live verifier adapters namespace |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
 ## NOW
 
-### 1. Clean-architecture Tranche 6 — T6A provider execution adapters
+### 1. Clean-architecture Tranche 6 — T6B live verifier adapters
 
-Tranche 5 and post-T5D stewardship are complete and main-qualified. The required Tranche 6 import/public-surface reconstitution was completed on `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301` / CI #999. Current `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 differs only by the qualified regulated-evidence refresh in PR #227; no T6 implementation or import-surface change has occurred.
+T6A / PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` passed Reference Implementation CI #1006: **1,151 tests**, **626 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. It merged as `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb`; merged-main Reference Implementation CI #1007 passed those gates. Concrete provider execution adapters now live under `teo_reference.adapters.providers`; accepted legacy imports, verifier-facing `_extract_usage` helpers, and package-root exports remain intact. **T6B live verifier adapters is next and unstarted.**
 
-The next implementation gate is **T6A — provider execution adapters namespace**: move only the concrete OpenAI, Google, and Anthropic execution implementations under `teo_reference.adapters.providers`, retain existing top-level adapter modules as compatibility shims, and preserve package-root exports. Provider-neutral contracts/connections, live verifiers, runtime/evaluation modules, policy, routing, risk, authority, Runtime Model Binding, provider defaults/access, live scope, finalization, verification policy, Issue #215 Stage B, and model versions remain unchanged. Add dependency-direction and shim-equivalence regressions and require full canonical CI before merge.
+T6B is the next bounded implementation gate: move concrete OpenAI, Google and Anthropic live verifier adapters into an outer namespace, preserving existing top-level and package-root imports and provider-diverse independent verification. Provider execution implementations, contracts, runtime, evaluation, policy, routing, risk, authority, Runtime Model Binding, model versions/defaults/access, live scope, finalization, and Issue #215 Stage B remain unchanged.
 
 ### 2. Evidence-governed live execution expansion
 
@@ -166,7 +168,7 @@ No access mechanism is itself routing authority. Do not authorize high or critic
 
 ## NEXT
 
-T6A is next only after this reconstitution stewardship reconciliation is merged and its resulting `main` is qualified. Recalibrate against that exact baseline before implementation; do not infer permission to reduce compatibility or change behavior from the namespace move itself.
+T6B follows the merged and main-qualified T6A baseline after T6A stewardship reconciliation. Recalibrate against that exact baseline before implementation; namespace movement is not permission to reduce compatibility or change behavior.
 
 The product-priority gate remains provider-backed controlled `documentation` replay evidence unless repository truth or an explicit owner decision changes sequencing.
 

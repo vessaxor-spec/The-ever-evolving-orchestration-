@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified; Tranche 6 reconstitution complete; T6A next and unstarted**  
+Status: **incremental implementation — Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified; Tranche 6 reconstitution and T6A merged and main-qualified; T6B next and unstarted**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -28,9 +28,9 @@ Tranche 5A moved repository configuration filesystem/PyYAML reads behind `Reposi
 
 The T5C validation input remains an immutable shell over the same mutable configuration mappings, so existing post-load mutation/conformance behavior remains intact. T5D now supplies the separately owned immutable runtime-facing configuration-view boundary: pre-dispatch compatibility mutations remain observable, while mid-dispatch mutation cannot alter the active execution snapshot.
 
-### 4. Provider contracts and provider implementations still share package-level surfaces
+### 4. Provider execution implementations now have an outer-layer namespace
 
-Provider-neutral contracts exist, while provider implementations, retry/circuit behavior, verification, runtime execution, and evaluation remain broadly distributed. The completed Tranche 6 reconstitution confirmed that current top-level and package-root imports are accepted compatibility surfaces and must remain intact during namespace movement. T6A therefore moves only concrete provider execution implementations first, behind compatibility shims, before verifier/runtime/evaluation groups are considered.
+Provider-neutral contracts remain in place. Concrete provider execution implementations moved into `teo_reference.adapters.providers` in T6A, while accepted top-level and package-root compatibility imports remain intact. Live provider verifiers, retry/circuit behavior, runtime execution, and evaluation remain separate follow-on migrations; T6B is next.
 
 ### 5. The package root remains a broad compatibility surface
 
@@ -229,7 +229,7 @@ T5D did not change routing policy, risk, authority, Runtime Model Binding, model
 
 ### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
 
-The prerequisite import/public-surface reconstitution is complete against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`, qualified by Reference Implementation CI #999 with **1,145 tests**, **619 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E. The exact-tree scan covered **218 Python files**: 83 package source files, 120 tests, and 15 CI/example/research Python files. Current `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced afterward only through regulated-evidence maintenance in PR #227, so the characterized import/ownership surface remains unchanged.
+The prerequisite import/public-surface reconstitution is complete against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`, qualified by Reference Implementation CI #999 with **1,145 tests**, **619 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E. The exact-tree scan covered **218 Python files**: 83 package source files, 120 tests, and 15 CI/example/research Python files. Pre-T6A `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced afterward only through regulated-evidence maintenance in PR #227, so the original characterization remained valid when T6A began.
 
 Reconstitution established these ownership constraints:
 
@@ -241,12 +241,14 @@ Reconstitution established these ownership constraints:
 
 Bounded sequence:
 
-1. **T6A — provider execution adapters namespace:** move concrete OpenAI/Google/Anthropic execution implementations under `teo_reference.adapters.providers`; retain top-level compatibility shims and package-root exports.
+1. **T6A — provider execution adapters namespace — COMPLETE:** concrete OpenAI/Google/Anthropic execution implementations moved under `teo_reference.adapters.providers`, with top-level compatibility shims and package-root exports preserved.
 2. **T6B — live verifier adapters namespace:** move concrete provider verifier implementations behind an outer verifier namespace while preserving provider-diversity behavior.
 3. **T6C — runtime implementation namespace:** reconstitute the runtime cluster immediately before movement and decide `runtime_identity` ownership separately.
 4. **T6D — evaluation namespace:** migrate evaluation implementations in bounded groups after provider/verifier stabilization.
 
-**T6A is the next implementation gate and has not started.** It is behavior-preserving only: no routing, risk, authority, Runtime Model Binding, provider-default, provider-access, live-scope, finalization, verification-policy, Issue #215 Stage B, model-version, or compatibility-reduction change. New dependency-direction and shim-equivalence tests plus full canonical CI are required before merge.
+T6A / PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` passed Reference Implementation CI #1006: **1,151 tests**, **626 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. It merged as `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb`; merged-main Reference Implementation CI #1007 passed those gates. Concrete provider execution adapters now live under `teo_reference.adapters.providers`; accepted legacy imports, verifier-facing `_extract_usage` helpers, and package-root exports remain intact. **T6B live verifier adapters is next and unstarted.**
+
+**T6B is the next implementation gate and has not started.** It remains behavior-preserving only: no routing, risk, authority, Runtime Model Binding, provider-default, provider-access, live-scope, finalization, verification-policy, Issue #215 Stage B, model-version, or compatibility-reduction change. New dependency-direction and shim-equivalence tests plus full canonical CI are required before merge.
 
 ### Tranche 7 — compatibility reduction
 
