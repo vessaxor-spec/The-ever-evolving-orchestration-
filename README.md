@@ -129,7 +129,7 @@ TEO has crossed the functional-v1 boundary and is in post-v1 stewardship and con
 |---|---|
 | Stable release | [`v1.0.0`](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/releases/tag/v1.0.0), `reference_operational` |
 | Development line | `teo-reference-router==1.0.1.dev0` |
-| Repository baseline | `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` after T6A provider execution adapters / PR #228; Reference Implementation CI #1007 qualified this baseline |
+| Qualified implementation snapshot | `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` after T6A provider execution adapters / PR #228; Reference Implementation CI #1007 qualified this code snapshot. Documentation-only stewardship merges may advance `main` without changing implementation; [GitHub main](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main) is authoritative for the live branch head. |
 | Executable code baseline | `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` from clean-architecture T6A / PR #228; prior `3607ccd793fad3913221982967636c2374c77334` from clean-architecture Tranche 5D / PR #224 remains historical; no routing/policy/live-scope behavior change |
 | Runtime model binding | RMI-1 through RMI-8 complete; RMI-8 merged via PR #209 as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` |
 | Current validated scale | Reference Implementation CI #1007 on `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` established **1,151 tests**, **626 tracked-file layout checks**, **42 schemas**, regulated-specialist evidence pass, linked configuration valid with zero issues, provider-diverse end-to-end pass |

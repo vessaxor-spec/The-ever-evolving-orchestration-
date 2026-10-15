@@ -15,7 +15,7 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Current repository baseline | `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` after T6A provider execution adapters / PR #228; Reference Implementation CI #1007 qualified this baseline |
+| Qualified implementation snapshot | `main@e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` after T6A provider execution adapters / PR #228; Reference Implementation CI #1007 qualified this code snapshot. Documentation-only stewardship merges may advance `main` without changing implementation; [GitHub main](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main) is authoritative for the live branch head. |
 | Current executable code baseline | `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` from clean-architecture T6A / PR #228; prior `3607ccd793fad3913221982967636c2374c77334` from clean-architecture Tranche 5D / PR #224 remains the prior executable milestone; no routing/policy/live-scope changes |
 | Organizational teams | 10 |
 | Workers | 84 |
