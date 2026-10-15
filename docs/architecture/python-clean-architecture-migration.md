@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified**  
+Status: **incremental implementation — Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified; Tranche 6 reconstitution complete; T6A next and unstarted**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -22,7 +22,7 @@ Tranches 1–4 have removed deterministic classification/risk ownership, finaliz
 
 `SpecialistRoutingEngine` remains the accepted public compatibility façade but no longer subclasses `OrchestrationEngine`. Specialist risk refinement and runtime-preference refinement are composed through `application/dispatch/specialist_policy.py`, while specialist-selection YAML/filesystem loading is behind `SpecialistSelectionPolicyPort` and the YAML adapter. Existing specialist dispatch, documentation-recovery verifier behavior, runtime lifecycle gates, provider diversity, and public compatibility are preserved.
 
-### 3. Configuration source I/O, composition, and validation are separated; immutable runtime view is next
+### 3. Configuration loading, composition, validation, and runtime view are separated
 
 Tranche 5A moved repository configuration filesystem/PyYAML reads behind `RepositoryConfigurationSourcePort` and `YamlRepositoryConfigurationAdapter`. Tranche 5B moved the explicit repository path manifest, extension ordering, merge/override composition, and current normalization behind `application/configuration/composition.py`. Tranche 5C moved invariant-validation ownership and deterministic issue construction behind `application/configuration/validation.py` while `ConfigBundle.validate()` remains the compatibility façade. Tranche 5D added a detached, deeply immutable runtime configuration view behind that mutable façade and binds one snapshot per dispatch.
 
@@ -30,7 +30,7 @@ The T5C validation input remains an immutable shell over the same mutable config
 
 ### 4. Provider contracts and provider implementations still share package-level surfaces
 
-Provider-neutral contracts exist, while provider implementations, retry/circuit behavior, verification, and runtime execution remain broadly distributed. Tranche 6 will move these behind explicit outer-layer namespaces with compatibility shims.
+Provider-neutral contracts exist, while provider implementations, retry/circuit behavior, verification, runtime execution, and evaluation remain broadly distributed. The completed Tranche 6 reconstitution confirmed that current top-level and package-root imports are accepted compatibility surfaces and must remain intact during namespace movement. T6A therefore moves only concrete provider execution implementations first, behind compatibility shims, before verifier/runtime/evaluation groups are considered.
 
 ### 5. The package root remains a broad compatibility surface
 
@@ -229,7 +229,24 @@ T5D did not change routing policy, risk, authority, Runtime Model Binding, model
 
 ### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
 
-Move concrete providers/verifiers and runtime/evaluation subsystems under explicit outer-layer namespaces. Existing top-level modules act as temporary compatibility shims. Perform moves in bounded groups, not as one mechanical relocation.
+The prerequisite import/public-surface reconstitution is complete against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`, qualified by Reference Implementation CI #999 with **1,145 tests**, **619 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E. The exact-tree scan covered **218 Python files**: 83 package source files, 120 tests, and 15 CI/example/research Python files. Current `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced afterward only through regulated-evidence maintenance in PR #227, so the characterized import/ownership surface remains unchanged.
+
+Reconstitution established these ownership constraints:
+
+- concrete OpenAI/Google/Anthropic execution adapters are outer implementations and can move first;
+- current top-level adapter modules and package-root exports are accepted compatibility surfaces and must remain valid during T6;
+- concrete live verifiers currently depend on provider-adapter `_extract_usage` helpers, so usage-normalization redesign is out of scope for namespace movement;
+- `runtime_canary`, `runtime_circuit_breaker`, `runtime_retry`, `runtime_telemetry`, and `runtime_verification` form a coupled operational cluster, while `runtime_identity` requires an independent ownership decision;
+- benchmark, shadow, cost-attribution, live-scope, and verifier-calibration modules cross provider/runtime/verification boundaries and should move only after provider/verifier namespaces stabilize.
+
+Bounded sequence:
+
+1. **T6A — provider execution adapters namespace:** move concrete OpenAI/Google/Anthropic execution implementations under `teo_reference.adapters.providers`; retain top-level compatibility shims and package-root exports.
+2. **T6B — live verifier adapters namespace:** move concrete provider verifier implementations behind an outer verifier namespace while preserving provider-diversity behavior.
+3. **T6C — runtime implementation namespace:** reconstitute the runtime cluster immediately before movement and decide `runtime_identity` ownership separately.
+4. **T6D — evaluation namespace:** migrate evaluation implementations in bounded groups after provider/verifier stabilization.
+
+**T6A is the next implementation gate and has not started.** It is behavior-preserving only: no routing, risk, authority, Runtime Model Binding, provider-default, provider-access, live-scope, finalization, verification-policy, Issue #215 Stage B, model-version, or compatibility-reduction change. New dependency-direction and shim-equivalence tests plus full canonical CI are required before merge.
 
 ### Tranche 7 — compatibility reduction
 
