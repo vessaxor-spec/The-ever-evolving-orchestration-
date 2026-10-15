@@ -1,1 +1,1 @@
-"""Concrete evaluation adapters; migrations remain individually reversible."""
+"""T6D outer evaluation implementations, migrated in bounded groups."""
