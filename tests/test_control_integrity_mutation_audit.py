@@ -88,7 +88,7 @@ MUTATIONS = (
     ),
     MutationProbe(
         name="fallback_redispatch_preserves_active_effective_risk",
-        source_file="runtime_canary.py",
+        source_file="adapters/runtime/canary.py",
         old="task_type=dispatch.task_type,\n        risk_level=dispatch.risk_level,\n        domain=task.domain,",
         new="task_type=dispatch.task_type,\n        risk_level=task.risk_level,\n        domain=task.domain,",
         pytest_targets=(
@@ -97,7 +97,7 @@ MUTATIONS = (
     ),
     MutationProbe(
         name="fallback_redispatch_preserves_explicit_human_approval_constraint",
-        source_file="runtime_canary.py",
+        source_file="adapters/runtime/canary.py",
         old="require_human_approval=task.constraints.require_human_approval,",
         new="require_human_approval=False,",
         pytest_targets=(
@@ -106,7 +106,7 @@ MUTATIONS = (
     ),
     MutationProbe(
         name="circuit_preparation_preserves_explicit_human_approval_constraint",
-        source_file="runtime_circuit_breaker.py",
+        source_file="adapters/runtime/circuit_breaker.py",
         old="require_human_approval=task.constraints.require_human_approval,",
         new="require_human_approval=False,",
         pytest_targets=(
