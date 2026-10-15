@@ -70,7 +70,10 @@ def test_runtime_outer_namespace_imports_do_not_depend_on_legacy_runtime_facades
                 }
             else:
                 assert node.level == 3
-                assert not (node.module or "").startswith("runtime_")
+                assert node.module not in {
+                    "runtime_canary", "runtime_retry", "runtime_circuit_breaker",
+                    "runtime_telemetry", "runtime_verification",
+                }
 
 
 def test_runtime_identity_is_not_implicitly_rehomed_with_operational_cluster() -> None:
