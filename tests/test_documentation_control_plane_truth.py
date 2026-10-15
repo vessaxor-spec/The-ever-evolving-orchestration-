@@ -29,7 +29,7 @@ T6A_PR_CI = 1006
 T6A_MAIN_CI = 1007
 T6A_QUALIFIED_TESTS = 1151
 T6A_QUALIFIED_TRACKED_FILES = 626
-CURRENT_MAIN = T6A_MERGE
+CURRENT_IMPLEMENTATION_BASELINE = T6A_MERGE
 RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
 RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
 RMI8_FINAL_CI = 958
@@ -128,7 +128,7 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
 
     for phrase in (
         "**Last reconciled:** 2026-10-15",
-        f"`main@{CURRENT_MAIN}` after T6A provider execution adapters / PR #228",
+        f"`main@{CURRENT_IMPLEMENTATION_BASELINE}` after T6A provider execution adapters / PR #228",
         f"`{TRANCHE5D_MERGE}` from clean-architecture Tranche 5D / PR #224",
         f"{CURRENT_VALIDATED_TESTS:,} tests passed",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
@@ -185,6 +185,10 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         "Task Intent & Action Authority Contract",
     ):
         assert phrase in text
+
+    assert "| Qualified implementation snapshot |" in text
+    assert "| Current repository baseline |" not in text
+    assert "is authoritative for the live branch head" in text
 
     for stale in (
         "T5D immutable runtime configuration view is the next actionable repository gate",
@@ -285,7 +289,7 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`main@{CURRENT_MAIN}` after T6A provider execution adapters / PR #228",
+        f"`main@{CURRENT_IMPLEMENTATION_BASELINE}` after T6A provider execution adapters / PR #228",
         f"`{TRANCHE5D_MERGE}` from clean-architecture Tranche 5D / PR #224",
         f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
         f"{CURRENT_VALIDATED_TESTS:,} tests",
@@ -321,6 +325,10 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "Assimilation is not installation",
     ):
         assert phrase in text
+
+    assert "| Qualified implementation snapshot |" in text
+    assert "| Repository baseline |" not in text
+    assert "is authoritative for the live branch head" in text
 
     for stale in (
         "Tranche 5D immutable runtime configuration view is the next clean-architecture gate",
