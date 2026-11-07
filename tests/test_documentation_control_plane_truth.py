@@ -409,7 +409,7 @@ def test_clean_architecture_plan_records_tranche5d_and_next_gate() -> None:
         f"CI #{T6A_MAIN_CI}",
         "218 Python files",
         "T6D shadow evaluation isolation merged and qualified",
-        "Deterministic verifier-calibration core / PR #239 / CI #1039 is also complete and qualified",
+        "deterministic verifier-calibration core / PR #239 / merged-main CI #1039 is also complete",
         f"main@{EVIDENCE_REFRESH_MERGE}",
         f"CI #{EVIDENCE_REFRESH_MAIN_CI}",
         "advanced afterward only through regulated-evidence maintenance in PR #227",
