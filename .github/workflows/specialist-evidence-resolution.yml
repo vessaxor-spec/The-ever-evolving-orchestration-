@@ -1,9 +1,6 @@
 name: Specialist Evidence Resolution
 
 on:
-  push:
-    branches:
-      - evidence/refresh-cycle-4-2026-11-07
   schedule:
     - cron: "0 5 * * 1"
   workflow_dispatch:
