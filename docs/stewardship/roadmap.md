@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D). Tranche 6 reconstitution, T6A–T6C and T6D benchmark/cost/shadow namespace moves are main-qualified; remaining verifier-calibration and live-scope evaluation groups require separate ownership decisions.
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D). Tranche 6 reconstitution, T6A–T6C and T6D benchmark/cost/shadow plus deterministic verifier-calibration core namespace moves are main-qualified; remaining empirical calibration and live-scope evaluation groups require separate ownership decisions.
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -142,9 +142,9 @@ The required read-only reconstitution is complete on `main@91e37ec0fe7a056d6d8e7
 1. **T6A — provider execution adapters namespace — COMPLETE:** PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` / CI #1006, merge `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` / CI #1007.
 2. **T6B — live verifier adapters namespace — COMPLETE:** PR #231, CI #1015, legacy import identities and verifier diversity retained.
 3. **T6C — operational runtime namespace — COMPLETE:** PR #232, CI #1020, `runtime_identity` unchanged.
-4. **T6D — evaluation namespaces — PARTIAL:** benchmark PR #234 / CI #1023; cost PR #235 / CI #1025; shadow PR #236 / CI #1033. **T6D shadow evaluation isolation merged and qualified.** Verifier-calibration and live-scope evaluation groups remain to be scoped separately.
+4. **T6D — evaluation namespaces — PARTIAL:** benchmark PR #234 / CI #1023; cost PR #235 / CI #1025; shadow PR #236 / CI #1033. **T6D shadow evaluation isolation merged and qualified.** Deterministic verifier-calibration core / PR #239 / CI #1039 is also complete and qualified, preserving old imports and both CLIs. Empirical calibration, blinded human review, machine panel and staged live-scope groups remain to be scoped separately.
 
-Evidence cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, with network authority resolution run #14 and merged-main CI #1031 PASS. Shadow evaluation PR #236 merged as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd`, merged-main CI #1033 PASS (**1,189 tests**, **650 tracked files**, **42 schemas**, linked configuration valid, regulated evidence PASS and provider-diverse E2E PASS).
+Evidence cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, with network authority resolution run #14 and merged-main CI #1031 PASS. Shadow evaluation PR #236 merged as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd`, merged-main CI #1033 PASS (**1,189 tests**, **650 tracked files**, **42 schemas**, linked configuration valid, regulated evidence PASS and provider-diverse E2E PASS). Deterministic verifier-calibration core / PR #239 merged as `edc7b147111be0ad5e7ce883bb6d87d8f6d350d6`, with merged-main CI #1039 passing **1,193 tests**, **654 tracked files**, **42 schemas** and the same evidence/configuration/provider-diverse gates.
 
 Future namespace work must remain reversible and preserve accepted public/private imports, dependency direction, `runtime_identity`, routing, risk, model neutrality, authority, verification, provider access, live scope and Stage B separation. Tranche 7 compatibility retirement remains a future API decision.
 

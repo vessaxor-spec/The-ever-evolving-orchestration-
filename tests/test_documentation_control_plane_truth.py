@@ -35,7 +35,8 @@ T6D_BENCHMARK_MERGE = "e74cead2057dba9d0c03a5ccef71172786a7e7d1"
 T6D_COST_MERGE = "4ce3c731d9e9ab770d094418d9e4298067818086"
 T6D_SHADOW_MERGE = "c104b466a977e4893ff76780e0ebc0c0e46d3ebd"
 EVIDENCE_REFRESH4_MERGE = "e085302479a61506ce89bf6b6495ad43869350d6"
-CURRENT_IMPLEMENTATION_BASELINE = T6D_SHADOW_MERGE
+T6D_CALIBRATION_CORE_MERGE = "edc7b147111be0ad5e7ce883bb6d87d8f6d350d6"
+CURRENT_IMPLEMENTATION_BASELINE = T6D_CALIBRATION_CORE_MERGE
 RMI8_MERGE = "8e5bef0f209f6fe14b46311c7345cea141eb0a4b"
 RMI8_FINAL_HEAD = "d5ab4791e7b037bade24e2780a9aaef7df42878f"
 RMI8_FINAL_CI = 958
@@ -78,10 +79,10 @@ TRANCHE5D_QUALIFIED_TRACKED_FILES = 619
 TRANCHE5D_QUALIFIED_SCHEMAS = 42
 TRANCHE5D_PR_CI = 996
 TRANCHE5D_MAIN_CI = 997
-CURRENT_VALIDATED_TESTS = 1189
-CURRENT_VALIDATED_TRACKED_FILES = 650
+CURRENT_VALIDATED_TESTS = 1193
+CURRENT_VALIDATED_TRACKED_FILES = 654
 CURRENT_VALIDATED_SCHEMAS = TRANCHE5D_QUALIFIED_SCHEMAS
-CURRENT_VALIDATED_CI = 1033
+CURRENT_VALIDATED_CI = 1039
 
 
 def _text(path: str) -> str:
@@ -134,7 +135,7 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
 
     for phrase in (
         "**Last reconciled:** 2026-11-07",
-        f"`main@{CURRENT_IMPLEMENTATION_BASELINE}` after T6D shadow evaluation / PR #236",
+        f"`main@{CURRENT_IMPLEMENTATION_BASELINE}` after T6D deterministic verifier-calibration core / PR #239",
         f"`{TRANCHE5D_MERGE}` from clean-architecture Tranche 5D / PR #224",
         f"{CURRENT_VALIDATED_TESTS:,} tests passed",
         f"{CURRENT_VALIDATED_TRACKED_FILES} tracked-file layout checks",
@@ -176,7 +177,7 @@ def test_progress_tracker_matches_current_merged_truth() -> None:
         "Discovered -> Eligible -> Calibrated -> Selected",
         "compatibility inputs. It does not claim that those implementations are currently running",
         "Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and qualified",
-        "T6D: verifier-calibration and live-scope evaluation",
+        "Characterize empirical verifier calibration and staged live-scope groups separately",
         T6A_HEAD,
         f"Reference Implementation CI #{T6A_PR_CI}",
         f"Reference Implementation CI #{T6A_MAIN_CI}",
@@ -295,7 +296,7 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         "runtime-compatibility-defaults.yaml",
         "specialist-selection-policy.yaml",
         "retired `specialist-model-routing.yaml` is not a current authority surface",
-        f"`main@{CURRENT_IMPLEMENTATION_BASELINE}` after T6D shadow evaluation / PR #236",
+        f"`main@{CURRENT_IMPLEMENTATION_BASELINE}` after T6D deterministic verifier-calibration core / PR #239",
         f"`{TRANCHE5D_MERGE}` from clean-architecture Tranche 5D / PR #224",
         f"Reference Implementation CI #{CURRENT_VALIDATED_CI}",
         f"{CURRENT_VALIDATED_TESTS:,} tests",
@@ -318,9 +319,10 @@ def test_root_readme_exposes_current_repository_truth() -> None:
         f"{TRANCHE5D_QUALIFIED_TESTS:,} tests",
         TRANCHE5D_HEAD,
         "`SpecialistRoutingEngine` remains the public compatibility façade but no longer subclasses `OrchestrationEngine`",
-        "T6A–T6C plus T6D benchmark, cost and shadow groups merged and qualified",
+        "T6A–T6C plus T6D benchmark, cost, shadow and deterministic calibration core groups merged and qualified",
         "218 Python files",
         "T6D shadow evaluation isolation is complete and main-qualified",
+        "Deterministic verifier-calibration core / PR #239 then merged",
         "refresh cycle 4 qualified on 2026-11-07",
         "2026-12-07",
         "2027-02-05",
@@ -407,6 +409,7 @@ def test_clean_architecture_plan_records_tranche5d_and_next_gate() -> None:
         f"CI #{T6A_MAIN_CI}",
         "218 Python files",
         "T6D shadow evaluation isolation merged and qualified",
+        "deterministic verifier-calibration core / PR #239 / merged-main CI #1039 is also complete",
         f"main@{EVIDENCE_REFRESH_MERGE}",
         f"CI #{EVIDENCE_REFRESH_MAIN_CI}",
         "advanced afterward only through regulated-evidence maintenance in PR #227",
