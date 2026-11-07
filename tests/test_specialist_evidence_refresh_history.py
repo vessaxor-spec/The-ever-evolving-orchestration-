@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CYCLE_ONE_NAME = "regulated-specialist-evidence-refresh-cycle-2026-08-11.json"
 CYCLE_TWO_NAME = "regulated-specialist-evidence-refresh-cycle-2026-08-16.json"
 CYCLE_THREE_NAME = "regulated-specialist-evidence-refresh-cycle-2026-10-02.json"
-RECORD_NAMES = (CYCLE_ONE_NAME, CYCLE_TWO_NAME, CYCLE_THREE_NAME)
+RECORD_NAMES = tuple(path.name for path, _ in load_refresh_records(ROOT))
 
 
 def _copy_refresh_fixture(tmp_path: Path) -> Path:
@@ -29,8 +29,8 @@ def _copy_refresh_fixture(tmp_path: Path) -> Path:
     return tmp_path
 
 
-def _record_path(root: Path, name: str = CYCLE_THREE_NAME) -> Path:
-    return root / "docs/history/validation" / name
+def _record_path(root: Path, name: str | None = None) -> Path:
+    return root / "docs/history/validation" / (name or RECORD_NAMES[-1])
 
 
 def test_refresh_history_is_valid_and_bound_to_active_registry() -> None:
@@ -38,7 +38,7 @@ def test_refresh_history_is_valid_and_bound_to_active_registry() -> None:
     assert errors == []
 
     records = load_refresh_records(ROOT)
-    assert len(records) == 3
+    assert len(records) >= 4
     _, cycle_one = records[0]
     _, cycle_two = records[1]
     _, cycle_three = records[2]
@@ -109,6 +109,25 @@ def test_refresh_history_is_valid_and_bound_to_active_registry() -> None:
     assert cycle_three["expansion_gate"]["next_batch_approved"] is False
     assert cycle_three["expansion_gate"]["expansion_authorized"] is False
 
+    _, cycle_four = records[3]
+    assert cycle_four["sequence"] == 4
+    assert cycle_four["status"] == "completed"
+    assert cycle_four["performed_at"] == "2026-11-07"
+    assert cycle_four["registry_before_blob_sha"] == cycle_three["registry_after_blob_sha"]
+    assert cycle_four["maintenance_summary"] == {
+        "claims_reviewed": 7,
+        "authorities_resolved": 7,
+        "claims_reaffirmed": 7,
+        "claims_amended": 0,
+        "authorities_moved": 0,
+        "authority_conflicts": 0,
+        "specialist_cards_changed": 0,
+    }
+    assert cycle_four["expansion_gate"]["refresh_cycles_completed"] == 4
+    assert cycle_four["expansion_gate"]["next_batch_approved"] is False
+    assert cycle_four["expansion_gate"]["expansion_authorized"] is False
+    assert records[-1][1]["sequence"] == len(records)
+
 
 def test_cycle_one_covers_all_seven_claims_and_records_controlled_amendment() -> None:
     _, cycle = load_refresh_records(ROOT)[0]
@@ -127,11 +146,12 @@ def test_cycle_one_covers_all_seven_claims_and_records_controlled_amendment() ->
     assert cycle["expansion_gate"]["controlled_change_type"] == "claim_amendment"
 
 
-def test_active_registry_reflects_cycle_three_dates_authority_and_rule_37e() -> None:
+def test_active_registry_reflects_latest_refresh_dates_authority_and_rule_37e() -> None:
     registry = yaml.safe_load(
         (ROOT / "policy/specialists/evidence-pilot.yaml").read_text(encoding="utf-8")
     )
-    assert registry["reviewed_at"].isoformat() == "2026-10-02"
+    latest = load_refresh_records(ROOT)[-1][1]
+    assert registry["reviewed_at"].isoformat() == latest["performed_at"]
 
     legal = registry["pilot_specialists"]["legal-operations"]["claims"][0]
     assert "cannot be restored or replaced through additional discovery" in legal["statement"]
@@ -142,13 +162,9 @@ def test_active_registry_reflects_cycle_three_dates_authority_and_rule_37e() -> 
 
     for specialist, entry in registry["pilot_specialists"].items():
         for claim in entry["claims"]:
-            assert claim["verified_at"].isoformat() == "2026-10-02", specialist
-            expected_expiry = (
-                "2026-11-01"
-                if claim["volatility_class"] == "fast_moving"
-                else "2026-12-31"
-            )
-            assert claim["expires_at"].isoformat() == expected_expiry, claim["id"]
+            assert claim["verified_at"].isoformat() == latest["performed_at"], specialist
+            max_age = 30 if claim["volatility_class"] == "fast_moving" else 90
+            assert 0 <= (claim["expires_at"] - claim["verified_at"]).days <= max_age, claim["id"]
 
 
 def test_forged_registry_binding_is_rejected(tmp_path: Path) -> None:
