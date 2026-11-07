@@ -6,7 +6,7 @@ Behavioral rule: **no routing, risk, verification, authority, evidence, provider
 
 ## Decision
 
-The Python reference implementation will move toward explicit clean-architecture boundaries through small, compatibility-preserving tranches rather than a repository-wide file move.
+Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified. The Python reference implementation continues toward explicit clean-architecture boundaries through small, compatibility-preserving tranches rather than a repository-wide file move.
 
 TEO is already a mature control plane with strong conformance, mutation, authority, evidence, and live-runtime tests. A big-bang reorganization would create unnecessary regression and audit risk. The migration therefore uses a strangler-style approach: extract one stable responsibility at a time, keep existing import paths as compatibility facades, prove behavioral equivalence, then continue outward.
 
