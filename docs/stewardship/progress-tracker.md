@@ -16,7 +16,7 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
 | Qualified implementation snapshot | `main@edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` after T6D deterministic verifier-calibration core / PR #239; Reference Implementation CI #1039 qualified this implementation snapshot. Documentation-only stewardship merges may advance `main` without changing implementation; [GitHub main](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main) is authoritative for the live branch head. |
-| Current executable code baseline | `edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` from T6D deterministic verifier-calibration core / PR #239; previous T6D shadow implementation `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` from PR #236 and Tranche 5D `3607ccd793fad3913221982967636c2374c77334` from PR #224 remain historical qualified milestones. No routing, risk, authority, model/default, or live-scope change. |
+| Current executable code baseline | `edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` from T6D deterministic verifier-calibration core / PR #239; previous T6D shadow implementation `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` from PR #236 and `3607ccd793fad3913221982967636c2374c77334` from clean-architecture Tranche 5D / PR #224 remain historical qualified milestones. No routing, risk, authority, model/default, or live-scope change. |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
