@@ -1,12 +1,12 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified; Tranche 6 reconstitution and T6A merged and main-qualified; T6B next and unstarted**  
+Status: **incremental implementation — Tranches 1–5, T6A–T6C and T6D benchmark/cost/shadow namespace moves main-qualified; remaining evaluation groups pending separate scoped review**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
 ## Decision
 
-The Python reference implementation will move toward explicit clean-architecture boundaries through small, compatibility-preserving tranches rather than a repository-wide file move.
+Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and main-qualified. The Python reference implementation continues toward explicit clean-architecture boundaries through small, compatibility-preserving tranches rather than a repository-wide file move.
 
 TEO is already a mature control plane with strong conformance, mutation, authority, evidence, and live-runtime tests. A big-bang reorganization would create unnecessary regression and audit risk. The migration therefore uses a strangler-style approach: extract one stable responsibility at a time, keep existing import paths as compatibility facades, prove behavioral equivalence, then continue outward.
 
@@ -30,7 +30,7 @@ The T5C validation input remains an immutable shell over the same mutable config
 
 ### 4. Provider execution implementations now have an outer-layer namespace
 
-Provider-neutral contracts remain in place. Concrete provider execution implementations moved into `teo_reference.adapters.providers` in T6A, while accepted top-level and package-root compatibility imports remain intact. Live provider verifiers, retry/circuit behavior, runtime execution, and evaluation remain separate follow-on migrations; T6B is next.
+Provider-neutral contracts remain in place. Concrete provider execution implementations moved into `teo_reference.adapters.providers` in T6A, verifier implementations into `teo_reference.adapters.verifiers` in T6B, and guarded runtime implementations into `teo_reference.adapters.runtime` in T6C. Accepted top-level and package-root compatibility imports remain intact. Remaining evaluation remain separate follow-on migrations; T6B is next.
 
 ### 5. The package root remains a broad compatibility surface
 
@@ -227,28 +227,16 @@ Merged-main qualification on `3607ccd793fad3913221982967636c2374c77334` was Refe
 
 T5D did not change routing policy, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification policy, Issue #215 Stage B, or compatibility-reduction policy. Full Tranche 5 is complete.
 
-### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
+### Tranche 6 — providers, verification, runtime, and evaluation namespaces — IN PROGRESS
 
-The prerequisite import/public-surface reconstitution is complete against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`, qualified by Reference Implementation CI #999 with **1,145 tests**, **619 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E. The exact-tree scan covered **218 Python files**: 83 package source files, 120 tests, and 15 CI/example/research Python files. Pre-T6A `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced afterward only through regulated-evidence maintenance in PR #227, so the original characterization remained valid when T6A began.
+The required import/public-surface reconstitution examined **218 Python files** against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301` / CI #999. Pre-T6A `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced afterward only through regulated-evidence maintenance in PR #227. Top-level and package-root imports remain compatibility contracts.
 
-Reconstitution established these ownership constraints:
+1. **T6A — provider execution adapters namespace — COMPLETE:** PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` / CI #1006; merge `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` / CI #1007.
+2. **T6B — live verifier adapters namespace — COMPLETE:** PR #231 / CI #1015, provider-diverse behavior and imports preserved.
+3. **T6C — operational runtime namespace — COMPLETE:** PR #232 / CI #1020, five-module runtime cluster moved; `runtime_identity` left in established ownership.
+4. **T6D — evaluation namespace — PARTIAL:** benchmark PR #234 / CI #1023; cost PR #235 / CI #1025; shadow PR #236 / CI #1033. **T6D shadow evaluation isolation merged and qualified**; remaining verifier-calibration and live-scope groups require independent characterization and bounded implementation decisions.
 
-- concrete OpenAI/Google/Anthropic execution adapters are outer implementations and can move first;
-- current top-level adapter modules and package-root exports are accepted compatibility surfaces and must remain valid during T6;
-- concrete live verifiers currently depend on provider-adapter `_extract_usage` helpers, so usage-normalization redesign is out of scope for namespace movement;
-- `runtime_canary`, `runtime_circuit_breaker`, `runtime_retry`, `runtime_telemetry`, and `runtime_verification` form a coupled operational cluster, while `runtime_identity` requires an independent ownership decision;
-- benchmark, shadow, cost-attribution, live-scope, and verifier-calibration modules cross provider/runtime/verification boundaries and should move only after provider/verifier namespaces stabilize.
-
-Bounded sequence:
-
-1. **T6A — provider execution adapters namespace — COMPLETE:** concrete OpenAI/Google/Anthropic execution implementations moved under `teo_reference.adapters.providers`, with top-level compatibility shims and package-root exports preserved.
-2. **T6B — live verifier adapters namespace:** move concrete provider verifier implementations behind an outer verifier namespace while preserving provider-diversity behavior.
-3. **T6C — runtime implementation namespace:** reconstitute the runtime cluster immediately before movement and decide `runtime_identity` ownership separately.
-4. **T6D — evaluation namespace:** migrate evaluation implementations in bounded groups after provider/verifier stabilization.
-
-T6A / PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` passed Reference Implementation CI #1006: **1,151 tests**, **626 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. It merged as `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb`; merged-main Reference Implementation CI #1007 passed those gates. Concrete provider execution adapters now live under `teo_reference.adapters.providers`; accepted legacy imports, verifier-facing `_extract_usage` helpers, and package-root exports remain intact. **T6B live verifier adapters is next and unstarted.**
-
-**T6B is the next implementation gate and has not started.** It remains behavior-preserving only: no routing, risk, authority, Runtime Model Binding, provider-default, provider-access, live-scope, finalization, verification-policy, Issue #215 Stage B, model-version, or compatibility-reduction change. New dependency-direction and shim-equivalence tests plus full canonical CI are required before merge.
+Evidence refresh cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, qualified by authority-resolution #14 and merged-main CI #1031. Shadow evaluation PR #236 rebased on that qualified baseline and merged as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd`; merged-main CI #1033 passed **1,189 tests**, **650 tracked files**, **42 schemas**, regulated evidence, valid configuration, and provider-diverse E2E. Namespace moves do not authorize routing, risk, authority, runtime-binding, verifier-policy, model/default, provider-access, live-scope, finalization, Stage B, or compatibility-retirement changes.
 
 ### Tranche 7 — compatibility reduction
 

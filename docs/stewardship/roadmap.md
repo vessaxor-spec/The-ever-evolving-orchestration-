@@ -1,6 +1,6 @@
 # Roadmap
 
-TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D). The required Tranche 6 import/public-surface reconstitution and T6A provider execution adapters are complete and main-qualified; **T6B live verifier adapters is the next unstarted implementation gate.**
+TEO has completed the foundation, team architecture, routing validation, registry population, reference control plane, operational evidence chain, and the runtime-model-binding program through RMI-8. The behavior-preserving Python clean-architecture migration has completed Tranches 1–4 plus full Tranche 5 (T5A–T5D). Tranche 6 reconstitution, T6A–T6C and T6D benchmark/cost/shadow namespace moves are main-qualified; remaining verifier-calibration and live-scope evaluation groups require separate ownership decisions.
 
 The roadmap is directional. Current operational state, exact evidence, completion percentages, and NOW/NEXT/LATER sequencing belong in [`progress-tracker.md`](progress-tracker.md).
 
@@ -135,29 +135,18 @@ Merged-main qualification on `3607ccd793fad3913221982967636c2374c77334` was Refe
 
 Full Tranche 5 is complete. T5D did not change routing, risk, authority, Runtime Model Binding, model/provider defaults, provider access, live scope, finalization, verification policy, Issue #215 Stage B, or compatibility-reduction policy.
 
-### Tranche 6 — providers, verification, runtime, and evaluation namespaces — NEXT
+### Tranche 6 — providers, verification, runtime, and evaluation namespaces — IN PROGRESS
 
-The required read-only reconstitution is complete against `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301`, qualified by Reference Implementation CI #999 with **1,145 tests**, **619 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration with zero issues, and provider-diverse E2E. The exact-tree scan covered **218 Python files**: 83 package source files, 120 tests, and 15 CI/example/research Python files. Pre-T6A `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced only through regulated-evidence maintenance in PR #227, to **621 tracked files**, without changing import, architecture, or runtime implementation surfaces.
+The required read-only reconstitution is complete on `main@91e37ec0fe7a056d6d8e7e5ef08b3608e7c60301` / CI #999, reviewing **218 Python files**. Pre-T6A `main@5445806f5cf7746d59010ae027bb1b9fc8047158` / CI #1003 advanced only through regulated-evidence maintenance in PR #227.
 
-Reconstitution confirmed that current top-level and package-root imports are accepted compatibility surfaces. It also identified four bounded implementation groups:
+1. **T6A — provider execution adapters namespace — COMPLETE:** PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` / CI #1006, merge `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` / CI #1007.
+2. **T6B — live verifier adapters namespace — COMPLETE:** PR #231, CI #1015, legacy import identities and verifier diversity retained.
+3. **T6C — operational runtime namespace — COMPLETE:** PR #232, CI #1020, `runtime_identity` unchanged.
+4. **T6D — evaluation namespaces — PARTIAL:** benchmark PR #234 / CI #1023; cost PR #235 / CI #1025; shadow PR #236 / CI #1033. **T6D shadow evaluation isolation merged and qualified.** Verifier-calibration and live-scope evaluation groups remain to be scoped separately.
 
-1. **T6A — provider execution adapters namespace — COMPLETE:** moved concrete OpenAI/Google/Anthropic execution implementations into `teo_reference.adapters.providers`; retained top-level compatibility shims and package-root exports.
-2. **T6B — live verifier adapters namespace:** move concrete provider verifier implementations behind an outer verifier namespace while preserving provider-diversity behavior.
-3. **T6C — runtime implementation namespace:** reconstitute the canary/circuit/retry/telemetry/verification cluster before movement and decide `runtime_identity` ownership independently.
-4. **T6D — evaluation namespace:** migrate benchmark/shadow/calibration/live-scope evaluation implementations only after provider/verifier namespaces stabilize.
+Evidence cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, with network authority resolution run #14 and merged-main CI #1031 PASS. Shadow evaluation PR #236 merged as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd`, merged-main CI #1033 PASS (**1,189 tests**, **650 tracked files**, **42 schemas**, linked configuration valid, regulated evidence PASS and provider-diverse E2E PASS).
 
-T6A / PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` passed Reference Implementation CI #1006: **1,151 tests**, **626 tracked files**, **42 schemas**, regulated-specialist evidence, valid linked configuration, and provider-diverse E2E. It merged as `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb`; merged-main Reference Implementation CI #1007 passed those gates. Concrete provider execution adapters now live under `teo_reference.adapters.providers`; accepted legacy imports, verifier-facing `_extract_usage` helpers, and package-root exports remain intact. **T6B live verifier adapters is next and unstarted.**
-
-**T6B is the next implementation gate and has not started.** Perform namespace moves in independently reversible groups rather than one mechanical relocation. Do not treat file movement as permission to change provider choice, routing, risk, authority, Runtime Model Binding, provider access, live scope, verification policy, finalization, Issue #215 Stage B, model versions, or accepted compatibility surfaces.
-
-Rules:
-
-- recalibrate #197 against current `main` before each tranche;
-- preserve dependency direction and existing behavior;
-- do not fold runtime-model-binding product behavior into #197;
-- do not change live authority, provider access, or model/default policy as a side effect;
-- do not turn configuration discovery, loading, composition, validation, or runtime projection into routing authority;
-- where workstreams touch a surface, sequence changes so each remains independently understandable and reversible.
+Future namespace work must remain reversible and preserve accepted public/private imports, dependency direction, `runtime_identity`, routing, risk, model neutrality, authority, verification, provider access, live scope and Stage B separation. Tranche 7 compatibility retirement remains a future API decision.
 
 ## Current operational priority: evidence-governed live execution expansion
 
@@ -215,7 +204,7 @@ Independent human calibration under Issue #75 remains optional evidence enhancem
 
 ## Regulated specialist evidence
 
-The bounded six-card regulated specialist evidence pilot has completed its current executable stability milestone. Refresh cycle 3 was qualified on 2026-10-02 after the fast-moving lending evidence expired; all seven consequential pilot claims were reaffirmed without claim, authority, specialist-card, or verification-ownership changes. The fast-moving lending evidence now expires 2026-11-01 and slow-moving evidence expires 2026-12-31.
+The bounded six-card regulated evidence pilot remains stability-qualified. Refresh cycle 4 qualified on 2026-11-07 under PR #237 with authority-resolution run #14 and merged-main CI #1031; all seven claims were reaffirmed without altering authority or expanding the pilot. Lending evidence expires 2026-12-07 and slow-moving evidence expires 2027-02-05.
 
 Maintain the seven-day authority-resolution cadence as continuous drift detection. Do not auto-authorize a larger regulated registry. Any next risk-tier batch requires explicit approval and a separate bounded reviewed change.
 
