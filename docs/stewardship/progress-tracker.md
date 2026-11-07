@@ -15,18 +15,18 @@ Normative runtime, routing, release, authority, and governance behavior remains 
 |---|---|
 | Stable release | `v1.0.0` in `reference_operational` state |
 | Development package | `1.0.1.dev0` |
-| Qualified implementation snapshot | `main@c104b466a977e4893ff76780e0ebc0c0e46d3ebd` after T6D shadow evaluation / PR #236; Reference Implementation CI #1033 qualified this code snapshot. Documentation-only stewardship merges may advance `main` without changing implementation; [GitHub main](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main) is authoritative for the live branch head. |
-| Current executable code baseline | `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` from T6D shadow recommendation evaluation / PR #236; `4ce3c731d9e9ab770d094418d9e4298067818086` from T6D cost / PR #235 is historical; no change to routing, risk, authority, models/defaults, or live scope. Prior `3607ccd793fad3913221982967636c2374c77334` from clean-architecture Tranche 5D / PR #224 is historical. |
+| Qualified implementation snapshot | `main@edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` after T6D deterministic verifier-calibration core / PR #239; Reference Implementation CI #1039 qualified this implementation snapshot. Documentation-only stewardship merges may advance `main` without changing implementation; [GitHub main](https://github.com/vessaxor-spec/The-ever-evolving-orchestration-/tree/main) is authoritative for the live branch head. |
+| Current executable code baseline | `edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` from T6D deterministic verifier-calibration core / PR #239; previous T6D shadow implementation `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` from PR #236 and Tranche 5D `3607ccd793fad3913221982967636c2374c77334` from PR #224 remain historical qualified milestones. No routing, risk, authority, model/default, or live-scope change. |
 | Organizational teams | 10 |
 | Workers | 84 |
 | Active specialists | 82 |
 | Mission Control workers | 4 |
-| Current validated scale | **1,189 tests passed**, **650 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #1033 on `main@c104b466a977e4893ff76780e0ebc0c0e46d3ebd` |
+| Current validated scale | **1,193 tests passed**, **654 tracked-file layout checks**, **42 schemas**, valid linked configuration with zero issues, regulated-specialist evidence pass, provider-diverse end-to-end pass; established by Reference Implementation CI #1039 on `main@edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` |
 | Runtime model binding | Complete through RMI-8; PR #209 merged as `8e5bef0f209f6fe14b46311c7345cea141eb0a4b` and Issue #200 is closed completed |
 | Responsibility architecture | model/provider neutral; concrete implementation identity is not owned by Teams, Workers, Specialists, task routes, risk, or authority |
 | Runtime compatibility defaults | explicit compatibility/default evidence in `policy/routing/core/runtime-compatibility-defaults.yaml`; not proof of live availability or fitness |
 | Specialist selection policy | model-neutral `policy/routing/core/specialist-selection-policy.yaml` |
-| Clean architecture | Tranches 1–4 and full Tranche 5 plus T6A provider, T6B verifier, T6C runtime and T6D benchmark/cost/shadow groups main-qualified; T6D verifier-calibration and live-scope evaluation groups require new ownership review; Tranche 7 remains separate |
+| Clean architecture | Tranches 1–5 complete; T6A–T6C and T6D benchmark/cost/shadow plus deterministic verifier-calibration core main-qualified. Empirical calibration, blinded human review, machine panel and staged live-scope evaluation groups remain separate; Tranche 7 unstarted. |
 | Guarded live execution | bounded `high_volume_simple` canary at low or medium effective risk |
 | Staged live-scope candidate | `documentation`, evaluation only, not authorized for live execution |
 | High and critical live execution | not authorized |
@@ -110,7 +110,8 @@ Issue #197 remains behavior-preserving and separate from Runtime Model Binding. 
     - [x] Benchmark evaluation, PR #234 / CI #1023.
     - [x] Cost attribution, PR #235 / CI #1025.
     - [x] Shadow evaluation, PR #236 / CI #1033.
-    - [ ] Verifier calibration and live-scope evaluation groups, pending separate ownership analysis.
+    - [x] Deterministic verifier-calibration core, PR #239 / CI #1039; existing `python -m` CLI, public/private identities preserved.
+    - [ ] Empirical verifier calibration, human review, machine panel and staged live-scope evaluation groups, pending separate bounded ownership review.
 - [ ] Tranche 7 — reduce compatibility surface only through explicit API evidence/versioning.
 
 Tranche 3 exact-head qualification was Reference Implementation CI #960 on `504c05f67ee6d89e0144e6d16c11c3a19509e780`: **1,118 tests**, **607 tracked files**, **42 schemas**, regulated-specialist evidence pass, linked configuration `status: valid` with `issues: []`, and provider-diverse end-to-end routing. `OrchestrationEngine.dispatch()` became a thin application-service façade with Worker, Specialist, and capability resolution extracted.
@@ -133,7 +134,7 @@ Historical post-T5D evidence maintenance: PR #227 exact head `ccd1d7bee209f1c8d5
 
 T6A / PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` passed Reference Implementation CI #1006 (**1,151 tests**, **626 tracked files**, **42 schemas**); it merged as `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` with Reference Implementation CI #1007 PASS. T6B verifier adapters / PR #231 merged as `54ad6995f3e293a96b1e469f0340c377b99eea34` / CI #1015; T6C operational runtime / PR #232 merged as `c0d691bb369f5f5d78deb3731059bdb30a04e705` / CI #1020. `runtime_identity` retains separate ownership.
 
-T6D benchmark evaluation PR #234 merged as `e74cead2057dba9d0c03a5ccef71172786a7e7d1` / CI #1023; cost attribution PR #235 as `4ce3c731d9e9ab770d094418d9e4298067818086` / CI #1025; shadow evaluation PR #236 as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` / CI #1033. All preserve compatibility imports and avoid changing routing or authority. **T6D shadow evaluation isolation merged and qualified**. Remaining verifier-calibration and live-scope evaluation groups await new scoped ownership analysis.
+T6D benchmark evaluation PR #234 merged as `e74cead2057dba9d0c03a5ccef71172786a7e7d1` / CI #1023; cost attribution PR #235 as `4ce3c731d9e9ab770d094418d9e4298067818086` / CI #1025; shadow evaluation PR #236 as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` / CI #1033. All preserve compatibility imports and avoid changing routing or authority. **T6D shadow evaluation isolation merged and qualified**. Deterministic verifier-calibration core / PR #239 followed as `edc7b147111be0ad5e7ce883bb6d87d8f6d350d6` / merged-main CI #1039 (**1,193 tests**, **654 tracked files**, **42 schemas**); source body was preserved except its relative verifier-contract import, and both legacy/concrete CLIs and private helpers were verified. Remaining empirical calibration, blinded human review, machine-panel and staged live-scope evaluation groups await separate scoped ownership analysis.
 
 Evidence refresh cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, authority resolution run #14 and Reference Implementation CI #1031 passed (**1,187 tests**, **648 tracked files**, **42 schemas**). The current post-shadow qualified code baseline is `c104b466a977e4893ff76780e0ebc0c0e46d3ebd` / Reference Implementation CI #1033 (**1,189 tests**, **650 tracked files**, **42 schemas**).
 
@@ -154,15 +155,15 @@ Evidence refresh cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad4386
 | Shadow route evaluation | Complete | 100% | Governed recommendation-only evidence loop | Preserve anti-Goodhart and no-policy-write boundaries |
 | Qualified-human approval lifecycle | Complete | 100% | Evidence-bound qualified-human authority lifecycle | Preserve scope, integrity, expiry, revocation, temporal causality, and finalization boundaries |
 | Live execution expansion | In progress | 65% | `documentation` staged replay harness and operator evidence path validated | Produce provider-backed controlled documentation replay evidence |
-| Clean-architecture migration (#197) | In progress | — | T6A–T6C and T6D benchmark/cost/shadow merged and qualified | T6D: verifier-calibration and live-scope evaluation ownership decisions |
+| Clean-architecture migration (#197) | In progress | — | T6A–T6C; T6D benchmark/cost/shadow and deterministic verifier-calibration core main-qualified through PR #239 / CI #1039 | Characterize empirical verifier calibration and staged live-scope groups separately |
 | Distributed runtime hardening | Future | 20% | Single-process reference behavior proven | Add coordinated state, concurrency-safe export, access control, retention, integrity, and recovery |
 | Licensing and contribution terms | Pending | 10% | Public repository with no reuse license selected | Select licensing and contribution terms before representing TEO as open source |
 
 ## NOW
 
-### 1. Clean-architecture Tranche 6 — remaining T6D evaluation groups
+### 1. Clean-architecture Tranche 6 — remaining T6D empirical and live-scope groups
 
-T6A–T6C and T6D benchmark, cost, and shadow namespace extractions are merged and main-qualified. The next bounded engineering action is to re-characterize verifier-calibration and staged live-scope evaluation imports, decide ownership separately, preserve `runtime_identity` and route-outcome contracts, and run exact-head CI on each independently reversible move. No changes to models, routing, authority, verification policy, provider access or guarded live-execution scope.
+T6A–T6C and T6D benchmark, cost, shadow and deterministic verifier-calibration core are main-qualified. PR #239 preserved both CLI entrypoints and all existing calibration import identities. Next, characterize the empirical collector, human review, machine panel and staged live-scope replay independently; preserve `runtime_identity`, evidence/provenance, authority and provider-access boundaries. No new live-execution permission, verification policy or model/default change is authorized.
 
 ### 2. Evidence-governed live execution expansion
 
@@ -174,7 +175,7 @@ No access mechanism is itself routing authority. Do not authorize high or critic
 
 ## NEXT
 
-Re-characterize remaining T6D verifier-calibration and live-scope evaluation groups on the qualified shadow baseline, then proceed only with separately reviewed, compatibility-preserving changes. The product evidence gate remains provider-backed controlled `documentation` replay evidence; the current tests do not authorize a live-scope expansion.
+Re-characterize remaining T6D empirical verifier-calibration and staged live-scope evaluation groups on the qualified calibration-core baseline, then proceed only with separately reviewed, compatibility-preserving changes. The product evidence gate remains provider-backed controlled `documentation` replay evidence; the current tests do not authorize a live-scope expansion.
 
 ## LATER
 

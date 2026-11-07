@@ -1,6 +1,6 @@
 # Python Reference Clean-Architecture Migration
 
-Status: **incremental implementation — Tranches 1–5, T6A–T6C and T6D benchmark/cost/shadow namespace moves main-qualified; remaining evaluation groups pending separate scoped review**  
+Status: **incremental implementation — Tranches 1–5, T6A–T6C and T6D benchmark/cost/shadow plus deterministic verifier-calibration core main-qualified; remaining empirical and live-scope groups pending separate review**  
 Scope: `reference/implementations/python/src/teo_reference/`  
 Behavioral rule: **no routing, risk, verification, authority, evidence, provider, or public-API behavior may change as a side effect of this migration.**
 
@@ -30,7 +30,7 @@ The T5C validation input remains an immutable shell over the same mutable config
 
 ### 4. Provider execution implementations now have an outer-layer namespace
 
-Provider-neutral contracts remain in place. Concrete provider execution implementations moved into `teo_reference.adapters.providers` in T6A, verifier implementations into `teo_reference.adapters.verifiers` in T6B, and guarded runtime implementations into `teo_reference.adapters.runtime` in T6C. Accepted top-level and package-root compatibility imports remain intact. Remaining evaluation remain separate follow-on migrations; T6B is next.
+Provider-neutral contracts remain in place. Concrete provider execution implementations moved into `teo_reference.adapters.providers` in T6A, verifier implementations into `teo_reference.adapters.verifiers` in T6B, and guarded runtime implementations into `teo_reference.adapters.runtime` in T6C. Accepted top-level and package-root compatibility imports remain intact. Remaining empirical calibration, blinded human review, machine-panel and staged live-scope evaluation groups remain separate, independently scoped follow-on migrations; T6B is already complete.
 
 ### 5. The package root remains a broad compatibility surface
 
@@ -234,9 +234,9 @@ The required import/public-surface reconstitution examined **218 Python files** 
 1. **T6A — provider execution adapters namespace — COMPLETE:** PR #228 exact head `533c9cb22f914af318b47f665620daf941cb664b` / CI #1006; merge `e791e6b2685359e6e7ca64a5bd66d10e2efc37eb` / CI #1007.
 2. **T6B — live verifier adapters namespace — COMPLETE:** PR #231 / CI #1015, provider-diverse behavior and imports preserved.
 3. **T6C — operational runtime namespace — COMPLETE:** PR #232 / CI #1020, five-module runtime cluster moved; `runtime_identity` left in established ownership.
-4. **T6D — evaluation namespace — PARTIAL:** benchmark PR #234 / CI #1023; cost PR #235 / CI #1025; shadow PR #236 / CI #1033. **T6D shadow evaluation isolation merged and qualified**; remaining verifier-calibration and live-scope groups require independent characterization and bounded implementation decisions.
+4. **T6D — evaluation namespace — PARTIAL:** benchmark PR #234 / CI #1023; cost PR #235 / CI #1025; shadow PR #236 / CI #1033. **T6D shadow evaluation isolation merged and qualified**. The deterministic verifier-calibration core / PR #239 / merged-main CI #1039 is also complete: new `adapters.evaluation.verifier_calibration` owns the unchanged implementation apart from a relative verifier-contract import, while the legacy module preserves public/private aliases and both CLI entrypoints. Remaining empirical collection, blinded human review, machine panel and live-scope replay groups require independent characterization and bounded implementation decisions.
 
-Evidence refresh cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, qualified by authority-resolution #14 and merged-main CI #1031. Shadow evaluation PR #236 rebased on that qualified baseline and merged as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd`; merged-main CI #1033 passed **1,189 tests**, **650 tracked files**, **42 schemas**, regulated evidence, valid configuration, and provider-diverse E2E. Namespace moves do not authorize routing, risk, authority, runtime-binding, verifier-policy, model/default, provider-access, live-scope, finalization, Stage B, or compatibility-retirement changes.
+Evidence refresh cycle 4 / PR #237 merged as `e085302479a61506ce89bf6b6495ad43869350d6`, qualified by authority-resolution #14 and merged-main CI #1031. Shadow evaluation PR #236 rebased on that qualified baseline and merged as `c104b466a977e4893ff76780e0ebc0c0e46d3ebd`; merged-main CI #1033 passed **1,189 tests**, **650 tracked files**, **42 schemas**, regulated evidence, valid configuration, and provider-diverse E2E. Deterministic verifier-calibration core / PR #239 then merged as `edc7b147111be0ad5e7ce883bb6d87d8f6d350d6`; exact-head CI #1038 and merged-main CI #1039 passed **1,193 tests**, **654 tracked files**, **42 schemas**, including calibration identity, CLI, evidence, configuration and provider-diverse E2E gates. Namespace moves do not authorize routing, risk, authority, runtime-binding, verifier-policy, model/default, provider-access, live-scope, finalization, Stage B, or compatibility-retirement changes.
 
 ### Tranche 7 — compatibility reduction
 
