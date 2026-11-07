@@ -90,7 +90,7 @@ RMI-8 final qualification on exact PR head `d5ab4791e7b037bade24e2780a9aaef7df42
 
 ## Clean-architecture migration — current executable truth
 
-Issue #197 remains behavior-preserving and separate from Runtime Model Binding.
+Issue #197 remains behavior-preserving and separate from Runtime Model Binding. Tranches 1–4 plus full Tranche 5 (T5A–T5D) merged and qualified; Tranche 6 remains in progress.
 
 - [x] Tranche 1 — deterministic classification/risk domain policy; PR #196, `a63887179a1ff3adfa7d7119a7db1a5f598a0f86`.
 - [x] Tranche 2 — finalization use case and artifact-integrity port; PR #198, `467c706d6f1077371928e3fcbe3f32f5ec51fb19`.
@@ -174,7 +174,7 @@ No access mechanism is itself routing authority. Do not authorize high or critic
 
 ## NEXT
 
-Re-characterize remaining T6D verifier-calibration and live-scope evaluation groups on the qualified shadow baseline, then proceed only with separately reviewed, compatibility-preserving changes. The product evidence gate remains provider-backed controlled `documentation` replay; the current tests do not authorize a live-scope expansion.
+Re-characterize remaining T6D verifier-calibration and live-scope evaluation groups on the qualified shadow baseline, then proceed only with separately reviewed, compatibility-preserving changes. The product evidence gate remains provider-backed controlled `documentation` replay evidence; the current tests do not authorize a live-scope expansion.
 
 ## LATER
 
